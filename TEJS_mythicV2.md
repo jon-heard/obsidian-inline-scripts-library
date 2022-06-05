@@ -1,6 +1,6 @@
 [
 	{
-		"regex": "^mythic help$",
+		"shortcut": "^mythic help$",
 		"expansion": [
 			"let result = \"MYTHIC SHORTCUTS HELP\\n\";",
 			"result += \"- mythic help - Display this help text.\\n\"",
@@ -27,7 +27,7 @@
 		]
 	},
 	{
-		"regex": "^tejs setup$",
+		"shortcut": "^tejs setup$",
 		"expansion": [
 			"window._tejsState.mythic ||= {};",
 			"window._tejsState.mythic.chaos ||= 4;",
@@ -36,7 +36,7 @@
 		]
 	},
 	{
-		"regex": "^mythic reset$",
+		"shortcut": "^mythic reset$",
 		"expansion": [
 			"window._tejsState.mythic.chaos= 4;",
 			"window._tejsState.mythic.lists = {};",
@@ -45,11 +45,11 @@
 		]
 	},
 	{
-		"regex": "",
+		"shortcut": "",
 		"expansion": "function roll(max) { return Math.trunc(Math.random() * max + 1); }"
 	},
 	{
-		"regex": "^detail$",
+		"shortcut": "^detail$",
 		"expansion": [
 			"let f = [[4,\"ANGER\"],[5,\"SADNESS\"],[6,\"FEAR\"],[7,\"THREAD NEGATIVE\"],[8,\"PC NEGATIVE\"],[9,\"FOCUS NPC\"],[10,\"NPC POSITIVE\"],[11,\"FOCUS PC\"],[12,\"NPC NEGATIVE\"],[13,\"FOCUS THREAD\"],[14,\"PC POSITIVE\"],[15,\"THREAD POSITIVE\"],[16,\"COURAGE\"],[17,\"HAPPINESS\"],[99,\"CALM\"]];",
 			"let roll1 = roll(10);",
@@ -58,11 +58,11 @@
 			"let chaosAdjust = ((chaos==3) ? 2 : (chaos==6) ? -2 : 0);",
 			"let r = roll1 + roll2 + chaosAdjust;",
 			"for (let i = 0; i < f.length; i++) if (f[i][0] >= r) { r = f[i]; break; }",
-			"return \"Detail: \" + r[1] + \"\\n_roll1=\" + roll1 + \",roll2=\" + roll2 + \",chaosAdjust=\" + chaosAdjust + \"_\";"
+			"return \"Detail: \" + r[1] + \"\\n_roll1=\" + roll1 + \",roll2=\" + roll2 + \",chaosAdjust=\" + chaosAdjust + \"_\\n\";"
 		]
 	},
 	{
-		"regex": "^list$",
+		"shortcut": "^list$",
 		"expansion": [
 			"let result = \"none\"",
 			"if (Object.keys(window._tejsState.mythic.lists).length)",
@@ -71,7 +71,7 @@
 		]
 	},
 	{
-		"regex": "^list ([a-zA-Z]+)$",
+		"shortcut": "^list ([a-zA-Z]+)$",
 		"expansion": [
 			"let result = \"none\"",
 			"if (window._tejsState.mythic.lists[$1])",
@@ -80,7 +80,7 @@
 		]
 	},
 	{
-		"regex": "^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$",
+		"shortcut": "^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$",
 		"expansion": [
 			"window._tejsState.mythic.lists[$1] ||= []",
 			"window._tejsState.mythic.lists[$1].push($2);",
@@ -88,7 +88,7 @@
 		]
 	},
 	{
-		"regex": "^listremoveall ([a-zA-Z]+)$",
+		"shortcut": "^listremoveall ([a-zA-Z]+)$",
 		"expansion": [
 		    "if (window._tejsState.mythic.lists[$1]) {",
 			"  delete window._tejsState.mythic.lists[$1];",
@@ -97,7 +97,7 @@
 		]
 	},
 	{
-		"regex": "^listremove ([a-zA-Z]+) ([a-zA-Z ]+)$",
+		"shortcut": "^listremove ([a-zA-Z]+) ([a-zA-Z ]+)$",
 		"expansion": [
 		    "if (window._tejsState.mythic.lists[$1]) {",
 			"  let i = window._tejsState.mythic.lists[$1].lastIndexOf($2);",
@@ -108,7 +108,7 @@
 		]
 	},
 	{
-		"regex": "^listget ([a-zA-Z]+)$",
+		"shortcut": "^listget ([a-zA-Z]+)$",
 		"expansion": [
 		    "if (window._tejsState.mythic.lists[$1] && window._tejsState.mythic.lists[$1].length) {",
 			"  let result = window._tejsState.mythic.lists[$1][roll(window._tejsState.mythic.lists[$1].length)-1];",
@@ -117,18 +117,18 @@
 		]
 	},
 	{
-		"regex": "^chaos$",
+		"shortcut": "^chaos$",
 		"expansion": "return \"CHAOS is \" + window._tejsState.mythic.chaos + \".\\n\";"
 	},
 	{
-		"regex": "^chaos=([3-6])$",
+		"shortcut": "^chaos=([3-6])$",
 		"expansion": [
 			"window._tejsState.mythic.chaos = $1",
 			"return \"CHAOS set to \" + $1 + \".\\n\";"
 		]
 	},
 	{
-		"regex": "",
+		"shortcut": "",
 		"expansion": [
 			"function chaosDown() {",
 			"  window._tejsState.mythic.chaos--;",
@@ -145,15 +145,15 @@
 		]
 	},
 	{
-		"regex": "^chaos--$",
+		"shortcut": "^chaos--$",
 		"expansion": "return \"CHAOS \" + (chaosDown() ? (\"lowered to \" + window._tejsState.mythic.chaos) : (\"remains at 3 (minimum)\")) + \".\\n\";"
 	},
 	{
-		"regex": "^chaos\\+\\+$",
+		"shortcut": "^chaos\\+\\+$",
 		"expansion": "return \"CHAOS \" + (chaosUp() ? (\"raised to \" + window._tejsState.mythic.chaos) : (\"remains at 6 (maximum)\")) + \".\\n\";"
 	},
 	{
-		"regex": "",
+		"shortcut": "",
 		"expansion": [
 			"function rollAction() {",
 			"  let v1 = [\"ATTAINMENT\",\"STARTING\",\"NEGLECT\",\"FIGHT\",\"RECRUIT\",\"TRIUMPH\",\"VIOLATE\",\"OPPOSE\",\"MALICE\",\"COMMUNICATE\",\"PERSECUTE\",\"INCREASE\",\"DECREASE\",\"ABANDON\",\"GRATIFY\",\"INQUIRE\",\"ANTAGONISE\",\"MOVE\",\"WASTE\",\"TRUCE\",\"RELEASE\",\"BEFRIEND\",\"JUDGE\",\"DESERT\",\"DOMINATE\",\"PROCRASTINATE\",\"PRAISE\",\"SEPARATE\",\"TAKE\",\"BREAK\",\"HEAL\",\"DELAY\",\"STOP\",\"LIE\",\"RETURN\",\"IMMITATE\",\"STRUGGLE\",\"INFORM\",\"BESTOW\",\"POSTPONE\",\"EXPOSE\",\"HAGGLE\",\"IMPRISON\",\"RELEASE\",\"CELEBRATE\",\"DEVELOP\",\"TRAVEL\",\"BLOCK\",\"HARM\",\"DEBASE\",\"OVERINDULGE\",\"ADJOURN\",\"ADVERSITY\",\"KILL\",\"DISRUPT\",\"USURP\",\"CREATE\",\"BETRAY\",\"AGREE\",\"ABUSE\",\"OPPRESS\",\"INSPECT\",\"AMBUSH\",\"SPY\",\"ATTACH\",\"CARRY\",\"OPEN\",\"CARELESSNESS\",\"RUIN\",\"EXTRAVAGANCE\",\"TRICK\",\"ARRIVE\",\"PROPOSE\",\"DIVIDE\",\"REFUSE\",\"MISTRUST\",\"DECEIVE\",\"CRUELTY\",\"INTOLERANCE\",\"TRUST\",\"EXCITEMENT\",\"ACTIVITY\",\"ASSIST\",\"CARE\",\"NEGLIGENCE\",\"PASSION\",\"WORK_HARD\",\"CONTROL\",\"ATTRACT\",\"FAILURE\",\"PURSUE\",\"VENGEANCE\",\"PROCEEDINGS\",\"DISPUTE\",\"PUNISH\",\"GUIDE\",\"TRANSFORM\",\"OVERTHROW\",\"OPPRESS\",\"CHANGE\"];",
@@ -162,11 +162,11 @@
 		]
 	},
 	{
-		"regex": "^meaning( action|)$",
+		"shortcut": "^meaning( action|)$",
 		"expansion": "return \"Meaning: action: \" + rollAction() + \"\\n\";"
 	},
 	{
-		"regex": "",
+		"shortcut": "",
 		"expansion": [
 			"function rollDescription() {",
 			"  let v1 = [\"ABNORMALLY\",\"ADVENTUROUSLY\",\"AGGRESSIVELY\",\"ANGRILY\",\"ANXIOUSLY\",\"AWKWARDLY\",\"BEAUTIFULLY\",\"BLEAKLY\",\"BOLDLY\",\"BRAVELY\",\"BUSILY\",\"CALMLY\",\"CAREFULLY\",\"CARELESSLY\",\"CAUTIOUSLY\",\"CEASELESSLY\",\"CHEERFULLY\",\"COMBATIVELY\",\"COOLLY\",\"CRAZILY\",\"CURIOUSLY\",\"DAINTILY\",\"DANGEROUSLY\",\"DEFIANTLY\",\"DELIBERATELY\",\"DELIGHTFULLY\",\"DIMLY\",\"EFFICIENTLY\",\"ENERGETICALLY\",\"ENORMOUSLY\",\"ENTHUSIASTICALLY\",\"EXCITEDLY\",\"FEARFULLY\",\"FEROCIOUSLY\",\"FIERCELY\",\"FOOLISHLY\",\"FORTUNATELY\",\"FRANTICALLY\",\"FREELY\",\"FRIGHTENINGLY\",\"FULLY\",\"GENEROUSLY\",\"GENTLY\",\"GLADLY\",\"GRACEFULLY\",\"GRATEFULLY\",\"HAPPILY\",\"HASTILY\",\"HEALTHILY\",\"HELPFULLY\",\"HELPLESSLY\",\"HOPELESSLY\",\"INNOCENTLY\",\"INTENSELY\",\"INTERESTINGLY\",\"IRRITATINGLY\",\"JOVIALLY\",\"JOYFULLY\",\"JUDGEMENTALLY\",\"KINDLY\",\"KOOKILY\",\"LAZILY\",\"LIGHTLY\",\"LOOSELY\",\"LOUDLY\",\"LOVINGLY\",\"LOYALLY\",\"MAJESTICALLY\",\"MEANINGFULLY\",\"MECHANICALLY\",\"MISERABLY\",\"MOCKINGLY\",\"MYSTERIOUSLY\",\"NATURALLY\",\"NEATLY\",\"NICELY\",\"ODDLY\",\"OFFENSIVELY\",\"OFFICIALLY\",\"PARTIALLY\",\"PEACEFULLY\",\"PERFECTLY\",\"PLAYFULLY\",\"POLITELY\",\"POSITIVELY\",\"POWERFULLY\",\"QUAINTLY\",\"QUARRELSOMELY\",\"QUIETLY\",\"ROUGHLY\",\"RUDELY\",\"RUTHLESSLY\",\"SLOWLY\",\"SOFTLY\",\"SWIFTLY\",\"THREATENINGLY\",\"VERY\",\"VIOLENTLY\",\"WILDLY\",\"YIELDINGLY\"];",
@@ -175,11 +175,11 @@
 		]
 	},
 	{
-		"regex": "^meaning description$",
+		"shortcut": "^meaning description$",
 		"expansion": "return \"Meaning: description: \" +rollDescription() + \"\\n\";"
 	},
 	{
-		"regex": "",
+		"shortcut": "",
 		"expansion": [
 			"function eventCheck() {",
 			"  let f = [[7,\"REMOTE\", 0],[28,\"NPC ACTS\",0],[35,\"NEW NPC\",1],[45,\"THREAD ADVANCE\",0],[52,\"THREAD LOSS\",0],[55,\"THREAD END\",0],[67,\"PC NEGATIVE\",0],[75,\"PC POSITIVE\",0],[83,\"AMBIGUOUS\",0],[92,\"NPC NEGATIVE\",0],[100,\"NPC POSITIVE\",0]];",
@@ -189,15 +189,15 @@
 		]
 	},
 	{
-		"regex": "^event$",
+		"shortcut": "^event$",
 		"expansion": "return eventCheck() + \"\\n\";"
 	},
 	{
-		"regex": "^scene$",
+		"shortcut": "^scene$",
 		"expansion": "return \"The current scene is \" + window._tejsState.mythic.scene + \".\";"
 	},
 	{
-		"regex": "^scene (1|-1)$",
+		"shortcut": "^scene (1|-1)$",
 		"expansion": [
 			"let result = \"\";",
 			"if ($1 == 1)",
@@ -214,7 +214,7 @@
 		]
 	},
 	{
-		"regex": "^[f|F](-?[0-4])(y|n|Y|N|)$",
+		"shortcut": "^[f|F](-?[0-4])(y|n|Y|N|)$",
 		"expansion" : [
 			"let odds = ['impossible','no way','very unlikely','unlikely','50/50','likely','very likely','sure thing','has to be'];",
 			"$1 = Number($1);",

@@ -1,6 +1,6 @@
 [
 	{
-		"regex": "^state help$",
+		"shortcut": "^state help$",
 		"expansion": [
 			"let result = \"TEJS STATE SHORTCUTS HELP\\n\";",
 			"result += \"- state - Display the current state (for session saving).\\n\"",
@@ -13,25 +13,25 @@
 		]
 	},
 	{
-		"regex": "^tejs setup$",
+		"shortcut": "^tejs setup$",
 		"expansion": [
 			"window._tejsState ||= {};",
 			"window._tejsState.clips ||= {}"
 		]
 	},
 	{
-		"regex": "^state$",
+		"shortcut": "^state$",
 		"expansion": "return \"TEJS state:\\n\" + JSON.stringify(window._tejsState) + \"\\n\\n\";"
 	},
 	{
-		"regex": "^state (.*)$",
+		"shortcut": "^state (.*)$",
 		"expansion": [
 			"window._tejsState = JSON.parse($1);",
 			"return \"TEJS state loaded.\\n\\n\""
 		]
 	},
 	{
-		"regex": "^clip$",
+		"shortcut": "^clip$",
 		"expansion": [
 			"let result = \"none\"",
 			"if (Object.keys(window._tejsState.clips).length)",
@@ -40,7 +40,7 @@
 		]
 	},
 	{
-		"regex": "^clip ([a-zA-Z]+)$",
+		"shortcut": "^clip ([a-zA-Z]+)$",
 		"expansion": [
 			"let result = \"unset\"",
 			"if (window._tejsState.clips[$1])",
@@ -49,14 +49,14 @@
 		]
 	},
 	{
-		"regex": "^clipadd ([a-zA-Z]+) (.+)$",
+		"shortcut": "^clipadd ([a-zA-Z]+) (.+)$",
 		"expansion": [
 			"window._tejsState.clips[$1] = $2;",
 			"return \"Clip \\\"\" + $1 + \"\\\" set to:\\n\" + $2 + \".\\n\";"
 		]
 	},
 	{
-		"regex": "^clipremove ([a-zA-Z]+)$",
+		"shortcut": "^clipremove ([a-zA-Z]+)$",
 		"expansion": [
 			"delete window._tejsState.clips[$1];",
 			"return \"Clip \\\"\" + $1 + \"\\\" removed.\\n\";"
