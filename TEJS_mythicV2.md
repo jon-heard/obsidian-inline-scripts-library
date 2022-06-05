@@ -4,9 +4,7 @@
 		"expansion": [
 			"let result = \"MYTHIC SHORTCUTS HELP\\n\";",
 			"result += \"- mythic help - Display this help text.\\n\"",
-			"result += \"- mythic state - Display the current state of mythic variables (for session saving).\\n\"",
-			"result += \"- mythic state [state] - Sets the state of mythic variables based on string [state], created previously with the \\\"mythic state\\\" shortcut.\\n\"",
-			"result += \"- mythic reset - Reset all of mythic state to defaults and print new scene.\\n\"",
+			"result += \"- mythic reset - Reset mythic state to defaults and displays scene heading.\\n\"",
 			"result += \"- detail - Make a details check.\\n\"",
 			"result += \"- event - Make an event check.\\n\"",
 			"result += \"- f[odds][wanted] - Make a fate check with the odds of [odds] (-4 to 4) and the preferred result of [wanted] (either 'n' or 'y').  The preferred result is optional and defaults to 'y'.  It specifies the direct of the chaos modifier.\\n\"",
@@ -16,6 +14,7 @@
 			"result += \"- list - Show a list of the lists.\\n\"",
 			"result += \"- list [listName] - Show all items in the list named [listName].\\n\"",
 			"result += \"- listadd [listName] [item] - Add [item] to the end of the list named [listName].\\n\"",
+			"result += \"- listremoveall [listName] - Remove the entire list of [listName].\\n\"",
 			"result += \"- listremove [listName] [item] - Remove last instance of [item] from the list named [listName].\\n\"",
 			"result += \"- listget [listName] - Get a random item from the list named [listName].\\n\"",
 			"result += \"- scene - Show the current scene.\\n\"",
@@ -23,33 +22,25 @@
 			"result += \"- chaos - Show the current chaos value.\\n\"",
 			"result += \"- chaos++ - Increase the chaos value by 1 (max of 6).\\n\"",
 			"result += \"- chaos-- - Decrease the chaos value by 1 (min of 3).\\n\"",
-			"result += \"- chaos=[value] - Set the chaos value to [value].\\n\\n\"",
-			"return result;"
+			"result += \"- chaos=[value] - Set the chaos value to [value].\\n\"",
+			"return result + \"\\n\";"
 		]
 	},
 	{
-		"regex": "^mythic state$",
+		"regex": "^tejs setup$",
 		"expansion": [
-			"let result = { chaos: (window._mChaos || 4), scene: (window._mScene || 1), lists: (window._mLists) || {} };",
-			"return \"Mythic state:\\n\" + JSON.stringify(result) + \"\\n\\n\";"
-		]
-	},
-	{
-		"regex": "^mythic state (.*)$",
-		"expansion": [
-			"let state = JSON.parse($1);",
-			"if (state.chaos) window._mChaos = state.chaos;",
-			"if (state.lists) window._mLists = state.lists;",
-			"if (state.scene) window._mScene = state.scene;",
-			"return \"Mythic state loaded.\\n\\n\""
+			"window._tejsState.mythic ||= {};",
+			"window._tejsState.mythic.chaos ||= 4;",
+			"window._tejsState.mythic.scene ||= 1;",
+			"window._tejsState.mythic.lists ||= {};"
 		]
 	},
 	{
 		"regex": "^mythic reset$",
 		"expansion": [
-			"window._mChaos= 4;",
-			"window._mLists = {};",
-			"window._mScene = 1;",
+			"window._tejsState.mythic.chaos= 4;",
+			"window._tejsState.mythic.lists = {};",
+			"window._tejsState.mythic.scene = 1;",
 			"return \".......................................................................\\n\\n\\n### SCENE 1\\n\\n\";"
 		]
 	},
@@ -63,19 +54,19 @@
 			"let f = [[4,\"ANGER\"],[5,\"SADNESS\"],[6,\"FEAR\"],[7,\"THREAD NEGATIVE\"],[8,\"PC NEGATIVE\"],[9,\"FOCUS NPC\"],[10,\"NPC POSITIVE\"],[11,\"FOCUS PC\"],[12,\"NPC NEGATIVE\"],[13,\"FOCUS THREAD\"],[14,\"PC POSITIVE\"],[15,\"THREAD POSITIVE\"],[16,\"COURAGE\"],[17,\"HAPPINESS\"],[99,\"CALM\"]];",
 			"let roll1 = roll(10);",
 			"let roll2 = roll(10);",
-			"let chaos = (window._mChaos || 4);",
+			"let chaos = window._tejsState.mythic.chaos;",
 			"let chaosAdjust = ((chaos==3) ? 2 : (chaos==6) ? -2 : 0);",
 			"let r = roll1 + roll2 + chaosAdjust;",
 			"for (let i = 0; i < f.length; i++) if (f[i][0] >= r) { r = f[i]; break; }",
-			"return \"Detail: \" + r[1] + \"\\n\";"
+			"return \"Detail: \" + r[1] + \"\\n_roll1=\" + roll1 + \",roll2=\" + roll2 + \",chaosAdjust=\" + chaosAdjust + \"_\";"
 		]
 	},
 	{
 		"regex": "^list$",
 		"expansion": [
 			"let result = \"none\"",
-			"if (window._mLists && Object.keys(window._mLists).length)",
-			"  result = Object.keys(window._mLists).join(\", \");",
+			"if (Object.keys(window._tejsState.mythic.lists).length)",
+			"  result = Object.keys(window._tejsState.mythic.lists).join(\", \");",
 			"return \"Lists: \" + result + \"\\n\";"
 		]
 	},
@@ -83,27 +74,35 @@
 		"regex": "^list ([a-zA-Z]+)$",
 		"expansion": [
 			"let result = \"none\"",
-			"if (window._mLists && window._mLists[$1])",
-			"  result = window._mLists[$1].join(\", \");",
+			"if (window._tejsState.mythic.lists[$1])",
+			"  result = window._tejsState.mythic.lists[$1].join(\", \");",
 			"return $1 + \": \" + result + \"\\n\";"
 		]
 	},
 	{
 		"regex": "^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$",
 		"expansion": [
-			"window._mLists = window._mLists || {};",
-			"window._mLists[$1] = window._mLists[$1] || []",
-			"window._mLists[$1].push($2);",
+			"window._tejsState.mythic.lists[$1] ||= []",
+			"window._tejsState.mythic.lists[$1].push($2);",
 			"return \"\\\"\" + $2 + \"\\\" added to list \\\"\" + $1 + \"\\\".\\n\";"
+		]
+	},
+	{
+		"regex": "^listremoveall ([a-zA-Z]+)$",
+		"expansion": [
+		    "if (window._tejsState.mythic.lists[$1]) {",
+			"  delete window._tejsState.mythic.lists[$1];",
+			"  return \"\\\"\" + $1 + \"\\\" list removed.\\n\"; }",
+			"return \"\\\"\" + $1 + \"\\\" list does not exist.\\n\""
 		]
 	},
 	{
 		"regex": "^listremove ([a-zA-Z]+) ([a-zA-Z ]+)$",
 		"expansion": [
-		    "if (window._mLists && window._mLists[$1]) {", 
-			"  let i = window._mLists[$1].lastIndexOf($2);",
+		    "if (window._tejsState.mythic.lists[$1]) {",
+			"  let i = window._tejsState.mythic.lists[$1].lastIndexOf($2);",
 			"  if (i != -1) {",
-			"    window._mLists[$1].splice(i, 1);",
+			"    window._tejsState.mythic.lists[$1].splice(i, 1);",
 			"    return \"\\\"\" + $2 + \"\\\" removed from list \\\"\" + $1 + \"\\\".\\n\"; } }",
 			"return \"\\\"\" + $1 + \"\\\" list does not contain \\\"\" + $2 + \"\\\".\\n\""
 		]
@@ -111,20 +110,20 @@
 	{
 		"regex": "^listget ([a-zA-Z]+)$",
 		"expansion": [
-		    "if (window._mLists && window._mLists[$1] && window._mLists[$1].length) {", 
-			"  let result = window._mLists[$1][roll(window._mLists[$1].length)-1];",
+		    "if (window._tejsState.mythic.lists[$1] && window._tejsState.mythic.lists[$1].length) {",
+			"  let result = window._tejsState.mythic.lists[$1][roll(window._tejsState.mythic.lists[$1].length)-1];",
 			"  return \"\\\"\" + result + \"\\\" picked from \\\"\" + $1 + \"\\\" list.\\n\"; }",
 			"return \"\\\"\" + $1 + \"\\\" is empty.\\n\""
 		]
 	},
 	{
 		"regex": "^chaos$",
-		"expansion": "return \"CHAOS is \" + (window._mChaos || 4) + \".\\n\";"
+		"expansion": "return \"CHAOS is \" + window._tejsState.mythic.chaos + \".\\n\";"
 	},
 	{
 		"regex": "^chaos=([3-6])$",
 		"expansion": [
-			"window._mChaos = $1",
+			"window._tejsState.mythic.chaos = $1",
 			"return \"CHAOS set to \" + $1 + \".\\n\";"
 		]
 	},
@@ -132,22 +131,26 @@
 		"regex": "",
 		"expansion": [
 			"function chaosDown() {",
-			"  window._mChaos = (window._mChaos || 4) - 1;",
-			"  if (window._mChaos < 3) { window._mChaos = 3; return false; }",
+			"  window._tejsState.mythic.chaos--;",
+			"  if (window._tejsState.mythic.chaos < 3) {",
+			"    window._tejsState.mythic.chaos = 3;",
+			"    return false; }",
 			"  return true; }",
 			"function chaosUp() {",
-			"  window._mChaos = (window._mChaos || 4) + 1;",
-			"  if (window._mChaos > 6) { window._mChaos = 6; return false; }",
+			"  window._tejsState.mythic.chaos++;",
+			"  if (window._tejsState.mythic.chaos > 6) {",
+			"    window._tejsState.mythic.chaos = 6;",
+			"    return false; }",
 			"  return true; }"
 		]
 	},
 	{
 		"regex": "^chaos--$",
-		"expansion": "return \"CHAOS \" + (chaosDown() ? (\"lowered to \" + window._mChaos) : (\"remains at 3 (minimum)\")) + \".\\n\";"
+		"expansion": "return \"CHAOS \" + (chaosDown() ? (\"lowered to \" + window._tejsState.mythic.chaos) : (\"remains at 3 (minimum)\")) + \".\\n\";"
 	},
 	{
 		"regex": "^chaos\\+\\+$",
-		"expansion": "return \"CHAOS \" + (chaosUp() ? (\"raised to \" + window._mChaos) : (\"remains at 6 (maximum)\")) + \".\\n\";"
+		"expansion": "return \"CHAOS \" + (chaosUp() ? (\"raised to \" + window._tejsState.mythic.chaos) : (\"remains at 6 (maximum)\")) + \".\\n\";"
 	},
 	{
 		"regex": "",
@@ -191,21 +194,21 @@
 	},
 	{
 		"regex": "^scene$",
-		"expansion": "return \"The current scene is \" + (window._mScene || 1) + \".\";"
+		"expansion": "return \"The current scene is \" + window._tejsState.mythic.scene + \".\";"
 	},
 	{
 		"regex": "^scene (1|-1)$",
 		"expansion": [
 			"let result = \"\";",
 			"if ($1 == 1)",
-			"  result = \"CHAOS \" + (chaosUp() ? (\"raised to \" + window._mChaos) : (\"remains at 6 (maximum)\"));",
+			"  result = \"CHAOS \" + (chaosUp() ? (\"raised to \" + window._tejsState.mythic.chaos) : (\"remains at 6 (maximum)\"));",
 			"else if ($1 == -1)",
-			"  result = \"CHAOS \" + (chaosDown() ? (\"lowered to \" + window._mChaos) : (\"remains at 3 (minimum)\"));",
+			"  result = \"CHAOS \" + (chaosDown() ? (\"lowered to \" + window._tejsState.mythic.chaos) : (\"remains at 3 (minimum)\"));",
 			"result += \"\\n.......................................................................\\n\\n\\n\";",
-			"window._mScene = (window._mScene || 1) + 1;",
-			"result += \"### SCENE \" + window._mScene;",
+			"window._tejsState.mythic.scene++;",
+			"result += \"### SCENE \" + window._tejsState.mythic.scene;",
 			"let c = roll(10);",
-			"if (c <= (window._mChaos || 4))",
+			"if (c <= window._tejsState.mythic.chaos)",
 			"  result += \"\\n\" + ((c%2) ? \"Scene modified\" : \"Scene replaced\\n\" + eventCheck());",
 			"return result + \"\\n\\n\";"
 		]
@@ -219,14 +222,14 @@
 			"let aRoll2 = roll(10);",
 			"let cRoll = roll(10);",
 			"let oddsAdjust = $1 * 2;",
-			"let chaos = (window._mChaos || 4);",
+			"let chaos = window._tejsState.mythic.chaos;",
 			"let chaosAdjust = ((chaos==3) ? 2 : (chaos==6) ? -2 : 0)  *  ($2.toLowerCase() == \"n\" ? -1 : 1);",
 			"let isExtreme = (cRoll <= chaos) && !!(aRoll1 % 2) && !!(aRoll2 % 2);",
 			"let isEvented = (cRoll <= chaos) && !(aRoll1 % 2) && !(aRoll2 % 2);",
 			"if (cRoll < chaos && aRoll1 == aRoll2) isExtreme = isEvented = true;",
 			"let answer = (isExtreme ? \"EXTREME \" : \"\") + (aRoll1+aRoll2+oddsAdjust+chaosAdjust > 10 ? \"YES\" : \"NO\");",
 			"let evtText = isEvented ? (\"\\n\" + eventCheck()) : \"\";",
-			"return \"Fate check: \" + answer + \"\\n(odds='\" + odds[$1+4] + \"',fateRoll1=\" + aRoll1 + \",fateRoll2=\" + aRoll2 + \",chaosRoll=\" + cRoll + \",oddsAdjust=\" + oddsAdjust + \",chaosAdjust=\" + chaosAdjust + \")\" + evtText + \"\\n\";"
+			"return \"Fate check (\" + odds[$1+4] + \"): \" +answer + \"\\n_fateRoll1=\" + aRoll1 + \",fateRoll2=\" + aRoll2 + \",chaosRoll=\" + cRoll + \",oddsAdjust=\" + oddsAdjust + \",chaosAdjust=\" + chaosAdjust + \"_\" + evtText + \"\\n\";"
 		]
 	}
 ]
