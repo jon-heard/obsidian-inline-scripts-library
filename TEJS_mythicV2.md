@@ -57,7 +57,7 @@ function roll(max)
 ~~
 ^detail$
 ~~
-let outcomes = [[4,"ANGER"],[5,"SADNESS"],[6,"FEAR"],[7,"THREAD NEGATIVE"],[8,"PC NEGATIVE"],[9,"FOCUS NPC"],[10,"NPC POSITIVE"],[11,"FOCUS PC"],[12,"NPC NEGATIVE"],[13,"FOCUS THREAD"],[14,"PC POSITIVE"],[15,"THREAD POSITIVE"],[16,"COURAGE"],[17,"HAPPINESS"],[99,"CALM"]];
+let outcomes = [ [4,"ANGER"],[5,"SADNESS"],[6,"FEAR"],[7,"THREAD NEGATIVE"],[8,"PC NEGATIVE"],[9,"FOCUS NPC"],[10,"NPC POSITIVE"],[11,"FOCUS PC"],[12,"NPC NEGATIVE"],[13,"FOCUS THREAD"],[14,"PC POSITIVE"],[15,"THREAD POSITIVE"],[16,"COURAGE"],[17,"HAPPINESS"],[99,"CALM"] ];
 let roll1 = roll(10);
 let roll2 = roll(10);
 let chaos = window._tejsState.mythic.chaos;
@@ -208,7 +208,7 @@ return "Meaning: description: " +rollDescription() + "\n\n";
 ~~
 function eventCheck()
 {
-	let outcomes = [[7,"REMOTE", 0],[28,"NPC ACTS",0],[35,"NEW NPC",1],[45,"THREAD ADVANCE",0],[52,"THREAD LOSS",0],[55,"THREAD END",0],[67,"PC NEGATIVE",0],[75,"PC POSITIVE",0],[83,"AMBIGUOUS",0],[92,"NPC NEGATIVE",0],[100,"NPC POSITIVE",0]];
+	let outcomes = [ [7,"REMOTE", 0],[28,"NPC ACTS",0],[35,"NEW NPC",1],[45,"THREAD ADVANCE",0],[52,"THREAD LOSS",0],[55,"THREAD END",0],[67,"PC NEGATIVE",0],[75,"PC POSITIVE",0],[83,"AMBIGUOUS",0],[92,"NPC NEGATIVE",0],[100,"NPC POSITIVE",0] ];
 	let result = roll(100);
 	for (let i = 0; i < outcomes.length; i++)
 	{
