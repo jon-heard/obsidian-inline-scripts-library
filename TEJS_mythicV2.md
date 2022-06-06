@@ -63,28 +63,28 @@ let roll2 = roll(10);
 let chaos = window._tejsState.mythic.chaos;
 let chaosAdjust = (chaos==3) ? 2 : (chaos==6) ? -2 : 0;
 let result = roll1 + roll2 + chaosAdjust;
-for (let i = 0; i < f.length; i++)
+for (let i = 0; i < outcomes.length; i++)
 {
 	if (outcomes[i][0] >= result)
 	{
-		result = outcomes[i];
+		result = outcomes[i][1];
 		break;
 	}
 }
-return "Detail: " + result[1] + "\n_roll1=" + roll1 + ",roll2=" + roll2 + ",chaosAdjust=" + chaosAdjust + "_\n\n";
+return "Detail: " + result + "\n_roll1=" + roll1 + ",roll2=" + roll2 + ",chaosAdjust=" + chaosAdjust + "_\n\n";
 
 
 ~~
 ^list$
 ~~
 let listNames = Object.keys(window._tejsState.mythic.lists);
-return "Lists:\n" + (listNames.length ? listNames : "none") + "\n\n";
+return "Lists:\n" + (listNames.length ? listNames.join(", ") : "none") + "\n\n";
 
 ~~
 ^list ([a-zA-Z]+)$
 ~~
 let list = window._tejsState.mythic.lists[$1];
-return "List \"" + $1 + "\":\n" + (list ? lists.join(",") : "none") + "\n\n";
+return "List \"" + $1 + "\":\n" + (list ? list.join(", ") : "none") + "\n\n";
 
 ~~
 ^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$
@@ -120,8 +120,9 @@ if (window._tejsState.mythic.lists[$1])
 return "Failed to remove list \"" + $1 + "\".  It does not exist.\n\n";
 
 ~~
-^listget ([a-zA-Z]+)$",
+^listget ([a-zA-Z]+)$
 ~~
+console.log("wtf");
 let list = window._tejsState.mythic.lists[$1];
 if (list && list.length)
 {
@@ -149,9 +150,9 @@ function chaosDown()
 	if (window._tejsState.mythic.chaos < 3)
 	{
 		window._tejsState.mythic.chaos = 3;
-		return false;
+		return "CHAOS remains at 3 (minimum).\n\n";
 	}
-	return true;
+	return "CHAOS lowered to " + window._tejsState.mythic.chaos + ".\n\n";
 }
 function chaosUp()
 {
@@ -159,28 +160,20 @@ function chaosUp()
 	if (window._tejsState.mythic.chaos > 6)
 	{
 		window._tejsState.mythic.chaos = 6;
-		return false;
+		return "CHAOS remains at 6 (maximum).\n\n";
 	}
-	return true;
+	return "CHAOS raised to " + window._tejsState.mythic.chaos + ".\n\n";
 }
 
 ~~
 ^chaos--$
 ~~
-if (chaosDown())
-{
-	return "CHAOS lowered to " + window._tejsState.mythic.chaos + ".\n\n";
-}
-return "CHAOS remains at 3 (minimum).\n\n";
+return chaosDown();
 
 ~~
-^chaos\\+\\+$
+^chaos\+\+$
 ~~
-if (chaosUp())
-{
-	return "CHAOS raised to " + window._tejsState.mythic.chaos + ".\n\n";
-}
-return "CHAOS remains at 6 (maximum).\n\n";
+return chaosUp();
 
 ~~
 ~~
@@ -246,27 +239,19 @@ return "The current scene is " + window._tejsState.mythic.scene + ".\n\n";
 let result = "";
 if ($1 == 1)
 {
-	if (chaosUp())
-	{
-		return "CHAOS raised to " + window._tejsState.mythic.chaos + ".\n\n";
-	}
-	return "CHAOS remains at 6 (maximum).\n\n";
+	result += chaosUp();
 }
 else if ($1 == -1)
 {
-	if (chaosDown())
-	{
-		return "CHAOS lowered to " + window._tejsState.mythic.chaos + ".\n\n";
-	}
-	return "CHAOS remains at 3 (minimum).\n\n";
+	result += chaosDown();
 }
-result += "\n" + "─".repeat(20) + " + "\n\n\n";
+result += "─".repeat(20) + "\n\n\n";
 window._tejsState.mythic.scene++;
 result += "### SCENE " + window._tejsState.mythic.scene;
-let result = roll(10);
-if (result <= window._tejsState.mythic.chaos)
+let chk = roll(10);
+if (chk <= window._tejsState.mythic.chaos)
 {
-	result += "\n" + ((c%2) ? "Scene modified" : "Scene replaced\n" + eventCheck());
+	result += "\n" + ((chk % 2) ? "Scene modified" : "Scene replaced\n" + eventCheck());
 }
 return result + "\n\n";
 
@@ -283,7 +268,7 @@ let oddsLabel = odds[$1+4];
 let oddsAdjust = $1 * 2;
 let chaos = window._tejsState.mythic.chaos;
 let chaosAdjust = ((chaos==3) ? 2 : (chaos==6) ? -2 : 0)
-chaosAdjust *=  ($2.toLowerCase() == \"n\" ? -1 : 1);
+chaosAdjust *=  ($2.toLowerCase() == "n" ? -1 : 1);
 let answer = (aRoll1+aRoll2+oddsAdjust+chaosAdjust > 10 ? "YES" : "NO");
 
 let isExtreme = (cRoll <= chaos) && !!(aRoll1 % 2) && !!(aRoll2 % 2);
