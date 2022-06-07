@@ -1,5 +1,5 @@
 Shortcuts for Mythic Variations 2.
-Use TEJS_state to save & load the state of this shortcut file.
+Uses TEJS_state to save & load this shortcut file's state.
 
 Enter the shortcut "state help" for reference.
 
