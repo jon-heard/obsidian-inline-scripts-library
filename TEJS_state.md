@@ -25,7 +25,7 @@ window._tejsState.clips ||= {};
 ~~
 ^state$
 ~~
-return "TEJS state:\n" + JSON.stringify(window._tejsState) + "\n\n";
+return "__TEJS state__\n" + JSON.stringify(window._tejsState) + "\n\n";
 
 ~~
 ^state (.*)$
@@ -37,7 +37,7 @@ return "TEJS state loaded.\n\n";
 ^clip$
 ~~
 let clipNames = Object.keys(window._tejsState.clips);
-return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "none") + "\n\n";
+return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "none") + "\n\n";
 
 ~~
 ^clip ([a-zA-Z]+)$
@@ -49,7 +49,7 @@ return (text ? text : "Empty clip") + "\n\n";
 ^clipadd ([a-zA-Z]+) (.+)$
 ~~
 window._tejsState.clips[$1] = $2;
-return "Clip \"" + $1 + "\" set to:\n" + $2 + "\n\n";
+return "__Clip \"" + $1 + "\" set to__\n" + $2 + "\n\n";
 
 ~~
 ^clipremove ([a-zA-Z]+)$

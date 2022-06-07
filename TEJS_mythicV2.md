@@ -18,15 +18,19 @@ result += "- meaning - Roll on the action meaning table. (short for \"meaning ac
 result += "- list - Show a list of the lists.\n";
 result += "- list [listName] - Show all items in the list named [listName].\n";
 result += "- listadd [listName] [item] - Add [item] to the end of the list named [listName].\n";
+result += "- listget [listName] - Get a random item from the list named [listName].\n";
 result += "- listremove [listName] [item] - Remove last instance of [item] from the list named [listName].\n";
 result += "- listremoveall [listName] - Remove the entire list of [listName].\n";
-result += "- listget [listName] - Get a random item from the list named [listName].\n";
 result += "- scene - Show the current scene.\n";
 result += "- scene [chaosAdjust] - Shift the chaos value by [chaosAdjust] (1 or -1), increment the current scene, then output all.\n";
 result += "- chaos - Show the current chaos value.\n";
-result += "- chaos++ - Increase the chaos value by 1 (max of 6).\n";
-result += "- chaos-- - Decrease the chaos value by 1 (min of 3).\n";
+result += "- chaos++ - Increase the chaos value by 1 (maximum of 6).\n";
+result += "- chaos-- - Decrease the chaos value by 1 (minimum of 3).\n";
 result += "- chaos=[value] - Set the chaos value to [value].\n";
+result += "- descriptor - Rolls for a personality and activity.\n";
+result += "- disposition [descriptorCount] - Rolls for a disposition, modified by [descriptorCount].\n";
+result += "- disposition [base] [descriptorCount] - Displays a disposition given by the [base] disposition, modified by [descriptorCount].\n";
+result += "- action [dispositionAdjust] - Action check, modified by [dispositionAdjust].\n";
 return result + "\n";
 
 ~~
@@ -37,6 +41,10 @@ window._tejsState.mythic ||= {};
 window._tejsState.mythic.chaos ||= 4;
 window._tejsState.mythic.scene ||= 1;
 window._tejsState.mythic.lists ||= {};
+window._tejsState.mythic.lists.pcs ||= [];
+window._tejsState.mythic.lists.npcs ||= [];
+window._tejsState.mythic.lists.threads ||= [];
+window.roll = function(max) { return Math.trunc(Math.random() * max + 1); }
 
 ~~
 ^mythic reset$
@@ -44,20 +52,15 @@ window._tejsState.mythic.lists ||= {};
 window._tejsState.mythic.chaos= 4;
 window._tejsState.mythic.scene = 1;
 window._tejsState.mythic.lists = {};
+window._tejsState.mythic.lists.pcs = [];
+window._tejsState.mythic.lists.npcs = [];
+window._tejsState.mythic.lists.threads = [];
 return "─".repeat(20) + "\n\n\n### SCENE 1\n\n";
-
-~~
-~~
-function roll(max)
-{
-	return Math.trunc(Math.random() * max + 1);
-}
-
 
 ~~
 ^detail$
 ~~
-let outcomes = [ [4,"ANGER"],[5,"SADNESS"],[6,"FEAR"],[7,"THREAD NEGATIVE"],[8,"PC NEGATIVE"],[9,"FOCUS NPC"],[10,"NPC POSITIVE"],[11,"FOCUS PC"],[12,"NPC NEGATIVE"],[13,"FOCUS THREAD"],[14,"PC POSITIVE"],[15,"THREAD POSITIVE"],[16,"COURAGE"],[17,"HAPPINESS"],[99,"CALM"] ];
+let outcomes = [ [4,"ANGER"],[5,"SADNESS"],[6,"FEAR"],[7,"THREAD NEGATIVE", "threads"],[8,"PC NEGATIVE", "pcs"],[9,"FOCUS NPC", "npcs"],[10,"NPC POSITIVE", "npcs"],[11,"FOCUS PC", "pcs"],[12,"NPC NEGATIVE", "npcs"],[13,"FOCUS THREAD", "threads"],[14,"PC POSITIVE", "pcs"],[15,"THREAD POSITIVE", "threads"],[16,"COURAGE"],[17,"HAPPINESS"],[99,"CALM"] ];
 let roll1 = roll(10);
 let roll2 = roll(10);
 let chaos = window._tejsState.mythic.chaos;
@@ -68,23 +71,28 @@ for (let i = 0; i < outcomes.length; i++)
 	if (outcomes[i][0] >= result)
 	{
 		result = outcomes[i][1];
+		let list = window._tejsState.mythic.lists[outcomes[i][2]];
+		if (list && list.length)
+		{
+			result += " (" + list[roll(list.length)-1] + ")";
+		}
 		break;
 	}
 }
-return "Detail: " + result + "\n_roll1=" + roll1 + ",roll2=" + roll2 + ",chaosAdjust=" + chaosAdjust + "_\n\n";
+return "__Detail__\n" + result + "\n_roll1=" + roll1 + ",roll2=" + roll2 + ",chaosAdjust=" + chaosAdjust + "_\n\n";
 
 
 ~~
 ^list$
 ~~
 let listNames = Object.keys(window._tejsState.mythic.lists);
-return "Lists:\n" + (listNames.length ? listNames.join(", ") : "none") + "\n\n";
+return "__Lists__\n" + (listNames.length ? listNames.join(", ") : "none") + "\n\n";
 
 ~~
 ^list ([a-zA-Z]+)$
 ~~
 let list = window._tejsState.mythic.lists[$1];
-return "List \"" + $1 + "\":\n" + (list ? list.join(", ") : "none") + "\n\n";
+return "__List \"" + $1 + "\"__\n" + (list && list.length ? list.join(", ") : "none") + "\n\n";
 
 ~~
 ^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$
@@ -92,6 +100,18 @@ return "List \"" + $1 + "\":\n" + (list ? list.join(", ") : "none") + "\n\n";
 window._tejsState.mythic.lists[$1] ||= [];
 window._tejsState.mythic.lists[$1].push($2);
 return "\"" + $2 + "\" added to list \"" + $1 + "\".\n\n";
+
+~~
+^listget ([a-zA-Z]+)$
+~~
+console.log("wtf");
+let list = window._tejsState.mythic.lists[$1];
+if (list && list.length)
+{
+	let result = list[roll(list.length)-1];
+	return "\"" + result + "\" picked from list \"" + $1 + "\".\n\n";
+}
+return "Failed to pick from list \"" + $1 + "\".  List is empty.\n\n";
 
 
 ~~
@@ -106,7 +126,7 @@ if (window._tejsState.mythic.lists[$1])
 	    return "\"" + $2 + "\" removed from list \"" + $1 + "\".\n\n";
 	}
 }
-return "Failed to remove \"" + $1 + "\" from list \"" + $2 + "\".  List does not contain it.\n\n";
+return "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  Not found in list.\n\n";
 
 
 ~~
@@ -117,30 +137,19 @@ if (window._tejsState.mythic.lists[$1])
 	delete window._tejsState.mythic.lists[$1];
 	return "List \"" + $1 + "\" removed.\n\n";
 }
-return "Failed to remove list \"" + $1 + "\".  It does not exist.\n\n";
+return "Failed to remove list \"" + $1 + "\".  List does not exist.\n\n";
 
-~~
-^listget ([a-zA-Z]+)$
-~~
-console.log("wtf");
-let list = window._tejsState.mythic.lists[$1];
-if (list && list.length)
-{
-	let result = list[roll(list.length)-1];
-	return "\"" + result + "\" picked from list \"" + $1 + "\".\n\n";
-}
-return "Failed to pick from list \"" + $1 + "\".  It is empty.\n\n";
 
 ~~
 ^chaos$
 ~~
-return "CHAOS is " + window._tejsState.mythic.chaos + ".\n\n";
+return "Chaos is " + window._tejsState.mythic.chaos + ".\n\n";
 
 ~~
 ^chaos=([3-6])$
 ~~
 window._tejsState.mythic.chaos = $1;
-return "CHAOS set to " + $1 + ".\n\n";
+return "Chaos set to " + $1 + ".\n\n";
 
 ~~
 ~~
@@ -150,9 +159,9 @@ function chaosDown()
 	if (window._tejsState.mythic.chaos < 3)
 	{
 		window._tejsState.mythic.chaos = 3;
-		return "CHAOS remains at 3 (minimum).\n\n";
+		return "Chaos remains at 3 (minimum).\n\n";
 	}
-	return "CHAOS lowered to " + window._tejsState.mythic.chaos + ".\n\n";
+	return "Chaos lowered to " + window._tejsState.mythic.chaos + ".\n\n";
 }
 function chaosUp()
 {
@@ -160,9 +169,9 @@ function chaosUp()
 	if (window._tejsState.mythic.chaos > 6)
 	{
 		window._tejsState.mythic.chaos = 6;
-		return "CHAOS remains at 6 (maximum).\n\n";
+		return "Chaos remains at 6 (maximum).\n\n";
 	}
-	return "CHAOS raised to " + window._tejsState.mythic.chaos + ".\n\n";
+	return "Chaos raised to " + window._tejsState.mythic.chaos + ".\n\n";
 }
 
 ~~
@@ -187,7 +196,7 @@ function rollAction()
 ~~
 ^meaning( action|)$
 ~~
-return "Meaning: action: " + rollAction() + "\n\n";
+return "__Meaning (action)__\n" + rollAction() + "\n\n";
 
 ~~
 ~~
@@ -201,24 +210,31 @@ function rollDescription()
 ~~
 ^meaning description$
 ~~
-return "Meaning: description: " +rollDescription() + "\n\n";
+return "__Meaning (description)__\n" +rollDescription() + "\n\n";
 
 
 ~~
 ~~
 function eventCheck()
 {
-	let outcomes = [ [7,"REMOTE", 0],[28,"NPC ACTS",0],[35,"NEW NPC",1],[45,"THREAD ADVANCE",0],[52,"THREAD LOSS",0],[55,"THREAD END",0],[67,"PC NEGATIVE",0],[75,"PC POSITIVE",0],[83,"AMBIGUOUS",0],[92,"NPC NEGATIVE",0],[100,"NPC POSITIVE",0] ];
+	let outcomes = [ [7,"REMOTE"],[28,"NPC ACTS","npcs"],[35,"NEW NPC","pc",true],[45,"THREAD ADVANCE","threads"],[52,"THREAD LOSS","threads"],[55,"THREAD END","threads"],[67,"PC NEGATIVE","pcs"],[75,"PC POSITIVE","pcs"],[83,"AMBIGUOUS"],[92,"NPC NEGATIVE","npcs"],[100,"NPC POSITIVE","npcs"] ];
 	let result = roll(100);
+	let meaningType = false;
 	for (let i = 0; i < outcomes.length; i++)
 	{
 		if (outcomes[i][0] >= result)
 		{
-			result = outcomes[i];
+			result = outcomes[i][1];
+			meaningType = outcomes[i][3];
+			let list = window._tejsState.mythic.lists[outcomes[i][2]];
+			if (list && list.length)
+			{
+				result += " (" + list[roll(list.length)-1] + ")";
+			}
 			break;
 		}
 	}
-	return "Event: " + result[1] + ": " + ( result[2] ? rollDescription() : rollAction() );
+	return "__Event__\n" + result + "\n" + (meaningType ? rollDescription() : rollAction());
 }
 
 
@@ -277,4 +293,93 @@ if (cRoll < chaos && aRoll1 == aRoll2) isExtreme = isEvent = true;
 
 answer = (isExtreme ? "EXTREME " : "") + answer;
 let evtText = isEvent ? ("\n" + eventCheck()) : "";
-return "Fate check (" + oddsLabel + "): " +answer + "\n_fateRoll1=" + aRoll1 + ",fateRoll2=" + aRoll2 + ",chaosRoll=" + cRoll + ",oddsAdjust=" + oddsAdjust + ",chaosAdjust=" + chaosAdjust + "_" + evtText + "\n\n";
+return "__Fate check (" + oddsLabel + ")__\n" +answer + "\n_fateRoll1=" + aRoll1 + ",fateRoll2=" + aRoll2 + ",chaosRoll=" + cRoll + ",oddsAdjust=" + oddsAdjust + ",chaosAdjust=" + chaosAdjust + "_" + evtText + "\n\n";
+
+
+~~
+^descriptor$
+~~
+return "__Descriptor__\nPersonality: " + rollDescription() + "\nActivity: " + rollAction() + "\n\n";
+
+
+~~
+^disposition (-?[0-3])$
+~~
+let outcomes = [ [5,"PASSIVE (-2)"],[10,"MODERATE (0)"],[15,"ACTIVE (+2)"],[99,"AGGRESSIVE (+4)"] ];
+let roll1 = roll(10);
+let roll2 = roll(10);
+let descriptorAdjust = Number($1) * 2;
+let result = roll1 + roll2 + descriptorAdjust;
+for (let i = 0; i < outcomes.length; i++)
+{
+	if (outcomes[i][0] >= result)
+	{
+		result = outcomes[i][1];
+		break;
+	}
+}
+return "__Disposition__\n" + result + "\n_base=" + (roll1+roll2) + ",roll1=" + roll1 + ",roll2=" + roll2 + ",descriptorAdjust=" + descriptorAdjust + "_\n\n";
+
+
+~~
+^disposition ([0-2]?[0-9]) (-?[0-3])$
+~~
+let outcomes = [ [5,"PASSIVE (-2)"],[10,"MODERATE (0)"],[15,"ACTIVE (+2)"],[99,"AGGRESSIVE (+4)"] ];
+let descriptorAdjust = Number($2) * 2;
+let result = Number($1) + descriptorAdjust;
+for (let i = 0; i < outcomes.length; i++)
+{
+	if (outcomes[i][0] >= result)
+	{
+		result = outcomes[i][1];
+		break;
+	}
+}
+return "__Disposition__\n" + result + "\n_base=" + $1 + ",descriptorAdjust=" + descriptorAdjust + "_\n\n";
+
+
+~~
+^action (-2|0|2|4)$
+~~
+let outcomes1 = [ [3,"NEW ACTION BASED ON THEME"],[5,"CONTINUE CURRENT ACTION"],[6,"CONTINUE CURRENT ACTION, +2 DISPOSITION"],[7,"CONTINUE CURRENT ACTION, -2 DISPOSITION"],[8,false,0],[9,false,-4],[99,false,4] ];
+let outcomes2 = [ [6,"TALK / EXPOSITION"],[8,"NEUTRAL, DISCONNECTED ACTION"],[10,"ACTION BENEFITS THE PC"],[11,"GIVE SOMETHING TO THE PC"],[12,"TRY TO END ENCOUNTER"],[13,"CHANGE THEME"],[14,"CHANGE %1 DESCRIPTOR. IT IS ACTIVATED & DECIDES NEXT ACTION.", true],[17,"ACT OUT OF SELF INTEREST"],[18,"TAKE SOMETHING"],[99,"HURT THE PC"] ];
+let result = roll(10);
+let details = "table1roll=" + result;
+for (let i = 0; i < outcomes1.length; i++)
+{
+	if (outcomes1[i][0] >= result)
+	{
+		if (outcomes1[i][1])
+		{
+			result = outcomes1[i][1];
+			break;
+		}
+		else
+		{
+			let table2roll1 = roll(10);
+			let table2roll2 = roll(10);
+			let table1Adjust = outcomes1[i][2];
+			let dispositionAdjust = Number($1);
+			details += ",table2roll1=" + table2roll1 + ",table2roll2=" + table2roll2 + ",table1Adjust=" + table1Adjust + ",dispositionAdjust=" + dispositionAdjust;
+			result = table2roll1 + table2roll2 + dispositionAdjust + table1Adjust;
+			for (let k = 0; k < outcomes2.length; k++)
+			{
+				if (outcomes2[k][0] >= result)
+				{
+					result = outcomes2[k][1];
+					if (outcomes2[k][2])
+					{
+						let dr = roll(3);
+						details += ",descriptorRoll=" + dr;
+						dr = (dr==1 ? "IDENTITY" : dr==2 ? "PERSONALITY" : "ACTIVITY");
+						result = result.replace("%1", dr);
+					}
+					result += "\nADJUST DISPOSITION (+2/0/-2) TO MATCH ACTION.";
+					break;
+				}
+			}
+			break;
+		}
+	}
+}
+return "__Action__\n" + result + "\n_" + details + "_\n\n";
