@@ -11,7 +11,11 @@ result += "- npc - Create a 2-word description of an npc.\n";
 result += "- npc power [randomness] - Determine npc's strength relative to pc's, based on [randomness] from 1-order, to 5-chaos.  [randomness] is optional and defaults to 3.\n";
 result += "- npc motive - 3, 2-word descriptions of an npc's motivations.\n";
 result += "- npc mood [relationship]- Determine npc's friendliness, based on [relationship] from 1-loved, to 7-hated.  [relationship] is optional and defaults to 4.\n";
-result += "- npc focus - What the NPC is most interesting in discussing.\n";
+result += "- npc focus - What the npc is most interesting in discussing.\n";
+result += "- npc bearing - Npc's attitude during this conversation.\n";
+result += "- npc bearing [demeanour] - Npc's attitude during this conversation, based on [demeanour], a number from 1-8, meaning one of the following.\n";
+result += "    1 - sceming       2 - insane       3 - friendly          4 - hostile\n";
+result += "    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced\n";
 return result + "\n";
 
 ~~
@@ -109,3 +113,20 @@ for (let i = 0; i < table8.length; i++)
 }
 return "__Npc focus__\n" + result + "\n\n";
 
+
+~~
+^npc bearing((?: [1-8])?)$
+~~
+let table7 = [
+["INTENT","BARGAIN","MEANS","PROPOSITION","PLAN","COMPROMISE","AGENDA","ARRANGEMENT","NEGOTIATION","PLOT"],
+["MADNESS","FEAR","ACCIDENT","CHAOS","IDIOCY","ILLUSION","TURMOIL","CONFUSION","FACADE","BEWILDERMENT"],
+["ALLIANCE","COMFORT","GRATITUDE","SHELTER","HAPPINESS","SUPPORT","PROMISE","DELIGHT","AID","CELEBRATION"],
+["DEATH","CAPTURE","JUDGMENT","COMBAT","SURRENDER","RAGE","RESENTMENT","SUBMISSION","INJURY","DESTRUCTION"],
+["QUESTIONS","INVESTIGATION","INTEREST","DEMAND","SUSPICION","REQUEST","CURIOSITY","SKEPTICISM","COMMAND","PETITION"],
+["REPORT","EFFECTS","EXAMINATION","RECORDS","ACCOUNT","NEWS","HISTORY","TELLING","DISCOURSE","SPEECH"],
+["RUMOR","UNCERTAINTY","SECRETS","MISDIRECTION","WHISPERS","LIES","SHADOWS","ENIGMA","OBSCURITY","CONUNDRUM"],
+["REPUTATION","DOUBT","BIAS","DISLIKE","PARTIALITY","BELIEF","VIEW","DISCRIMINATION","ASSESSMENT","DIFFERENCE"] ];
+let demeanor = $1 ? $1 : roll(8);
+let bearing = roll(10);
+let result = table7[demeanor-1][bearing-1];
+return "__Npc bearing__\n" + result + "\n_demeanor=" + demeanor + ",bearing=" + bearing + "_\n\n";
