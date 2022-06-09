@@ -13,7 +13,7 @@ result += "- npc motive - 3, 2-word descriptions of an npc's motivations.\n";
 result += "- npc mood [relationship]- Determine npc's friendliness, based on [relationship] from 1-loved, to 7-hated.  [relationship] is optional and defaults to 4.\n";
 result += "- npc focus - What the npc is most interesting in discussing.\n";
 result += "- npc bearing - Npc's attitude during this conversation.\n";
-result += "- npc bearing [demeanour] - Npc's attitude during this conversation, based on [demeanour], a number from 1-8, meaning one of the following.\n";
+result += "- npc bearing [demeanour] - Npc's attitude during this conversation, based on [demeanour], a number from 1-8, meaning one of the following:\n";
 result += "    1 - sceming       2 - insane       3 - friendly          4 - hostile\n";
 result += "    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced\n";
 return result + "\n";
@@ -75,7 +75,7 @@ for (let i = 0; i < 3; i++)
 		roll2 = roll(100);
 	}
 	priorNounRolls.push(Math.trunc((roll2-1)/20));
-	result += table4[roll1-1] + " " + table5[roll2-1] + " " + roll2 + "\n";
+	result += table4[roll1-1] + " " + table5[roll2-1] + " " + "\n";
 }
 return result + "\n";
 
