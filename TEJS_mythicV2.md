@@ -48,7 +48,6 @@ window._tejsState.mythic.lists ||= {};
 window._tejsState.mythic.lists.pcs ||= [];
 window._tejsState.mythic.lists.npcs ||= [];
 window._tejsState.mythic.lists.threads ||= [];
-window.roll = function(max) { return Math.trunc(Math.random() * max + 1); }
 
 ~~
 ^reset mythic$
@@ -59,30 +58,38 @@ window._tejsState.mythic.lists = {};
 window._tejsState.mythic.lists.pcs = [];
 window._tejsState.mythic.lists.npcs = [];
 window._tejsState.mythic.lists.threads = [];
-return "─".repeat(20) + "\n\n\n### SCENE 1\n\n";
+return "─".repeat(20) + "\n\n\n### SCENE 1\n__Setup__: ";
+
+~~
+~~
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+function aPick(a) { return a[roll(a.length)-1]; }
+function aPickWeight(a, wIndex, theRoll)
+{
+	wIndex = wIndex || 1;
+	theRoll = theRoll || roll(a[a.length-1][wIndex]);
+	for (let i = 0; i < a.length; i++)
+	{
+		if (a[i][wIndex] >= theRoll)
+		{
+			return a[i];
+		}
+	}
+	return a[a.length-1];
+}
 
 ~~
 ^detail$
 ~~
-let outcomes = [ [4,"ANGER"],[5,"SADNESS"],[6,"FEAR"],[7,"THREAD NEGATIVE", "threads"],[8,"PC NEGATIVE", "pcs"],[9,"FOCUS NPC", "npcs"],[10,"NPC POSITIVE", "npcs"],[11,"FOCUS PC", "pcs"],[12,"NPC NEGATIVE", "npcs"],[13,"FOCUS THREAD", "threads"],[14,"PC POSITIVE", "pcs"],[15,"THREAD POSITIVE", "threads"],[16,"COURAGE"],[17,"HAPPINESS"],[99,"CALM"] ];
+let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
 let roll1 = roll(10);
 let roll2 = roll(10);
 let chaos = window._tejsState.mythic.chaos;
 let chaosAdjust = (chaos==3) ? 2 : (chaos==6) ? -2 : 0;
 let result = roll1 + roll2 + chaosAdjust;
-for (let i = 0; i < outcomes.length; i++)
-{
-	if (outcomes[i][0] >= result)
-	{
-		result = outcomes[i][1];
-		let list = window._tejsState.mythic.lists[outcomes[i][2]];
-		if (list && list.length)
-		{
-			result += " (" + list[roll(list.length)-1] + ")";
-		}
-		break;
-	}
-}
+result = aPickWeight(outcomes, 1, roll1 + roll2 + chaosAdjust);
+let list = window._tejsState.mythic.lists[result[2]];
+result = result[0] + ((list && list.length) ? (" (" + aPick(list) + ")") : "");
 return "__Detail__\n" + result + "\n_roll1=" + roll1 + ",roll2=" + roll2 + ",chaosAdjust=" + chaosAdjust + "_\n\n";
 
 
@@ -193,8 +200,8 @@ return chaosUp();
 function rollAction()
 {
 	let value1 = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
-	let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
-	return value1[roll(100)-1] + " " + value2[roll(100)-1];
+	let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
+	return aPick(value1) + " _(of)_ " + aPick(value2);
 }
 
 ~~
@@ -208,7 +215,7 @@ function rollDescription()
 {
 	let value1 = ["ABNORMALLY","ADVENTUROUSLY","AGGRESSIVELY","ANGRILY","ANXIOUSLY","AWKWARDLY","BEAUTIFULLY","BLEAKLY","BOLDLY","BRAVELY","BUSILY","CALMLY","CAREFULLY","CARELESSLY","CAUTIOUSLY","CEASELESSLY","CHEERFULLY","COMBATIVELY","COOLLY","CRAZILY","CURIOUSLY","DAINTILY","DANGEROUSLY","DEFIANTLY","DELIBERATELY","DELIGHTFULLY","DIMLY","EFFICIENTLY","ENERGETICALLY","ENORMOUSLY","ENTHUSIASTICALLY","EXCITEDLY","FEARFULLY","FEROCIOUSLY","FIERCELY","FOOLISHLY","FORTUNATELY","FRANTICALLY","FREELY","FRIGHTENINGLY","FULLY","GENEROUSLY","GENTLY","GLADLY","GRACEFULLY","GRATEFULLY","HAPPILY","HASTILY","HEALTHILY","HELPFULLY","HELPLESSLY","HOPELESSLY","INNOCENTLY","INTENSELY","INTERESTINGLY","IRRITATINGLY","JOVIALLY","JOYFULLY","JUDGEMENTALLY","KINDLY","KOOKILY","LAZILY","LIGHTLY","LOOSELY","LOUDLY","LOVINGLY","LOYALLY","MAJESTICALLY","MEANINGFULLY","MECHANICALLY","MISERABLY","MOCKINGLY","MYSTERIOUSLY","NATURALLY","NEATLY","NICELY","ODDLY","OFFENSIVELY","OFFICIALLY","PARTIALLY","PEACEFULLY","PERFECTLY","PLAYFULLY","POLITELY","POSITIVELY","POWERFULLY","QUAINTLY","QUARRELSOMELY","QUIETLY","ROUGHLY","RUDELY","RUTHLESSLY","SLOWLY","SOFTLY","SWIFTLY","THREATENINGLY","VERY","VIOLENTLY","WILDLY","YIELDINGLY"];
 	let value2 = ["ABANDONED","ABNORMAL","AMUSING","ANCIENT","AROMATIC","AVERAGE","BEAUTIFUL","BIZARRE","CLASSY","CLEAN","COLD","COLORFUL","CREEPY","CUTE","DAMAGED","DARK","DEFEATED","DELICATE","DELIGHTFUL","DIRTY","DISAGREEABLE","DISGUSTING","DRAB","DRY","DULL","EMPTY","ENORMOUS","EXOTIC","FADED","FAMILIAR","FANCY","FAT","FEEBLE","FEMININE","FESTIVE","FLAWLESS","FRESH","FULL","GLORIOUS","GOOD","GRACEFUL","HARD","HARSH","HEALTHY","HEAVY","HISTORICAL","HORRIBLE","IMPORTANT","INTERESTING","JUVENILE","LACKING","LAME","LARGE","LAVISH","LEAN","LESS","LETHAL","LONELY","LOVELY","MACABRE","MAGNIFICENT","MASCULINE","MATURE","MESSY","MIGHTY","MILITARY","MODERN","EXTRAVAGANT","MUNDANE","MYSTERIOUS","NATURAL","NONDESCRIPT","ODD","PALE","PETITE","POOR","POWERFUL","QUAINT","RARE","REASSURING","REMARKABLE","ROTTEN","ROUGH","RUINED","RUSTIC","SCARY","SIMPLE","SMALL","SMELLY","SMOOTH","SOFT","STRONG","TRANQUIL","UGLY","VALUABLE","WARLIKE","WARM","WATERY","WEAK","YOUNG"];
-	return value1[roll(100)-1] + " " + value2[roll(100)-1];
+	return aPick(value1) + " " + aPick(value2);
 }
 
 ~~
@@ -221,24 +228,12 @@ return "__Meaning (description)__\n" +rollDescription() + "\n\n";
 ~~
 function eventCheck()
 {
-	let outcomes = [ [7,"REMOTE"],[28,"NPC ACTS","npcs"],[35,"NEW NPC","pc",true],[45,"THREAD ADVANCE","threads"],[52,"THREAD LOSS","threads"],[55,"THREAD END","threads"],[67,"PC NEGATIVE","pcs"],[75,"PC POSITIVE","pcs"],[83,"AMBIGUOUS"],[92,"NPC NEGATIVE","npcs"],[100,"NPC POSITIVE","npcs"] ];
-	let result = roll(100);
-	let meaningType = false;
-	for (let i = 0; i < outcomes.length; i++)
-	{
-		if (outcomes[i][0] >= result)
-		{
-			result = outcomes[i][1];
-			meaningType = outcomes[i][3];
-			let list = window._tejsState.mythic.lists[outcomes[i][2]];
-			if (list && list.length)
-			{
-				result += " (" + list[roll(list.length)-1] + ")";
-			}
-			break;
-		}
-	}
-	return "__Event__\n" + result + ": " + (meaningType ? rollDescription() : rollAction());
+	let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pc",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
+	let result = aPickWeight(outcomes);
+	let meaningType = result[3];
+	let list = window._tejsState.mythic.lists[result[2]];
+	result = result[0] + ((list && list.length) ? (" (" + aPick(list) + ")") : "");
+	return "__Event__\n" + result + " - " + (meaningType ? rollDescription() : rollAction());
 }
 
 
@@ -273,7 +268,7 @@ if (chk <= window._tejsState.mythic.chaos)
 {
 	result += "\n" + ((chk % 2) ? "Scene modified" : "Scene replaced\n" + eventCheck());
 }
-return result + "\n\n";
+return result + "\n__Setup__: ";
 
 
 ~~
@@ -305,87 +300,51 @@ return "__Fate check (" + oddsLabel + ")__\n" +answer + "\n_fateRoll1=" + aRoll1
 ~~
 return "__Descriptor__\nPersonality: " + rollDescription() + "\nActivity: " + rollAction() + "\n\n";
 
-~~
-~~
 
 ~~
 ^disposition (-?[0-3])$
 ~~
-let outcomes = [ [5,"PASSIVE (-2)"],[10,"MODERATE (0)"],[15,"ACTIVE (+2)"],[99,"AGGRESSIVE (+4)"] ];
+let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
 let roll1 = roll(10);
 let roll2 = roll(10);
 let descriptorAdjust = Number($1) * 2;
-let result = roll1 + roll2 + descriptorAdjust;
-for (let i = 0; i < outcomes.length; i++)
-{
-	if (outcomes[i][0] >= result)
-	{
-		result = outcomes[i][1];
-		break;
-	}
-}
-return "__Disposition__\n" + result + "\n_base=" + (roll1+roll2) + ",roll1=" + roll1 + ",roll2=" + roll2 + ",descriptorAdjust=" + descriptorAdjust + "_\n\n";
+let result = aPickWeight(outcomes, 1, roll1 + roll2 + descriptorAdjust);
+return "__Disposition__\n" + result[0] + "\n_base=" + (roll1+roll2) + ",roll1=" + roll1 + ",roll2=" + roll2 + ",descriptorAdjust=" + descriptorAdjust + "_\n\n";
 
 
 ~~
 ^disposition ([0-2]?[0-9]) (-?[0-3])$
 ~~
-let outcomes = [ [5,"PASSIVE (-2)"],[10,"MODERATE (0)"],[15,"ACTIVE (+2)"],[99,"AGGRESSIVE (+4)"] ];
-let descriptorAdjust = Number($2) * 2;
-let result = Number($1) + descriptorAdjust;
-for (let i = 0; i < outcomes.length; i++)
-{
-	if (outcomes[i][0] >= result)
-	{
-		result = outcomes[i][1];
-		break;
-	}
-}
-return "__Disposition__\n" + result + "\n_base=" + $1 + ",descriptorAdjust=" + descriptorAdjust + "_\n\n";
+let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
+let descriptorAdjust = Number($1) * 2;
+let result = aPickWeight(outcomes, 1, Number($1) + descriptorAdjust);
+return "__Disposition__\n" + result[0] + "\n_base=" + $1 + ",descriptorAdjust=" + descriptorAdjust + "_\n\n";
 
 
 ~~
 ^action (-2|0|2|4)$
 ~~
-let outcomes1 = [ [3,"NEW ACTION BASED ON THEME"],[5,"CONTINUE CURRENT ACTION"],[6,"CONTINUE CURRENT ACTION, +2 DISPOSITION"],[7,"CONTINUE CURRENT ACTION, -2 DISPOSITION"],[8,false,0],[9,false,-4],[99,false,4] ];
-let outcomes2 = [ [6,"TALK / EXPOSITION"],[8,"NEUTRAL, DISCONNECTED ACTION"],[10,"ACTION BENEFITS THE PC"],[11,"GIVE SOMETHING TO THE PC"],[12,"TRY TO END ENCOUNTER"],[13,"CHANGE THEME"],[14,"CHANGE %1 DESCRIPTOR. IT IS ACTIVATED & DECIDES NEXT ACTION.", true],[17,"ACT OUT OF SELF INTEREST"],[18,"TAKE SOMETHING"],[99,"HURT THE PC"] ];
+let outcomes1 = [ ["NEW ACTION BASED ON THEME",3],["CONTINUE CURRENT ACTION",5],["CONTINUE CURRENT ACTION, +2 DISPOSITION",6],["CONTINUE CURRENT ACTION, -2 DISPOSITION",7],[false,8,0],[false,9,-4],[false,10,4] ];
+let outcomes2 = [ ["TALK / EXPOSITION",6],["NEUTRAL, DISCONNECTED ACTION",8],["ACTION BENEFITS THE PC",10],["GIVE SOMETHING TO THE PC",11],["TRY TO END ENCOUNTER",12],["CHANGE THEME",13],["CHANGE \"%1\" DESCRIPTOR. IT IS ACTIVATED & DECIDES NEXT ACTION.",14,true],["ACT OUT OF SELF INTEREST",17],["TAKE SOMETHING",18],["HURT THE PC",99] ];
+let descriptors = ["IDENTITY","PERSONALITY","ACTIVITY"];
 let result = roll(10);
 let details = "table1roll=" + result;
-for (let i = 0; i < outcomes1.length; i++)
+result = aPickWeight(outcomes1, 1, result);
+if (!result[0])
 {
-	if (outcomes1[i][0] >= result)
+	let table2roll1 = roll(10);
+	let table2roll2 = roll(10);
+	let dispositionAdjust = Number($1);
+	let table1Adjust = result[2];
+	details += ",table2roll1=" + table2roll1 + ",table2roll2=" + table2roll2 + ",table1Adjust=" + table1Adjust + ",dispositionAdjust=" + dispositionAdjust;
+	result = table2roll1 + table2roll2 + dispositionAdjust + table1Adjust;
+	result = aPickWeight(outcomes2, 1, result);
+	if (result[2])
 	{
-		if (outcomes1[i][1])
-		{
-			result = outcomes1[i][1];
-			break;
-		}
-		else
-		{
-			let table2roll1 = roll(10);
-			let table2roll2 = roll(10);
-			let table1Adjust = outcomes1[i][2];
-			let dispositionAdjust = Number($1);
-			details += ",table2roll1=" + table2roll1 + ",table2roll2=" + table2roll2 + ",table1Adjust=" + table1Adjust + ",dispositionAdjust=" + dispositionAdjust;
-			result = table2roll1 + table2roll2 + dispositionAdjust + table1Adjust;
-			for (let k = 0; k < outcomes2.length; k++)
-			{
-				if (outcomes2[k][0] >= result)
-				{
-					result = outcomes2[k][1];
-					if (outcomes2[k][2])
-					{
-						let dr = roll(3);
-						details += ",descriptorRoll=" + dr;
-						dr = (dr==1 ? "IDENTITY" : dr==2 ? "PERSONALITY" : "ACTIVITY");
-						result = result.replace("%1", dr);
-					}
-					result += "\n+2/0/-2 DISPOSITION TO MATCH ACTION.";
-					break;
-				}
-			}
-			break;
-		}
+		let descriptorRoll = roll(3);
+		details += ",descriptorRoll=" + descriptorRoll;
+		result[0] = result[0].replace("%1", descriptors[descriptorRoll-1]);
 	}
+	result[0] += "\n+2/0/-2 DISPOSITION TO MATCH ACTION.";
 }
-return "__Action__\n" + result + "\n_" + details + "_\n\n";
+return "__Action__\n" + result[0] + "\n_" + details + "_\n\n";

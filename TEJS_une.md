@@ -8,22 +8,39 @@ Enter the shortcut "une help" for reference.
 let result = "### UNE SHORTCUTS HELP ###\n";
 result += "- __help une__ - Display this help text.\n";
 result += "---\n";
-result += "- __une {randomness} {relationship to pc} {demeanor}__ - Runs \"une character\" and \"une interaction\" together.  {randomness} is an optional value for \"une character\".  {relationship to pc} and {demeanor} are optional values for \"une interaction\".\n";
+result += "- __une {randomness} {relationship to pc} {demeanor}__ - Runs \"une character\" and \"une interact\" together.  {randomness} is an optional value for \"une character\".  {relationship to pc} and {demeanor} are optional values for \"une interact\".\n";
 result += "---\n";
 result += "- __une character {randomness}__ - Runs \"identity\", \"power\" and \"motive\" together.  {randomness} is an optional value for \"power\".\n";
-result += "- __une interaction {relationship to pc} {demeanor}__ - Runs \"mood\", \"bearing\" and \"focus\" together.  {relationship to pc} is an optional value for \"mood\".  {demeanor} is an optional value for \"bearing\".\n";
+result += "- __une interact {relationship to pc} {demeanor}__ - Runs \"mood\", \"bearing\" and \"focus\" together.  {relationship to pc} is an optional value for \"mood\".  {demeanor} is an optional value for \"bearing\".\n";
 result += "---\n";
 result += "- __une identity__ - Generates a 2-word description for a character.\n";
 result += "- __une power {randomness}__ - Generates a character's power level relative to pc's power level, based on {randomness}: an optional number from 1 (order), to 5 (chaos), defaulting to 3 (standard).\n";
 result += "- __une motive__ - Generates three 2-word descriptions for a character's motivations.\n";
 result += "---\n";
-result += "- __une mood {relationship to pc}__ - Generates a character's friendliness for this interaction, based on {relationship to pc}: a optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).\n";
+result += "- __une mood {relationship to pc}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: a optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).\n";
 result += "- __une bearing {demeanor}__ - Generate a character's attitude for this interaction, based on {demeanor}: an optional number from 1-8, defaulting to random and meaning one of the following:\n";
 result += "    1 - sceming       2 - insane       3 - friendly          4 - hostile\n";
 result += "    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced.\n";
 result += "- __une focus__ - Generate a character's primary interest for this interaction.\n";
 return result + "\n";
 
+~~
+~~
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+function aPick(a) { return a[roll(a.length)-1]; }
+function aPickWeight(a, wIndex, theRoll)
+{
+	wIndex = wIndex || 1;
+	theRoll = theRoll || roll(a[a.length-1][wIndex]);
+	for (let i = 0; i < a.length; i++)
+	{
+		if (a[i][wIndex] >= theRoll)
+		{
+			return a[i];
+		}
+	}
+	return a[a.length-1];
+}
 
 ~~
 ~~
@@ -33,7 +50,7 @@ function getIdentity()
 	["SUPERFLUOUS","ADDICTED","CONFORMIST","NEFARIOUS","SENSIBLE","UNTRAINED","ROMANTIC","UNREASONABLE","SKILLED","NEGLECTFUL","LIVELY","FORTHRIGHT","IDEALISTIC","UNSUPPORTIVE","RATIONAL","COARSE","FOOLISH","CUNNING","DELIGHTFUL","MISERLY","INEPT","BANAL","LOGICAL","SUBTLE","REPUTABLE","WICKED","LAZY","PESSIMISTIC","SOLEMN","HABITUAL","MEEK","HELPFUL","UNCONCERNED","GENEROUS","DOCILE","CHEERY","PRAGMATIC","SERENE","THOUGHTFUL","HOPELESS","PLEASANT","INSENSITIVE","TITLED","INEXPERIENCED","PRYING","OBLIVIOUS","REFINED","INDISPENSABLE","SCHOLARLY","CONSERVATIVE","UNCOUTH","WILLFUL","INDIFFERENT","FICKLE","ELDERLY","SINFUL","NAIVE","PRIVILEGED","GLUM","LIKABLE","LETHARGIC","DEFIANT","OBNOXIOUS","INSIGHTFUL","TACTLESS","FANATIC","PLEBEIAN","CHILDISH","PIOUS","UNEDUCATED","INCONSIDERATE","CULTURED","REVOLTING","CURIOUS","TOUCHY","NEEDY","DIGNIFIED","PUSHY","KIND","CORRUPT","JOVIAL","SHREWD","LIBERAL","COMPLIANT","DESTITUTE","CONNIVING","CAREFUL","ALLURING","DEFECTIVE","OPTIMISTIC","AFFLUENT","DESPONDENT","MINDLESS","PASSIONATE","DEVOTED","ESTABLISHED","UNSEEMLY","DEPENDABLE","RIGHTEOUS","CONFIDENT"];
 	let table2 =
 	["GYPSY","WITCH","MERCHANT","EXPERT","COMMONER","JUDGE","RANGER","OCCULTIST","REVEREND","THUG","DRIFTER","JOURNEYMAN","STATESMAN","ASTROLOGER","DUELIST","JACK-OF-ALL-TRADES","ARISTOCRAT","PREACHER","ARTISAN","ROGUE","MISSIONARY","OUTCAST","MERCENARY","CARETAKER","HERMIT","ORATOR","CHIEFTAIN","PIONEER","BURGLAR","VICAR","OFFICER","EXPLORER","WARDEN","OUTLAW","ADEPT","BUM","SORCERER","LABORER","MASTER","ASCENDANT","VILLAGER","MAGUS","CONSCRIPT","WORKER","ACTOR","HERALD","HIGHWAYMAN","FORTUNE-HUNTER","GOVERNOR","SCRAPPER","MONK","HOMEMAKER","RECLUSE","STEWARD","POLYMATH","MAGICIAN","TRAVELER","VAGRANT","APPRENTICE","POLITICIAN","MEDIATOR","CROOK","CIVILIAN","ACTIVIST","HERO","CHAMPION","CLERIC","SLAVE","GUNMAN","CLAIRVOYANT","PATRIARCH","SHOPKEEPER","CRONE","ADVENTURER","SOLDIER","ENTERTAINER","CRAFTSMAN","SCIENTIST","ASCETIC","SUPERIOR","PERFORMER","MAGISTER","SERF","BRUTE","INQUISITOR","LORD","VILLAIN","PROFESSOR","SERVANT","CHARMER","GLOBETROTTER","SNIPER","COURTIER","PRIEST","TRADESMAN","HITMAN","WIZARD","BEGGAR","TRADESMAN","WARRIOR"];
-	return table1[roll(100)-1] + " " + table2[roll(100)-1];
+	return aPick(table1) + " " + aPick(table2);
 }
 
 
@@ -48,19 +65,8 @@ return "__Character identity__\n" + getIdentity() + "\n\n";
 function getPower($1)
 {
 	let table3 = 
-	[ ["MUCH WEAKER",2,4,5,8,12],["SLIGHTLY WEAKER",10,15,20,25,30],["COMPARABLE",90,85,80,75,70],["SLIGHTLY STRONGER",98,96,95,92,88],["MUCH STRONGER",999,999,999,999,999] ];
-	$1 = Number($1) || 3;
-	let result = roll(100);
-	let details = "\n_roll=" + result + ",randomness=" + $1 + "_\n\n";
-	for (let i = 0; i < table3.length; i++)
-	{
-		if (table3[i][$1] >= result)
-		{
-			result = table3[i][0];
-			break;
-		}
-	}
-	return result;
+	[ ["MUCH WEAKER",2,4,5,8,12],["SLIGHTLY WEAKER",10,15,20,25,30],["COMPARABLE",90,85,80,75,70],["SLIGHTLY STRONGER",98,96,95,92,88],["MUCH STRONGER",100,100,100,100,100] ];
+	return aPickWeight(table3, Number($1) || 3)[0];
 }
 
 
@@ -79,27 +85,27 @@ function getMotive()
 	let table5 =
 	["WEALTH","HARDSHIP","AFFLUENCE","RESOURCES","PROSPERITY","POVERTY","OPULENCE","DEPRIVATION","SUCCESS","DISTRESS","CONTRABAND","MUSIC","LITERATURE","TECHNOLOGY","ALCOHOL","MEDICINES","BEAUTY","STRENGTH","INTELLIGENCE","FORCE","THE_WEALTHY","THE_POPULOUS","ENEMIES","THE_PUBLIC","RELIGION","THE_POOR","FAMILY","THE_ELITE","ACADEMIA","THE_FORSAKEN","THE_LAW","THE_GOVERNMENT","THE_OPPRESSED","FRIENDS","CRIMINALS","ALLIES","SECRET_SOCIETIES","THE_WORLD","MILITARY","THE_CHURCH","DREAMS","DISCRETION","LOVE","FREEDOM","PAIN","FAITH","SLAVERY","ENLIGHTENMENT","RACISM","SENSUALITY","DISSONANCE","PEACE","DISCRIMINATION","DISBELIEF","PLEASURE","HATE","HAPPINESS","SERVITUDE","HARMONY","JUSTICE","GLUTTONY","LUST","ENVY","GREED","LAZINESS","WRATH","PRIDE","PURITY","MODERATION","VIGILANCE","ZEAL","COMPOSURE","CHARITY","MODESTY","ATROCITIES","COWARDICE","NARCISSISM","COMPASSION","VALOR","PATIENCE","ADVICE","PROPAGANDA","SCIENCE","KNOWLEDGE","COMMUNICATIONS","LIES","MYTHS","RIDDLES","STORIES","LEGENDS","INDUSTRY","NEW_RELIGIONS","PROGRESS","ANIMALS","GHOSTS","MAGIC","NATURE","OLD_RELIGIONS","EXPERTISE","SPIRITS"];
 	let result = "";
-	let priorNounRolls = [];
+	let priorNounColumns = [];
 	for (let i = 0; i < 3; i++)
 	{
-		let roll1 = roll(100);
-		let roll2 = roll(100);
-		while (true)
+		let roll2;
+		do
 		{
-			let foundMatch = false;
-			for (let i = 0; i < priorNounRolls.length; i++)
+			roll2 = roll(100);
+			let foundColumnMatch = false;
+			for (let i = 0; i < priorNounColumns.length; i++)
 			{
-				if (priorNounRolls[i] == Math.trunc((roll2-1)/20))
+				if (priorNounColumns[i] == Math.trunc((roll2-1)/20))
 				{
-					foundMatch = true;
+					foundColumnMatch = true;
 					break;
 				}
 			}
-			if (!foundMatch) break;
-			roll2 = roll(100);
+			if (!foundColumnMatch) break;
 		}
-		priorNounRolls.push(Math.trunc((roll2-1)/20));
-		result += "- " + table4[roll1-1] + " " + table5[roll2-1] + " " + "\n";
+		while (true);
+		priorNounColumns.push(Math.trunc((roll2-1)/20));
+		result += "- " + aPick(table4) + " " + table5[roll2-1] + " " + "\n";
 	}
 	return result;
 }
@@ -121,19 +127,8 @@ return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPo
 function getMood($1)
 {
 	let table6 = 
-	[ ["WITHDRAWN",1,2,3,5,7,11,15],["GUARDED",6,8,11,15,18,24,30],["CAUTIOUS",16,20,25,30,46,61,69],["NEUTRAL",31,40,55,60,76,81,84],["SOCIABLE",70,76,82,85,90,93,94],["HELPFUL",85,89,93,95,97,98,99],["FORTHCOMING",999,999,999,999,999,999,999] ];
-	$1 = Number($1) || 4;
-	let result = roll(100);
-	let details = "\n_roll=" + result + ",relationship=" + $1 + "_\n\n";
-	for (let i = 0; i < table6.length; i++)
-	{
-		if (table6[i][$1] >= result)
-		{
-			result = table6[i][0];
-			break;
-		}
-	}
-	return result;
+	[ ["WITHDRAWN",1,2,3,5,7,11,15],["GUARDED",6,8,11,15,18,24,30],["CAUTIOUS",16,20,25,30,46,61,69],["NEUTRAL",31,40,55,60,76,81,84],["SOCIABLE",70,76,82,85,90,93,94],["HELPFUL",85,89,93,95,97,98,99],["FORTHCOMING",100,100,100,100,100,100,100] ];
+	return aPickWeight(table6, Number($1) || 4)[0];
 }
 
 
@@ -160,7 +155,7 @@ function getBearing($1)
 	let demeanor = $1 ? $1 : roll(8);
 	let bearing = roll(10);
 return table7a[demeanor-1] + ": " + table7b
-[demeanor-1] [bearing-1];
+[demeanor-1][bearing-1];
 }
 
 
@@ -174,17 +169,8 @@ return "__Character bearing__\n" + getBearing($1) + "\n\n";
 ~~
 function getFocus()
 {
-	let table8 = [ [3,"CURRENT_SCENE"],[6,"LAST_STORY"],[9,"EQUIPMENT"],[12,"PARENTS"],[15,"HISTORY"],[18,"RETAINERS"],[21,"WEALTH"],[24,"RELICS"],[27,"LAST_ACTION"],[30,"SKILLS"],[33,"SUPERIORS"],[36,"FAME"],[39,"CAMPAIGN"],[42,"FUTURE_ACTION"],[45,"FRIENDS"],[48,"ALLIES"],[51,"LAST_SCENE"],[54,"CONTACTS"],[57,"FLAWS"],[60,"ANTAGONIST"],[63,"REWARDS"],[66,"EXPERIENCE"],[69,"KNOWLEDGE"],[72,"RECENT_SCENE"],[75,"COMMUNITY"],[78,"TREASURE"],[81,"THE_CHARACTER"],[84,"CURRENT_STORY"],[87,"FAMILY"],[90,"POWER"],[93,"WEAPONS"],[96,"PREVIOUS_SCENE"],[100,"ENEMY"] ];
-	let result = roll(100);
-	for (let i = 0; i < table8.length; i++)
-	{
-		if (table8[i][0] >= result)
-		{
-			result = "THE PC'S " + table8[i][1];
-			break;
-		}
-	}
-	return result;
+	let table8 = [ ["CURRENT_SCENE", 3],["LAST_STORY",6],["EQUIPMENT",9],["PARENTS",12],["HISTORY",15],["RETAINERS",18],["WEALTH",21],["RELICS",24],["LAST_ACTION",27],["SKILLS",30],["SUPERIORS",33],["FAME",36],["CAMPAIGN",39],["FUTURE_ACTION",42],["FRIENDS",45],["ALLIES",48],["LAST_SCENE",51],["CONTACTS",54],["FLAWS",57],["ANTAGONIST",60],["REWARDS",63],["EXPERIENCE",66],["KNOWLEDGE",69],["RECENT_SCENE",72],["COMMUNITY",75],["TREASURE",78],["THE_CHARACTER",81],["CURRENT_STORY",84],["FAMILY",87],["POWER",90],["WEAPONS",93],["PREVIOUS_SCENE",96],["ENEMY",100] ];
+	return "THE PC'S " + aPickWeight(table8)[0];
 }
 
 
@@ -194,11 +180,11 @@ function getFocus()
 return "__Character focus__\n" + getFocus() + "\n\n";
 
 ~~
-^une interaction((?: [1-7])?)((?: [1-8])?)$
+^une interact((?: [1-7])?)((?: [1-8])?)$
 ~~
-return "__Character interaction__\n__Mood__: " + getMood($1) + "\n__Bearing__: " + getBearing($2) + "\n__Focus__: " + getFocus() + "\n\n";
+return "__Interact__\n__Mood__: " + getMood($1) + "\n__Bearing__: " + getBearing($2) + "\n__Focus__: " + getFocus() + "\n\n";
 
 ~~
 ^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
 ~~
-return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPower($1) + "\n__Motive__:\n" + getMotive() + "----------\n__Character interaction__\n__Mood__: " + getMood($2) + "\n__Bearing__: " + getBearing($3) + "\n__Focus__: " + getFocus() + "\n\n";
+return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPower($1) + "\n__Motive__:\n" + getMotive() + "----------\n__Interact__\n__Mood__: " + getMood($2) + "\n__Bearing__: " + getBearing($3) + "\n__Focus__: " + getFocus() + "\n\n";
