@@ -46,7 +46,7 @@ return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "none") + "\n\
 ^clip ([a-zA-Z]+)$
 ~~
 let text = window._tejsState.clips[$1];
-return (text ? text : "Empty clip") + "\n\n";
+return (text ? text : "{Empty clip}") + "\n\n";
 
 ~~
 ^clipadd ([a-zA-Z]+) (.+)$

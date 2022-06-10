@@ -6,7 +6,7 @@ Enter the shortcut "state help" for reference.
 ~~
 ^help mythic$
 ~~
-let result = "MYTHIC SHORTCUTS HELP\n";
+let result = "### MYTHIC SHORTCUTS HELP\n";
 result += "- __help mythic__ - Display this help text.\n";
 result += "- __reset mythic__ - Reset mythic state to defaults and displays scene heading.\n";
 result += "---\n";
@@ -305,6 +305,8 @@ return "__Fate check (" + oddsLabel + ")__\n" +answer + "\n_fateRoll1=" + aRoll1
 ~~
 return "__Descriptor__\nPersonality: " + rollDescription() + "\nActivity: " + rollAction() + "\n\n";
 
+~~
+~~
 
 ~~
 ^disposition (-?[0-3])$
