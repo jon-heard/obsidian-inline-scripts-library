@@ -7,30 +7,35 @@ Enter the shortcut "state help" for reference.
 ^mythic help$
 ~~
 let result = "MYTHIC SHORTCUTS HELP\n";
-result += "- mythic help - Display this help text.\n";
-result += "- mythic reset - Reset mythic state to defaults and displays scene heading.\n";
-result += "- detail - Make a details check.\n";
-result += "- event - Make an event check.\n";
-result += "- f[odds][wanted] - Make a fate check with the odds of [odds] (-4 to 4) and the preferred result of [wanted] (either 'n' or 'y').  The preferred result is optional and defaults to 'y'.  It specifies the direct of the chaos modifier.\n";
-result += "- meaning action - Roll on the action meaning table.\n";
-result += "- meaning discription - Roll on the description meaning table.\n";
-result += "- meaning - Roll on the action meaning table. (short for \"meaning action\")\n";
-result += "- list - Show a list of the lists.\n";
-result += "- list [listName] - Show all items in the list named [listName].\n";
-result += "- listadd [listName] [item] - Add [item] to the end of the list named [listName].\n";
-result += "- listget [listName] - Get a random item from the list named [listName].\n";
-result += "- listremove [listName] [item] - Remove last instance of [item] from the list named [listName].\n";
-result += "- listremoveall [listName] - Remove the entire list of [listName].\n";
-result += "- scene - Show the current scene.\n";
-result += "- scene [chaosAdjust] - Shift the chaos value by [chaosAdjust] (1 or -1), increment the current scene, then output all.\n";
-result += "- chaos - Show the current chaos value.\n";
-result += "- chaos++ - Increase the chaos value by 1 (maximum of 6).\n";
-result += "- chaos-- - Decrease the chaos value by 1 (minimum of 3).\n";
-result += "- chaos=[value] - Set the chaos value to [value].\n";
-result += "- descriptor - Rolls for a personality and activity.\n";
-result += "- disposition [descriptorCount] - Rolls for a disposition, modified by [descriptorCount].\n";
-result += "- disposition [base] [descriptorCount] - Displays a disposition given by the [base] disposition, modified by [descriptorCount].\n";
-result += "- action [dispositionAdjust] - Action check, modified by [dispositionAdjust].\n";
+result += "---\n";
+result += "- __mythic help__ - Display this help text.\n";
+result += "- __mythic reset__ - Reset mythic state to defaults and displays scene heading.\n";
+result += "---\n";
+result += "- __detail__ - Make a details check.\n";
+result += "- __event__ - Make an event check.\n";
+result += "- __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting in 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direct of the chaos modifier.\n";
+result += "- __meaning action__ - Roll on the action meaning table.\n";
+result += "- __meaning discription__ - Roll on the description meaning table.\n";
+result += "- __meaning__ - Roll on the action meaning table. (short for \"meaning action\")\n";
+result += "---\n";
+result += "- __list__ - Show all lists.\n";
+result += "- __list {listName}__ - Show all items in the list {listName}.\n";
+result += "- __listadd {listName} {item}__ - Add {item} to the end of the list {listName}.\n";
+result += "- __listget {listName}__ - Get a random item from the list named {listName}.\n";
+result += "- __listremove {listName} {item}__ - Remove last instance of {item} from the list {listName}.\n";
+result += "- __listremoveall {listName}__ - Remove the entire list of {listName}.\n";
+result += "---\n";
+result += "- __scene__ - Show the current scene.\n";
+result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1 or -1), then increment the current scene.\n";
+result += "- __chaos__ - Show the current chaos value.\n";
+result += "- __chaos++__ - Increase the chaos value by 1 (maximum of 6).\n";
+result += "- __chaos--__ - Decrease the chaos value by 1 (minimum of 3).\n";
+result += "- __chaos={value}__ - Set the chaos value to {value}.\n";
+result += "---\n";
+result += "- __descriptor__ - Rolls for a personality and activity.\n";
+result += "- __disposition {descriptorCount}__ - Rolls for a disposition, modified by {descriptorCount}.\n";
+result += "- __disposition {base} {descriptorCount}__ - Displays a disposition given by the {base} disposition, modified by {descriptorCount}.\n";
+result += "- __action {dispositionAdjust}__ - Action check, modified by {dispositionAdjust}.\n";
 return result + "\n";
 
 ~~
@@ -234,7 +239,7 @@ function eventCheck()
 			break;
 		}
 	}
-	return "__Event__\n" + result + "\n" + (meaningType ? rollDescription() : rollAction());
+	return "__Event__\n" + result + ": " + (meaningType ? rollDescription() : rollAction());
 }
 
 
@@ -273,18 +278,18 @@ return result + "\n\n";
 
 
 ~~
-^[f|F](-?[0-4])(y|n|Y|N|)$
+^fate((?: -?[0-4])?)((?: [y|n])?)$
 ~~
 let odds = ["impossible","no way","very unlikely","unlikely","50/50","likely","very likely","sure thing","has to be"];
-$1 = Number($1);
 let aRoll1 = roll(10);
 let aRoll2 = roll(10);
 let cRoll = roll(10);
+$1 = Number($1 || 0);
 let oddsLabel = odds[$1+4];
 let oddsAdjust = $1 * 2;
 let chaos = window._tejsState.mythic.chaos;
 let chaosAdjust = ((chaos==3) ? 2 : (chaos==6) ? -2 : 0)
-chaosAdjust *=  ($2.toLowerCase() == "n" ? -1 : 1);
+chaosAdjust *=  ($2 == " n" ? -1 : 1);
 let answer = (aRoll1+aRoll2+oddsAdjust+chaosAdjust > 10 ? "YES" : "NO");
 
 let isExtreme = (cRoll <= chaos) && !!(aRoll1 % 2) && !!(aRoll2 % 2);
@@ -374,7 +379,7 @@ for (let i = 0; i < outcomes1.length; i++)
 						dr = (dr==1 ? "IDENTITY" : dr==2 ? "PERSONALITY" : "ACTIVITY");
 						result = result.replace("%1", dr);
 					}
-					result += "\nADJUST DISPOSITION (+2/0/-2) TO MATCH ACTION.";
+					result += "\n+2/0/-2 DISPOSITION TO MATCH ACTION.";
 					break;
 				}
 			}
