@@ -3,10 +3,10 @@ Shortcuts for UNE (The Universal NPC Emulator).
 Enter the shortcut "une help" for reference.
 
 ~~
-^une help$
+^help une$
 ~~
 let result = "### UNE SHORTCUTS HELP ###\n";
-result += "- __une help__ - Display this help text.\n";
+result += "- __help une__ - Display this help text.\n";
 result += "---\n";
 result += "- __une {randomness} {relationship to pc} {demeanor}__ - Runs \"une character\" and \"une interaction\" together.  {randomness} is an optional value for \"une character\".  {relationship to pc} and {demeanor} are optional values for \"une interaction\".\n";
 result += "---\n";

@@ -5,9 +5,11 @@ This shortcut file is used by other shortcut files to let them keep their states
 Enter the shortcut "state help" for reference.
 
 ~~
-^state help$
+^help state$
 ~~
 let result = "### TEJS STATE SHORTCUTS HELP\n";
+result += "- __help state__ - Display this help text.\n";
+result += "---\n";
 result += "- __state__ - Expands to the current state (for session saving).\n";
 result += "- __state {state}__ - Sets the current state based on {state}: a string created previously with the \"state\" shortcut.\n";
 result += "---\n";

@@ -4,12 +4,11 @@ Uses TEJS_state to save & load this shortcut file's state.
 Enter the shortcut "state help" for reference.
 
 ~~
-^mythic help$
+^help mythic$
 ~~
 let result = "MYTHIC SHORTCUTS HELP\n";
-result += "---\n";
-result += "- __mythic help__ - Display this help text.\n";
-result += "- __mythic reset__ - Reset mythic state to defaults and displays scene heading.\n";
+result += "- __help mythic__ - Display this help text.\n";
+result += "- __reset mythic__ - Reset mythic state to defaults and displays scene heading.\n";
 result += "---\n";
 result += "- __detail__ - Make a details check.\n";
 result += "- __event__ - Make an event check.\n";
@@ -52,7 +51,7 @@ window._tejsState.mythic.lists.threads ||= [];
 window.roll = function(max) { return Math.trunc(Math.random() * max + 1); }
 
 ~~
-^mythic reset$
+^reset mythic$
 ~~
 window._tejsState.mythic.chaos= 4;
 window._tejsState.mythic.scene = 1;
