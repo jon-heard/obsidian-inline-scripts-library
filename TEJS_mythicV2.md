@@ -179,7 +179,7 @@ return "\"" + $2 + "\" added to list \"" + $1 + "\".\n\n";
 let list = window._tejsState.mythic.lists[$1];
 if (list && list.length)
 {
-	let result = list[roll(list.length)-1];
+	let result = list[roll("pickRoll", list.length)-1];
 	return "\"" + result + "\" picked from list \"" + $1 + "\".\n\n";
 }
 return "Failed to pick from list \"" + $1 + "\".  List is empty.\n\n";
