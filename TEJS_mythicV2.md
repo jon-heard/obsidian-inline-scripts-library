@@ -373,7 +373,7 @@ let fateRoll1 = roll("fateRoll1", 10);
 let fateRoll2 = roll("fateRoll1", 10);
 let chaosRoll = roll("chaosRoll", 10);
 let result =
-	fateRoll1 + rateRoll2 +
+	fateRoll1 + fateRoll2 +
 	addDetails("oddsAdjust", $1 * 2) +
 	getChaosAdjust($2 == " n" ? -1 : 1);
 result = result > 10 ? "YES" : "NO";
