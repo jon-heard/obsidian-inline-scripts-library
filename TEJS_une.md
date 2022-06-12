@@ -5,6 +5,7 @@ Enter the shortcut "une help" for reference.
 ~~
 ^help une$
 ~~
+```js
 let result = "### UNE SHORTCUTS HELP ###\n";
 result += "- __help une__ - Display this help text.\n";
 result += "---\n";
@@ -23,9 +24,11 @@ result += "    1 - sceming       2 - insane       3 - friendly          4 - host
 result += "    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced.\n";
 result += "- __une focus__ - Generate a character's primary interest for this interaction.\n";
 return result + "\n";
+```
 
 ~~
 ~~
+```js
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
 function aPickWeight(a, wIndex, theRoll)
@@ -41,9 +44,11 @@ function aPickWeight(a, wIndex, theRoll)
 	}
 	return a[a.length-1];
 }
+```
 
 ~~
 ~~
+```js
 function getIdentity()
 {
 	let table1 =
@@ -52,32 +57,36 @@ function getIdentity()
 	["GYPSY","WITCH","MERCHANT","EXPERT","COMMONER","JUDGE","RANGER","OCCULTIST","REVEREND","THUG","DRIFTER","JOURNEYMAN","STATESMAN","ASTROLOGER","DUELIST","JACK-OF-ALL-TRADES","ARISTOCRAT","PREACHER","ARTISAN","ROGUE","MISSIONARY","OUTCAST","MERCENARY","CARETAKER","HERMIT","ORATOR","CHIEFTAIN","PIONEER","BURGLAR","VICAR","OFFICER","EXPLORER","WARDEN","OUTLAW","ADEPT","BUM","SORCERER","LABORER","MASTER","ASCENDANT","VILLAGER","MAGUS","CONSCRIPT","WORKER","ACTOR","HERALD","HIGHWAYMAN","FORTUNE-HUNTER","GOVERNOR","SCRAPPER","MONK","HOMEMAKER","RECLUSE","STEWARD","POLYMATH","MAGICIAN","TRAVELER","VAGRANT","APPRENTICE","POLITICIAN","MEDIATOR","CROOK","CIVILIAN","ACTIVIST","HERO","CHAMPION","CLERIC","SLAVE","GUNMAN","CLAIRVOYANT","PATRIARCH","SHOPKEEPER","CRONE","ADVENTURER","SOLDIER","ENTERTAINER","CRAFTSMAN","SCIENTIST","ASCETIC","SUPERIOR","PERFORMER","MAGISTER","SERF","BRUTE","INQUISITOR","LORD","VILLAIN","PROFESSOR","SERVANT","CHARMER","GLOBETROTTER","SNIPER","COURTIER","PRIEST","TRADESMAN","HITMAN","WIZARD","BEGGAR","TRADESMAN","WARRIOR"];
 	return aPick(table1) + " " + aPick(table2);
 }
-
+```
 
 ~~
 ^une identity$
 ~~
+```js
 return "__Character identity__\n" + getIdentity() + "\n\n";
-
+```
 
 ~~
 ~~
+```js
 function getPower($1)
 {
 	let table3 = 
 	[ ["MUCH WEAKER",2,4,5,8,12],["SLIGHTLY WEAKER",10,15,20,25,30],["COMPARABLE",90,85,80,75,70],["SLIGHTLY STRONGER",98,96,95,92,88],["MUCH STRONGER",100,100,100,100,100] ];
 	return aPickWeight(table3, Number($1) || 3)[0];
 }
-
+```
 
 ~~
 ^une power((?: [1-5])?)$
 ~~
+```js
 return "__Character power level__\n" + getPower($1) + "\n\n";
-
+```
 
 ~~
 ~~
+```js
 function getMotive()
 {
 	let table4 =
@@ -109,37 +118,43 @@ function getMotive()
 	}
 	return result;
 }
-
+```
 
 ~~
 ^une motive$
 ~~
+```js
 return "__Character motive__\n" + getMotive() + "\n";
+```
 
 ~~
 ^une character((?: [1-5])?)$
 ~~
+```js
 return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPower($1) + "\n__Motive__:\n" + getMotive() + "\n";
-
+```
 
 ~~
 ~~
+```js
 function getMood($1)
 {
 	let table6 = 
 	[ ["WITHDRAWN",1,2,3,5,7,11,15],["GUARDED",6,8,11,15,18,24,30],["CAUTIOUS",16,20,25,30,46,61,69],["NEUTRAL",31,40,55,60,76,81,84],["SOCIABLE",70,76,82,85,90,93,94],["HELPFUL",85,89,93,95,97,98,99],["FORTHCOMING",100,100,100,100,100,100,100] ];
 	return aPickWeight(table6, Number($1) || 4)[0];
 }
-
+```
 
 ~~
 ^une mood((?: [1-7])?)$
 ~~
+```js
 return "__Character mood__\n" + getMood($1) + "\n\n";
-
+```
 
 ~~
 ~~
+```js
 function getBearing($1)
 {
 	let table7a = ["SCHEMING", "INSANE", "FRIENDLY", "HOSTILE", "INQUISITIVE", "KNOWING", "MYSTERIOUS", "PREJUDICED"];
@@ -157,34 +172,42 @@ function getBearing($1)
 return table7a[demeanor-1] + ": " + table7b
 [demeanor-1][bearing-1];
 }
-
+```
 
 ~~
 ^une bearing((?: [1-8])?)$
 ~~
+```js
 return "__Character bearing__\n" + getBearing($1) + "\n\n";
-
+```
 
 ~~
 ~~
+```js
 function getFocus()
 {
 	let table8 = [ ["CURRENT_SCENE", 3],["LAST_STORY",6],["EQUIPMENT",9],["PARENTS",12],["HISTORY",15],["RETAINERS",18],["WEALTH",21],["RELICS",24],["LAST_ACTION",27],["SKILLS",30],["SUPERIORS",33],["FAME",36],["CAMPAIGN",39],["FUTURE_ACTION",42],["FRIENDS",45],["ALLIES",48],["LAST_SCENE",51],["CONTACTS",54],["FLAWS",57],["ANTAGONIST",60],["REWARDS",63],["EXPERIENCE",66],["KNOWLEDGE",69],["RECENT_SCENE",72],["COMMUNITY",75],["TREASURE",78],["THE_CHARACTER",81],["CURRENT_STORY",84],["FAMILY",87],["POWER",90],["WEAPONS",93],["PREVIOUS_SCENE",96],["ENEMY",100] ];
 	return "THE PC'S " + aPickWeight(table8)[0];
 }
-
+```
 
 ~~
 ^une focus$
 ~~
+```js
 return "__Character focus__\n" + getFocus() + "\n\n";
+```
 
 ~~
 ^une interact((?: [1-7])?)((?: [1-8])?)$
 ~~
+```js
 return "__Interact__\n__Mood__: " + getMood($1) + "\n__Bearing__: " + getBearing($2) + "\n__Focus__: " + getFocus() + "\n\n";
+```
 
 ~~
 ^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
 ~~
+```js
 return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPower($1) + "\n__Motive__:\n" + getMotive() + "----------\n__Interact__\n__Mood__: " + getMood($2) + "\n__Bearing__: " + getBearing($3) + "\n__Focus__: " + getFocus() + "\n\n";
+```

@@ -7,6 +7,7 @@ Enter the shortcut "state help" for reference.
 ~~
 ^help state$
 ~~
+```js
 let result = "### TEJS STATE SHORTCUTS HELP\n";
 result += "- __help state__ - Display this help text.\n";
 result += "---\n";
@@ -18,48 +19,63 @@ result += "- __clip {name}__ - Expands to the value stored in clip {name}.\n";
 result += "- __clipadd {name} {value}__ - Creates a clip {name} that stores {value}.\n";
 result += "- __clipremove {name}__ - Removes the clip {name}.\n";
 return result + "\n";
+```
 
 ~~
 ^tejs setup$
 ~~
+```js
 window._tejsState ||= {};
 window._tejsState.clips ||= {};
+```
 
 ~~
 ^state$
 ~~
+```js
 return "__TEJS state__\n" + JSON.stringify(window._tejsState) + "\n\n";
+```
 
 ~~
 ^state (.*)$
 ~~
+```js
 window._tejsState = JSON.parse($1);
 return "TEJS state loaded.\n\n";
+```
 
 ~~
 ^clip$
 ~~
+```js
 let clipNames = Object.keys(window._tejsState.clips);
 return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "none") + "\n\n";
+```
 
 ~~
 ^clip ([a-zA-Z]+)$
 ~~
+```js
 let text = window._tejsState.clips[$1];
 return text || "";
+```
 
 ~~
 ^clipadd ([a-zA-Z]+) (.+)$
 ~~
+```js
 window._tejsState.clips[$1] = $2;
 return "__Clip \"" + $1 + "\" set to__\n" + $2 + "\n\n";
+```
 
 ~~
 ^clipremove ([a-zA-Z]+)$
 ~~
+```js
 if (window._tejsState.clips.hasOwnProperty($1))
 {
 	delete window._tejsState.clips[$1];
 	return "Clip \"" + $1 + "\" removed.\n\n";
 }
 return "Failed to remove clip \"" + $1 + "\".  Does not exist.\n\n";
+```
