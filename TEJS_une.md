@@ -8,16 +8,16 @@ Enter the shortcut "une help" for reference.
 ```js
 let result = "### UNE SHORTCUTS HELP ###\n";
 result += "- __help une__ - Display this help text.\n";
-result += "---\n";
+result += "***\n";
 result += "- __une {randomness} {relationship to pc} {demeanor}__ - Runs \"une character\" and \"une interact\" together.  {randomness} is an optional value for \"une character\".  {relationship to pc} and {demeanor} are optional values for \"une interact\".\n";
-result += "---\n";
+result += "***\n";
 result += "- __une character {randomness}__ - Runs \"identity\", \"power\" and \"motive\" together.  {randomness} is an optional value for \"power\".\n";
 result += "- __une interact {relationship to pc} {demeanor}__ - Runs \"mood\", \"bearing\" and \"focus\" together.  {relationship to pc} is an optional value for \"mood\".  {demeanor} is an optional value for \"bearing\".\n";
-result += "---\n";
+result += "***\n";
 result += "- __une identity__ - Generates a 2-word description for a character.\n";
 result += "- __une power {randomness}__ - Generates a character's power level relative to pc's power level, based on {randomness}: an optional number from 1 (order), to 5 (chaos), defaulting to 3 (standard).\n";
 result += "- __une motive__ - Generates three 2-word descriptions for a character's motivations.\n";
-result += "---\n";
+result += "***\n";
 result += "- __une mood {relationship to pc}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: a optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).\n";
 result += "- __une bearing {demeanor}__ - Generate a character's attitude for this interaction, based on {demeanor}: an optional number from 1-8, defaulting to random and meaning one of the following:\n";
 result += "    1 - sceming       2 - insane       3 - friendly          4 - hostile\n";
@@ -209,5 +209,5 @@ return "__Interact__\n__Mood__: " + getMood($1) + "\n__Bearing__: " + getBearing
 ^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
 ~~
 ```js
-return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPower($1) + "\n__Motive__:\n" + getMotive() + "----------\n__Interact__\n__Mood__: " + getMood($2) + "\n__Bearing__: " + getBearing($3) + "\n__Focus__: " + getFocus() + "\n\n";
+return "__Character__\n__Identity__: " + getIdentity() + "\n__Power__: " + getPower($1) + "\n__Motive__:\n" + getMotive() + "***\n__Interact__\n__Mood__: " + getMood($2) + "\n__Bearing__: " + getBearing($3) + "\n__Focus__: " + getFocus() + "\n\n";
 ```

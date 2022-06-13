@@ -10,10 +10,10 @@ Enter the shortcut "state help" for reference.
 ```js
 let result = "### TEJS STATE SHORTCUTS HELP\n";
 result += "- __help state__ - Display this help text.\n";
-result += "---\n";
+result += "***\n";
 result += "- __state__ - Expands to the current state (for session saving).\n";
 result += "- __state {state}__ - Sets the current state based on {state}: a string created previously with the \"state\" shortcut.\n";
-result += "---\n";
+result += "***\n";
 result += "- __clip__ - List all stored clips.\n";
 result += "- __clip {name}__ - Expands to the value stored in clip {name}.\n";
 result += "- __clipadd {name} {value}__ - Creates a clip {name} that stores {value}.\n";

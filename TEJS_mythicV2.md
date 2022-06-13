@@ -15,28 +15,28 @@ result += `- __mythic details {state}__ - Sets \"details\" mode based on {state}
     - If {state} is 'y' then \"details\" mode is enabled
 	- if {state} is 'n' then \"details\" mode is disabled.
 `;
-result += "---\n";
+result += "***\n";
 result += "- __detail__ - Make a detail check.\n";
 result += "- __event__ - Make an event check.\n";
 result += "- __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.\n";
 result += "- __meaning action__ - Roll on the action meaning table.\n";
 result += "- __meaning discription__ - Roll on the description meaning table.\n";
 result += "- __meaning__ - Roll on the action meaning table. (short for \"meaning action\")\n";
-result += "---\n";
+result += "***\n";
 result += "- __list__ - Show all lists.\n";
 result += "- __list {listName}__ - Show all items in the list {listName}.\n";
 result += "- __listadd {listName} {item}__ - Add {item} to the end of the list {listName}.\n";
 result += "- __listget {listName}__ - Get a random item from the list named {listName}.\n";
 result += "- __listremove {listName} {item}__ - Remove last instance of {item} from the list {listName}.\n";
 result += "- __listremoveall {listName}__ - Remove the entire list of {listName}.\n";
-result += "---\n";
+result += "***\n";
 result += "- __scene__ - Show the current scene.\n";
 result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1 or -1), then increment the current scene.\n";
 result += "- __chaos__ - Show the current chaos value.\n";
 result += "- __chaos++__ - Increase the chaos value by 1 (maximum of 6).\n";
 result += "- __chaos--__ - Decrease the chaos value by 1 (minimum of 3).\n";
 result += "- __chaos={value}__ - Set the chaos value to {value}.\n";
-result += "---\n";
+result += "***\n";
 result += "- __descriptor__ - Generates a personality and activity descriptor for an NPC.\n";
 result += "- __disposition {descriptorCount}__ - Rolls for an NPC's disposition, modified by {descriptorCount}.\n";
 result += "- __disposition {base} {descriptorCount}__ - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.\n";
@@ -70,7 +70,7 @@ window._tejsState.mythic.lists = {};
 window._tejsState.mythic.lists.pcs = [];
 window._tejsState.mythic.lists.npcs = [];
 window._tejsState.mythic.lists.threads = [];
-return "----\n\n\n### SCENE 1\n__Setup__: ";
+return "***\n\n\n### SCENE 1\n__Setup__: ";
 ```
 
 ~~
@@ -348,18 +348,18 @@ else if ($1 == -1)
 {
 	result += chaosDown();
 }
-result += "****\n\n\n\n";
+result += "***\n\n\n\n";
 window._tejsState.mythic.scene++;
 result += "### SCENE " + window._tejsState.mythic.scene;
 let chk = roll("sceneCheck", 10);
 if (chk <= window._tejsState.mythic.chaos)
 {
-	result += "\n****\n" +
+	result += "\n***\n" +
 		((chk % 2) ?
 		"Scene modified" :
 		( "Scene replaced\n" + eventCheck() + getDetails() ));
 }
-return result + "\n****\n__Setup__: ";
+return result + "\n***\n__Setup__: ";
 ```
 
 ~~
