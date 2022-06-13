@@ -1,6 +1,6 @@
 Shortcuts for UNE (The Universal NPC Emulator).
 
-Enter the shortcut "une help" for reference.
+Enter the shortcut "help une" for reference.
 
 ~~
 ^help une$

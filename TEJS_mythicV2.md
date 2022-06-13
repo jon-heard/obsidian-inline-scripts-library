@@ -1,7 +1,7 @@
 Shortcuts for Mythic Variations 2.
 Uses TEJS_state to save & load this shortcut file's state.
 
-Enter the shortcut "state help" for reference.
+Enter the shortcut "help mythic" for reference.
 
 ~~
 ^help mythic$

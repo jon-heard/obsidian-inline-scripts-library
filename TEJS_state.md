@@ -2,7 +2,7 @@ Shortcuts that let the user manage a state.  Effectively allows saving and loadi
 Also, shortcuts that let the user manage "clips" of text (stored in state).
 This shortcut file is used by other shortcut files to let them keep their states too.
 
-Enter the shortcut "state help" for reference.
+Enter the shortcut "help state" for reference.
 
 ~~
 ^help state$
