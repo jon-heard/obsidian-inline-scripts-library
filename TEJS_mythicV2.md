@@ -19,9 +19,10 @@ result += "***\n";
 result += "- __detail__ - Make a detail check.\n";
 result += "- __event__ - Make an event check.\n";
 result += "- __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.\n";
+result += "- __f {odds} {wanted}__ - Shorthand for \"fate  {odds} {wanted}\".\n";
 result += "- __meaning action__ - Roll on the action meaning table.\n";
-result += "- __meaning discription__ - Roll on the description meaning table.\n";
-result += "- __meaning__ - Roll on the action meaning table. (short for \"meaning action\")\n";
+result += "- __meaning description__ - Roll on the description meaning table.\n";
+result += "- __meaning__ - Shorthand for \"meaning action\".\n";
 result += "***\n";
 result += "- __list__ - Show all lists.\n";
 result += "- __list {listName}__ - Show all items in the list {listName}.\n";
@@ -31,7 +32,7 @@ result += "- __listremove {listName} {item}__ - Remove last instance of {item} f
 result += "- __listremoveall {listName}__ - Remove the entire list of {listName}.\n";
 result += "***\n";
 result += "- __scene__ - Show the current scene.\n";
-result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1 or -1), then increment the current scene.\n";
+result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene.\n";
 result += "- __chaos__ - Show the current chaos value.\n";
 result += "- __chaos++__ - Increase the chaos value by 1 (maximum of 6).\n";
 result += "- __chaos--__ - Decrease the chaos value by 1 (minimum of 3).\n";
@@ -70,7 +71,7 @@ window._tejsState.mythic.lists = {};
 window._tejsState.mythic.lists.pcs = [];
 window._tejsState.mythic.lists.npcs = [];
 window._tejsState.mythic.lists.threads = [];
-return "***\n\n\n### SCENE 1\n__Setup__: ";
+return [ "***\n\n\n### SCENE ", window._tejsState.mythic.scene, "\n__Setup__: " ];
 ```
 
 ~~
@@ -81,7 +82,7 @@ if ($1)
 {
 	window._tejsState.mythic.showDetails = ($1==" y");
 }
-return "Mythic details are " + (window._tejsState.mythic.showDetails ? "ENABLED" : "DISABLED") + "\n\n";
+return [ "Mythic details are ", (window._tejsState.mythic.showDetails ? "ENABLED" : "DISABLED"), "\n\n" ];
 ```
 
 ~~
@@ -115,17 +116,16 @@ function addDetails()
 	}
 	return arguments[arguments.length - 1];
 }
-function getDetails()
+function getDetails(sameLine)
 {
-	if (window._tejsMythicDetails.length == 0) { return; }
-	let result = "";
-	if (window._tejsState.mythic.showDetails)
-	{
-		result = "\n_" + window._tejsMythicDetails.join(" ") + "_";
-	}
-	return result;
+	if (!window._tejsState.mythic.showDetails) { return ""; }
+	if (window._tejsMythicDetails.length == 0) { return ""; }
+	return (sameLine?"":"\n") + "_" + window._tejsMythicDetails.join(" ") + "_";
 }
-function clearDetails() { window._tejsMythicDetails = []; }
+clearDetailsIfUserTriggered = () =>
+{
+	if (isUserTriggered) { window._tejsMythicDetails = []; }
+}
 function getChaosAdjust(multiplier)
 {
 	let chaos = window._tejsState.mythic.chaos;
@@ -138,13 +138,13 @@ function getChaosAdjust(multiplier)
 ^detail$
 ~~
 ```js
+clearDetailsIfUserTriggered();
 let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
-clearDetails();
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
 let list = window._tejsState.mythic.lists[result[2]];
 result = result[0] + ((list && list.length) ? (" (" + aPick(result[2], list) + ")") : "");
-return "__Detail__\n" + result + getDetails() + "\n\n";
+return [ "__Detail__\n", result, getDetails(), "\n\n" ];
 ```
 
 ~~
@@ -152,7 +152,7 @@ return "__Detail__\n" + result + getDetails() + "\n\n";
 ~~
 ```js
 let listNames = Object.keys(window._tejsState.mythic.lists);
-return "__Lists__\n" + (listNames.length ? listNames.join(", ") : "none") + "\n\n";
+return [ "__Lists__\n", (listNames.length ? listNames.join(", ") : "none"), "\n\n" ];
 ```
 
 ~~
@@ -160,7 +160,7 @@ return "__Lists__\n" + (listNames.length ? listNames.join(", ") : "none") + "\n\
 ~~
 ```js
 let list = window._tejsState.mythic.lists[$1];
-return "__List \"" + $1 + "\"__\n" + (list && list.length ? list.join(", ") : "none") + "\n\n";
+return [ "__List \"", $1, "\"__\n", (list && list.length ? list.join(", ") : "none"), "\n\n" ];
 ```
 
 ~~
@@ -169,20 +169,21 @@ return "__List \"" + $1 + "\"__\n" + (list && list.length ? list.join(", ") : "n
 ```js
 window._tejsState.mythic.lists[$1] ||= [];
 window._tejsState.mythic.lists[$1].push($2);
-return "\"" + $2 + "\" added to list \"" + $1 + "\".\n\n";
+return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 ```
 
 ~~
 ^listget ([a-zA-Z]+)$
 ~~
 ```js
+clearDetailsIfUserTriggered()
 let list = window._tejsState.mythic.lists[$1];
 if (list && list.length)
 {
 	let result = list[roll("pickRoll", list.length)-1];
-	return "\"" + result + "\" picked from list \"" + $1 + "\".\n\n";
+	return [ "\"", result, "\" picked from list \"", $1, "\".", getDetails(), "\n\n" ];
 }
-return "Failed to pick from list \"" + $1 + "\".  List is empty.\n\n";
+return [ "Failed to pick from list \"", $1, "\".  List is empty.\n\n" ];
 ```
 
 ~~
@@ -195,10 +196,10 @@ if (window._tejsState.mythic.lists[$1])
 	if (i >= 0)
 	{
 	    window._tejsState.mythic.lists[$1].splice(i, 1);
-	    return "\"" + $2 + "\" removed from list \"" + $1 + "\".\n\n";
+	    return [ "\"", $2, "\" removed from list \"", $1, "\".\n\n" ];
 	}
 }
-return "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  Not found in list.\n\n";
+return [ "Failed to remove \"", $2, "\" from list \"", $1, "\".  Not found in list.\n\n" ];
 ```
 
 ~~
@@ -208,16 +209,16 @@ return "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  Not found in 
 if (window._tejsState.mythic.lists[$1])
 {
 	delete window._tejsState.mythic.lists[$1];
-	return "List \"" + $1 + "\" removed.\n\n";
+	return [ "List \"", $1, "\" removed.\n\n" ];
 }
-return "Failed to remove list \"" + $1 + "\".  List does not exist.\n\n";
+return [ "Failed to remove list \"", $1, "\".  List does not exist.\n\n" ];
 ```
 
 ~~
 ^chaos$
 ~~
 ```js
-return "Chaos is " + window._tejsState.mythic.chaos + ".\n\n";
+return [ "Chaos is ", window._tejsState.mythic.chaos, ".\n\n" ];
 ```
 
 ~~
@@ -225,157 +226,132 @@ return "Chaos is " + window._tejsState.mythic.chaos + ".\n\n";
 ~~
 ```js
 window._tejsState.mythic.chaos = $1;
-return "Chaos set to " + $1 + ".\n\n";
-```
-
-~~
-~~
-```js
-function chaosDown()
-{
-	window._tejsState.mythic.chaos--;
-	if (window._tejsState.mythic.chaos < 3)
-	{
-		window._tejsState.mythic.chaos = 3;
-		return "Chaos remains at 3 (minimum).\n\n";
-	}
-	return "Chaos lowered to " + window._tejsState.mythic.chaos + ".\n\n";
-}
-function chaosUp()
-{
-	window._tejsState.mythic.chaos++;
-	if (window._tejsState.mythic.chaos > 6)
-	{
-		window._tejsState.mythic.chaos = 6;
-		return "Chaos remains at 6 (maximum).\n\n";
-	}
-	return "Chaos raised to " + window._tejsState.mythic.chaos + ".\n\n";
-}
+return [ "Chaos set to ", $1, ".\n\n" ];
 ```
 
 ~~
 ^chaos--$
 ~~
 ```js
-return chaosDown();
+window._tejsState.mythic.chaos--;
+if (window._tejsState.mythic.chaos < 3)
+{
+	window._tejsState.mythic.chaos = 3;
+	return [ "Chaos remains at 3 (minimum).", "\n\n" ];
+}
+return [ "Chaos is lowered to " + window._tejsState.mythic.chaos + ".", "\n\n" ];
 ```
 
 ~~
 ^chaos\+\+$
 ~~
 ```js
-return chaosUp();
-```
-
-~~
-~~
-```js
-function rollAction()
+window._tejsState.mythic.chaos++;
+if (window._tejsState.mythic.chaos > 6)
 {
-	let value1 = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
-	let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
-	return aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", value2);
+	window._tejsState.mythic.chaos = 6;
+	return [ "Chaos remains at 6 (maximum).", "\n\n" ];
 }
+return [ "Chaos is raised to " + window._tejsState.mythic.chaos + ".", "\n\n" ];
 ```
 
 ~~
 ^meaning(| action)$
 ~~
 ```js
-clearDetails();
-return "__Meaning (action)__\n" + rollAction() + getDetails() + "\n\n";
-```
-
-~~
-~~
-```js
-function rollDescription()
-{
-	let value1 = ["ABNORMALLY","ADVENTUROUSLY","AGGRESSIVELY","ANGRILY","ANXIOUSLY","AWKWARDLY","BEAUTIFULLY","BLEAKLY","BOLDLY","BRAVELY","BUSILY","CALMLY","CAREFULLY","CARELESSLY","CAUTIOUSLY","CEASELESSLY","CHEERFULLY","COMBATIVELY","COOLLY","CRAZILY","CURIOUSLY","DAINTILY","DANGEROUSLY","DEFIANTLY","DELIBERATELY","DELIGHTFULLY","DIMLY","EFFICIENTLY","ENERGETICALLY","ENORMOUSLY","ENTHUSIASTICALLY","EXCITEDLY","FEARFULLY","FEROCIOUSLY","FIERCELY","FOOLISHLY","FORTUNATELY","FRANTICALLY","FREELY","FRIGHTENINGLY","FULLY","GENEROUSLY","GENTLY","GLADLY","GRACEFULLY","GRATEFULLY","HAPPILY","HASTILY","HEALTHILY","HELPFULLY","HELPLESSLY","HOPELESSLY","INNOCENTLY","INTENSELY","INTERESTINGLY","IRRITATINGLY","JOVIALLY","JOYFULLY","JUDGEMENTALLY","KINDLY","KOOKILY","LAZILY","LIGHTLY","LOOSELY","LOUDLY","LOVINGLY","LOYALLY","MAJESTICALLY","MEANINGFULLY","MECHANICALLY","MISERABLY","MOCKINGLY","MYSTERIOUSLY","NATURALLY","NEATLY","NICELY","ODDLY","OFFENSIVELY","OFFICIALLY","PARTIALLY","PEACEFULLY","PERFECTLY","PLAYFULLY","POLITELY","POSITIVELY","POWERFULLY","QUAINTLY","QUARRELSOMELY","QUIETLY","ROUGHLY","RUDELY","RUTHLESSLY","SLOWLY","SOFTLY","SWIFTLY","THREATENINGLY","VERY","VIOLENTLY","WILDLY","YIELDINGLY"];
-	let value2 = ["ABANDONED","ABNORMAL","AMUSING","ANCIENT","AROMATIC","AVERAGE","BEAUTIFUL","BIZARRE","CLASSY","CLEAN","COLD","COLORFUL","CREEPY","CUTE","DAMAGED","DARK","DEFEATED","DELICATE","DELIGHTFUL","DIRTY","DISAGREEABLE","DISGUSTING","DRAB","DRY","DULL","EMPTY","ENORMOUS","EXOTIC","FADED","FAMILIAR","FANCY","FAT","FEEBLE","FEMININE","FESTIVE","FLAWLESS","FRESH","FULL","GLORIOUS","GOOD","GRACEFUL","HARD","HARSH","HEALTHY","HEAVY","HISTORICAL","HORRIBLE","IMPORTANT","INTERESTING","JUVENILE","LACKING","LAME","LARGE","LAVISH","LEAN","LESS","LETHAL","LONELY","LOVELY","MACABRE","MAGNIFICENT","MASCULINE","MATURE","MESSY","MIGHTY","MILITARY","MODERN","EXTRAVAGANT","MUNDANE","MYSTERIOUS","NATURAL","NONDESCRIPT","ODD","PALE","PETITE","POOR","POWERFUL","QUAINT","RARE","REASSURING","REMARKABLE","ROTTEN","ROUGH","RUINED","RUSTIC","SCARY","SIMPLE","SMALL","SMELLY","SMOOTH","SOFT","STRONG","TRANQUIL","UGLY","VALUABLE","WARLIKE","WARM","WATERY","WEAK","YOUNG"];
-	return aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", value2);
-}
+clearDetailsIfUserTriggered();
+let value1 = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
+let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
+let result = aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", value2);
+return [ "__Meaning (action)__\n", result, getDetails(), "\n\n" ];
 ```
 
 ~~
 ^meaning description$
 ~~
 ```js
-clearDetails();
-return "__Meaning (description)__\n" +rollDescription() + getDetails() + "\n\n";
-```
-
-~~
-~~
-```js
-function eventCheck()
-{
-	let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pc",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
-	let result = aPickWeight("eventRoll", outcomes);
-	let meaningType = result[3];
-	let list = window._tejsState.mythic.lists[result[2]];
-	result = result[0] + ((list && list.length) ? (" (" + aPick(result[2], list) + ")") : "");
-	return "__Event__\n" + result + " - " + (meaningType ? rollDescription() : rollAction());
-}
+clearDetailsIfUserTriggered();
+let value1 = ["ABNORMALLY","ADVENTUROUSLY","AGGRESSIVELY","ANGRILY","ANXIOUSLY","AWKWARDLY","BEAUTIFULLY","BLEAKLY","BOLDLY","BRAVELY","BUSILY","CALMLY","CAREFULLY","CARELESSLY","CAUTIOUSLY","CEASELESSLY","CHEERFULLY","COMBATIVELY","COOLLY","CRAZILY","CURIOUSLY","DAINTILY","DANGEROUSLY","DEFIANTLY","DELIBERATELY","DELIGHTFULLY","DIMLY","EFFICIENTLY","ENERGETICALLY","ENORMOUSLY","ENTHUSIASTICALLY","EXCITEDLY","FEARFULLY","FEROCIOUSLY","FIERCELY","FOOLISHLY","FORTUNATELY","FRANTICALLY","FREELY","FRIGHTENINGLY","FULLY","GENEROUSLY","GENTLY","GLADLY","GRACEFULLY","GRATEFULLY","HAPPILY","HASTILY","HEALTHILY","HELPFULLY","HELPLESSLY","HOPELESSLY","INNOCENTLY","INTENSELY","INTERESTINGLY","IRRITATINGLY","JOVIALLY","JOYFULLY","JUDGEMENTALLY","KINDLY","KOOKILY","LAZILY","LIGHTLY","LOOSELY","LOUDLY","LOVINGLY","LOYALLY","MAJESTICALLY","MEANINGFULLY","MECHANICALLY","MISERABLY","MOCKINGLY","MYSTERIOUSLY","NATURALLY","NEATLY","NICELY","ODDLY","OFFENSIVELY","OFFICIALLY","PARTIALLY","PEACEFULLY","PERFECTLY","PLAYFULLY","POLITELY","POSITIVELY","POWERFULLY","QUAINTLY","QUARRELSOMELY","QUIETLY","ROUGHLY","RUDELY","RUTHLESSLY","SLOWLY","SOFTLY","SWIFTLY","THREATENINGLY","VERY","VIOLENTLY","WILDLY","YIELDINGLY"];
+let value2 = ["ABANDONED","ABNORMAL","AMUSING","ANCIENT","AROMATIC","AVERAGE","BEAUTIFUL","BIZARRE","CLASSY","CLEAN","COLD","COLORFUL","CREEPY","CUTE","DAMAGED","DARK","DEFEATED","DELICATE","DELIGHTFUL","DIRTY","DISAGREEABLE","DISGUSTING","DRAB","DRY","DULL","EMPTY","ENORMOUS","EXOTIC","FADED","FAMILIAR","FANCY","FAT","FEEBLE","FEMININE","FESTIVE","FLAWLESS","FRESH","FULL","GLORIOUS","GOOD","GRACEFUL","HARD","HARSH","HEALTHY","HEAVY","HISTORICAL","HORRIBLE","IMPORTANT","INTERESTING","JUVENILE","LACKING","LAME","LARGE","LAVISH","LEAN","LESS","LETHAL","LONELY","LOVELY","MACABRE","MAGNIFICENT","MASCULINE","MATURE","MESSY","MIGHTY","MILITARY","MODERN","EXTRAVAGANT","MUNDANE","MYSTERIOUS","NATURAL","NONDESCRIPT","ODD","PALE","PETITE","POOR","POWERFUL","QUAINT","RARE","REASSURING","REMARKABLE","ROTTEN","ROUGH","RUINED","RUSTIC","SCARY","SIMPLE","SMALL","SMELLY","SMOOTH","SOFT","STRONG","TRANQUIL","UGLY","VALUABLE","WARLIKE","WARM","WATERY","WEAK","YOUNG"];
+let result = aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", value2);
+return [ "__Meaning (description)__\n", result, getDetails(), "\n\n" ];
 ```
 
 ~~
 ^event$
 ~~
 ```js
-clearDetails();
-return eventCheck() + getDetails() + "\n\n";
+clearDetailsIfUserTriggered();
+let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pcs",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
+let result = aPickWeight("eventRoll", outcomes);
+let meaningType = result[3];
+let list = window._tejsState.mythic.lists[result[2]];
+result = result[0] + ((list && list.length) ? (" (" + aPick(result[2] + "List", list) + ")") : "");
+result = result + " - " + getExpansion("meaning " + (meaningType ? "description" : "action"))[1];
+return [ "__Event__\n", result, getDetails(), "\n\n"];
 ```
 
 ~~
 ^scene$
 ~~
 ```js
-return "The current scene is " + window._tejsState.mythic.scene + ".\n\n";
+return [ "The current scene is ", window._tejsState.mythic.scene, ".\n\n" ];
 ```
 
 ~~
-^scene (1|-1)$
+^scene (1|-1|0)$
 ~~
 ```js
-clearDetails();
+clearDetailsIfUserTriggered();
 let result = "";
 if ($1 == 1)
 {
-	result += chaosUp();
+	result += getExpansion("chaos++")[0] + "\n";
 }
 else if ($1 == -1)
 {
-	result += chaosDown();
+	result += getExpansion("chaos--")[0] + "\n";
 }
 result += "***\n\n\n\n";
 window._tejsState.mythic.scene++;
 result += "### SCENE " + window._tejsState.mythic.scene;
+let sceneCheckResults = "";
 let chk = roll("sceneCheck", 10);
 if (chk <= window._tejsState.mythic.chaos)
 {
-	result += "\n***\n" +
+	sceneCheckResults =
 		((chk % 2) ?
-		"Scene modified" :
-		( "Scene replaced\n" + eventCheck() + getDetails() ));
+		 "__Scene modified__" :
+		 ("__Scene replaced__\n__Event__ - " +
+		  getExpansion("event")[1])) +
+		sceneCheckResults;
 }
-return result + "\n***\n__Setup__: ";
+let details = getDetails(!sceneCheckResults);
+if (details)
+{
+	sceneCheckResults += details;
+}
+if (sceneCheckResults)
+{
+	sceneCheckResults = "\n***\n" + sceneCheckResults;
+}
+return [ result, sceneCheckResults, "\n***\n__Setup__: " ];
 ```
 
 ~~
-^fate((?: -?[0-4])?)((?: [y|n])?)$
+^f(?:ate)?[ ]?(|[0-4]|(?:-[0-4]))[ ]?([y|n]?)$
 ~~
 ```js
-clearDetails();
+clearDetailsIfUserTriggered();
 let odds = ["impossible","no way","very unlikely","unlikely","50/50","likely","very likely","sure thing","has to be"];
 $1 = Number($1 || 0);
 let fateRoll1 = roll("fateRoll1", 10);
-let fateRoll2 = roll("fateRoll1", 10);
+let fateRoll2 = roll("fateRoll2", 10);
 let chaosRoll = roll("chaosRoll", 10);
 let result =
 	fateRoll1 + fateRoll2 +
 	addDetails("oddsAdjust", $1 * 2) +
-	getChaosAdjust($2 == " n" ? -1 : 1);
+	getChaosAdjust($2 == "n" ? -1 : 1);
 result = result > 10 ? "YES" : "NO";
 
 let chaos = window._tejsState.mythic.chaos;
@@ -384,48 +360,48 @@ let isEvent = (chaosRoll <= chaos) && !(fateRoll1 % 2) && !(fateRoll2 % 2);
 if (chaosRoll < chaos && fateRoll1 == fateRoll2) isExtreme = isEvent = true;
 
 result = (isExtreme ? "EXTREME " : "") + result;
-let evtText = isEvent ? ( "\n" + eventCheck() ) : "";
-return "__Fate check (" + odds[$1+4] + ")__\n" +result + evtText + getDetails() + "\n\n";
+let evtText = isEvent ? ( "\n__Event__ - " + getExpansion("event")[1] ) : "";
+return [ "__Fate check (", odds[$1+4], ")__\n", result, evtText, getDetails(), "\n\n" ];
 ```
 
 ~~
 ^descriptor$
 ~~
 ```js
-clearDetails();
-return "__Descriptor__\nPersonality: " + rollDescription() + "\nActivity: " + rollAction() + getDetails() + "\n\n";
+clearDetailsIfUserTriggered();
+return [ "__Descriptor__\n", "Personality: ", getExpansion("meaning description")[1], "\nActivity: ", getExpansion("meaning action")[1], getDetails(), "\n\n" ];
 ```
 
 ~~
 ^disposition (-?[0-3])$
 ~~
 ```js
-clearDetails();
+clearDetailsIfUserTriggered();
 let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
 let base = roll("roll1", 10) + roll("roll2", 10);
 let result = base + addDetails("descriptorAdjust", Number($1) * 2);
 result = aPickWeight("", outcomes, 1, result)[0] + " - BASE=" + base;
-return "__Disposition__\n" + result + getDetails() + "\n\n";
+return [ "__Disposition__\n", result, getDetails(), "\n\n" ];
 ```
 
 ~~
 ^disposition ([0-2]?[0-9]) (-?[0-3])$
 ~~
 ```js
-clearDetails();
+clearDetailsIfUserTriggered();
 let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
 let result =
 		addDetails("base", Number($1)) +
 		addDetails("descriptorAdjust", Number($2) * 2);
 result = aPickWeight("", outcomes, 1, result);
-return "__Disposition__\n" + result[0] + getDetails() + "\n\n";
+return [ "__Disposition__\n", result[0], getDetails(), "\n\n" ];
 ```
 
 ~~
 ^action (-2|0|2|4)$
 ~~
 ```js
-clearDetails();
+clearDetailsIfUserTriggered();
 let outcomes1 = [ ["NEW ACTION BASED ON THEME",3],["CONTINUE CURRENT ACTION",5],["CONTINUE CURRENT ACTION, +2 DISPOSITION",6],["CONTINUE CURRENT ACTION, -2 DISPOSITION",7],[false,8,0],[false,9,-4],[false,10,4] ];
 let outcomes2 = [ ["TALK / EXPOSITION",6],["NEUTRAL, DISCONNECTED ACTION",8],["ACTION BENEFITS THE PC",10],["GIVE SOMETHING TO THE PC",11],["TRY TO END ENCOUNTER",12],["CHANGE THEME",13],["CHANGE \"%1\" DESCRIPTOR. IT IS ACTIVATED & DECIDES NEXT ACTION.",14,true],["ACT OUT OF SELF INTEREST",17],["TAKE SOMETHING",18],["HURT THE PC",99] ];
 let descriptors = ["IDENTITY","PERSONALITY","ACTIVITY"];
@@ -443,5 +419,5 @@ if (!result[0])
 	}
 	result[0] += "\n+2/0/-2 DISPOSITION TO MATCH ACTION.";
 }
-return "__Action__\n" + result[0] + getDetails() + "\n\n";
+return [ "__Action__\n", result[0], getDetails(), "\n\n" ];
 ```

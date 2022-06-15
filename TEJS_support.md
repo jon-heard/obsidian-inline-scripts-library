@@ -9,18 +9,37 @@ Enter the shortcut "help support" for reference.
 let result = "### TEJS SUPPORT SHORTCUTS HELP\n";
 result += "- __help support__ - Display this help text.\n";
 result += "***\n";
-result += "- __rngseed {seed}__ - Sets up a consistant random number generator with a seed of {seed} (a non-zero integer).  Useful for testing.\n";
+result += "- __rngseed {seed}__ - Sets Math.random to a custom random number generator with a seed of {seed} (a non-zero integer).  Useful for testing.  If {seed} is omitted, random number generator is returned to javascript default.\n";
 return result + "\n";
 ```
 
 ~~
-^rngseed ([1-9][0-9]*)$
+^rngseed((?: [1-9][0-9]*)?)$
 ~~
 ```js
-Math.rngseed = $1;
-Math.random = function() {
-    var x = Math.sin(Math.rngseed++) * 10000;
-    return x - Math.floor(x);
-};
-return "Random number generator set up with seed " + $1 + ".\n\n";
+if ($1)
+{
+	if (!Math._oldRandom)
+	{
+		Math._oldRandom = Math.random;
+		Math.random = function()
+		{
+			var x = Math.sin(Math.rngseed++) * 10000;
+			return x - Math.floor(x);
+		};
+	}
+	Math.rngseed = $1;
+	return "Random number generator set up with seed '" + $1 + "'.\n\n";
+}
+else
+{
+	if (Math._oldRandom)
+	{
+		Math.random = Math._oldRandom;
+		delete Math._oldRandom;
+		delete Math.rngsed;
+		return "Random number generator reverted to javascript default.\n\n";
+	}
+	return "Random number generator unchanged.\n\n";
+}
 ```
