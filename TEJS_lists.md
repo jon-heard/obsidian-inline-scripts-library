@@ -16,11 +16,11 @@ result += "***\n";
 result += "- __lists__ - Show all lists.\n";
 result += "- __lists {listName}__ - Show all items in the list {listName}.\n";
 result += "- __listsadd {listName} {item}__ - Add {item} to the end of the basic-list {listName}.  Cannot add to folder-lists or combo-lists.\n";
-result += "- __listsaddfolder {listName} {folder}__ - Create a folder-list named {listName} that is linked to the folder {folder}.  A \"folder-list\" is a list who's items are the names of the files in the linked folder.\n";
-result += "- __listsaddcombo {listName} {subList1} {subList2}...__ - Create a combo-list named {listName} that is linked to the sublists given as {subList1}, {subList2}, etc.  A \"combo-list\" is a list who's items are all the items of its linked sublists.\n";
 result += "- __listsget {listName}__ - Get a random item from the list {listName}.\n";
 result += "- __listsremove {listName} {item}__ - Remove last instance of {item} from the basic-list {listName}.  Cannot remove from folder-lists or combo-lists.\n";
 result += "- __listsremovelist {listName}__ - Remove the entire list {listName}.\n";
+result += "- __listsaddfolder {listName} {folder}__ - Create a folder-list named {listName} that is linked to the folder {folder}.  A \"folder-list\" is a list who's items are the names of the files in the linked folder.\n";
+result += "- __listsaddcombo {listName} {subList1} {subList2}...__ - Create a combo-list named {listName} that is linked to the sublists given as {subList1}, {subList2}, etc.  A \"combo-list\" is a list who's items are all the items of its linked sublists.\n";
 return result + "\n";
 ```
 
