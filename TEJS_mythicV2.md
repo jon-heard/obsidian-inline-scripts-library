@@ -58,9 +58,9 @@ window._tejsState.mythic.chaos ||= 4;
 window._tejsState.mythic.scene ||= 1;
 window._tejsState.mythic.showDetails ||= false;
 window._tejsState.lists ||= {};
-window._tejsState.lists.pcs ||= [];
-window._tejsState.lists.npcs ||= [];
-window._tejsState.lists.threads ||= [];
+window._tejsState.lists.pcs ||= { type: "basic", content: [] };
+window._tejsState.lists.npcs ||= { type: "basic", content: [] };
+window._tejsState.lists.threads ||= { type: "basic", content: [] };
 window._tejsMythicDetails = [];
 ```
 
@@ -74,9 +74,9 @@ window._tejsMythicDetails = [];
 window._tejsState.mythic.chaos= 4;
 window._tejsState.mythic.scene = 1;
 window._tejsState.lists ||= {};
-window._tejsState.lists.pcs = [];
-window._tejsState.lists.npcs = [];
-window._tejsState.lists.threads = [];
+window._tejsState.lists.pcs = { type: "basic", content: [] };
+window._tejsState.lists.npcs = { type: "basic", content: [] };
+window._tejsState.lists.threads = { type: "basic", content: [] };
 return [ "***\n\n\n### SCENE ", window._tejsState.mythic.scene, "\n__Setup__: " ];
 ```
 
