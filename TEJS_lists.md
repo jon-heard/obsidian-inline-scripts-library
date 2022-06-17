@@ -46,6 +46,7 @@ window._tejsState.lists = {};
 return "All lists cleared.\n\n";
 ```
 
+
 ~~
 ```
 ^lists$
@@ -97,6 +98,7 @@ window._tejsState.lists[$1].content.sort();
 return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 ```
 
+
 ~~
 ```
 ^listsaddfolder ([a-zA-Z]+) (.+)$
@@ -120,6 +122,7 @@ window._tejsState.lists[$1] = { type: "combo", content: links };
 return [ "List \"", $1, "\" added as a combo-list linked to: ", links.join(", "), ".\n\n" ];
 ```
 
+
 ~~
 ```
 ^listsremove ([a-zA-Z]+) ([a-zA-Z ]+)$
@@ -141,6 +144,7 @@ if (window._tejsState.lists[$1])
 }
 return [ "Failed to remove \"", $2, "\" from list \"", $1, "\".  Not found in list.\n\n" ];
 ```
+
 
 ~~
 ~~
@@ -177,6 +181,7 @@ function getListItems(name)
 	return result;
 }
 ```
+
 
 ~~
 ```

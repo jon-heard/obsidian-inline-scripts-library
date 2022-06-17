@@ -170,6 +170,7 @@ return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
 return [];
 ```
 
+
 ~~
 ```
 ^chaos$
