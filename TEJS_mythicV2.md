@@ -158,9 +158,9 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
-let list = window._tejsState.mythic.lists[result[2]];
-result = result[0] + ((list && list.length) ? (" (" + aPick(result[2], list) + ")") : "");
-return [ "__Detail__\n", result, getDetails(), "\n\n" ];
+let focus = getExpansion("listget " + (result[2] || ""));
+focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
+return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
 ```
 
 
@@ -200,7 +200,7 @@ return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 
 ~~
 ```
-^listget ([a-zA-Z]+)$
+^listget ([a-zA-Z]*)$
 ```
 ~~
 ```js
@@ -339,11 +339,10 @@ return [ "__Meaning (description)__\n", result, getDetails(), "\n\n" ];
 clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pcs",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight("eventRoll", outcomes);
-let meaningType = result[3];
-let list = window._tejsState.mythic.lists[result[2]];
-result = result[0] + ((list && list.length) ? (" (" + aPick(result[2] + "List", list) + ")") : "");
-result = result + " - " + getExpansion("meaning " + (meaningType ? "description" : "action"))[1];
-return [ "__Event__\n", result, getDetails(), "\n\n"];
+let focus = getExpansion("listget " + (result[2] || ""));
+focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
+let meaning = getExpansion("meaning " + (result[3] ? "description" : "action"))[1];
+return [ "__Event__\n", result[0], focus, " - ", meaning, getDetails(), "\n\n"];
 ```
 
 
