@@ -1,5 +1,7 @@
 Shortcuts for Mythic Variations 2.
-Uses TEJS_state to save & load this shortcut file's state.
+Uses `TEJS_state` shortcut-list to save & load this shortcut file's state.
+Uses `TEJS_lists` shortcut-list for pcs, npcs and threads lists.
+Both of those shortcut-files should be placed before this one in the settings.
 
 Enter the shortcut "help mythic" for reference.
 
@@ -27,12 +29,7 @@ result += "- __meaning action__ - Roll on the action meaning table.\n";
 result += "- __meaning description__ - Roll on the description meaning table.\n";
 result += "- __meaning__ - Shorthand for \"meaning action\".\n";
 result += "***\n";
-result += "- __list__ - Show all lists.\n";
-result += "- __list {listName}__ - Show all items in the list {listName}.\n";
-result += "- __listadd {listName} {item}__ - Add {item} to the end of the list {listName}.\n";
-result += "- __listget {listName}__ - Get a random item from the list named {listName}.\n";
-result += "- __listremove {listName} {item}__ - Remove last instance of {item} from the list {listName}.\n";
-result += "- __listremoveall {listName}__ - Remove the entire list of {listName}.\n";
+result += "- __listget {listName}__ - A stub in case TEJS_lists shortcut-file isn't available.\n";
 result += "***\n";
 result += "- __scene__ - Show the current scene.\n";
 result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene.\n";
@@ -60,10 +57,10 @@ window._tejsState.mythic ||= {};
 window._tejsState.mythic.chaos ||= 4;
 window._tejsState.mythic.scene ||= 1;
 window._tejsState.mythic.showDetails ||= false;
-window._tejsState.mythic.lists ||= {};
-window._tejsState.mythic.lists.pcs ||= [];
-window._tejsState.mythic.lists.npcs ||= [];
-window._tejsState.mythic.lists.threads ||= [];
+window._tejsState.lists ||= {};
+window._tejsState.lists.pcs ||= [];
+window._tejsState.lists.npcs ||= [];
+window._tejsState.lists.threads ||= [];
 window._tejsMythicDetails = [];
 ```
 
@@ -76,10 +73,10 @@ window._tejsMythicDetails = [];
 ```js
 window._tejsState.mythic.chaos= 4;
 window._tejsState.mythic.scene = 1;
-window._tejsState.mythic.lists = {};
-window._tejsState.mythic.lists.pcs = [];
-window._tejsState.mythic.lists.npcs = [];
-window._tejsState.mythic.lists.threads = [];
+window._tejsState.lists ||= {};
+window._tejsState.lists.pcs = [];
+window._tejsState.lists.npcs = [];
+window._tejsState.lists.threads = [];
 return [ "***\n\n\n### SCENE ", window._tejsState.mythic.scene, "\n__Setup__: " ];
 ```
 
@@ -166,88 +163,12 @@ return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
 
 ~~
 ```
-^list$
-```
-~~
-```js
-let listNames = Object.keys(window._tejsState.mythic.lists);
-return [ "__Lists__\n", (listNames.length ? listNames.join(", ") : "none"), "\n\n" ];
-```
-
-
-~~
-```
-^list ([a-zA-Z]+)$
-```
-~~
-```js
-let list = window._tejsState.mythic.lists[$1];
-return [ "__List \"", $1, "\"__\n", (list && list.length ? list.join(", ") : "none"), "\n\n" ];
-```
-
-
-~~
-```
-^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$
-```
-~~
-```js
-window._tejsState.mythic.lists[$1] ||= [];
-window._tejsState.mythic.lists[$1].push($2);
-return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
-```
-
-
-~~
-```
 ^listget ([a-zA-Z]*)$
 ```
 ~~
 ```js
-clearDetailsIfUserTriggered()
-let list = window._tejsState.mythic.lists[$1];
-if (list && list.length)
-{
-	let result = list[roll("pickRoll", list.length)-1];
-	return [ "\"", result, "\" picked from list \"", $1, "\".", getDetails(), "\n\n" ];
-}
-return [ "Failed to pick from list \"", $1, "\".  List is empty.\n\n" ];
+return [];
 ```
-
-
-~~
-```
-^listremove ([a-zA-Z]+) ([a-zA-Z ]+)$
-```
-~~
-```js
-if (window._tejsState.mythic.lists[$1])
-{
-	let i = window._tejsState.mythic.lists[$1].lastIndexOf($2);
-	if (i >= 0)
-	{
-	    window._tejsState.mythic.lists[$1].splice(i, 1);
-	    return [ "\"", $2, "\" removed from list \"", $1, "\".\n\n" ];
-	}
-}
-return [ "Failed to remove \"", $2, "\" from list \"", $1, "\".  Not found in list.\n\n" ];
-```
-
-
-~~
-```
-^listremoveall ([a-zA-Z]+)$
-```
-~~
-```js
-if (window._tejsState.mythic.lists[$1])
-{
-	delete window._tejsState.mythic.lists[$1];
-	return [ "List \"", $1, "\" removed.\n\n" ];
-}
-return [ "Failed to remove list \"", $1, "\".  List does not exist.\n\n" ];
-```
-
 
 ~~
 ```
