@@ -42,6 +42,7 @@ window._tejsState.lists ||= {};
 ```
 ~~
 ```js
+window._tejsState ||= {};
 window._tejsState.lists = {};
 return "All lists cleared.\n\n";
 ```

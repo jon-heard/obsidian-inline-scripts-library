@@ -17,6 +17,7 @@ Enter the shortcut "help state" for reference.
 ```js
 let result = "### TEJS STATE SHORTCUTS HELP\n";
 result += "- __help state__ - Display this help text.\n";
+result += "- __reset state__ - Clear all state.\n";
 result += "***\n";
 result += "- __state__ - Expands to the current state (for session saving).\n";
 result += "- __state {state}__ - Sets the current state based on {state}: a string created previously with the \"state\" shortcut.\n";
@@ -39,6 +40,16 @@ window._tejsState ||= {};
 window._tejsState.clips ||= {};
 ```
 
+
+~~
+```
+^reset state$
+```
+~~
+```js
+window._tejsState = {};
+window._tejsState.clips = {};
+```
 
 ~~
 ```

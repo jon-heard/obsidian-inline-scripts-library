@@ -28,6 +28,7 @@ This shortcut-file includes shortcuts that let the user manage a session state. 
 This shortcut-file also includes shortcuts that let the user manage "clips" of text.
 
 - __help state__ - Display this help text.
+- __reset state__ - Clear all state.
 - __state__ - Expands to the current state (for session saving).
 - __state {state}__ - Sets the current state based on {state}: a string created previously with the "state" shortcut.
 - __clip__ - List all stored clips.

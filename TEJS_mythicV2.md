@@ -72,7 +72,9 @@ window._tejsMythicDetails = [];
 ```
 ~~
 ```js
-window._tejsState.mythic.chaos= 4;
+window._tejsState ||= {};
+window._tejsState.mythic ||= {};
+window._tejsState.mythic.chaos = 4;
 window._tejsState.mythic.scene = 1;
 window._tejsState.lists ||= {};
 window._tejsState.lists.pcs = { type: "basic", content: [] };
