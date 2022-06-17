@@ -1,6 +1,10 @@
-Shortcuts that let the user manage a session state.  Effectively allows saving and loading data between sessions.
-Also, shortcuts that let the user manage "clips" of text (stored in session state).
-This shortcut file is used by other shortcut files to let them keep their states too.
+This shortcut-file includes shortcuts that let the user manage a session state.  Effectively allows saving and restoring data between sessions.  
+
+This shortcut-file also includes shortcuts that let the user manage "clips" of text.
+
+This shortcut file can be used by other shortcut files to help them save/restore their states.
+
+To save the session state, use the "state" shortcut (no parameters).  This expands to a "state string", which represents the current session state, which you can leave as part of the note.  To load the session state, copy the state string and pass it into the "state" shortcut.
 
 Enter the shortcut "help state" for reference.
 
