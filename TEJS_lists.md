@@ -74,6 +74,7 @@ return [ "__List \"", $1, "\"__\n", (list && list.length ? list.join(", ") : "no
 ```js
 window._tejsState.lists[$1] ||= [];
 window._tejsState.lists[$1].push($2);
+window._tejsState.lists[$1].sort();
 return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 ```
 
