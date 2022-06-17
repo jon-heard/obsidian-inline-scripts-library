@@ -49,6 +49,7 @@ window._tejsState.clips ||= {};
 ```js
 window._tejsState = {};
 window._tejsState.clips = {};
+return "All state cleared.\n\n";
 ```
 
 ~~
