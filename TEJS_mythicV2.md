@@ -1,6 +1,7 @@
 Shortcuts for Mythic Variations 2.
-Uses `TEJS_state` shortcut-list to save & load this shortcut file's state.
-Uses `TEJS_lists` shortcut-list for pcs, npcs and threads lists.
+
+Uses __TEJS_state__ shortcut-list to save & load this shortcut file's state.
+Uses __TEJS_lists__ shortcut-list for pcs, npcs and threads lists.
 Both of those shortcut-files should be placed before this one in the settings.
 
 Enter the shortcut "help mythic" for reference.
