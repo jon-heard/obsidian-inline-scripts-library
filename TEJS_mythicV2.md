@@ -265,7 +265,7 @@ let result = aPickWeight("eventRoll", outcomes);
 let focus = getExpansion("listsget " + (result[2] || ""));
 focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
 let meaning = getExpansion("meaning " + (result[3] ? "description" : "action"))[1];
-return [ "__Event__\n", result[0], focus, " - ", meaning, getDetails(), "\n\n"];
+return [ "__Event__\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n"];
 ```
 
 
