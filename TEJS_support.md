@@ -2,8 +2,11 @@ Various helper shortcuts of minimal category.
 
 Enter the shortcut "help support" for reference.
 
+
 ~~
+```
 ^help support$
+```
 ~~
 ```js
 let result = "### TEJS SUPPORT SHORTCUTS HELP\n";
@@ -13,8 +16,11 @@ result += "- __rngseed {seed}__ - Sets Math.random to a custom random number gen
 return result + "\n";
 ```
 
+
 ~~
+```
 ^rngseed((?: [1-9][0-9]*)?)$
+```
 ~~
 ```js
 if ($1)

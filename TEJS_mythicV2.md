@@ -3,8 +3,11 @@ Uses TEJS_state to save & load this shortcut file's state.
 
 Enter the shortcut "help mythic" for reference.
 
+
 ~~
+```
 ^help mythic$
+```
 ~~
 ```js
 let result = "### MYTHIC SHORTCUTS HELP\n";
@@ -45,8 +48,11 @@ result += "- __action {dispositionAdjust}__ - Makes an NPC behavior check, modif
 return result + "\n";
 ```
 
+
 ~~
+```
 ^tejs setup$
+```
 ~~
 ```js
 window._tejsState ||= {};
@@ -61,8 +67,11 @@ window._tejsState.mythic.lists.threads ||= [];
 window._tejsMythicDetails = [];
 ```
 
+
 ~~
+```
 ^reset mythic$
+```
 ~~
 ```js
 window._tejsState.mythic.chaos= 4;
@@ -74,8 +83,11 @@ window._tejsState.mythic.lists.threads = [];
 return [ "***\n\n\n### SCENE ", window._tejsState.mythic.scene, "\n__Setup__: " ];
 ```
 
+
 ~~
+```
 ^mythic details((?: [y|n])?)$
+```
 ~~
 ```js
 if ($1)
@@ -84,6 +96,7 @@ if ($1)
 }
 return [ "Mythic details are ", (window._tejsState.mythic.showDetails ? "ENABLED" : "DISABLED"), "\n\n" ];
 ```
+
 
 ~~
 ~~
@@ -134,8 +147,11 @@ function getChaosAdjust(multiplier)
 }
 ```
 
+
 ~~
+```
 ^detail$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -147,24 +163,33 @@ result = result[0] + ((list && list.length) ? (" (" + aPick(result[2], list) + "
 return [ "__Detail__\n", result, getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^list$
+```
 ~~
 ```js
 let listNames = Object.keys(window._tejsState.mythic.lists);
 return [ "__Lists__\n", (listNames.length ? listNames.join(", ") : "none"), "\n\n" ];
 ```
 
+
 ~~
+```
 ^list ([a-zA-Z]+)$
+```
 ~~
 ```js
 let list = window._tejsState.mythic.lists[$1];
 return [ "__List \"", $1, "\"__\n", (list && list.length ? list.join(", ") : "none"), "\n\n" ];
 ```
 
+
 ~~
+```
 ^listadd ([a-zA-Z]+) ([a-zA-Z ]+)$
+```
 ~~
 ```js
 window._tejsState.mythic.lists[$1] ||= [];
@@ -172,8 +197,11 @@ window._tejsState.mythic.lists[$1].push($2);
 return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 ```
 
+
 ~~
+```
 ^listget ([a-zA-Z]+)$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered()
@@ -186,8 +214,11 @@ if (list && list.length)
 return [ "Failed to pick from list \"", $1, "\".  List is empty.\n\n" ];
 ```
 
+
 ~~
+```
 ^listremove ([a-zA-Z]+) ([a-zA-Z ]+)$
+```
 ~~
 ```js
 if (window._tejsState.mythic.lists[$1])
@@ -202,8 +233,11 @@ if (window._tejsState.mythic.lists[$1])
 return [ "Failed to remove \"", $2, "\" from list \"", $1, "\".  Not found in list.\n\n" ];
 ```
 
+
 ~~
+```
 ^listremoveall ([a-zA-Z]+)$
+```
 ~~
 ```js
 if (window._tejsState.mythic.lists[$1])
@@ -214,23 +248,32 @@ if (window._tejsState.mythic.lists[$1])
 return [ "Failed to remove list \"", $1, "\".  List does not exist.\n\n" ];
 ```
 
+
 ~~
+```
 ^chaos$
+```
 ~~
 ```js
 return [ "Chaos is ", window._tejsState.mythic.chaos, ".\n\n" ];
 ```
 
+
 ~~
+```
 ^chaos=([3-6])$
+```
 ~~
 ```js
 window._tejsState.mythic.chaos = $1;
 return [ "Chaos set to ", $1, ".\n\n" ];
 ```
 
+
 ~~
+```
 ^chaos--$
+```
 ~~
 ```js
 window._tejsState.mythic.chaos--;
@@ -242,8 +285,11 @@ if (window._tejsState.mythic.chaos < 3)
 return [ "Chaos is lowered to " + window._tejsState.mythic.chaos + ".", "\n\n" ];
 ```
 
+
 ~~
+```
 ^chaos\+\+$
+```
 ~~
 ```js
 window._tejsState.mythic.chaos++;
@@ -255,8 +301,11 @@ if (window._tejsState.mythic.chaos > 6)
 return [ "Chaos is raised to " + window._tejsState.mythic.chaos + ".", "\n\n" ];
 ```
 
+
 ~~
+```
 ^meaning(| action)$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -266,8 +315,11 @@ let result = aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", va
 return [ "__Meaning (action)__\n", result, getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^meaning description$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -277,8 +329,11 @@ let result = aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", v
 return [ "__Meaning (description)__\n", result, getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^event$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -291,15 +346,21 @@ result = result + " - " + getExpansion("meaning " + (meaningType ? "description"
 return [ "__Event__\n", result, getDetails(), "\n\n"];
 ```
 
+
 ~~
+```
 ^scene$
+```
 ~~
 ```js
 return [ "The current scene is ", window._tejsState.mythic.scene, ".\n\n" ];
 ```
 
+
 ~~
+```
 ^scene (1|-1|0)$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -338,8 +399,11 @@ if (sceneCheckResults)
 return [ result, sceneCheckResults, "\n***\n__Setup__: " ];
 ```
 
+
 ~~
+```
 ^f(?:ate)?[ ]?(|[0-4]|(?:-[0-4]))[ ]?([y|n]?)$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -364,16 +428,22 @@ let evtText = isEvent ? ( "\n__Event__ - " + getExpansion("event")[1] ) : "";
 return [ "__Fate check (", odds[$1+4], ")__\n", result, evtText, getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^descriptor$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
 return [ "__Descriptor__\n", "Personality: ", getExpansion("meaning description")[1], "\nActivity: ", getExpansion("meaning action")[1], getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^disposition (-?[0-3])$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -384,8 +454,11 @@ result = aPickWeight("", outcomes, 1, result)[0] + " - BASE=" + base;
 return [ "__Disposition__\n", result, getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^disposition ([0-2]?[0-9]) (-?[0-3])$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();
@@ -397,8 +470,11 @@ result = aPickWeight("", outcomes, 1, result);
 return [ "__Disposition__\n", result[0], getDetails(), "\n\n" ];
 ```
 
+
 ~~
+```
 ^action (-2|0|2|4)$
+```
 ~~
 ```js
 clearDetailsIfUserTriggered();

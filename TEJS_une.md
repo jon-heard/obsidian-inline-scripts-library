@@ -2,8 +2,11 @@ Shortcuts for UNE (The Universal NPC Emulator).
 
 Enter the shortcut "help une" for reference.
 
+
 ~~
+```
 ^help une$
+```
 ~~
 ```js
 let result = "### UNE SHORTCUTS HELP ###\n";
@@ -26,6 +29,7 @@ result += "- __une focus__ - Generate a character's primary interest for this in
 return result + "\n";
 ```
 
+
 ~~
 ~~
 ```js
@@ -46,8 +50,11 @@ function aPickWeight(a, wIndex, theRoll)
 }
 ```
 
+
 ~~
+```
 ^une identity$
+```
 ~~
 ```js
 let table1 =
@@ -57,8 +64,11 @@ let table2 =
 return ["__Character identity__\n", aPick(table1) + " " + aPick(table2), "\n\n"];
 ```
 
+
 ~~
+```
 ^une power((?: [1-5])?)$
+```
 ~~
 ```js
 let table3 =
@@ -66,8 +76,11 @@ let table3 =
 return ["__Character power level__\n", aPickWeight(table3, Number($1) || 3)[0], "\n\n"];
 ```
 
+
 ~~
+```
 ^une motive$
+```
 ~~
 ```js
 let table4 =
@@ -100,15 +113,21 @@ for (let i = 0; i < 3; i++)
 return ["__Character motive__\n", result, "\n"];
 ```
 
+
 ~~
+```
 ^une character((?: [1-5])?)$
+```
 ~~
 ```js
 return ["__Character__\n__Identity__: " + getExpansion("une identity")[1] + "\n__Power__: " + getExpansion("une power" + $1)[1] + "\n__Motive__:\n" + getExpansion("une motive")[1], "\n"];
 ```
 
+
 ~~
+```
 ^une mood((?: [1-7])?)$
+```
 ~~
 ```js
 let table6 = [
@@ -123,8 +142,11 @@ let result = aPickWeight(table6, Number($1) || 4)[0];
 return ["__Character mood__\n", result, "\n\n"];
 ```
 
+
 ~~
+```
 ^une bearing((?: [1-8])?)$
+```
 ~~
 ```js
 let table7a = ["SCHEMING", "INSANE", "FRIENDLY", "HOSTILE", "INQUISITIVE", "KNOWING", "MYSTERIOUS", "PREJUDICED"];
@@ -144,8 +166,11 @@ let result = table7a[demeanor-1] + " - " + table7b
 return ["__Character bearing__\n", result, "\n\n"];
 ```
 
+
 ~~
+```
 ^une focus$
+```
 ~~
 ```js
 let table8 = [ ["CURRENT_SCENE", 3],["LAST_STORY",6],["EQUIPMENT",9],["PARENTS",12],["HISTORY",15],["RETAINERS",18],["WEALTH",21],["RELICS",24],["LAST_ACTION",27],["SKILLS",30],["SUPERIORS",33],["FAME",36],["CAMPAIGN",39],["FUTURE_ACTION",42],["FRIENDS",45],["ALLIES",48],["LAST_SCENE",51],["CONTACTS",54],["FLAWS",57],["ANTAGONIST",60],["REWARDS",63],["EXPERIENCE",66],["KNOWLEDGE",69],["RECENT_SCENE",72],["COMMUNITY",75],["TREASURE",78],["THE_CHARACTER",81],["CURRENT_STORY",84],["FAMILY",87],["POWER",90],["WEAPONS",93],["PREVIOUS_SCENE",96],["ENEMY",100] ];
@@ -153,15 +178,21 @@ let result = "THE PC'S " + aPickWeight(table8)[0];
 return ["__Character focus__\n", result, "\n\n"];
 ```
 
+
 ~~
+```
 ^une interact((?: [1-7])?)((?: [1-8])?)$
+```
 ~~
 ```js
 return "__Interact__\n__Mood__: " + getExpansion("une mood" + $1)[1] + "\n__Bearing__: " + getExpansion("une bearing" + $2)[1] + "\n__Focus__: " + getExpansion("une focus")[1] + "\n\n";
 ```
 
+
 ~~
+```
 ^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
+```
 ~~
 ```js
 return getExpansion("une character" + $1)[0] + "***\n" + getExpansion("une interact" + $2 + $3);

@@ -1,11 +1,14 @@
-Shortcuts that let the user manage a state.  Effectively allows saving and loading data between sessions.
-Also, shortcuts that let the user manage "clips" of text (stored in state).
+Shortcuts that let the user manage a session state.  Effectively allows saving and loading data between sessions.
+Also, shortcuts that let the user manage "clips" of text (stored in session state).
 This shortcut file is used by other shortcut files to let them keep their states too.
 
 Enter the shortcut "help state" for reference.
 
+
 ~~
+```
 ^help state$
+```
 ~~
 ```js
 let result = "### TEJS STATE SHORTCUTS HELP\n";
@@ -21,55 +24,76 @@ result += "- __clipremove {name}__ - Removes the clip {name}.\n";
 return result + "\n";
 ```
 
+
 ~~
+```
 ^tejs setup$
+```
 ~~
 ```js
 window._tejsState ||= {};
 window._tejsState.clips ||= {};
 ```
 
+
 ~~
+```
 ^state$
+```
 ~~
 ```js
 return "__TEJS state__\n" + JSON.stringify(window._tejsState) + "\n\n";
 ```
 
+
 ~~
+```
 ^state (.*)$
+```
 ~~
 ```js
 window._tejsState = JSON.parse($1);
 return "TEJS state loaded.\n\n";
 ```
 
+
 ~~
+```
 ^clip$
+```
 ~~
 ```js
 let clipNames = Object.keys(window._tejsState.clips);
 return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "none") + "\n\n";
 ```
 
+
 ~~
+```
 ^clip ([a-zA-Z]+)$
+```
 ~~
 ```js
 let text = window._tejsState.clips[$1];
 return text || "";
 ```
 
+
 ~~
+```
 ^clipadd ([a-zA-Z]+) (.+)$
+```
 ~~
 ```js
 window._tejsState.clips[$1] = $2;
 return "__Clip \"" + $1 + "\" set to__\n" + $2 + "\n\n";
 ```
 
+
 ~~
+```
 ^clipremove ([a-zA-Z]+)$
+```
 ~~
 ```js
 if (window._tejsState.clips.hasOwnProperty($1))
