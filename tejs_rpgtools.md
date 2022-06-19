@@ -1,16 +1,16 @@
-Various random tables found on the web
+Shortcuts to help in playing tabletop rpgs, either group or solo.
 
-Enter the shortcut "help tables" for reference.
+Enter the shortcut "help rpgtools" for reference.
 
 
 ~~
 ```
-^help tables$
+^help rpgtools$
 ```
 ~~
 ```js
-let result = "### TABLES SHORTCUTS HELP\n";
-result += "- __help tables__ - Display this help text.\n";
+let result = "### RPG TOOLS SHORTCUTS HELP\n";
+result += "- __help rpgtools__ - Display this help text.\n";
 result += "***\n";
 result += "- __tbl twist__ - Roll a twist.  [Source](https://jvhouse.xyz/plot-twist-situations).\n";
 return result + "\n";
