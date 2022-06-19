@@ -38,7 +38,7 @@ function aPick(a) { return a[roll(a.length)-1]; }
 function aPickWeight(a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;
-	theRoll = theRoll || roll(a[a.length-1][wIndex]);
+	theRoll = theRoll || roll(a.last()[wIndex]);
 	for (let i = 0; i < a.length; i++)
 	{
 		if (a[i][wIndex] >= theRoll)
@@ -46,7 +46,7 @@ function aPickWeight(a, wIndex, theRoll)
 			return a[i];
 		}
 	}
-	return a[a.length-1];
+	return a.last();
 }
 ```
 

@@ -109,7 +109,7 @@ function aPick(name, a) { return a[roll(name, a.length)-1]; }
 function aPickWeight(name, a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;
-	theRoll = theRoll || roll("",a[a.length-1][wIndex]);
+	theRoll = theRoll || roll("",a.last()[wIndex]);
 	addDetails(name, theRoll);
 	for (let i = 0; i < a.length; i++)
 	{
@@ -118,7 +118,7 @@ function aPickWeight(name, a, wIndex, theRoll)
 			return a[i];
 		}
 	}
-	return a[a.length-1];
+	return a.last();
 }
 function addDetails()
 {
@@ -132,7 +132,7 @@ function addDetails()
 function getDetails(sameLine)
 {
 	if (!window._tejsState.mythic.showDetails) { return ""; }
-	if (window._tejsMythicDetails.length == 0) { return ""; }
+	if (!window._tejsMythicDetails.length) { return ""; }
 	return (sameLine?"":"\n") + "_" + window._tejsMythicDetails.join(" ") + "_";
 }
 clearDetailsIfUserTriggered = () =>

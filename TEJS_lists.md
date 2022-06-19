@@ -1,5 +1,7 @@
 Shortcuts for working with lists.
 
+Uses __TEJS_state__ shortcut-list (optional) to save & load this shortcut file's state.
+
 Enter the shortcut "help lists" for reference.
 
 
