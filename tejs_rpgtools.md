@@ -12,7 +12,7 @@ Enter the shortcut "help rpgtools" for reference.
 let result = "### RPG TOOLS SHORTCUTS HELP\n";
 result += "- __help rpgtools__ - Display this help text.\n";
 result += "***\n";
-result += "- __tbl twist__ - Roll a twist.  [Source](https://jvhouse.xyz/plot-twist-situations).\n";
+result += "- __tbl twist__ - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).\n";
 return result + "\n";
 ```
 

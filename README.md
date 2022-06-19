@@ -15,9 +15,10 @@ To use these in your Obsidian vault, you can either clone or download this repo 
 
 - [tejs_state](#tejs_state)
 - [tejs_lists](#tejs_lists)
-- [tejs_mythicV2](#tejs_mythicv2)
+- [tejs_mythicv2](#tejs_mythicv2)
 - [tejs_une](#tejs_une)
-- [tejs_randomtables](#tejs_randomtables)
+- [tejs_rpgtools](#tejs_rpgtools)
+- [tejs_arrows](#tejs_arrows)
 - [tejs_support](#tejs_support)
 
 ***
@@ -27,7 +28,7 @@ This shortcut-file includes shortcuts that let the user manage a session state. 
 
 This shortcut-file also includes shortcuts that let the user manage "clips" of text.
 
-- __help state__ - Display this help text.
+- __help state__ - Display the help text.
 - __reset state__ - Clear all state.
 - __state__ - Expands to the current state (for session saving).
 - __state {state}__ - Sets the current state based on {state}: a string created previously with the "state" shortcut.
@@ -41,7 +42,7 @@ This shortcut-file also includes shortcuts that let the user manage "clips" of t
 ### tejs_lists
 Shortcuts for working with lists.
 
-- __help lists__ - Display this help text.
+- __help lists__ - Display the help text.
 - __reset lists__ - Clear all lists.
 - __lists__ - Show all lists.
 - __lists {listName}__ - Show all items in the list {listName}.
@@ -54,14 +55,14 @@ Shortcuts for working with lists.
 
 ***
 
-### tejs_mythicV2
+### tejs_mythicv2
 Shortcuts for Mythic Variations 2.
 
 Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
 
 Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 
-- __help mythic__ - Display this help text.
+- __help mythic__ - Display the help text.
 - __reset mythic__ - Reset mythic state to defaults and displays scene heading.
 - __mythic details__ - Displays "details" mode state.  If "details" mode is enabled, expansions include the rolls behind the results.
 - __mythic details {state}__ - Sets "details" mode based on {state}.
@@ -91,7 +92,7 @@ Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 ### tejs_une
 Shortcuts for UNE (The Universal NPC Emulator).
 
-- __help une__ - Display this help text.
+- __help une__ - Display the help text.
 - __une {randomness} {relationship to pc} {demeanor}__ - Runs "une character" and "une interact" together.  {randomness} is an optional value for "une character".  {relationship to pc} and {demeanor} are optional values for "une interact".
 - __une character {randomness}__ - Runs "identity", "power" and "motive" together.  {randomness} is an optional value for "power".
 - __une interact {relationship to pc} {demeanor}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is an optional value for "mood".  {demeanor} is an optional value for "bearing".
@@ -106,18 +107,31 @@ Shortcuts for UNE (The Universal NPC Emulator).
 
 ***
 
-### tejs_randomtables
-Miscelaneous random tables.
+### tejs_rpgtools
+Shortcuts to help in playing tabletop rpgs, either group or solo.
 
-- __help tables__ - Display this help text.
-- __tbl twist__ - Roll a twist.  [Source](https://jvhouse.xyz/plot-twist-situations).
+- __help rpgtools__ - Display the help text.
+- __tbl twist__ - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).
+
+***
+
+### tejs_arrows
+Shortcuts for writing various arrows:
+→←↑↓
+▶◀▲▼
+⇒⇐⇑⇓
+↔↕⇔⇕⇄⇅
+↗↘↖↙
+↪↩↻↺↝↜
+
+- __help arrows__ - Display the help text.
 
 ***
 
 ### tejs_support
 Various helper shortcuts of minimal category.
 
-- __help support__ - Display this help text.
+- __help support__ - Display the help text.
 - __rngseed {seed}__ - Sets Math.random to a custom random number generator with a seed of {seed} (a non-zero integer).  Useful for testing.  If {seed} is omitted, random number generator is returned to javascript default.
 
 ***
