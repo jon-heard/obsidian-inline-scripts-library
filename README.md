@@ -13,16 +13,16 @@ To use these in your Obsidian vault, you can either clone or download this repo 
 
 ## Reference - All shortcut-files in this repo
 
-- [TEJS_state](#tejs_state)
-- [TEJS_lists](#tejs_lists)
-- [TEJS_mythicV2](#tejs_mythicv2)
-- [TEJS_une](#tejs_une)
-- [TEJS_tables](#tejs_tables)
-- [TEJS_support](#tejs_support)
+- [tejs_state](#tejs_state)
+- [tejs_lists](#tejs_lists)
+- [tejs_mythicV2](#tejs_mythicv2)
+- [tejs_une](#tejs_une)
+- [tejs_randomtables](#tejs_randomtables)
+- [tejs_support](#tejs_support)
 
 ***
 
-### TEJS_state
+### tejs_state
 This shortcut-file includes shortcuts that let the user manage a session state. Effectively allows saving and restoring data between sessions.
 
 This shortcut-file also includes shortcuts that let the user manage "clips" of text.
@@ -38,7 +38,7 @@ This shortcut-file also includes shortcuts that let the user manage "clips" of t
 
 ***
 
-### TEJS_lists
+### tejs_lists
 Shortcuts for working with lists.
 
 - __help lists__ - Display this help text.
@@ -54,12 +54,12 @@ Shortcuts for working with lists.
 
 ***
 
-### TEJS_mythicV2
+### tejs_mythicV2
 Shortcuts for Mythic Variations 2.
 
-Uses __TEJS_state__ shortcut-list (optional) to save & load this shortcut file's state.
+Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
 
-Uses __TEJS_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
+Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 
 - __help mythic__ - Display this help text.
 - __reset mythic__ - Reset mythic state to defaults and displays scene heading.
@@ -74,7 +74,7 @@ Uses __TEJS_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 - __meaning action__ - Roll on the action meaning table.
 - __meaning description__ - Roll on the description meaning table.
 - __meaning__ - Shorthand for "meaning action".
-- __listsget {listName}__ - A stub in case TEJS_lists shortcut-file isn't available.
+- __listsget {listName}__ - A stub in case tejs_lists shortcut-file isn't available.
 - __scene__ - Show the current scene.
 - __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene.
 - __chaos__ - Show the current chaos value.
@@ -88,7 +88,7 @@ Uses __TEJS_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 
 ***
 
-### TEJS_une
+### tejs_une
 Shortcuts for UNE (The Universal NPC Emulator).
 
 - __help une__ - Display this help text.
@@ -106,7 +106,7 @@ Shortcuts for UNE (The Universal NPC Emulator).
 
 ***
 
-### TEJS_tables
+### tejs_randomtables
 Miscelaneous random tables.
 
 - __help tables__ - Display this help text.
@@ -114,7 +114,7 @@ Miscelaneous random tables.
 
 ***
 
-### TEJS_support
+### tejs_support
 Various helper shortcuts of minimal category.
 
 - __help support__ - Display this help text.
