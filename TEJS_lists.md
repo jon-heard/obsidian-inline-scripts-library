@@ -16,13 +16,13 @@ result += "- __help lists__ - Display this help text.\n";
 result += "- __reset lists__ - Clear all lists.\n";
 result += "***\n";
 result += "- __lists__ - Show all lists.\n";
-result += "- __lists {listName}__ - Show all items in the list {listName}.\n";
-result += "- __listsadd {listName} {item}__ - Add {item} to the end of the basic-list {listName}.  Cannot add to folder-lists or combo-lists.\n";
-result += "- __listsget {listName}__ - Get a random item from the list {listName}.\n";
-result += "- __listsremove {listName} {item}__ - Remove last instance of {item} from the basic-list {listName}.  Cannot remove from folder-lists or combo-lists.\n";
-result += "- __listsremovelist {listName}__ - Remove the entire list {listName}.\n";
-result += "- __listsaddfolder {listName} {folder}__ - Create a folder-list named {listName} that is linked to the folder {folder}.  A \"folder-list\" is a list who's items are the names of the files in the linked folder.\n";
-result += "- __listsaddcombo {listName} {subList1} {subList2}...__ - Create a combo-list named {listName} that is linked to the sublists given as {subList1}, {subList2}, etc.  A \"combo-list\" is a list who's items are all the items of its linked sublists.\n";
+result += "- __lists list {listName}__ - Show all items in the list {listName}.\n";
+result += "- __lists add {listName} {item}__ - Add {item} to the basic-list {listName}.  Allows duplicate items.  Cannot add to folder-lists or combo-lists.\n";
+result += "- __lists pick {listName}__ - Get a random item from the list {listName}.\n";
+result += "- __lists remove {listName} {item}__ - Remove an instance of {item} from the basic-list {listName}.  Cannot remove from folder-lists or combo-lists.\n";
+result += "- __lists removelist {listName}__ - Remove the entire list {listName}.\n";
+result += "- __lists addfolder {listName} {folder}__ - Create a folder-list named {listName} that is linked to the folder {folder}.  A \"folder-list\" is a list who's items are the names of the files in the linked folder.\n";
+result += "- __lists addcombo {listName} {subList1} {subList2}...__ - Create a combo-list named {listName} that is linked to the sublists given as {subList1}, {subList2}, etc.  A \"combo-list\" is a list who's items are all the items of its linked sublists.\n";
 return result + "\n";
 ```
 
@@ -72,7 +72,7 @@ return [ "__Lists__\n", (listNames.length ? listNames.join(", ") : "none"), "\n\
 
 ~~
 ```
-^listsremovelist ([a-zA-Z]+)$
+^lists removelist ([a-zA-Z]+)$
 ```
 ~~
 ```js
@@ -87,7 +87,7 @@ return [ "Failed to remove list \"", $1, "\".  List does not exist.\n\n" ];
 
 ~~
 ```
-^listsadd ([a-zA-Z]+) ([a-zA-Z ]+)$
+^lists add ([a-zA-Z]+) ([a-zA-Z ]+)$
 ```
 ~~
 ```js
@@ -104,7 +104,7 @@ return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 
 ~~
 ```
-^listsaddfolder ([a-zA-Z]+) (.+)$
+^lists addfolder ([a-zA-Z]+) (.+)$
 ```
 ~~
 ```js
@@ -116,7 +116,7 @@ return [ "List \"", $1, "\" added as a folder-list that is linked to the folder 
 
 ~~
 ```
-^listsaddcombo ([a-zA-Z]+) ([a-zA-Z ]+)$
+^lists addcombo ([a-zA-Z]+) ([a-zA-Z ]+)$
 ```
 ~~
 ```js
@@ -128,7 +128,7 @@ return [ "List \"", $1, "\" added as a combo-list linked to: ", links.join(", ")
 
 ~~
 ```
-^listsremove ([a-zA-Z]+) ([a-zA-Z ]+)$
+^lists remove ([a-zA-Z]+) ([a-zA-Z ]+)$
 ```
 ~~
 ```js
@@ -188,7 +188,7 @@ function getListItems(name)
 
 ~~
 ```
-^lists ([a-zA-Z]+)$
+^lists list ([a-zA-Z]+)$
 ```
 ~~
 ```js
@@ -200,7 +200,7 @@ return [ "__List \"", $1, "\"__\n", items, "\n\n" ];
 
 ~~
 ```
-^listsget ([a-zA-Z]*)$
+^lists pick ([a-zA-Z]*)$
 ```
 ~~
 ```js

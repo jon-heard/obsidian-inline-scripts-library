@@ -30,7 +30,7 @@ result += "- __meaning action__ - Roll on the action meaning table.\n";
 result += "- __meaning description__ - Roll on the description meaning table.\n";
 result += "- __meaning__ - Shorthand for \"meaning action\".\n";
 result += "***\n";
-result += "- __listsget {listName}__ - A stub in case TEJS_lists shortcut-file isn't available.\n";
+result += "- __lists pick {listName}__ - A stub in case TEJS_lists shortcut-file isn't available.\n";
 result += "***\n";
 result += "- __scene__ - Show the current scene.\n";
 result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene.\n";
@@ -158,7 +158,7 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
-let focus = getExpansion("listsget " + (result[2] || ""));
+let focus = getExpansion("lists pick " + (result[2] || ""));
 focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
 return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
 ```
@@ -166,7 +166,7 @@ return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
 
 ~~
 ```
-^listsget ([a-zA-Z]*)$
+^lists pick ([a-zA-Z]*)$
 ```
 ~~
 ```js
@@ -264,7 +264,7 @@ return [ "__Meaning (description)__\n", result, getDetails(), "\n\n" ];
 clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pcs",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight("eventRoll", outcomes);
-let focus = getExpansion("listsget " + (result[2] || ""));
+let focus = getExpansion("lists pick " + (result[2] || ""));
 focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
 let meaning = getExpansion("meaning " + (result[3] ? "description" : "action"))[1];
 return [ "__Event__\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n"];
