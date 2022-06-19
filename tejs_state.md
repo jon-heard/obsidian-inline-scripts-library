@@ -58,7 +58,7 @@ return "All state cleared.\n\n";
 ```
 ~~
 ```js
-return "__TEJS state__\n" + JSON.stringify(window._tejsState) + "\n\n";
+return "__State__\n" + JSON.stringify(window._tejsState) + "\n\n";
 ```
 
 
@@ -69,7 +69,7 @@ return "__TEJS state__\n" + JSON.stringify(window._tejsState) + "\n\n";
 ~~
 ```js
 window._tejsState = JSON.parse($1);
-return "TEJS state loaded.\n\n";
+return "State loaded.\n\n";
 ```
 
 

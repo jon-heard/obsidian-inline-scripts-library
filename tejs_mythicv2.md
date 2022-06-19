@@ -1,7 +1,7 @@
 Shortcuts for Mythic Variations 2.
 
-Uses __TEJS_state__ shortcut-list (optional) to save & load this shortcut file's state.
-Uses __TEJS_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
+Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
+Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 Both of those shortcut-files should be placed before this one in the settings.
 
 Enter the shortcut "help mythic" for reference.
@@ -30,7 +30,7 @@ result += "- __meaning action__ - Roll on the action meaning table.\n";
 result += "- __meaning description__ - Roll on the description meaning table.\n";
 result += "- __meaning__ - Shorthand for \"meaning action\".\n";
 result += "***\n";
-result += "- __lists pick {listName}__ - A stub in case TEJS_lists shortcut-file isn't available.\n";
+result += "- __lists pick {listName}__ - A stub in case tejs_lists shortcut-file isn't available.\n";
 result += "***\n";
 result += "- __scene__ - Show the current scene.\n";
 result += "- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene.\n";
