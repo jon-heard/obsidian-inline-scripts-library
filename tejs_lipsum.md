@@ -1,6 +1,6 @@
 A decent Lorum Ipsum generator.
 
-Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source paragraphs.
+Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source's paragraphs.
 
 ~~
 ```

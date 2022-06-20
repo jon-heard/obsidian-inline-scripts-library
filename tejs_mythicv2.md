@@ -1,4 +1,4 @@
-Shortcuts for Mythic Variations 2.
+Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about the Mythic Variations 2 [here](http://wordmillgames.com/mythic-variations-2.html).
 
 Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
 Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
