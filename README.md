@@ -1,4 +1,4 @@
-# Obsidian Plugin - Text Expander JS - Shortcut-file samples
+# Text Expander JS (Obsidian Plugin) - Shortcut-file library
 
 These are sample shortcut-files for the Obsidian plugin [Text Expander JS](https://github.com/jon-heard/obsidian-text-expander-js).
 
