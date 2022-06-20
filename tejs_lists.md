@@ -15,7 +15,7 @@ let result = "### LISTS SHORTCUTS HELP\n";
 result += "- __help lists__ - Display this help text.\n";
 result += "- __reset lists__ - Clear all lists.\n";
 result += "***\n";
-result += "- __lists__ - Show all lists.\n";
+result += "- __lists__ - Show all list and all items for each list.\n";
 result += "- __lists list {listName}__ - Show all items in the list {listName}.\n";
 result += "- __lists add {listName} {item}__ - Add {item} to the basic-list {listName}.  Allows duplicate items.  Cannot add to folder-lists or combo-lists.\n";
 result += "- __lists pick {listName}__ - Get a random item from the list {listName}.\n";
@@ -52,27 +52,7 @@ return "All lists cleared.\n\n";
 
 ~~
 ```
-^lists$
-```
-~~
-```js
-let listNames = Object.keys(window._tejsState.lists);
-listNames.sort();
-for (let i = 0; i < listNames.length; i++)
-{
-	let listType = window._tejsState.lists[listNames[i]].type;
-	if (listType != "basic")
-	{
-		listNames[i] = listNames[i] + " _(" + listType + ")_";
-	}
-}
-return [ "__Lists__\n", (listNames.length ? listNames.join(", ") : "none"), "\n\n" ];
-```
-
-
-~~
-```
-^lists removelist ([a-zA-Z]+)$
+^lists removelist ([_a-zA-Z]+)$
 ```
 ~~
 ```js
@@ -87,7 +67,7 @@ return [ "Failed to remove list \"", $1, "\".  List does not exist.\n\n" ];
 
 ~~
 ```
-^lists add ([a-zA-Z]+) ([a-zA-Z ]+)$
+^lists add ([_a-zA-Z]+) (.+)$
 ```
 ~~
 ```js
@@ -104,7 +84,7 @@ return ["\"", $2, "\" added to list \"", $1, "\".\n\n" ];
 
 ~~
 ```
-^lists addfolder ([a-zA-Z]+) (.+)$
+^lists addfolder ([_a-zA-Z]+) (.+)$
 ```
 ~~
 ```js
@@ -116,7 +96,7 @@ return [ "List \"", $1, "\" added as a folder-list that is linked to the folder 
 
 ~~
 ```
-^lists addcombo ([a-zA-Z]+) ([a-zA-Z ]+)$
+^lists addcombo ([_a-zA-Z]+) ([a-zA-Z ]+)$
 ```
 ~~
 ```js
@@ -128,7 +108,7 @@ return [ "List \"", $1, "\" added as a combo-list linked to: ", links.join(", ")
 
 ~~
 ```
-^lists remove ([a-zA-Z]+) ([a-zA-Z ]+)$
+^lists remove ([_a-zA-Z]+) (.+)$
 ```
 ~~
 ```js
@@ -179,6 +159,7 @@ function getListItems(name)
 			{
 				result = result.concat(getListItems(list.content[i]));
 			}
+			result.sort();
 			break;
 	}
 	return result;
@@ -188,7 +169,29 @@ function getListItems(name)
 
 ~~
 ```
-^lists list ([a-zA-Z]+)$
+^lists$
+```
+~~
+```js
+let listNames = Object.keys(window._tejsState.lists);
+listNames.sort();
+for (let i = 0; i < listNames.length; i++)
+{
+	let items = getListItems(listNames[i]);
+	let listType = window._tejsState.lists[listNames[i]].type;
+	if (listType != "basic")
+	{
+		listNames[i] += " _(" + listType + ")_";
+	}
+	listNames[i] = "- " + listNames[i] + "\n      " + (items.length ? items.join(", ") : "EMPTY");
+}
+return [ "__Lists__\n", (listNames.length ? listNames.join("\n") : "NONE"), "\n\n" ];
+```
+
+
+~~
+```
+^lists list ([_a-zA-Z]+)$
 ```
 ~~
 ```js
@@ -200,7 +203,7 @@ return [ "__List \"", $1, "\"__\n", items, "\n\n" ];
 
 ~~
 ```
-^lists pick ([a-zA-Z]*)$
+^lists pick ([_a-zA-Z]*)$
 ```
 ~~
 ```js

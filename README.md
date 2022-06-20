@@ -44,14 +44,14 @@ Shortcuts for working with lists.
 
 - __help lists__ - Display the help text.
 - __reset lists__ - Clear all lists.
-- __lists__ - Show all lists.
-- __lists {listName}__ - Show all items in the list {listName}.
-- __listsadd {listName} {item}__ - Add {item} to the end of the basic-list {listName}.  Cannot add to folder-lists or combo-lists.
-- __listsget {listName}__ - Get a random item from the list {listName}.
-- __listsremove {listName} {item}__ - Remove last instance of {item} from the basic-list {listName}.  Cannot remove from folder-lists or combo-lists.
-- __listsremovelist {listName}__ - Remove the entire list {listName}.
-- __listsaddfolder {listName} {folder}__ - Create a folder-list named {listName} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the files in the linked folder.
-- __listsaddcombo {listName} {subList1} {subList2}...__ - Create a combo-list named {listName} that is linked to the sublists given as {subList1}, {subList2}, etc.  A "combo-list" is a list who's items are all the items of its linked sublists.
+- __lists__ - Show all list and all items for each list.
+- __lists list {listName}__ - Show all items in the list {listName}.
+- __lists add {listName} {item}__ - Add {item} to the basic-list {listName}.  Allows duplicate items.  Cannot add to folder-lists or combo-lists.
+- __lists pick {listName}__ - Get a random item from the list {listName}.
+- __lists remove {listName} {item}__ - Remove an instance of {item} from the basic-list {listName}.  Cannot remove from folder-lists or combo-lists.
+- __lists removelist {listName}__ - Remove the entire list {listName}.
+- __lists addfolder {listName} {folder}__ - Create a folder-list named {listName} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the files in the linked folder.
+- __lists addcombo {listName} {subList1} {subList2}...__ - Create a combo-list named {listName} that is linked to the sublists given as {subList1}, {subList2}, etc.  A "combo-list" is a list who's items are all the items of its linked sublists.
 
 ***
 
