@@ -128,6 +128,12 @@ Shortcuts for writing various arrows:
 
 ***
 
+### LIPSUM SHORTCUTS HELP
+- __help lipsum__ - Display the help text.
+- __lipsum {paragraph count}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
+
+***
+
 ### tejs_support
 Various helper shortcuts of minimal category.
 
