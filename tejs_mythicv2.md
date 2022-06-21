@@ -1,4 +1,4 @@
-Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about the Mythic Variations 2 [here](http://wordmillgames.com/mythic-variations-2.html).
+Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
 Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
 Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
@@ -9,12 +9,12 @@ Enter the shortcut "help mythic" for reference.
 
 ~~
 ```
-^help mythic$
+^help mythicv2$
 ```
 ~~
 ```js
 let result = "### MYTHIC SHORTCUTS HELP\n";
-result += "- __help mythic__ - Display this help text.\n";
+result += "- __help mythicv2__ - Display this help text.\n";
 result += "- __reset mythic__ - Reset mythic state to defaults and displays scene heading.\n";
 result += "- __mythic details__ - Displays \"details\" mode state.  If \"details\" mode is enabled, expansions include the rolls behind the results.\n";
 result += `- __mythic details {state}__ - Sets \"details\" mode based on {state}.

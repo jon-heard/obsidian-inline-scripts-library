@@ -57,13 +57,13 @@ Shortcuts for working with lists.
 ***
 
 ### tejs_mythicv2
-Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 [here](http://wordmillgames.com/mythic-variations-2.html).
+Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
 Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
 
 Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 
-- __help mythic__ - Display the help text.
+- __help mythicv2__ - Display the help text.
 - __reset mythic__ - Reset mythic state to defaults and displays scene heading.
 - __mythic details__ - Displays "details" mode state.  If "details" mode is enabled, expansions include the rolls behind the results.
 - __mythic details {state}__ - Sets "details" mode based on {state}.
@@ -91,7 +91,7 @@ Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
 ***
 
 ### tejs_une
-Shortcuts for UNE (The Universal NPC Emulator).  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE [here](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
+Shortcuts for UNE (The Universal NPC Emulator).  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
 Zach Best, the writer and publisher of this product has, sadly, passed away.  Proceeds from buying UNE, and other [conjecture games](https://www.drivethrurpg.com/browse/pub/7251/Conjecture-Games) products go to supporting his family.
 
