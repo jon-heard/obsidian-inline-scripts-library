@@ -43,6 +43,8 @@ This shortcut-file also includes shortcuts that let the user manage "clips" of t
 ### tejs_lists
 Shortcuts for working with lists.
 
+Uses __tejs_state__ shortcut-file (optional) to save & load this shortcut-file's state.
+
 - __help lists__ - Display the help text.
 - __reset lists__ - Clear all lists.
 - __lists__ - Show all list and all items for each list.
@@ -59,9 +61,9 @@ Shortcuts for working with lists.
 ### tejs_mythicv2
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
-Uses __tejs_state__ shortcut-list (optional) to save & load this shortcut file's state.
+Uses __tejs_state__ shortcut-file (optional) to save & load this shortcut-file's state.
 
-Uses __tejs_lists__ shortcut-list (optional) for pcs, npcs and threads lists.
+Uses __tejs_lists__ shortcut-file (optional) for pcs, npcs and threads lists.  If these lists have items, then the __event__ and __detail__ shortcuts will pick from the lists for their results.
 
 - __help mythicv2__ - Display the help text.
 - __reset mythic__ - Reset mythic state to defaults and displays scene heading.
@@ -120,12 +122,12 @@ Shortcuts to help in playing tabletop rpgs, either group or solo.
 
 ### tejs_arrows
 Shortcuts for writing various arrows:
-→←↑↓
-▶◀▲▼
-⇒⇐⇑⇓
-↔↕⇔⇕⇄⇅
-↗↘↖↙
-↪↩↻↺↝↜
+- →←↑↓
+- ▶◀▲▼
+- ⇒⇐⇑⇓
+- ↔↕⇔⇕⇄⇅
+- ↗↘↖↙
+- ↪↩↻↺↝↜
 
 - __help arrows__ - Display the help text.
 

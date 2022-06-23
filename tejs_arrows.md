@@ -1,10 +1,10 @@
 Shortcuts for writing various arrows:
-→←↑↓
-▶◀▲▼
-⇒⇐⇑⇓
-↔↕⇔⇕⇄⇅
-↗↘↖↙
-↪↩↻↺↝↜
+- →←↑↓
+- ▶◀▲▼
+- ⇒⇐⇑⇓
+- ↔↕⇔⇕⇄⇅
+- ↗↘↖↙
+- ↪↩↻↺↝↜
 
 Enter the shortcut "help arrows" for reference.
 
