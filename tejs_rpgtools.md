@@ -1,21 +1,5 @@
 Shortcuts to help in playing tabletop rpgs, either group or solo.
 
-Enter the shortcut "help rpgtools" for reference.
-
-
-~~
-```
-^help rpgtools$
-```
-~~
-```js
-let result = "### RPG TOOLS SHORTCUTS HELP\n";
-result += "- __help rpgtools__ - Display this help text.\n";
-result += "***\n";
-result += "- __tbl twist__ - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).\n";
-return result + "\n";
-```
-
 
 ~~
 ~~
@@ -36,6 +20,8 @@ function aPickWeight(a, wIndex, theRoll)
 	return a.last();
 }
 ```
+~~
+Some useful functions
 
 
 ~~
@@ -49,3 +35,5 @@ let circumstance = ["MISSING / GONE / LOST / FORGOTTEN","EXPLOSIVE / DANGEROUS /
 return [ "__Twist__\n", aPick(target), " - ", aPick(circumstance), "\n\n" ]
 
 ```
+~~
+tbl twist - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).

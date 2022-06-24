@@ -6,82 +6,6 @@ Shortcuts for writing various arrows:
 - ↗↘↖↙
 - ↪↩↻↺↝↜
 
-Enter the shortcut "help arrows" for reference.
-
-
-~~
-```
-^help arrows$
-```
-~~
-```js
-let result = "### ARROW SHORTCUTS HELP\n";
-result += "- __help arrows__ - Display this help text.\n";
-result += "***\n";
-result += "- __-<wbr>>__ - → (RIGHT arrow)\n";
-result += "- __<<wbr>-__ - ← (LEFT arrow)\n";
-result += "- __-^__ - ↑ (UP arrow)\n";
-result += "- __-v__ - ↓ (DOWN arrow)\n";
-result += "- __arrow right__ - → (RIGHT arrow)\n";
-result += "- __arrow left__ - ← (LEFT arrow)\n";
-result += "- __arrow up__ - ↑ (UP arrow)\n";
-result += "- __arrow down__ - ↓ (DOWN arrow)\n";
-result += "***\n";
-result += "- __|>__ - ▶ (RIGHT triangle)\n";
-result += "- __<|__ - ◀ (LEFT triangle)\n";
-result += "- __|^__ - ▲ (UP triangle)\n";
-result += "- __|v__ - ▼ (DOWN triangle)\n";
-result += "- __tri right__ - ▶ (RIGHT triangle)\n";
-result += "- __tri left__ - ◀ (LEFT triangle)\n";
-result += "- __tri up__ - ▲ (UP triangle)\n";
-result += "- __tri down__ - ▼ (DOWN triangle)\n";
-result += "***\n";
-result += "- __=<wbr>>__ - ⇒ (RIGHT double-arrow)\n";
-result += "- __<<wbr>=__ - ⇐ (LEFT double-arrow)\n";
-result += "- __=^__ - ⇑ (UP double-arrow)\n";
-result += "- __=v__ - ⇓ (DOWN double-arrow)\n";
-result += "- __arrow dbl right__ - ⇒ (RIGHT double-arrow)\n";
-result += "- __arrow dbl left__ - ⇐ (LEFT double-arrow)\n";
-result += "- __arrow dbl up__ - ⇑ (UP double-arrow)\n";
-result += "- __arrow dbl down__ - ⇓ (DOWN double-arrow)\n";
-result += "***\n";
-result += "- __<<wbr>-<wbr>>__ - ↔ (LEFT / RIGHT arrow)\n";
-result += "- __^-v__ - ↕ (UP / DOWN arrow)\n";
-result += "- __<<wbr>=<wbr>>__ - ⇔ (LEFT / RIGHT double arrow)\n";
-result += "- __^=v__ - ⇕ (UP / DOWN double arrow)\n";
-result += "- __<//>__ - ⇄ (LEFT arrow & RIGHT arrow)\n";
-result += "- __^//v__ - ⇅ (UP arrow & DOWN arrow)\n";
-result += "- __arrow leftright__ - ↔ (LEFT / RIGHT arrow)\n";
-result += "- __arrow updown__ - ↕ (UP / DOWN arrow)\n";
-result += "- __arrow dbl leftright__ - ⇔ (LEFT / RIGHT double arrow)\n";
-result += "- __arrow dbl updown__ - ⇕ (UP / DOWN double arrow)\n";
-result += "- __arrow left right__ - ⇄ (LEFT arrow & RIGHT arrow)\n";
-result += "- __arrow up down__ - ⇅ (UP arrow & DOWN arrow)\n";
-result += "***\n";
-result += "- __-^>__ - ↗ (RIGHT / UP arrow)\n";
-result += "- __-v>__ - ↘ (RIGHT / DOWN arrow)\n";
-result += "- __<^-__ - ↖ (LEFT / UP arrow)\n";
-result += "- __<v-__ - ↙ (LEFT / DOWN arrow)\n";
-result += "- __arrow rightup__ - ↗ (RIGHT / UP arrow)\n";
-result += "- __arrow rightdown__ - ↘ (RIGHT / DOWN arrow)\n";
-result += "- __arrow leftup__ - ↖ (LEFT / UP arrow)\n";
-result += "- __arrow leftdown__ - ↙ (LEFT / DOWN arrow)\n";
-result += "***\n";
-result += "- __u>__ - ↪ (RIGHT curve arrow)\n";
-result += "- __<u__ - ↩ (LEFT curve arrow)\n";
-result += "- __c>__ - ↻ (CLOCKWISE arrow)\n";
-result += "- __<c__ - ↺ (COUNTER-CLOCKWISE arrow)\n";
-result += "- __~>__ - ↝ (RIGHT wavy arrow)\n";
-result += "- __<~__ - ↜ (LEFT wavy arrow)\n";
-result += "- __arrow curve right__ - ↪ (RIGHT swoop arrow)\n";
-result += "- __arrow curve left__ - ↩ (LEFT swoop arrow)\n";
-result += "- __arrow clock__ - ↻ (CLOCKWISE arrow)\n";
-result += "- __arrow cclock__ - ↺ (COUNTER-CLOCKWISE arrow)\n";
-result += "- __arrow wavy right__ - ↝ (RIGHT wavy arrow)\n";
-result += "- __arrow wavy left__ - ↜ (LEFT wavy arrow)\n";
-return result + "\n";
-```
-
 
 ~~
 ```
@@ -91,6 +15,8 @@ return result + "\n";
 ```js
 return "→";
 ```
+~~
+-<wbr>> - → (RIGHT arrow).  Alternative shortcut: __arrow right__.
 
 
 ~~
@@ -101,6 +27,8 @@ return "→";
 ```js
 return "←";
 ```
+~~
+<<wbr>- - ← (LEFT arrow).  Alternative shortcut: __arrow left__.
 
 
 ~~
@@ -111,6 +39,8 @@ return "←";
 ```js
 return "↑";
 ```
+~~
+-^ - ↑ (UP arrow).  Alternative shortcut: __arrow up__.
 
 
 ~~
@@ -121,6 +51,9 @@ return "↑";
 ```js
 return "↓";
 ```
+~~
+-v - ↓ (DOWN arrow).  Alternative shortcut: __arrow down__.
+***
 
 
 ~~
@@ -131,6 +64,8 @@ return "↓";
 ```js
 return "▶";
 ```
+~~
+ |> - ▶ (RIGHT triangle).  Alternative shortcut: __tri right__.
 
 
 ~~
@@ -141,6 +76,8 @@ return "▶";
 ```js
 return "◀";
 ```
+~~
+<| - ◀ (LEFT triangle).  Alternative shortcut: __tri left__.
 
 
 ~~
@@ -151,6 +88,8 @@ return "◀";
 ```js
 return "▲";
 ```
+~~
+|^ - ▲ (UP triangle).  Alternative shortcut: __tri up__.
 
 
 ~~
@@ -161,6 +100,9 @@ return "▲";
 ```js
 return "▼";
 ```
+~~
+|v - ▼ (DOWN triangle).  Alternative shortcut: __tri down__.
+***
 
 
 ~~
@@ -171,6 +113,8 @@ return "▼";
 ```js
 return "⇒";
 ```
+~~
+ =<wbr>> - ⇒ (RIGHT double-arrow).  Alternative shortcut: __arrow dbl right__.
 
 
 ~~
@@ -181,6 +125,8 @@ return "⇒";
 ```js
 return "⇐";
 ```
+~~
+<<wbr>= - ⇐ (LEFT double-arrow).  Alternative shortcut: __arrow dbl left__.
 
 
 ~~
@@ -191,6 +137,8 @@ return "⇐";
 ```js
 return "⇑";
 ```
+~~
+=^ - ⇑ (UP double-arrow).  Alternative shortcut: __arrow dbl up__.
 
 
 ~~
@@ -201,6 +149,9 @@ return "⇑";
 ```js
 return "⇓";
 ```
+~~
+=v - ⇓ (DOWN double-arrow).  Alternative shortcut: __arrow dbl down__.
+***
 
 
 ~~
@@ -211,6 +162,8 @@ return "⇓";
 ```js
 return "↔";
 ```
+~~
+ <<wbr>-<wbr>> - ↔ (LEFT / RIGHT arrow).  Alternative shortcut: __arrow leftright__.
 
 
 ~~
@@ -221,6 +174,8 @@ return "↔";
 ```js
 return "↕";
 ```
+~~
+^-v - ↕ (UP / DOWN arrow).  Alternative shortcut: __arrow updown__.
 
 
 ~~
@@ -231,6 +186,8 @@ return "↕";
 ```js
 return "⇔";
 ```
+~~
+<<wbr>=<wbr>> - ⇔ (LEFT / RIGHT double arrow).  Alternative shortcut: __arrow dbl leftright__.
 
 
 ~~
@@ -241,6 +198,8 @@ return "⇔";
 ```js
 return "⇕";
 ```
+~~
+^=v - ⇕ (UP / DOWN double arrow).  Alternative shortcut: __arrow dbtl updown__.
 
 
 ~~
@@ -251,6 +210,8 @@ return "⇕";
 ```js
 return "⇄";
 ```
+~~
+<//> - ⇄ (LEFT arrow & RIGHT arrow).  Alternative shortcut: __arrow left right__.
 
 
 ~~
@@ -261,6 +222,9 @@ return "⇄";
 ```js
 return "⇅";
 ```
+~~
+^//v - ⇅ (UP arrow & DOWN arrow).  Alternative shortcut: __arrow up down__.
+***
 
 
 ~~
@@ -271,6 +235,8 @@ return "⇅";
 ```js
 return "↗";
 ```
+~~
+ -^> - ↗ (RIGHT / UP arrow).  Alternative shortcut: __arrow rightup__.
 
 
 ~~
@@ -281,6 +247,8 @@ return "↗";
 ```js
 return "↘";
 ```
+~~
+-v> - ↘ (RIGHT / DOWN arrow).  Alternative shortcut: __arrow rightdown__.
 
 
 ~~
@@ -291,6 +259,8 @@ return "↘";
 ```js
 return "↖";
 ```
+~~
+<^- - ↖ (LEFT / UP arrow).  Alternative shortcut: __arrow leftup__.
 
 
 ~~
@@ -301,6 +271,10 @@ return "↖";
 ```js
 return "↙";
 ```
+~~
+<v- - ↙ (LEFT / DOWN arrow).  Alternative shortcut: __arrow leftdown__.
+***
+
 
 ~~
 ```
@@ -310,6 +284,8 @@ return "↙";
 ```js
 return "↪";
 ```
+~~
+ u> - ↪ (RIGHT curve arrow).  Alternative shortcut: __arrow curve right__.
 
 
 ~~
@@ -320,6 +296,8 @@ return "↪";
 ```js
 return "↩";
 ```
+~~
+<u - ↩ (LEFT curve arrow).  Alternative shortcut: __arrow curve left__.
 
 
 ~~
@@ -330,6 +308,8 @@ return "↩";
 ```js
 return "↻";
 ```
+~~
+c> - ↻ (CLOCKWISE arrow).  Alternative shortcut: __arrow clock__.
 
 
 ~~
@@ -340,6 +320,8 @@ return "↻";
 ```js
 return "↺";
 ```
+~~
+<c - ↺ (COUNTER-CLOCKWISE arrow).  Alternative shortcut: __arrow cclock__.
 
 
 ~~
@@ -350,6 +332,8 @@ return "↺";
 ```js
 return "↝";
 ```
+~~
+~> - ↝ (RIGHT wavy arrow).  Alternative shortcut: __arrow wavy right__.
 
 
 ~~
@@ -360,3 +344,5 @@ return "↝";
 ```js
 return "↜";
 ```
+~~
+<~ - ↜ (LEFT wavy arrow).  Alternative shortcut: __arrow wavy left__.

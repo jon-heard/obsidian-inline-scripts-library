@@ -1,20 +1,5 @@
 A decent Lorum Ipsum generator.
 
-Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source's paragraphs.
-
-~~
-```
-^help lipsum$
-```
-~~
-```js
-let result = "### LIPSUM SHORTCUTS HELP\n";
-result += "- __help lipsum__ - Display this help text.\n";
-result += "***\n";
-result += "- __lipsum {paragraph count}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.\n";
-return result + "\n";
-```
-
 
 ~~
 ```
@@ -58,6 +43,8 @@ for (let i = 0; i < l.length; i++)
 let first = sentences.shift();
 window._tejsLipsumData = { first: first, pSizes: pSizes, sentences: sentences };
 ```
+~~
+Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source's paragraphs.
 
 
 ~~
@@ -66,6 +53,8 @@ window._tejsLipsumData = { first: first, pSizes: pSizes, sentences: sentences };
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
 ```
+~~
+Helper script - some useful functions
 
 
 ~~
@@ -96,3 +85,5 @@ for (let i = 0; i < $1; i++)
 }
 return result;
 ```
+~~
+lipsum {paragraph count} - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.

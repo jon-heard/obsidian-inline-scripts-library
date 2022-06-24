@@ -1,35 +1,6 @@
-Shortcuts for UNE (The Universal NPC Emulator).  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
+Shortcuts for UNE: The Universal NPC Emulator.  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
 Zach Best, the writer and publisher of this product has, sadly, passed away.  Proceeds from buying UNE, and other [conjecture games](https://www.drivethrurpg.com/browse/pub/7251/Conjecture-Games) products go to supporting his family.
-
-Enter the shortcut "help une" for reference.
-
-
-~~
-```
-^help une$
-```
-~~
-```js
-let result = "### UNE SHORTCUTS HELP ###\n";
-result += "- __help une__ - Display this help text.\n";
-result += "***\n";
-result += "- __une {randomness} {relationship to pc} {demeanor}__ - Runs \"une character\" and \"une interact\" together.  {randomness} is an optional value for \"une character\".  {relationship to pc} and {demeanor} are optional values for \"une interact\".\n";
-result += "***\n";
-result += "- __une character {randomness}__ - Runs \"identity\", \"power\" and \"motive\" together.  {randomness} is an optional value for \"power\".\n";
-result += "- __une interact {relationship to pc} {demeanor}__ - Runs \"mood\", \"bearing\" and \"focus\" together.  {relationship to pc} is an optional value for \"mood\".  {demeanor} is an optional value for \"bearing\".\n";
-result += "***\n";
-result += "- __une identity__ - Generates a 2-word description for a character.\n";
-result += "- __une power {randomness}__ - Generates a character's power level relative to pc's power level, based on {randomness}: an optional number from 1 (order), to 5 (chaos), defaulting to 3 (standard).\n";
-result += "- __une motive__ - Generates three 2-word descriptions for a character's motivations.\n";
-result += "***\n";
-result += "- __une mood {relationship to pc}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: a optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).\n";
-result += "- __une bearing {demeanor}__ - Generate a character's attitude for this interaction, based on {demeanor}: an optional number from 1-8, defaulting to random and meaning one of the following:\n";
-result += "    1 - sceming       2 - insane       3 - friendly          4 - hostile\n";
-result += "    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced.\n";
-result += "- __une focus__ - Generate a character's primary interest for this interaction.\n";
-return result + "\n";
-```
 
 
 ~~
@@ -51,6 +22,46 @@ function aPickWeight(a, wIndex, theRoll)
 	return a.last();
 }
 ```
+~~
+Some useful functions
+
+
+~~
+```
+^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
+```
+~~
+```js
+return getExpansion("une character" + $1)[0] + "***\n" + getExpansion("une interact" + $2 + $3);
+```
+~~
+une {randomness} {relationship to pc} {demeanor} - Runs "une character" and "une interact" together.  {randomness} is an optional value for "une character".  {relationship to pc} and {demeanor} are optional values for "une interact".
+***
+
+
+~~
+```
+^une character((?: [1-5])?)$
+```
+~~
+```js
+return ["__Character__\n__Identity__: " + getExpansion("une identity")[1] + "\n__Power__: " + getExpansion("une power" + $1)[1] + "\n__Motive__:\n" + getExpansion("une motive")[1], "\n"];
+```
+~~
+une character {randomness} - Runs "identity", "power" and "motive" together.  {randomness} is an optional value for "power".
+
+
+~~
+```
+^une interact((?: [1-7])?)((?: [1-8])?)$
+```
+~~
+```js
+return "__Interact__\n__Mood__: " + getExpansion("une mood" + $1)[1] + "\n__Bearing__: " + getExpansion("une bearing" + $2)[1] + "\n__Focus__: " + getExpansion("une focus")[1] + "\n\n";
+```
+~~
+une interact {relationship to pc} {demeanor} - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is an optional value for "mood".  {demeanor} is an optional value for "bearing".
+***
 
 
 ~~
@@ -65,6 +76,8 @@ let table2 =
 ["GYPSY","WITCH","MERCHANT","EXPERT","COMMONER","JUDGE","RANGER","OCCULTIST","REVEREND","THUG","DRIFTER","JOURNEYMAN","STATESMAN","ASTROLOGER","DUELIST","JACK-OF-ALL-TRADES","ARISTOCRAT","PREACHER","ARTISAN","ROGUE","MISSIONARY","OUTCAST","MERCENARY","CARETAKER","HERMIT","ORATOR","CHIEFTAIN","PIONEER","BURGLAR","VICAR","OFFICER","EXPLORER","WARDEN","OUTLAW","ADEPT","BUM","SORCERER","LABORER","MASTER","ASCENDANT","VILLAGER","MAGUS","CONSCRIPT","WORKER","ACTOR","HERALD","HIGHWAYMAN","FORTUNE-HUNTER","GOVERNOR","SCRAPPER","MONK","HOMEMAKER","RECLUSE","STEWARD","POLYMATH","MAGICIAN","TRAVELER","VAGRANT","APPRENTICE","POLITICIAN","MEDIATOR","CROOK","CIVILIAN","ACTIVIST","HERO","CHAMPION","CLERIC","SLAVE","GUNMAN","CLAIRVOYANT","PATRIARCH","SHOPKEEPER","CRONE","ADVENTURER","SOLDIER","ENTERTAINER","CRAFTSMAN","SCIENTIST","ASCETIC","SUPERIOR","PERFORMER","MAGISTER","SERF","BRUTE","INQUISITOR","LORD","VILLAIN","PROFESSOR","SERVANT","CHARMER","GLOBETROTTER","SNIPER","COURTIER","PRIEST","TRADESMAN","HITMAN","WIZARD","BEGGAR","TRADESMAN","WARRIOR"];
 return ["__Character identity__\n", aPick(table1) + " " + aPick(table2), "\n\n"];
 ```
+~~
+une identity - Generates a 2-word description for a character.
 
 
 ~~
@@ -77,6 +90,8 @@ let table3 =
 [ ["MUCH WEAKER",2,4,5,8,12],["SLIGHTLY WEAKER",10,15,20,25,30],["COMPARABLE",90,85,80,75,70],["SLIGHTLY STRONGER",98,96,95,92,88],["MUCH STRONGER",100,100,100,100,100] ];
 return ["__Character power level__\n", aPickWeight(table3, Number($1) || 3)[0], "\n\n"];
 ```
+~~
+une power {randomness} - Generates a character's power level relative to pc's power level, based on {randomness}: an optional number from 1 (order), to 5 (chaos), defaulting to 3 (standard).
 
 
 ~~
@@ -114,16 +129,9 @@ for (let i = 0; i < 3; i++)
 }
 return ["__Character motive__\n", result, "\n"];
 ```
-
-
 ~~
-```
-^une character((?: [1-5])?)$
-```
-~~
-```js
-return ["__Character__\n__Identity__: " + getExpansion("une identity")[1] + "\n__Power__: " + getExpansion("une power" + $1)[1] + "\n__Motive__:\n" + getExpansion("une motive")[1], "\n"];
-```
+une motive - Generates three 2-word descriptions for a character's motivations.
+***
 
 
 ~~
@@ -143,6 +151,8 @@ let table6 = [
 let result = aPickWeight(table6, Number($1) || 4)[0];
 return ["__Character mood__\n", result, "\n\n"];
 ```
+~~
+une mood {relationship to pc} - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: an optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).
 
 
 ~~
@@ -167,6 +177,10 @@ let result = table7a[demeanor-1] + " - " + table7b
 [demeanor-1][bearing-1];
 return ["__Character bearing__\n", result, "\n\n"];
 ```
+~~
+une bearing {demeanor} - Generate a character's attitude for this interaction, based on {demeanor}: an optional number from 1-8, defaulting to random and meaning one of the following:
+    1 - sceming       2 - insane       3 - friendly          4 - hostile
+    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
 
 
 ~~
@@ -179,23 +193,5 @@ let table8 = [ ["CURRENT_SCENE", 3],["LAST_STORY",6],["EQUIPMENT",9],["PARENTS",
 let result = "THE PC'S " + aPickWeight(table8)[0];
 return ["__Character focus__\n", result, "\n\n"];
 ```
-
-
 ~~
-```
-^une interact((?: [1-7])?)((?: [1-8])?)$
-```
-~~
-```js
-return "__Interact__\n__Mood__: " + getExpansion("une mood" + $1)[1] + "\n__Bearing__: " + getExpansion("une bearing" + $2)[1] + "\n__Focus__: " + getExpansion("une focus")[1] + "\n\n";
-```
-
-
-~~
-```
-^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
-```
-~~
-```js
-return getExpansion("une character" + $1)[0] + "***\n" + getExpansion("une interact" + $2 + $3);
-```
+une focus - Generate a character's primary interest for this interaction.

@@ -1,21 +1,5 @@
 Various helper shortcuts of minimal category.
 
-Enter the shortcut "help support" for reference.
-
-
-~~
-```
-^help support$
-```
-~~
-```js
-let result = "### TEJS SUPPORT SHORTCUTS HELP\n";
-result += "- __help support__ - Display this help text.\n";
-result += "***\n";
-result += "- __rngseed {seed}__ - Sets Math.random to a custom random number generator with a seed of {seed} (a non-zero integer).  Useful for testing.  If {seed} is omitted, random number generator is returned to javascript default.\n";
-return result + "\n";
-```
-
 
 ~~
 ```
@@ -49,3 +33,5 @@ else
 	return "Random number generator unchanged.\n\n";
 }
 ```
+~~
+rngseed {seed} - Sets Math.random to a custom random number generator with a seed of {seed}, a non-zero, positive integer.  Useful for testing.  If {seed} is omitted, the random number generator is returned to javascript default.
