@@ -16,6 +16,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 
 - [tejs_state](#tejs_state)
 - [tejs_lists](#tejs_lists)
+- [tejs_varnotes](#tejs_varnotes)
 - [tejs_mythicv2](#tejs_mythicv2)
 - [tejs_une](#tejs_une)
 - [tejs_rpgtools](#tejs_rpgtools)
@@ -26,24 +27,20 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 ***
 
 ### tejs_state
-This shortcut-file includes shortcuts that let the user manage a session state.  Effectively allows saving and restoring data between sessions.  
+This shortcut-file includes shortcuts that let the user manage a session state.  Effectively allows saving and restoring data between sessions.
 
-This shortcut-file also includes shortcuts that let the user manage "clips" of text.
+This shortcut file can be used by other shortcut-files to help them save/restore their states.
 
 - __reset state__ - Clear all state.
 - __state__ - Expands to a string representing the current state (for session saving).
 - __state {state}__ - Sets the current state based on {state}: a string created with the parameterless "state" shortcut.
-- __clip__ - Lists all stored clips.
-- __clip {name}__ - Expands to the value stored in clip {name}.
-- __clipadd {name} {value}__ - Creates a clip {name} that stores the string {value}.
-- __clipremove {name}__ - Removes the clip {name}.
 
 ***
 
 ### tejs_lists
 Shortcuts for working with lists.
 
-Uses __tejs_state__ shortcut-file (optional) to save & load this shortcut-file's state.
+Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the lists.
 
 - __reset lists__ - Clear all lists.
 - __lists__ - Show all list and all items for each list.
@@ -57,19 +54,39 @@ Uses __tejs_state__ shortcut-file (optional) to save & load this shortcut-file's
 
 ***
 
+### tejs_varnotes
+Setup notes with variables.  Useful for reading raw data from a nicely formatted document.
+
+Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the varnotes lists.
+
+Can be used by other shortcut-files for dynamically reading data for other operations.
+
+- __reset varnotes__ - Removes all stored varnotes from the session state.
+- __varnotes__ - Lists all varnotes and the files they are connected to.
+- __varnotes data {varnote name}__ - Lists all the data for varnote {varnote name} (an required name paroperty).
+- __varnotes add {varnote name} {file address}__ - Adds a varnote named {varnote name} (a required name parameter) that is attached to the file at {file address} (a required file address parameter).
+- __varnotes remove {varnote name}__ - Removes the varnote {var name} (a required name parameter).
+- __varnotes get {varnote name} {data name}__ - Gets the data named {data name} (a required name parameter) from the varnote named {varnote name} (a required name parameter).
+    - Alternative shortcut: __vn {varnote name} {data name}__.
+- __varnotes refresh__ - Pull the data from all varnotes.
+    - Alternative shortcut: __vn refresh__.
+- __varnotes refresh {varnote name}__ - Pull the data from varnote {varnote name} (a required "name" parameter).
+
+***
+
 ### tejs_mythicv2
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
-Uses __tejs_state__ shortcut-file (optional) to save & load this shortcut-file's state.
+Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the chaos value, the scene count, and "Details" mode.
 
-Uses __tejs_lists__ shortcut-file (optional) for pcs, npcs and threads lists.  If these llists have items, then the __event__ and __detail__ shortcuts will pick from the lists for their results.
+Uses __tejs_lists__ shortcut-file (optional).  Adds and uses lists for pcs, npcs and threads.  If these llists have items, then the __event__ and __detail__ shortcuts will pick from the lists for their results.
 
 - __reset mythic__ - Reset mythic state to defaults and displays scene heading.
 - __mythic details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 - __detail__ - Make a detail check.
 - __event__ - Make an event check.
 - __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
-    - Alternative shortcut: __f__.
+    - Alternative shortcut: __f {odds} {wanted}____.
 - __meaning action__ - Roll on the action meaning table.
     - Alternative shortcut: __meaning__.
 - __meaning description__ - Roll on the description meaning table.
@@ -128,6 +145,17 @@ Shortcuts for writing various arrows:
 A decent Lorum Ipsum generator.
 
 - __lipsum {paragraph count}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
+
+***
+
+### tejs_clips
+Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but more simplistic.
+
+- __reset state__ - Remove all clips.
+- __clip__ - Lists all stored clips.
+- __clip {name}__ - Expands to the value stored in clip {name}.
+- __clipadd {name} {value}__ - Creates a clip {name} that stores the string {value}.
+- __clipremove {name}__ - Removes the clip {name}.
 
 ***
 

@@ -1,8 +1,6 @@
 Shortcuts for working with lists.
 
-Uses __tejs_state__ shortcut-file (optional) to save & load this shortcut-file's state.
-
-The tejs_state shortcut-file should be placed before this one in the settings.
+Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the lists.
 
 
 ~~
