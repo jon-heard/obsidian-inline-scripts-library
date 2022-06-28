@@ -50,7 +50,7 @@ if (!window._tejsVarnotes.noteVars)
 	window._tejsVarnotes.noteVars ||= {};
 	for (const varnoteName in window._tejsState.varnotes)
 	{
-		getExpansion("varnotes refresh " + varnoteName);
+		expand("varnotes refresh " + varnoteName);
 	}
 }
 
@@ -61,7 +61,7 @@ if (!window._tejsVarnotes.onModified)
 		let varnoteName = window._tejsVarnotes.revLookup[file.path];
 		if (varnoteName)
 		{
-			getExpansion("varnotes refresh " + varnoteName);
+			expand("varnotes refresh " + varnoteName);
 		}
 	};
 	app.vault.on("modify", window._tejsVarnotes.onModified);
@@ -70,18 +70,18 @@ if (!window._tejsVarnotes.onModified)
 if (window._tejsListeners?.state?.onReset &&
     !window._tejsListeners.state.onReset.varnotes)
 {
-	window._tejsListeners.state.onReset.varnotes = (getExpansion) =>
+	window._tejsListeners.state.onReset.varnotes = (expand) =>
 	{
-		getExpansion("reset varnotes");
+		expand("reset varnotes");
 	};
 }
 
 if (window._tejsListeners?.state?.onLoad &&
     !window._tejsListeners.state.onLoad.varnotes)
 {
-	window._tejsListeners.state.onLoad.varnotes = (getExpansion) =>
+	window._tejsListeners.state.onLoad.varnotes = (expand) =>
 	{
-		getExpansion("varnotes refresh");
+		expand("varnotes refresh");
 	};
 }
 ```
@@ -181,7 +181,7 @@ varnotes vars {varnote name} - Lists all the vars for the varnote named {varnote
 $2 = $2.endsWith(".md") ? $2 : $2 + ".md";
 window._tejsState.varnotes[$1] = $2
 window._tejsVarnotes.revLookup[$2] = $1;
-getExpansion("varnotes refresh " + $1);
+expand("varnotes refresh " + $1);
 return "Varnote \"" + $1 + "\" added.\n\n";
 ```
 ~~
@@ -270,7 +270,7 @@ varnotes set {varnote name} {var name} {value} - Sets the var named {var name} (
 let result = [];
 for (const name in window._tejsState.varnotes)
 {
-	const newResult = getExpansion("varnotes refresh " + name);
+	const newResult = expand("varnotes refresh " + name);
 	if (!Array.isArray(newResult))
 	{
 		result.push(newResult, "\n");

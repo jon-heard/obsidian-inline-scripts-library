@@ -25,9 +25,9 @@ window._tejsMythicDetails = [];
 if (window._tejsListeners?.state?.onReset &&
     !window._tejsListeners.state.onReset.mythicv2)
 {
-	window._tejsListeners.state.onReset.mythicv2 = (getExpansion) =>
+	window._tejsListeners.state.onReset.mythicv2 = (expand) =>
 	{
-		getExpansion("reset mythicv2");
+		expand("reset mythicv2");
 	};
 }
 
@@ -146,7 +146,7 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
-let focus = getExpansion("lists pick " + (result[2] || ""));
+let focus = expand("lists pick " + (result[2] || ""));
 focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
 return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
 ```
@@ -163,9 +163,9 @@ detail - Make a detail check.
 clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pcs",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight("eventRoll", outcomes);
-let focus = getExpansion("lists pick " + (result[2] || ""));
+let focus = expand("lists pick " + (result[2] || ""));
 focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
-let meaning = getExpansion("meaning " + (result[3] ? "description" : "action"))[1];
+let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
 return [ "__Event__\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n"];
 ```
 ~~
@@ -196,7 +196,7 @@ let isEvent = (chaosRoll <= chaos) && !(fateRoll1 % 2) && !(fateRoll2 % 2);
 if (chaosRoll < chaos && fateRoll1 == fateRoll2) isExtreme = isEvent = true;
 
 result = (isExtreme ? "EXTREME " : "") + result;
-let evtText = isEvent ? ( "\n__Event__ - " + getExpansion("event")[1] ) : "";
+let evtText = isEvent ? ( "\n__Event__ - " + expand("event")[1] ) : "";
 return [ "__Fate check (", odds[$1+4], ")__\n", result, evtText, getDetails(), "\n\n" ];
 ```
 ~~
@@ -260,11 +260,11 @@ clearDetailsIfUserTriggered();
 let result = "";
 if ($1 == 1)
 {
-	result += getExpansion("chaos++")[0] + "\n";
+	result += expand("chaos++")[0] + "\n";
 }
 else if ($1 == -1)
 {
-	result += getExpansion("chaos--")[0] + "\n";
+	result += expand("chaos--")[0] + "\n";
 }
 result += "***\n\n\n\n";
 window._tejsState.mythic.scene++;
@@ -277,7 +277,7 @@ if (chk <= window._tejsState.mythic.chaos)
 		((chk % 2) ?
 		 "__Scene modified__" :
 		 ("__Scene replaced__\n__Event__ - " +
-		  getExpansion("event")[1])) +
+		  expand("event")[1])) +
 		sceneCheckResults;
 }
 let details = getDetails(!sceneCheckResults);
@@ -364,7 +364,7 @@ chaos={value} - Set the chaos value to {value}, an integer from 3 to 6.
 ~~
 ```js
 clearDetailsIfUserTriggered();
-return [ "__Descriptor__\n", "Personality: ", getExpansion("meaning description")[1], "\nActivity: ", getExpansion("meaning action")[1], getDetails(), "\n\n" ];
+return [ "__Descriptor__\n", "Personality: ", expand("meaning description")[1], "\nActivity: ", expand("meaning action")[1], getDetails(), "\n\n" ];
 ```
 ~~
 descriptor - Generates a personality and activity descriptor for an NPC.

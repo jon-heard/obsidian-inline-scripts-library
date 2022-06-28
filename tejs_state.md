@@ -37,7 +37,7 @@ for (const name in window._tejsListeners.state.onReset)
 		console.warn("Non-function is registered as a listener:" + listener);
 		continue;
 	}
-	listener(getExpansion);
+	listener(expand);
 }
 
 return "All state cleared.\n\n";
@@ -81,7 +81,7 @@ for (const name in window._tejsListeners.state.onLoad)
 		console.warn("Non-function is registered as a listener:" + listener);
 		continue;
 	}
-	listener(getExpansion);
+	listener(expand);
 }
 
 return "State loaded.\n\n";

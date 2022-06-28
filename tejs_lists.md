@@ -15,9 +15,9 @@ window._tejsState.lists ||= {};
 if (window._tejsListeners?.state?.onReset &&
     !window._tejsListeners.state.onReset.lists)
 {
-	window._tejsListeners.state.onReset.lists = (getExpansion) =>
+	window._tejsListeners.state.onReset.lists = (expand) =>
 	{
-		getExpansion("reset lists");
+		expand("reset lists");
 	};
 }
 

@@ -32,7 +32,7 @@ Some useful functions
 ```
 ~~
 ```js
-return getExpansion("une character" + $1)[0] + "***\n" + getExpansion("une interact" + $2 + $3);
+return expand("une character" + $1)[0] + "***\n" + expand("une interact" + $2 + $3);
 ```
 ~~
 une {randomness} {relationship to pc} {demeanor} - Runs "une character" and "une interact" together.  {randomness} is an optional value for "une character".  {relationship to pc} and {demeanor} are optional values for "une interact".
@@ -45,7 +45,7 @@ une {randomness} {relationship to pc} {demeanor} - Runs "une character" and "une
 ```
 ~~
 ```js
-return ["__Character__\n__Identity__: " + getExpansion("une identity")[1] + "\n__Power__: " + getExpansion("une power" + $1)[1] + "\n__Motive__:\n" + getExpansion("une motive")[1], "\n"];
+return ["__Character__\n__Identity__: " + expand("une identity")[1] + "\n__Power__: " + expand("une power" + $1)[1] + "\n__Motive__:\n" + expand("une motive")[1], "\n"];
 ```
 ~~
 une character {randomness} - Runs "identity", "power" and "motive" together.  {randomness} is an optional value for "power".
@@ -57,7 +57,7 @@ une character {randomness} - Runs "identity", "power" and "motive" together.  {r
 ```
 ~~
 ```js
-return "__Interact__\n__Mood__: " + getExpansion("une mood" + $1)[1] + "\n__Bearing__: " + getExpansion("une bearing" + $2)[1] + "\n__Focus__: " + getExpansion("une focus")[1] + "\n\n";
+return "__Interact__\n__Mood__: " + expand("une mood" + $1)[1] + "\n__Bearing__: " + expand("une bearing" + $2)[1] + "\n__Focus__: " + expand("une focus")[1] + "\n\n";
 ```
 ~~
 une interact {relationship to pc} {demeanor} - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is an optional value for "mood".  {demeanor} is an optional value for "bearing".

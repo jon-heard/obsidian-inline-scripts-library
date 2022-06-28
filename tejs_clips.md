@@ -13,9 +13,9 @@ window._tejsState.clips ||= {};
 if (window._tejsListeners?.state?.onReset &&
     !window._tejsListeners.state.onReset.clips)
 {
-	window._tejsListeners.state.onReset.clips = (getExpansion) =>
+	window._tejsListeners.state.onReset.clips = (expand) =>
 	{
-		getExpansion("reset clips");
+		expand("reset clips");
 	};
 }
 ```
