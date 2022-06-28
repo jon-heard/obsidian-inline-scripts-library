@@ -66,6 +66,16 @@ if (!window._tejsVarnotes.onModified)
 	};
 	app.vault.on("modify", window._tejsVarnotes.onModified);
 }
+
+if (window._tejsListeners?.state?.onReset &&
+    !window._tejsListeners.state.onReset.varnotes)
+{
+	window._tejsListeners.state.onReset.varnotes = (getExpansion) =>
+	{
+		getExpansion("reset varnotes");
+	};
+}
+
 if (window._tejsListeners?.state?.onLoad &&
     !window._tejsListeners.state.onLoad.varnotes)
 {
@@ -85,16 +95,19 @@ Sets up a variable to register varnotes in the global tejs state variable.  Regi
 ```
 ~~
 ```js
+// Unregister note-modify event listener
 if (window._tejsVarnotes?.onModified)
 {
 	app.vault.off("modify", window._tejsVarnotes.onModified);
 	delete window._tejsVarnotes.onModified;
-	delete window._tejsVarnotes.noteVars;
-	delete window._tejsListeners.state.onLoad.varnotes;
 }
+
+// Unregister state shortut-file listeners
+delete window._tejsListeners?.state?.onReset?.varnotes;
+delete window._tejsListeners?.state?.onLoad?.varnotes;
 ```
 ~~
-Unregisters the file-modified event.
+Unregisters the file-modified event. Unregisters state listeners.
 
 
 ~~

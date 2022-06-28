@@ -9,9 +9,30 @@ Shortcuts that let the user manage clips of text.  A "clip" is a bit of named te
 ```js
 window._tejsState ||= {};
 window._tejsState.clips ||= {};
+
+if (window._tejsListeners?.state?.onReset &&
+    !window._tejsListeners.state.onReset.clips)
+{
+	window._tejsListeners.state.onReset.clips = (getExpansion) =>
+	{
+		getExpansion("reset clips");
+	};
+}
 ```
 ~~
 Sets up a state variable for the clips.
+
+
+~~
+```
+^tejs shutdown$
+```
+~~
+```js
+delete window._tejsListeners?.state?.onReset?.clips;
+```
+~~
+Unregisters state listener.
 
 
 ~~

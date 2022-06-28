@@ -11,9 +11,31 @@ Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the l
 ```js
 window._tejsState ||= {};
 window._tejsState.lists ||= {};
+
+if (window._tejsListeners?.state?.onReset &&
+    !window._tejsListeners.state.onReset.lists)
+{
+	window._tejsListeners.state.onReset.lists = (getExpansion) =>
+	{
+		getExpansion("reset lists");
+	};
+}
+
 ```
 ~~
 Sets up a variable to store lists in the global tejs state variable.
+
+
+~~
+```
+^tejs shutdown$
+```
+~~
+```js
+delete window._tejsListeners?.state?.onReset?.lists;
+```
+~~
+Unregisters state listener.
 
 
 ~~

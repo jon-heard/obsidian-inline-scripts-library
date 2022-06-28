@@ -21,6 +21,16 @@ window._tejsState.lists.pcs ||= { type: "basic", content: [] };
 window._tejsState.lists.npcs ||= { type: "basic", content: [] };
 window._tejsState.lists.threads ||= { type: "basic", content: [] };
 window._tejsMythicDetails = [];
+
+if (window._tejsListeners?.state?.onReset &&
+    !window._tejsListeners.state.onReset.mythicv2)
+{
+	window._tejsListeners.state.onReset.mythicv2 = (getExpansion) =>
+	{
+		getExpansion("reset mythicv2");
+	};
+}
+
 ```
 ~~
 Sets up a variable to store mythicv2 state in the global tejs state variable.
@@ -28,7 +38,19 @@ Sets up a variable to store mythicv2 state in the global tejs state variable.
 
 ~~
 ```
-^reset mythic$
+^tejs shutdown$
+```
+~~
+```js
+delete window._tejsListeners?.state?.onReset?.mythicv2;
+```
+~~
+Unregisters state listener.
+
+
+~~
+```
+^reset mythicv2$
 ```
 ~~
 ```js
@@ -43,12 +65,12 @@ window._tejsState.lists.threads = { type: "basic", content: [] };
 return [ "***\n\n\n### SCENE ", window._tejsState.mythic.scene, "\n__Setup__: " ];
 ```
 ~~
-reset mythic - Reset mythic state to defaults and displays scene heading.
+reset mythicv2 - Reset mythic state to defaults and displays scene heading.
 
 
 ~~
 ```
-^mythic details((?: [y|n])?)$
+^mythicv2 details((?: [y|n])?)$
 ```
 ~~
 ```js
@@ -59,7 +81,7 @@ if ($1)
 return [ "Mythic details are ", (window._tejsState.mythic.showDetails ? "ENABLED" : "DISABLED"), "\n\n" ];
 ```
 ~~
-mythic details {state} - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
+mythicv2 details {state} - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 ***
 
 ~~
