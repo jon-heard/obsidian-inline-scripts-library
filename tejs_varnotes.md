@@ -66,6 +66,14 @@ if (!window._tejsVarnotes.onModified)
 	};
 	app.vault.on("modify", window._tejsVarnotes.onModified);
 }
+if (window._tejsListeners?.state?.onLoad &&
+    !window._tejsListeners.state.onLoad.varnotes)
+{
+	window._tejsListeners.state.onLoad.varnotes = (getExpansion) =>
+	{
+		getExpansion("varnotes refresh");
+	};
+}
 ```
 ~~
 Sets up a variable to register varnotes in the global tejs state variable.  Registers the file-modified event.
@@ -82,6 +90,7 @@ if (window._tejsVarnotes?.onModified)
 	app.vault.off("modify", window._tejsVarnotes.onModified);
 	delete window._tejsVarnotes.onModified;
 	delete window._tejsVarnotes.noteVars;
+	delete window._tejsListeners.state.onLoad.varnotes;
 }
 ```
 ~~
@@ -241,7 +250,7 @@ varnotes set {varnote name} {var name} {value} - Sets the var named {var name} (
 
 ~~
 ```
-^(?:varnotes|vn) refresh$
+^varnotes refresh$
 ```
 ~~
 ```js
@@ -259,7 +268,6 @@ return result;
 ```
 ~~
 varnotes refresh - Get the latest vars from all varnotes and store it all.
-    - Alternative shortcut: __vn refresh__.
 
 
 ~~

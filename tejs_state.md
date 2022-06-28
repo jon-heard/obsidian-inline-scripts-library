@@ -12,9 +12,12 @@ To save the session state, use the "state" shortcut (no parameters).  This expan
 ~~
 ```js
 window._tejsState ||= {};
+window._tejsListeners ||= {};
+window._tejsListeners.state ||= {};
+window._tejsListeners.state.onLoad ||= {};
 ```
 ~~
-Sets up a global variable to hold the state for all shortcut-files.
+Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded.
 
 
 ~~
@@ -49,6 +52,16 @@ state - Expands to a string representing the current state (for session saving).
 ~~
 ```js
 window._tejsState = JSON.parse($1);
+for (const name in window._tejsListeners.state.onLoad)
+{
+	const listener = window._tejsListeners.state.onLoad[name];
+	if (typeof listener !== "function")
+	{
+		console.warn("Non-function is registered as state load listener:" + listener);
+		continue;
+	}
+	listener(getExpansion);
+}
 return "State loaded.\n\n";
 ```
 ~~
