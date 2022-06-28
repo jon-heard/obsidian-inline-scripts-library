@@ -1,16 +1,16 @@
-Setup notes with variables.  Useful for reading raw data from a nicely formatted document.
+Setup and manage variables within notes.  Useful for adding data points (vars) into a note, then reading from and writing to those vars.
 
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the varnotes lists.
+Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the managed varnotes.
 
-Can be used by other shortcut-files for dynamically reading data for other operations.
+Can be used by other shortcut-files for working with data in notes.
 
-The syntax for a variable in a document is \*\*\%\%variable name\%\%\*\*\_variable value\_:
+The syntax for a notevar (a variable in a note) is \*\*\%\%variable name\%\%\*\*\_variable value\_:
 - double-asterisk
 - double-percentages
 - __variable name__
 - double-percentages
 - double-asterisk
--  single-underscore
+- single-underscore
 - __variable value__
 - single-underscore
 
@@ -18,9 +18,9 @@ Note that the variable name is case-INsensitive, so STR, str and Str are all con
 
 Examples:
 - \*\*\%\%Name\%\%\*\*\_Maggie Smith\_.
-    - This specifies that the data named "name" (case-insensitive) is set to value "Maggie Smith".
-- \*\*\%\%Str\%\%\*\*\_18\_.
-    - This specifies that the data named "str" (case-insensitive) is set to value 18.
+    - This specifies that the notevar named "name" (case-insensitive) holds the value "Maggie Smith".
+- \*\*\%\%str\%\%\*\*\_18\_.
+    - This specifies that the notevar named "str" (case-insensitive) holds the value 18.
 
 
 ~~
@@ -33,7 +33,7 @@ window._tejsState ||= {};
 window._tejsState.varnotes ||= {};
 window._tejsVarnotes ||= {};
 window._tejsVarnotes.regex_vars ||= /\*\*%%([_a-zA-Z_][_a-zA-Z_0-9]*)%%\*\*_([^_]+)_/g;
-window._tejsVarnotes.regex_var ||= "\*\*%%~1~%%\*\*_([^_]+)_";
+window._tejsVarnotes.regex_var ||= "\\*\\*%%~1~%%\\*\\*_([^_]+)_";
 
 if (!window._tejsVarnotes.revLookup)
 {
@@ -45,9 +45,9 @@ if (!window._tejsVarnotes.revLookup)
 	}
 }
 
-if (!window._tejsVarnotes.data)
+if (!window._tejsVarnotes.noteVars)
 {
-	window._tejsVarnotes.data ||= {};
+	window._tejsVarnotes.noteVars ||= {};
 	for (const varnoteName in window._tejsState.varnotes)
 	{
 		getExpansion("varnotes refresh " + varnoteName);
@@ -68,7 +68,7 @@ if (!window._tejsVarnotes.onModified)
 }
 ```
 ~~
-Sets up a variable to store varnote data in the global tejs state variable.  Registers the file-modified event.
+Sets up a variable to register varnotes in the global tejs state variable.  Registers the file-modified event.
 
 
 ~~
@@ -81,7 +81,7 @@ if (window._tejsVarnotes?.onModified)
 {
 	app.vault.off("modify", window._tejsVarnotes.onModified);
 	delete window._tejsVarnotes.onModified;
-	delete window._tejsVarnotes.data;
+	delete window._tejsVarnotes.noteVars;
 }
 ```
 ~~
@@ -96,7 +96,7 @@ Unregisters the file-modified event.
 ```js
 window._tejsState ||= {};
 window._tejsState.varnotes = {};
-window._tejsVarnotes.data = {};
+window._tejsVarnotes.noteVars = {};
 return "All varnotes cleared.\n\n";
 ```
 ~~
@@ -126,27 +126,28 @@ varnotes - Lists all varnotes and the files they are connected to.
 
 ~~
 ```
-^varnotes data ([a-zA-Z_][a-zA-Z_0-9]*)$
+^varnotes vars ([a-zA-Z_][a-zA-Z_0-9]*)$
 ```
 ~~
 ```js
 let result = ["__Varnotes - ", $1, "__:\n"];
-const data = window._tejsVarnotes.data[$1];
-let hasData = false;
-if (data)
+const noteVars = window._tejsVarnotes.noteVars[$1];
+let hasVars = false;
+if (noteVars)
 {
-	for (const key in data)
+	for (const varName in noteVars)
 	{
-		result.push("- __" + key + "__ - " + data[key] + "\n");
-		hasData = true;
+		if (varName == "varnote") { continue; }
+		result.push("- __" + varName + "__ - \"" + noteVars[varName] + "\"\n");
+		hasVars = true;
 	}
 }
-if (!hasData) { result.push("NO DATA"); }
+if (!hasVars) { result.push("NO VARS"); }
 result.push("\n\n");
 return result;
 ```
 ~~
-varnotes data {varnote name} - Lists all the data for varnote {varnote name} (an required name paroperty).
+varnotes vars {varnote name} - Lists all the vars for the varnote named {varnote name} (a required name property).
 
 
 ~~
@@ -173,11 +174,11 @@ varnotes add {varnote name} {file address} - Adds a varnote named {varnote name}
 ```js
 if (!window._tejsState.varnotes[$1])
 {
-	return "Varnote \"" + %i + "\" not removed.  Does not exist.";
+	return "Varnote \"" + $i + "\" not removed.  Does not exist.\n\n";
 }
 delete window._tejsVarnotes.revLookup[window._tejsState.varnotes[$1]];
 delete window._tejsState.varnotes[$1];
-delete window._tejsVarnotes.data[$1];
+delete window._tejsVarnotes.noteVars[$1];
 return "Varnote \"" + $1 + "\" removed.\n\n";
 ```
 ~~
@@ -190,15 +191,15 @@ varnotes remove {varnote name} - Removes the varnote {var name} (a required name
 ```
 ~~
 ```js
-const data = window._tejsVarnotes.data[$1];
-if (!data) { return "varnote \"" + $1 + "\" not found."; }
-const datum = data[$2.toLowerCase()];
-if (!datum) { return "data \"" + $2 + "\" not found."; }
-return data;
+const noteVars = window._tejsVarnotes.noteVars[$1];
+if (!noteVars) { return [ "Varnote \"", $1, "\" not found.\n\n" ]; }
+const noteVar = noteVars[$2.toLowerCase()];
+if (!noteVar) { return [ "Var \"", $2, "\" not found.\n\n" ]; }
+return noteVar;
 ```
 ~~
-varnotes get {varnote name} {data name} - Gets the data named {data name} (a required name parameter) in the varnote named {varnote name} (a required name parameter).
-    - Alternative shortcut: __vn {varnote name} {data name}__.
+varnotes get {varnote name} {var name} - Gets the value of the var named {var name} (a required name parameter) in the varnote named {varnote name} (a required name parameter).
+    - Alternative shortcut: __vn {varnote name} {var name}__.
 
 
 ~~
@@ -207,27 +208,35 @@ varnotes get {varnote name} {data name} - Gets the data named {data name} (a req
 ```
 ~~
 ```js
+if ($3.contains("_")) { return "Var \"" + $2 + "\" not set. New value contains underscore: \"" + $3 + "\"."; }
+const noteVars = window._tejsVarnotes.noteVars[$1];
+if (!noteVars) { return "Var \"" + $2 + "\" not set.  Varnote \"" + $1 + "\" not found.\n\n"; }
+let content = noteVars["varnote"];
+if (!content) { return ["Var \"" + $2 + "\" not set.  Varnote \"" + $1 + "\" Has no content.\n\n"]; }
+
+const regex =
+	window._tejsVarnotes.regex_var.replace("~1~", $2);
+const r = content.match(regex);
+if (!r) { return ["Var \"" + $2 + "\" not set.  Var not found.\n\n"]; }
+content = content.slice(0, r.index + 9 + $2.length) + $3 + content.slice(r.index + 9 + $2.length + r[1].length);
+
 const filename = window._tejsState.varnotes[$1];
 if (!filename)
 {
-	return "Varnote \"" + $2 + "\" not set.  Varnote \"" + $1 + "\" not found.\n\n";
+	return "Var \"" + $2 + "\" not set.  Varnote \"" + $1 + "\" not found.\n\n";
 }
 const file = app.vault.fileMap[filename];
 if (!file)
 {
-	return "Varnote \"" + $2 + "\" not set.  File \"" + filename + "\" not found.\n\n";
+	return "Var \"" + $2 + "\" not set.  File \"" + filename + "\" not found.\n\n";
 }
-app.vault.cachedRead(file).then(r =>
-{
-debugger;
-	const regex = window._tejsVarnotes.regex_var.replace("~1~", $2);
-console.log(regex);
-});
-return [ "Varnote \"", $2, "\" set.\n\n" ];
+app.vault.modify(file, content);
+
+return [ "Var \"", $2, "\" in varnote \"", $1, "\" set to \"", $3, "\".\n\n" ];
 ```
 ~~
-varnotes set {varnote name} {data name} {value} - Sets the data named {data name} (a required name parameter) to {value} (a required text parameter), in the varnote named {varnote name} (a required name parameter).
-    - Alternative shortcut: __vnset {varnote name} {data name} {value}__.
+varnotes set {varnote name} {var name} {value} - Sets the var named {var name} (a required name parameter) to {value} (a required text parameter), in the varnote named {varnote name} (a required name parameter).
+    - Alternative shortcut: __vnset {varnote name} {var name} {value}__.
 
 
 ~~
@@ -249,7 +258,7 @@ result.push("Varnote refreshing finished.\n\n");
 return result;
 ```
 ~~
-varnotes refresh - Pull the data from all varnotes.
+varnotes refresh - Get the latest vars from all varnotes and store it all.
     - Alternative shortcut: __vn refresh__.
 
 
@@ -262,7 +271,7 @@ varnotes refresh - Pull the data from all varnotes.
 const filename = window._tejsState.varnotes[$1];
 if (!filename)
 {
-	return "Varnote \"" + $1 + "\" not refreshed.  Does not exist.\n\n";
+	return "Varnote \"" + $1 + "\" not refreshed.  File does not exist.\n\n";
 }
 const file = app.vault.fileMap[filename];
 if (!file)
@@ -271,13 +280,14 @@ if (!file)
 }
 app.vault.cachedRead(file).then(r =>
 {
-	window._tejsVarnotes.data[$1] = {};
+	window._tejsVarnotes.noteVars[$1] = {};
 	for (let ri of r.matchAll(window._tejsVarnotes.regex_vars))
 	{
-		window._tejsVarnotes.data[$1][ri[1].toLowerCase()] = ri[2];
+		window._tejsVarnotes.noteVars[$1][ri[1].toLowerCase()] = ri[2];
 	}
+	window._tejsVarnotes.noteVars[$1]["varnote"] = r;
 });
 return [ "Varnote \"", $1, "\" refreshed.\n\n" ];
 ```
 ~~
-varnotes refresh {varnote name} - Pull the data from varnote {varnote name} (a required "name" parameter).
+varnotes refresh {varnote name} - Pull the vars from varnote {varnote name} (a required "name" parameter).
