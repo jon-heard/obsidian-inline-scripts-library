@@ -7,6 +7,7 @@ A decent Lorum Ipsum generator.
 ```
 ~~
 ```js
+if (window._tejs?.lipsum) { return; }
 let l = `
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et sem quam. Proin viverra egestas sem, et finibus mi volutpat eget. Aliquam vel nulla mattis, malesuada lectus sed, sagittis eros. Etiam vulputate, felis nec aliquam tempor, velit ex lobortis nisi, ac aliquet magna arcu id velit. Nam odio ligula, consequat eget elit non, accumsan rutrum est. Mauris vitae ligula nec lacus finibus venenatis at molestie ligula. Ut suscipit ex et finibus gravida.
@@ -41,7 +42,8 @@ for (let i = 0; i < l.length; i++)
 	sentences = sentences.concat(l[i]);
 }
 let first = sentences.shift();
-window._tejsLipsumData = { first: first, pSizes: pSizes, sentences: sentences };
+window._tejs ||= {};
+window._tejs.lipsum = { first: first, pSizes: pSizes, sentences: sentences };
 ```
 ~~
 Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source's paragraphs.
@@ -67,11 +69,11 @@ $1 = Number($1) || 1;
 let result = "";
 for (let i = 0; i < $1; i++)
 {
-	let pSize = aPick(window._tejsLipsumData.pSizes);
-	if (!i)
+	let pSize = aPick(window._tejs.lipsum.pSizes);
+	if (i == 0)
 	{
 		pSize--;
-		result += window._tejsLipsumData.first + ". ";
+		result += window._tejs.lipsum.first + ". ";
 	}
 	else
 	{
@@ -79,7 +81,7 @@ for (let i = 0; i < $1; i++)
 	}
 	for (let k = 0; k < pSize; k++)
 	{
-		result += aPick(window._tejsLipsumData.sentences) + ". ";
+		result += aPick(window._tejs.lipsum.sentences) + ". ";
 	}
 	result = result.substring(0, result.length-1);
 }

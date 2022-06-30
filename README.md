@@ -20,9 +20,10 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [tejs_mythicv2](#tejs_mythicv2)
 - [tejs_une](#tejs_une)
 - [tejs_rpgtools](#tejs_rpgtools)
+- [tejs_clips](#tejs_clips)
 - [tejs_arrows](#tejs_arrows)
-- [tejs_support](#tejs_support)
 - [tejs_lipsum](#tejs_lipsum)
+- [tejs_support](#tejs_support)
 
 ***
 
@@ -130,6 +131,17 @@ Shortcuts to help in playing tabletop rpgs, either group or solo.
 
 ***
 
+### tejs_clips
+Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but more simplistic.
+
+- __reset state__ - Remove all clips.
+- __clip__ - Lists all stored clips.
+- __clip {name}__ - Expands to the value stored in clip {name}.
+- __clipadd {name} {value}__ - Creates a clip {name} that stores the string {value}.
+- __clipremove {name}__ - Removes the clip {name}.
+
+***
+
 ### tejs_arrows
 Shortcuts for writing various arrows:
 - →←↑↓
@@ -145,17 +157,6 @@ Shortcuts for writing various arrows:
 A decent Lorum Ipsum generator.
 
 - __lipsum {paragraph count}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
-
-***
-
-### tejs_clips
-Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but more simplistic.
-
-- __reset state__ - Remove all clips.
-- __clip__ - Lists all stored clips.
-- __clip {name}__ - Expands to the value stored in clip {name}.
-- __clipadd {name} {value}__ - Creates a clip {name} that stores the string {value}.
-- __clipremove {name}__ - Removes the clip {name}.
 
 ***
 

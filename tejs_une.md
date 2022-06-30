@@ -12,11 +12,11 @@ function aPickWeight(a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;
 	theRoll = theRoll || roll(a.last()[wIndex]);
-	for (let i = 0; i < a.length; i++)
+	for (const item of a)
 	{
-		if (a[i][wIndex] >= theRoll)
+		if (item[wIndex] >= theRoll)
 		{
-			return a[i];
+			return item;
 		}
 	}
 	return a.last();
@@ -74,7 +74,7 @@ let table1 =
 ["SUPERFLUOUS","ADDICTED","CONFORMIST","NEFARIOUS","SENSIBLE","UNTRAINED","ROMANTIC","UNREASONABLE","SKILLED","NEGLECTFUL","LIVELY","FORTHRIGHT","IDEALISTIC","UNSUPPORTIVE","RATIONAL","COARSE","FOOLISH","CUNNING","DELIGHTFUL","MISERLY","INEPT","BANAL","LOGICAL","SUBTLE","REPUTABLE","WICKED","LAZY","PESSIMISTIC","SOLEMN","HABITUAL","MEEK","HELPFUL","UNCONCERNED","GENEROUS","DOCILE","CHEERY","PRAGMATIC","SERENE","THOUGHTFUL","HOPELESS","PLEASANT","INSENSITIVE","TITLED","INEXPERIENCED","PRYING","OBLIVIOUS","REFINED","INDISPENSABLE","SCHOLARLY","CONSERVATIVE","UNCOUTH","WILLFUL","INDIFFERENT","FICKLE","ELDERLY","SINFUL","NAIVE","PRIVILEGED","GLUM","LIKABLE","LETHARGIC","DEFIANT","OBNOXIOUS","INSIGHTFUL","TACTLESS","FANATIC","PLEBEIAN","CHILDISH","PIOUS","UNEDUCATED","INCONSIDERATE","CULTURED","REVOLTING","CURIOUS","TOUCHY","NEEDY","DIGNIFIED","PUSHY","KIND","CORRUPT","JOVIAL","SHREWD","LIBERAL","COMPLIANT","DESTITUTE","CONNIVING","CAREFUL","ALLURING","DEFECTIVE","OPTIMISTIC","AFFLUENT","DESPONDENT","MINDLESS","PASSIONATE","DEVOTED","ESTABLISHED","UNSEEMLY","DEPENDABLE","RIGHTEOUS","CONFIDENT"];
 let table2 =
 ["GYPSY","WITCH","MERCHANT","EXPERT","COMMONER","JUDGE","RANGER","OCCULTIST","REVEREND","THUG","DRIFTER","JOURNEYMAN","STATESMAN","ASTROLOGER","DUELIST","JACK-OF-ALL-TRADES","ARISTOCRAT","PREACHER","ARTISAN","ROGUE","MISSIONARY","OUTCAST","MERCENARY","CARETAKER","HERMIT","ORATOR","CHIEFTAIN","PIONEER","BURGLAR","VICAR","OFFICER","EXPLORER","WARDEN","OUTLAW","ADEPT","BUM","SORCERER","LABORER","MASTER","ASCENDANT","VILLAGER","MAGUS","CONSCRIPT","WORKER","ACTOR","HERALD","HIGHWAYMAN","FORTUNE-HUNTER","GOVERNOR","SCRAPPER","MONK","HOMEMAKER","RECLUSE","STEWARD","POLYMATH","MAGICIAN","TRAVELER","VAGRANT","APPRENTICE","POLITICIAN","MEDIATOR","CROOK","CIVILIAN","ACTIVIST","HERO","CHAMPION","CLERIC","SLAVE","GUNMAN","CLAIRVOYANT","PATRIARCH","SHOPKEEPER","CRONE","ADVENTURER","SOLDIER","ENTERTAINER","CRAFTSMAN","SCIENTIST","ASCETIC","SUPERIOR","PERFORMER","MAGISTER","SERF","BRUTE","INQUISITOR","LORD","VILLAIN","PROFESSOR","SERVANT","CHARMER","GLOBETROTTER","SNIPER","COURTIER","PRIEST","TRADESMAN","HITMAN","WIZARD","BEGGAR","TRADESMAN","WARRIOR"];
-return ["__Character identity__\n", aPick(table1) + " " + aPick(table2), "\n\n"];
+return [ "__Character identity__\n", aPick(table1) + " " + aPick(table2), "\n\n" ];
 ```
 ~~
 une identity - Generates a 2-word description for a character.
@@ -88,7 +88,7 @@ une identity - Generates a 2-word description for a character.
 ```js
 let table3 =
 [ ["MUCH WEAKER",2,4,5,8,12],["SLIGHTLY WEAKER",10,15,20,25,30],["COMPARABLE",90,85,80,75,70],["SLIGHTLY STRONGER",98,96,95,92,88],["MUCH STRONGER",100,100,100,100,100] ];
-return ["__Character power level__\n", aPickWeight(table3, Number($1) || 3)[0], "\n\n"];
+return [ "__Character power level__\n", aPickWeight(table3, Number($1) || 3)[0], "\n\n" ];
 ```
 ~~
 une power {randomness} - Generates a character's power level relative to pc's power level, based on {randomness}: an optional number from 1 (order), to 5 (chaos), defaulting to 3 (standard).
@@ -127,7 +127,7 @@ for (let i = 0; i < 3; i++)
 	priorNounColumns.push(Math.trunc((roll2-1)/20));
 	result += "- " + aPick(table4) + " " + table5[roll2-1] + " " + "\n";
 }
-return ["__Character motive__\n", result, "\n"];
+return [ "__Character motive__\n", result, "\n" ];
 ```
 ~~
 une motive - Generates three 2-word descriptions for a character's motivations.
@@ -149,7 +149,7 @@ let table6 = [
 	["HELPFUL",85,89,93,95,97,98,99],
 	["FORTHCOMING",100,100,100,100,100,100,100] ];
 let result = aPickWeight(table6, Number($1) || 4)[0];
-return ["__Character mood__\n", result, "\n\n"];
+return [ "__Character mood__\n", result, "\n\n" ];
 ```
 ~~
 une mood {relationship to pc} - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: an optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).
@@ -171,11 +171,10 @@ let table7b = [
 ["REPORT","EFFECTS","EXAMINATION","RECORDS","ACCOUNT","NEWS","HISTORY","TELLING","DISCOURSE","SPEECH"],
 ["RUMOR","UNCERTAINTY","SECRETS","MISDIRECTION","WHISPERS","LIES","SHADOWS","ENIGMA","OBSCURITY","CONUNDRUM"],
 ["REPUTATION","DOUBT","BIAS","DISLIKE","PARTIALITY","BELIEF","VIEW","DISCRIMINATION","ASSESSMENT","DIFFERENCE"] ];
-let demeanor = $1 ? $1 : roll(8);
+let demeanor = $1 || roll(8);
 let bearing = roll(10);
-let result = table7a[demeanor-1] + " - " + table7b
-[demeanor-1][bearing-1];
-return ["__Character bearing__\n", result, "\n\n"];
+let result = table7a[demeanor-1] + " - " + table7b[demeanor-1][bearing-1];
+return [ "__Character bearing__\n", result, "\n\n" ];
 ```
 ~~
 une bearing {demeanor} - Generate a character's attitude for this interaction, based on {demeanor}: an optional number from 1-8, defaulting to random and meaning one of the following:
@@ -191,7 +190,7 @@ une bearing {demeanor} - Generate a character's attitude for this interaction, b
 ```js
 let table8 = [ ["CURRENT_SCENE", 3],["LAST_STORY",6],["EQUIPMENT",9],["PARENTS",12],["HISTORY",15],["RETAINERS",18],["WEALTH",21],["RELICS",24],["LAST_ACTION",27],["SKILLS",30],["SUPERIORS",33],["FAME",36],["CAMPAIGN",39],["FUTURE_ACTION",42],["FRIENDS",45],["ALLIES",48],["LAST_SCENE",51],["CONTACTS",54],["FLAWS",57],["ANTAGONIST",60],["REWARDS",63],["EXPERIENCE",66],["KNOWLEDGE",69],["RECENT_SCENE",72],["COMMUNITY",75],["TREASURE",78],["THE_CHARACTER",81],["CURRENT_STORY",84],["FAMILY",87],["POWER",90],["WEAPONS",93],["PREVIOUS_SCENE",96],["ENEMY",100] ];
 let result = "THE PC'S " + aPickWeight(table8)[0];
-return ["__Character focus__\n", result, "\n\n"];
+return [ "__Character focus__\n", result, "\n\n" ];
 ```
 ~~
 une focus - Generate a character's primary interest for this interaction.

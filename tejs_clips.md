@@ -7,20 +7,21 @@ Shortcuts that let the user manage clips of text.  A "clip" is a bit of named te
 ```
 ~~
 ```js
-window._tejsState ||= {};
-window._tejsState.clips ||= {};
+window._tejs ||= {};
+window._tejs.state ||= {};
+window._tejs.state.clips ||= {};
 
-if (window._tejsListeners?.state?.onReset &&
-    !window._tejsListeners.state.onReset.clips)
+if (window._tejs.listeners?.state?.onReset &&
+    !window._tejs.listeners.state.onReset.clips)
 {
-	window._tejsListeners.state.onReset.clips = (expand) =>
+	window._tejs.listeners.state.onReset.clips = (expand) =>
 	{
 		expand("reset clips");
 	};
 }
 ```
 ~~
-Sets up a state variable for the clips.
+Sets up a state variable for the clips.  Sets up callback for state "reset" event to reset itself.
 
 
 ~~
@@ -29,10 +30,10 @@ Sets up a state variable for the clips.
 ```
 ~~
 ```js
-delete window._tejsListeners?.state?.onReset?.clips;
+delete window._tejs.listeners?.state?.onReset?.clips;
 ```
 ~~
-Unregisters state listener.
+Unregisters event callbacks.
 
 
 ~~
@@ -41,7 +42,7 @@ Unregisters state listener.
 ```
 ~~
 ```js
-window._tejsState.clips = {};
+window._tejs.state.clips = {};
 return "All clips cleared.\n\n";
 ```
 ~~
@@ -50,55 +51,56 @@ reset clips - Remove all clips.
 
 ~~
 ```
-^clip$
+^clips$
 ```
 ~~
 ```js
-let clipNames = Object.keys(window._tejsState.clips);
-return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "none") + "\n\n";
+let clipNames = Object.keys(window._tejs.state.clips);
+return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 ~~
-clip - Lists all stored clips.
+clips - Lists all stored clips.
 
 
 ~~
 ```
-^clip ([a-zA-Z]+)$
+^(?:clips get|cg) ([a-zA-Z]+)$
 ```
 ~~
 ```js
-let text = window._tejsState.clips[$1];
+let text = window._tejs.state.clips[$1];
 return text || "";
 ```
 ~~
-clip {name} - Expands to the value stored in clip {name}.
+clips get {name} - Expands to the value stored in clip {name}.
+	- Alternative shortcut: __cg {name}__.
 
 
 ~~
 ```
-^clipadd ([a-zA-Z]+) (.+)$
+^clips add ([a-zA-Z]+) (.+)$
 ```
 ~~
 ```js
-window._tejsState.clips[$1] = $2;
+window._tejs.state.clips[$1] = $2;
 return "__Clip \"" + $1 + "\" set to__\n" + $2 + "\n\n";
 ```
 ~~
-clipadd {name} {value} - Creates a clip {name} that stores the string {value}.
+clips add {name} {value} - Creates a clip {name} that stores the string {value}.
 
 
 ~~
 ```
-^clipremove ([a-zA-Z]+)$
+^clips remove ([a-zA-Z]+)$
 ```
 ~~
 ```js
-if (window._tejsState.clips.hasOwnProperty($1))
+if (window._tejs.state.clips[$1])
 {
-	delete window._tejsState.clips[$1];
+	delete window._tejs.state.clips[$1];
 	return "Clip \"" + $1 + "\" removed.\n\n";
 }
 return "Failed to remove clip \"" + $1 + "\".  Does not exist.\n\n";
 ```
 ~~
-clipremove {name} - Removes the clip {name}.
+clips remove {name} - Removes the clip {name}.

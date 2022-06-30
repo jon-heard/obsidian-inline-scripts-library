@@ -11,21 +11,20 @@ Uses __tejs_lists__ shortcut-file (optional).  Adds and uses lists for pcs, npcs
 ```
 ~~
 ```js
-window._tejsState ||= {};
-window._tejsState.mythic ||= {};
-window._tejsState.mythic.chaos ||= 4;
-window._tejsState.mythic.scene ||= 1;
-window._tejsState.mythic.showDetails ||= false;
-window._tejsState.lists ||= {};
-window._tejsState.lists.pcs ||= { type: "basic", content: [] };
-window._tejsState.lists.npcs ||= { type: "basic", content: [] };
-window._tejsState.lists.threads ||= { type: "basic", content: [] };
-window._tejsMythicDetails = [];
+window._tejs ||= {};
+window._tejs.state ||= {};
+window._tejs.state.mythicv2 ||= {};
+window._tejs.state.mythicv2.chaos ||= 4;
+window._tejs.state.mythicv2.scene ||= 1;
+window._tejs.state.lists ||= {};
+window._tejs.state.lists.pcs ||= { type: "basic", content: [] };
+window._tejs.state.lists.npcs ||= { type: "basic", content: [] };
+window._tejs.state.lists.threads ||= { type: "basic", content: [] };
 
-if (window._tejsListeners?.state?.onReset &&
-    !window._tejsListeners.state.onReset.mythicv2)
+if (window._tejs.listeners?.state?.onReset &&
+    !window._tejs.listeners.state.onReset.mythicv2)
 {
-	window._tejsListeners.state.onReset.mythicv2 = (expand) =>
+	window._tejs.listeners.state.onReset.mythicv2 = (expand) =>
 	{
 		expand("reset mythicv2");
 	};
@@ -33,7 +32,7 @@ if (window._tejsListeners?.state?.onReset &&
 
 ```
 ~~
-Sets up a variable to store mythicv2 state in the global tejs state variable.
+Sets up a state variable for mythicv2.  Sets up callback for state "reset" event to reset itself.
 
 
 ~~
@@ -42,10 +41,10 @@ Sets up a variable to store mythicv2 state in the global tejs state variable.
 ```
 ~~
 ```js
-delete window._tejsListeners?.state?.onReset?.mythicv2;
+delete window._tejs.listeners?.state?.onReset?.mythicv2;
 ```
 ~~
-Unregisters state listener.
+Unregisters event callbacks.
 
 
 ~~
@@ -54,15 +53,18 @@ Unregisters state listener.
 ```
 ~~
 ```js
-window._tejsState ||= {};
-window._tejsState.mythic ||= {};
-window._tejsState.mythic.chaos = 4;
-window._tejsState.mythic.scene = 1;
-window._tejsState.lists ||= {};
-window._tejsState.lists.pcs = { type: "basic", content: [] };
-window._tejsState.lists.npcs = { type: "basic", content: [] };
-window._tejsState.lists.threads = { type: "basic", content: [] };
-return [ "***\n\n\n### SCENE ", window._tejsState.mythic.scene, "\n__Setup__: " ];
+window._tejs ||= {};
+window._tejs.state ||= {};
+window._tejs.state.mythicv2 ||= {};
+window._tejs.state.mythicv2.chaos = 4;
+window._tejs.state.mythicv2.scene = 1;
+window._tejs.state.lists ||= {};
+window._tejs.state.lists.pcs = { type: "basic", content: [] };
+window._tejs.state.lists.npcs = { type: "basic", content: [] };
+window._tejs.state.lists.threads = { type: "basic", content: [] };
+window._tejs.mythicv2 ||= {};
+window._tejs.mythicv2.details ||= []; // Track the details of a shortcut
+return "***\n\n\n### SCENE " + window._tejs.state.mythicv2.scene + "\n__Setup__: ";
 ```
 ~~
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
@@ -76,9 +78,9 @@ reset mythicv2 - Reset mythic state to defaults and displays scene heading.
 ```js
 if ($1)
 {
-	window._tejsState.mythic.showDetails = ($1==" y");
+	window._tejs.state.mythicv2.showDetails = ($1 == " y");
 }
-return [ "Mythic details are ", (window._tejsState.mythic.showDetails ? "ENABLED" : "DISABLED"), "\n\n" ];
+return "Mythic details are " + (window._tejs.state.mythicv2.showDetails ? "ENABLED" : "DISABLED") + "\n\n";
 ```
 ~~
 mythicv2 details {state} - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
@@ -97,11 +99,11 @@ function aPickWeight(name, a, wIndex, theRoll)
 	wIndex = wIndex || 1;
 	theRoll = theRoll || roll("",a.last()[wIndex]);
 	addDetails(name, theRoll);
-	for (let i = 0; i < a.length; i++)
+	for (const item of a)
 	{
-		if (a[i][wIndex] >= theRoll)
+		if (item[wIndex] >= theRoll)
 		{
-			return a[i];
+			return item;
 		}
 	}
 	return a.last();
@@ -111,23 +113,23 @@ function addDetails()
 	for (let i = 0; i < arguments.length; i+= 2)
 	{
 		if (!arguments[i]) { continue; }
-		window._tejsMythicDetails.push(arguments[i] + "=" + arguments[i+1]);
+		window._tejs.mythicv2.details.push(arguments[i] + "=" + arguments[i+1]);
 	}
 	return arguments[arguments.length - 1];
 }
 function getDetails(sameLine)
 {
-	if (!window._tejsState.mythic.showDetails) { return ""; }
-	if (!window._tejsMythicDetails.length) { return ""; }
-	return (sameLine?"":"\n") + "_" + window._tejsMythicDetails.join(" ") + "_";
+	if (!window._tejs.state.mythicv2.showDetails) { return ""; }
+	if (!window._tejs.mythicv2.details.length) { return ""; }
+	return (sameLine?"":"\n") + "_" + window._tejs.mythicv2.details.join(" ") + "_";
 }
 clearDetailsIfUserTriggered = () =>
 {
-	if (isUserTriggered) { window._tejsMythicDetails = []; }
+	if (isUserTriggered) { window._tejs.mythicv2.details = []; }
 }
 function getChaosAdjust(multiplier)
 {
-	let chaos = window._tejsState.mythic.chaos;
+	let chaos = window._tejs.state.mythicv2.chaos;
 	let result = ( (chaos==3) ? 2 : (chaos==6) ? -2 : 0 ) * (multiplier || 1);
 	return addDetails("chaosAdjust", result);
 }
@@ -147,8 +149,8 @@ let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"thre
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
 let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
-return [ "__Detail__\n", result[0], focus, getDetails(), "\n\n" ];
+focus = (focus.length == 1) ? "" : (" (" + focus[1] + ")");
+return "__Detail__\n" + result[0] + focus + getDetails() + "\n\n";
 ```
 ~~
 detail - Make a detail check.
@@ -164,9 +166,9 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pcs",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight("eventRoll", outcomes);
 let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length <= 3) ? "" : (" (" + focus[1] + ")");
+focus = (focus.length == 1) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
-return [ "__Event__\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n"];
+return [ "__Event__\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
 ```
 ~~
 event - Make an event check.
@@ -190,14 +192,14 @@ let result =
 	getChaosAdjust($2 == "n" ? -1 : 1);
 result = result > 10 ? "YES" : "NO";
 
-let chaos = window._tejsState.mythic.chaos;
-let isExtreme = (chaosRoll <= chaos) && !!(fateRoll1 % 2) && !!(fateRoll2 % 2);
-let isEvent = (chaosRoll <= chaos) && !(fateRoll1 % 2) && !(fateRoll2 % 2);
-if (chaosRoll < chaos && fateRoll1 == fateRoll2) isExtreme = isEvent = true;
+let isChaotic = (chaosRoll <= window._tejs.state.mythicv2.chaos);
+let isExtreme = isChaotic && !!(fateRoll1 % 2) && !!(fateRoll2 % 2);
+let isEvent = isChaotic && !(fateRoll1 % 2) && !(fateRoll2 % 2);
+if (isChaotic && fateRoll1 == fateRoll2) isExtreme = isEvent = true;
 
 result = (isExtreme ? "EXTREME " : "") + result;
 let evtText = isEvent ? ( "\n__Event__ - " + expand("event")[1] ) : "";
-return [ "__Fate check (", odds[$1+4], ")__\n", result, evtText, getDetails(), "\n\n" ];
+return "__Fate check (" + odds[$1+4] + ")__\n" + result + evtText + getDetails() + "\n\n";
 ```
 ~~
 fate {odds} {wanted} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
@@ -244,7 +246,7 @@ meaning description - Roll on the description meaning table.
 ```
 ~~
 ```js
-return [ "The current scene is ", window._tejsState.mythic.scene, ".\n\n" ];
+return "The current scene is " + window._tejs.state.mythicv2.scene + ".\n\n";
 ```
 ~~
 scene - Show the current scene.
@@ -267,18 +269,17 @@ else if ($1 == -1)
 	result += expand("chaos--")[0] + "\n";
 }
 result += "***\n\n\n\n";
-window._tejsState.mythic.scene++;
-result += "### SCENE " + window._tejsState.mythic.scene;
+window._tejs.state.mythicv2.scene++;
+result += "### SCENE " + window._tejs.state.mythicv2.scene;
 let sceneCheckResults = "";
 let chk = roll("sceneCheck", 10);
-if (chk <= window._tejsState.mythic.chaos)
+if (chk <= window._tejs.state.mythicv2.chaos)
 {
-	sceneCheckResults =
-		((chk % 2) ?
-		 "__Scene modified__" :
-		 ("__Scene replaced__\n__Event__ - " +
-		  expand("event")[1])) +
-		sceneCheckResults;
+	sceneCheckResults = "__Scene modified__";
+	if (chk % 2)
+	{
+		sceneCheckResults = "__Scene replaced__\n__Event__ - " + expand("event")[1];
+	}
 }
 let details = getDetails(!sceneCheckResults);
 if (details)
@@ -289,7 +290,7 @@ if (sceneCheckResults)
 {
 	sceneCheckResults = "\n***\n" + sceneCheckResults;
 }
-return [ result, sceneCheckResults, "\n***\n__Setup__: " ];
+return result + sceneCheckResults + "\n***\n__Setup__: ";
 ```
 ~~
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
@@ -301,7 +302,7 @@ scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then 
 ```
 ~~
 ```js
-return [ "Chaos is ", window._tejsState.mythic.chaos, ".\n\n" ];
+return "Chaos is " + window._tejs.state.mythicv2.chaos + ".\n\n";
 ```
 ~~
 chaos - Show the current chaos value.
@@ -313,13 +314,13 @@ chaos - Show the current chaos value.
 ```
 ~~
 ```js
-window._tejsState.mythic.chaos--;
-if (window._tejsState.mythic.chaos < 3)
+window._tejs.state.mythicv2.chaos--;
+if (window._tejs.state.mythicv2.chaos < 3)
 {
-	window._tejsState.mythic.chaos = 3;
+	window._tejs.state.mythicv2.chaos = 3;
 	return [ "Chaos remains at 3 (minimum).", "\n\n" ];
 }
-return [ "Chaos is lowered to " + window._tejsState.mythic.chaos + ".", "\n\n" ];
+return [ "Chaos is lowered to " + window._tejs.state.mythicv2.chaos + ".", "\n\n" ];
 ```
 ~~
 chaos-- - Decrease the chaos value by 1 (minimum of 3).
@@ -331,13 +332,13 @@ chaos-- - Decrease the chaos value by 1 (minimum of 3).
 ```
 ~~
 ```js
-window._tejsState.mythic.chaos++;
-if (window._tejsState.mythic.chaos > 6)
+window._tejs.state.mythicv2.chaos++;
+if (window._tejs.state.mythicv2.chaos > 6)
 {
-	window._tejsState.mythic.chaos = 6;
+	window._tejs.state.mythicv2.chaos = 6;
 	return [ "Chaos remains at 6 (maximum).", "\n\n" ];
 }
-return [ "Chaos is raised to " + window._tejsState.mythic.chaos + ".", "\n\n" ];
+return [ "Chaos is raised to " + window._tejs.state.mythicv2.chaos + ".", "\n\n" ];
 ```
 ~~
 chaos++ - Increase the chaos value by 1 (maximum of 6).
@@ -349,8 +350,8 @@ chaos++ - Increase the chaos value by 1 (maximum of 6).
 ```
 ~~
 ```js
-window._tejsState.mythic.chaos = $1;
-return [ "Chaos set to ", $1, ".\n\n" ];
+window._tejs.state.mythicv2.chaos = $1;
+return "Chaos set to " + $1 + ".\n\n";
 ```
 ~~
 chaos={value} - Set the chaos value to {value}, an integer from 3 to 6.
@@ -364,7 +365,7 @@ chaos={value} - Set the chaos value to {value}, an integer from 3 to 6.
 ~~
 ```js
 clearDetailsIfUserTriggered();
-return [ "__Descriptor__\n", "Personality: ", expand("meaning description")[1], "\nActivity: ", expand("meaning action")[1], getDetails(), "\n\n" ];
+return "__Descriptor__\n", "Personality: " + expand("meaning description")[1] + "\nActivity: " + expand("meaning action")[1] + getDetails() + "\n\n";
 ```
 ~~
 descriptor - Generates a personality and activity descriptor for an NPC.
@@ -381,7 +382,7 @@ let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGG
 let base = roll("roll1", 10) + roll("roll2", 10);
 let result = base + addDetails("descriptorAdjust", Number($1) * 2);
 result = aPickWeight("", outcomes, 1, result)[0] + " - BASE=" + base;
-return [ "__Disposition__\n", result, getDetails(), "\n\n" ];
+return "__Disposition__\n" + result + getDetails() + "\n\n";
 ```
 ~~
 disposition {descriptor count} - Rolls for an NPC's disposition, modified by {descriptor count}: a required parameter representing the total of the NPC's activated descriptors (integer from -3 to 3).
@@ -400,7 +401,7 @@ let result =
 		addDetails("base", Number($1)) +
 		addDetails("descriptorAdjust", Number($2) * 2);
 result = aPickWeight("", outcomes, 1, result);
-return [ "__Disposition__\n", result[0], getDetails(), "\n\n" ];
+return "__Disposition__\n" + result[0] + getDetails() + "\n\n";
 ```
 ~~
 disposition {base} {descriptorCount} - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  See "disposition {descriptor count}" for an explanation of {descriptor count}.
@@ -430,7 +431,7 @@ if (!result[0])
 	}
 	result[0] += "\n+2/0/-2 DISPOSITION TO MATCH ACTION.";
 }
-return [ "__Action__\n", result[0], getDetails(), "\n\n" ];
+return "__Action__\n" + result[0] + getDetails() + "\n\n";
 ```
 ~~
 action {dispositionAdjust} - Makes an NPC behavior check, modified by {dispositionAdjust}, the modifier of the NPC's disposition.
@@ -446,4 +447,4 @@ action {dispositionAdjust} - Makes an NPC behavior check, modified by {dispositi
 return [];
 ```
 ~~
-lists pick - Does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.
+lists pick - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_mythicv2" in the shortcut-files list for mythicv3 to use lists.
