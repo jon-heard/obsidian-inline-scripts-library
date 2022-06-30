@@ -1,0 +1,29 @@
+// Expand bottom to top
+
+;;une focus
+;;une bearing 1
+;;une bearing
+;;une mood 1
+;;une mood
+;;une motive
+;;une power 1
+;;une power
+;;une identity
+
+***
+
+;;une interact 1 1
+;;une interact
+;;une character 1
+;;une character
+
+***
+
+;;une 1 1 1
+;;une
+;;rngseed 1
+
+***
+
+;;about une
+;;ref une

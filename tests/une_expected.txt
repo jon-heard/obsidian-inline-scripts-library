@@ -1,0 +1,133 @@
+// Expand bottom to top
+
+__Character focus__
+THE PC'S WEAPONS
+
+
+__Character bearing__
+SCHEMING - BARGAIN
+
+
+__Character bearing__
+MYSTERIOUS - ENIGMA
+
+
+__Character mood__
+SOCIABLE
+
+
+__Character mood__
+CAUTIOUS
+
+
+__Character motive__
+- DISCOURAGE MILITARY 
+- PREPARE SCIENCE 
+- REVIEW HATE 
+
+
+__Character power level__
+COMPARABLE
+
+
+__Character power level__
+COMPARABLE
+
+
+__Character identity__
+PRYING GOVERNOR
+
+
+
+***
+
+__Interact__
+__Mood__: NEUTRAL
+__Bearing__: SCHEMING - MEANS
+__Focus__: THE PC'S PARENTS
+
+
+__Interact__
+__Mood__: NEUTRAL
+__Bearing__: HOSTILE - JUDGMENT
+__Focus__: THE PC'S SKILLS
+
+
+__Character__
+__Identity__: ESTABLISHED ASTROLOGER
+__Power__: COMPARABLE
+__Motive__:
+- DRIVE VALOR 
+- SPOIL HARDSHIP 
+- ACHIEVE STORIES 
+
+
+__Character__
+__Identity__: PLEBEIAN GUNMAN
+__Power__: COMPARABLE
+__Motive__:
+- PROGRESS FAMILY 
+- PURSUE SCIENCE 
+- REPORT LUST 
+
+
+
+***
+
+__Character__
+__Identity__: UNSEEMLY MERCHANT
+__Power__: COMPARABLE
+__Motive__:
+- PUBLICIZE COMPASSION 
+- IMPLEMENT HATE 
+- IMPLEMENT THE_POPULOUS 
+***
+__Interact__
+__Mood__: SOCIABLE
+__Bearing__: SCHEMING - ARRANGEMENT
+__Focus__: THE PC'S LAST_STORY
+
+
+__Character__
+__Identity__: INCONSIDERATE BEGGAR
+__Power__: COMPARABLE
+__Motive__:
+- INFORM OLD_RELIGIONS 
+- ASSOCIATE HARMONY 
+- CONCEIVE VALOR 
+***
+__Interact__
+__Mood__: CAUTIOUS
+__Bearing__: KNOWING - REPORT
+__Focus__: THE PC'S POWER
+
+
+Random number generator set up with seed ' 1'.
+
+
+
+***
+
+### About - Une
+Shortcuts for UNE: The Universal NPC Emulator.  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
+
+Zach Best, the writer and publisher of this product has, sadly, passed away.  Proceeds from buying UNE, and other [conjecture games](https://www.drivethrurpg.com/browse/pub/7251/Conjecture-Games) products go to supporting his family.
+
+
+### Reference - Une
+- __une {randomness} {relationship to pc} {demeanor}__ - Runs "une character" and "une interact" together.  {randomness} is an optional value for "une character".  {relationship to pc} and {demeanor} are optional values for "une interact".
+***
+- __une character {randomness}__ - Runs "identity", "power" and "motive" together.  {randomness} is an optional value for "power".
+- __une interact {relationship to pc} {demeanor}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is an optional value for "mood".  {demeanor} is an optional value for "bearing".
+***
+- __une identity__ - Generates a 2-word description for a character.
+- __une power {randomness}__ - Generates a character's power level relative to pc's power level, based on {randomness}: an optional number from 1 (order), to 5 (chaos), defaulting to 3 (standard).
+- __une motive__ - Generates three 2-word descriptions for a character's motivations.
+***
+- __une mood {relationship to pc}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: an optional number from 1 (love), to 7 (hate), defaulting to 4 (neutral).
+- __une bearing {demeanor}__ - Generate a character's attitude for this interaction, based on {demeanor}: an optional number from 1-8, defaulting to random and meaning one of the following:
+    1 - sceming       2 - insane       3 - friendly          4 - hostile
+    5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
+- __une focus__ - Generate a character's primary interest for this interaction.
+
+

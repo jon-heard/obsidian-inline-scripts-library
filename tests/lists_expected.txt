@@ -1,0 +1,291 @@
+// Expand bottom to top
+
+__List "c"__
+1, 11
+
+
+__Lists__
+- a
+      1
+- b
+      11
+- c _(combo)_
+      1, 11
+
+
+List "c" added as a combo-list linked to: a, b.
+
+
+"11" added to list "b".
+
+
+__List "b"__
+NONE
+
+
+__Lists__
+- a
+      1
+
+
+List "b" removed.
+
+
+__List "c"__
+NONE
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+
+
+List "c" removed.
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+- c
+      22
+
+
+Failed to remove list "notAList".  List does not exist.
+
+
+__List "c"__
+22
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+- c
+      22
+
+
+"21" removed from list "c".
+
+
+__List "c"__
+21, 22
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+- c
+      21, 22
+
+
+"21" removed from list "c".
+
+
+__List "c"__
+21, 21, 22
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+- c
+      21, 21, 22
+
+
+Failed to remove "999" from list "c".  Not found in list.
+
+
+__List "b"__
+NONE
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+- c
+      21, 21, 22
+
+
+Failed to remove "12" from list "b".  Not found in list.
+
+
+__List "b"__
+NONE
+
+
+__Lists__
+- a
+      1
+- b
+      NONE
+- c
+      21, 21, 22
+
+
+"12" removed from list "b".
+
+
+__List "b"__
+12
+
+
+__Lists__
+- a
+      1
+- b
+      12
+- c
+      21, 21, 22
+
+
+"11" removed from list "b".
+
+
+__List "b"__
+11, 12
+
+
+__Lists__
+- a
+      1
+- b
+      11, 12
+- c
+      21, 21, 22
+
+
+Failed to remove "999" from list "b".  Not found in list.
+
+
+Failed to remove "1" from list "notAList".  Not found in list.
+
+
+"21" picked from list "c".
+
+
+"22" picked from list "c".
+
+
+"22" picked from list "c".
+
+
+"22" picked from list "c".
+
+
+"12" picked from list "b".
+
+
+"11" picked from list "b".
+
+
+"12" picked from list "b".
+
+
+"1" picked from list "a".
+
+
+Failed to pick from list "notAList".  List is empty.
+
+
+Random number generator set up with seed ' 1'.
+
+
+__List "c"__
+21, 21, 22
+
+
+__Lists__
+- a
+      1
+- b
+      11, 12
+- c
+      21, 21, 22
+
+
+"21" added to list "c".
+
+
+"22" added to list "c".
+
+
+"21" added to list "c".
+
+
+__List "b"__
+11, 12
+
+
+__List "a"__
+1
+
+
+__Lists__
+- a
+      1
+- b
+      11, 12
+
+
+"12" added to list "b".
+
+
+"11" added to list "b".
+
+
+__List "a"__
+1
+
+
+__Lists__
+- a
+      1
+
+
+"1" added to list "a".
+
+
+__List "notAList"__
+NONE
+
+
+__Lists__
+NONE
+
+
+
+***
+
+All lists cleared.
+
+
+### About - Lists
+Shortcuts for working with lists.
+
+Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the lists.
+
+
+### Reference - Lists
+- __reset lists__ - Clear all lists.
+- __lists__ - Show all list and all items for each list.
+- __lists list {list name}__ - Show all items in the list {list name}.
+- __lists add {list name} {item}__ - Add {item} to the list {list name}.  Allows duplicate items.  Cannot add to folder-lists or combo-lists.
+- __lists pick {list name}__ - Get a random item from the list {list name}.
+- __lists remove {list name} {item}__ - Remove an instance of {item} from the list {list name}.  Cannot remove from folder-lists or combo-lists.
+- __lists removelist {list name}__ - Remove the entire list {list name}.
+- __lists addfolder {list name} {folder}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the files in the linked folder.
+- __lists addcombo {list name} {sub list 1} {sub list 2}...__ - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+
+
