@@ -1,4 +1,4 @@
-Shortcuts for UNE: The Universal NPC Emulator.  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
+Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
 Zach Best, the writer and publisher of this product has, sadly, passed away.  Proceeds from buying UNE, and other [conjecture games](https://www.drivethrurpg.com/browse/pub/7251/Conjecture-Games) products go to supporting his family.
 

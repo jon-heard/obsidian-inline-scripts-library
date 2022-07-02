@@ -1,10 +1,11 @@
 Setup and manage variables within notes.  Useful for adding data points (vars) into a note, then reading from and writing to those vars.
 
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the managed varnotes.
-
 Can be used by other shortcut-files for working with data in notes.
 
-The syntax for a notevar (a variable in a note) is \*\*\%\%variable name\%\%\*\*\_variable value\_:
+Uses __tejs_state__ shortcut-file (optional).
+It uses this to save & load the managed varnotes.
+
+The syntax for a noteVar (a variable in a note) is \*\*\%\%variable name\%\%\*\*\_variable value\_:
 - double-asterisk
 - double-percentages
 - __variable name__
@@ -14,7 +15,7 @@ The syntax for a notevar (a variable in a note) is \*\*\%\%variable name\%\%\*\*
 - __variable value__
 - single-underscore
 
-Note that the variable name is case-INsensitive, so STR, str and Str are all considered the same name.
+The variable name is case-INsensitive, so STR, str and Str are all considered the same name.
 
 Examples:
 - \*\*\%\%Name\%\%\*\*\_Maggie Smith\_.

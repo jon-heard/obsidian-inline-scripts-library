@@ -1,8 +1,12 @@
-Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
+Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" supplement, is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the chaos value, the scene count, and "Details" mode.
+Uses __tejs_state__ shortcut-file (optional).
+It uses this to save & load the chaos value, the scene count, and "Details" mode.
 
-Uses __tejs_lists__ shortcut-file (optional).  Adds and uses lists for pcs, npcs and threads.  If these llists have items, then the __event__ and __detail__ shortcuts will pick from the lists for their results.
+Uses __tejs_lists__ shortcut-file (optional).
+Adds and uses lists for pcs, npcs and threads.
+This requires that __tejs_lists__ comes before __tejs_mythicv2__ in the shortcut-list.
+If the pc, npc and thread lists have items, then the __event__ and __detail__ shortcuts will incorporate them into their results.
 
 
 ~~
@@ -440,11 +444,11 @@ action {dispositionAdjust} - Makes an NPC behavior check, modified by {dispositi
 
 ~~
 ```
-^lists pick ([a-zA-Z]*)$
+^lists pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
 ~~
 ```js
 return [];
 ```
 ~~
-lists pick - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_mythicv2" in the shortcut-files list for mythicv3 to use lists.
+lists pick - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_mythicv2" in the shortcut-files list for mythicv3 to be able to use lists.

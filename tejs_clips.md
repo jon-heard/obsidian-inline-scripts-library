@@ -1,5 +1,8 @@
 Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but more simplistic.
 
+Uses __tejs_state__ shortcut-file (optional).
+It uses this to save & load the clips.
+
 
 ~~
 ```

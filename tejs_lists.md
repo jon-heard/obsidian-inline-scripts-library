@@ -1,6 +1,7 @@
 Shortcuts for working with lists.
 
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the lists.
+Uses __tejs_state__ shortcut-file (optional).
+It uses this to save & load the lists.
 
 
 ~~
@@ -124,7 +125,7 @@ lists - Show all list and all items for each list.
 ```js
 let items = getListItems($1);
 items = (items?.length ? items.join(", ") : "NONE");
-return "__List \"" + $1 + "\"__\n" + items + "\n\n";
+return [ "__List \"" + $1 + "\"__\n", items, "\n\n" ];
 ```
 ~~
 lists list {list name} - Show all items in the list {list name}.
@@ -151,7 +152,7 @@ lists add {list name} {item} - Add {item} to the list {list name}.  Allows dupli
 
 ~~
 ```
-^lists pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)$
+^lists pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
 ~~
 ```js
@@ -159,9 +160,10 @@ lists add {list name} {item} - Add {item} to the list {list name}.  Allows dupli
 // note: Success returns string array for use as a sub-shortcut.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 let items = getListItems($1);
-if (items?.length)
+if (items?.length || $2)
 {
-	let result = items[roll(items.length)-1];
+	let result = Number($2) || roll(items.length);
+	result = items[result - 1];
 	return [ "\"", result, "\" picked from list \"", $1, "\".\n\n" ];
 }
 return [ "Failed to pick from list \"" + $1 + "\".  List is empty.\n\n" ];
@@ -239,3 +241,31 @@ return "List \"" + $1 + "\" added as a combo-list linked to: " + links.join(", "
 ```
 ~~
 lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+
+
+~~
+```
+^lists listraw ([_a-zA-Z][_a-zA-Z0-9]*)$
+```
+~~
+```js
+return getListItems($1);
+```
+~~
+lists listraw {list name} - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).
+
+
+~~
+```
+^lists type ([_a-zA-Z][_a-zA-Z0-9]*)$
+```
+~~
+```js
+if (!window._tejs.state.lists.hasOwnProperty($1))
+{
+	return "none";
+}
+return window._tejs.state.lists[$1].type;
+```
+~~
+lists type {list name} - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).

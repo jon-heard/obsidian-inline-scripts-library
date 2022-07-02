@@ -1,0 +1,284 @@
+The adventurecrafter shortcut-file requires a data shortcut-file that I'm not making public for
+copyright reasons.  If you have the Adventure Crafter pdf, then you can recreate the data
+shortcut-file yourself without a terrible amount of effort, after which you can use the
+adventurecrafter shortcut-file.
+
+This document is an explanation of how to do that.
+
+First is the shortcut-file's layout.  Below is the shortcut file, but with most of the data
+replaced by ellipses (...).  I've left just enough data to illustrate the format that the data
+is expected to be in.  The first step is to copy the following content into a note (I suggest
+calling it "tejs_adventurecrafter_data", though it's ultimately up to you).  The rest of the steps
+are to fill the note with data from the pdf.
+
+
+
+
+~~
+```
+^tejs setup$
+```
+~~
+```js
+window._tejs ||= {};
+window._tejs.adventurecrafter ||= {};
+window._tejs.adventurecrafter.themes = [ "ACTION", "TENSION", "MYSTERY", "SOCIAL", "PERSONAL" ];
+
+window._tejs.adventurecrafter.character_identities = [
+["Roll for two Identities",33,true],["Warrior",34],...,["Exotic",100]
+];
+
+window._tejs.adventurecrafter.character_descriptors = [
+["Roll for two Descriptors",21,true],["Ugly",22],...,["Heroic",100]
+];
+
+window._tejs.adventurecrafter.character_specialTraits = [
+	[ "THE CHARACTER IS AN INDIVIDUAL", 50, "The Character is an individual, as opposed to an organization or object." ],
+	...
+	[ "THE CHARACTER IS CONNECTED TO AN EXISTING CHARACTER", 100, "This Character has some relationship to another, existing Character in this Adventure. Roll on the Characters List to see who. A result of New Character is changed to Choose The Most Logical Character. The connection can be anything, from the two Characters are related, they know each other, they were former friends, they both work in the same occupation or belong to the same organization, they look or act similarly, they have similar skills or equipment, etc. The connection can be as close or as distant as you like." ]
+];
+
+window._tejs.adventurecrafter.plot_meta = [
+	[ "CHARACTER EXITS THE ADVENTURE", 18, "A Character, who is not a Player Character, is removed from the Characters List completely. Cross out all references to that Character on the Characters List. If there are no non- Player Characters, then re-roll for another Meta Plot Point. This change can be reflected in the activity in this Turning Point or not. For instance, you may explain the Character being removed from the Adventure by having that Character die in the Turning Point. Or, you simply remove them from the Characters List and decide that their involvement in the Adventure is over. If, when rolling on the Characters List to determine who this Character is, you roll a Player Character or \"New Character\", then consider it a result of \"Choose The Most Logical Character\"." ],
+	...
+	[ "PLOTLINE COMBO", 100, "This Turning Point is about more than one Plotline at the same time. Roll again on the Plotlines List and add that Plotline to this Turning Point along with the original Plotline rolled. If when rolling for an additional Plotline you roll the same Plotline already in use for this Turning Point, then treat the result as a \"Choose The Most Logical Plotline\". If there are no other Plotlines to choose from, then create a new Plotline as the additional Plotline. If a Conclusion is rolled as a Plot Point during this Turning Point, apply it to the Plotline that seems most appropriate. If another Conclusion is rolled, continue to apply them to the additional Plotlines in this Turning Point if you can. It is possible with repeated results of \"Plotline Combo\" to have more than two Plotlines combined in this way." ],
+];
+
+window._tejs.adventurecrafter.plot = [
+	[ "CONCLUSION", 8,8,8,8,8, "If this Turning Point is currently a Plotline Development, then it becomes a Plotline Conclusion. Incorporate anything necessary into this Turning Point to end this Plotline and remove it from the Plotlines List. If this Turning Point is a New Plotline or already a Conclusion, then consider this Plot Point a None." ],
+	[ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll.", 1 ],
+	[ "INTO THE UNKNOWN", 0,26,26,0,0, "This Turning Point involves Characters entering a situation with unknown factors. To know the unknown, you have to commit to it. For instance, a magic portal where there is no way of knowing what’s on the other side except by walking through it. Or, you discover a machine that is very powerful but you have no idea what it does, except if you turn it on. The only way to discover the unknown is to engage it, when it will be too late if you regret it." ],
+	...
+	[ "AN OPPOSING STORY", 0,0,95,0,0, "A Character learns of an alternate version of something they already know about from this Adventure. For instance, while investigating a starship that had been waylaid by aliens, Characters discover a crewmember who claims the attackers were members of a rival guild and not aliens." ],
+	[ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point.", 2 ]
+];
+```
+~~
+
+~~
+^tejs shutdown$
+~~
+```js
+delete window._tejs.adventurecrafter?.themes;
+delete window._tejs.adventurecrafter?.character_identities;
+delete window._tejs.adventurecrafter?.character_descriptors;
+delete window._tejs.adventurecrafter?.character_specialTraits;
+delete window._tejs.adventurecrafter?.plot_meta;
+delete window._tejs.adventurecrafter?.plot;
+```
+~~
+
+
+
+
+Once you have the above content into a note in Obsidian, we want to fill it with data from the pdf.
+The way to do this is to copy a table from the pdf, then use a regex editor, such as
+https://regex101.com, to modify the text until it matches the format that we want.  In some cases,
+the data lines will need reordering, which can be done with a spreadsheet application, such as
+Google sheets.  I'll go over what to do for each table individually.
+
+
+
+/////////////////////////////
+// CHARACTER SPECIAL TRAIT //
+/////////////////////////////
+Copy the full table contents (but not the headings) into a regex app with substitution
+capabilities.  https://regex101.com is what I'm using.  Copy the contents into "test string".  The
+regex replace app needs to be in "substitution" mode.  With regex101, this is on the left side,
+beneath the heading "FUNCTION".
+Once the table content is in there, you'll enter a regex and substitution script pair to modify the
+content.  Then you'll copy the result back into the input test string.  You'll keep adding
+different regex and substitution pairs to modify the data, then copy the output back into the input
+until it's in the format that we need.  Now I'll provide the regex and substitution script pairs
+you need to work through.
+
+regex:
+[0-9]+-([0-9]+)
+substitution:
+^$1^
+
+This substitution has a single space.  I've displayed it as an underscore here for visibility.
+regex:
+\n
+substitution:
+_
+
+Before doing this regex, add a single space to the end of the content.
+This regex has a space character, which I've (again) displayed as an underscore for visibility.
+regex:
+\^_
+substitution:
+\n
+
+regex:
+(.+): (.+) \^(.+)
+substitution:
+\t[ "$1", $3, "$2" ],
+
+The data is in its final form now.  When you copy it in, make sure to remove the final comma.
+
+
+
+///////////////////////////////////////////
+// CHARACTER IDENTITIES AND DESCRIPTIONS //
+///////////////////////////////////////////
+Character identities and descriptions are two separate table, but the process is the same for both,
+so I'll go over them together.
+First copy the full table contents (but not the headings) into the regex app of your choice.  I've
+covered setting this up in the "CHARACTER SPECIAL TRAIT" section, so read that first.
+Then, run through the following process.
+
+The substitution is a single space.  I've written it as an underscore here for visibility.
+regex:
+\n
+substitution:
+_
+
+Manually change the "1-33" (or "1-21") in the first entry to just "33" (or "21").  Do the same to
+the "99-100" near the end (if it's a two numbers, make it just "100").  The final one might be
+spaced out.  Remove the extra spacing.
+
+regex:
+([0-9]+)
+substitution:
+^$1
+
+regex:
+\^
+substitution:
+\n\^
+
+Ok, now for a wrinkle.  Copy the result into a spreadsheet app.  It should be a single column.
+Select the entire column (by clicking on the column's heading).
+Then, you want to click the menu "Data" then "Sort".  In the popup, just click "Ok".
+This will produce a version of the list that is sorted (despite the leading ^ mark on each item).
+It's possible that the "100" item is on the wrong end of the list.  Copy and paste the item into
+the right spot manually.
+Copy the sorted array back into the regex editor app.  Again, you can select the column heading
+to select the entire column at once.
+
+// This substitution is an empty string: no characters.
+regex:
+\n
+substitution:
+
+
+regex:
+\^([0-9]+) ([^\^]+)
+substitution:
+["$2",$1],
+
+// Here, as before, the regex has a space that is written as an underscore here for visibility.
+regex:
+_",
+substitution:
+",
+
+Just one more step.  The first entry, the "roll for two ..." entry, should have an extra "true"
+at the end of it's block.  So, change this...
+["Roll for two Identities",33]
+Into this...
+["Roll for two Identities",33,true]
+
+The data is in its final form now.  When you copy it in, make sure to remove the final comma.
+
+////////////////////////////
+// META PLOT POINTS TABLE //
+////////////////////////////
+For this table and for the "plot points" table we will be relying on the full table, not the
+reduced table.  This means it includes the (often lengthy) description for each item.
+So, like the others, copy the entire table into the regex application, except for the headings,
+and paste it into the regex app.  Then go through these transformations:
+
+regex:
+[0-9]+\-([0-9]+)
+substitution:
+^$1^
+
+Again, the underscore is used to signify a space character in this substitution string.
+regex:
+\n
+substitution:
+_
+
+Before running this regex, add a single space to the end of the text.
+There are many spaces in this regex and substitution.  I've written the regex's final space as an
+underscore because it is, otherwise, hard to spot.  The others are easier to see, so I left them
+as the space character.
+regex:
+([^\^]+): ([^\^]*) \^([^\^]*)\^_
+substitution:
+\t[ "$1", $3, "$2" ],\n
+
+regex:
+(?:“|”)
+substitution:
+\\"
+
+The data is in its final form now.  When you copy it in, make sure to remove the final comma.
+
+///////////////////////
+// PLOT POINTS TABLE //
+///////////////////////
+For this table and for the "meta plot points" table we will be relying on
+the full table, not the reduced table.
+This is the big one.  It spans many pages.  You need to copy each page's table-contents (not
+headings) into the regex application.  It could take a while.
+Also, make sure there is a new line between each page's contents in the regex  app.
+And, to emphasize, make sure you copy the full contents for each page, and do NOT copy the
+heading text.
+
+regex:
+((?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-))
+substitution:
+\^\n$1\n\^
+
+regex:
+[0-9]+\-([0-9]+)
+substitution:
+$1
+
+__Repeat this regex 4 times.__
+regex:
+\^\n([^\-\n]*)\-([^~\n]*)\n\^
+substitution
+\^\n${1}0${2}\n\^
+
+regex:
+\^\n([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)\n\^
+substitution:
+\^\n$1,$2,$3,$4,$5\n\^
+
+__This regex has a single space for the substitution string (shown here as an underscore)__
+regex:
+\n
+substitution:
+_
+
+__This regex has 2 spaces in the regex string (shown here as underscores).__
+__Add a single space at the end before running this regex.__
+regex:
+_\^_
+substitution:
+\n
+
+Add a blank newline at the top before running this regex.
+regex:
+\n([A-Z \-\'’!,]+): ([^\n]+)\n(.+)
+substitution:
+\n\t[ "$1", $3, "$2" ],
+
+Finally, we need to add an extra value to a few entries.  The second entry, "NONE", needs an
+extra 1 at the end.  So change this:
+[ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll." ]
+to this:
+[ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll.", 1 ]
+
+And the final entry is "META" and needs an extra 2 at the end.  So change this:
+[ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point." ]
+to this:
+[ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point.", 2 ]
+
+The data is in its final form now.  When you copy it in, make sure to remove the final comma, and
+any extra lines at the top and bottom.
+
