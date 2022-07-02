@@ -11,7 +11,7 @@ Uses __tejs_mythicv2__ shortcut file (optional).
 If __tejs_mythicv2__ comes before __tejs_adventurecarfter__ in the shortcut-files list, the plotlines and characters lists are created to reference the __tejs_mythicv2__ lists.
 
 Uses __tejs_adventurecrafter_data__ shortcut-file (required).
-For copyright reasons, the major tables of this system are contained in the __tejs_adventurecrafter_data__ shortcut-file, which is not publicly provided.  With a bit of effort, you should be able to recreate this shortcut-file yourself by copying text from the Adventure Crafter PDF and doing some regex transformations on it.
+For copyright reasons, the major tables of this system are contained in the __tejs_adventurecrafter_data__ shortcut-file, which is not publicly provided.  With a bit of effort, you should be able to recreate this shortcut-file yourself by copying text from the Adventure Crafter PDF and doing some regex transformations on it.  You can find detailed instructions for how to do this [here](https://github.com/jon-heard/obsidian-text-expander-js_shortcutFileLibrary/blob/shortcutAboutString/docs/adventurecrafter_dataSetup.txt).
 
 ~~
 ```

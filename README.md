@@ -19,6 +19,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [tejs_varnotes](#tejs_varnotes)
 - [tejs_mythicv2](#tejs_mythicv2)
 - [tejs_une](#tejs_une)
+- [tejs_adventurecrafter](#tejs_adventurecrafter)
 - [tejs_rpgtools](#tejs_rpgtools)
 - [tejs_clips](#tejs_clips)
 - [tejs_arrows](#tejs_arrows)
@@ -41,8 +42,6 @@ This shortcut file can be used by other shortcut-files to help them save/restore
 ### tejs_lists
 Shortcuts for working with lists.
 
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the lists.
-
 - __reset lists__ - Clear all lists.
 - __lists__ - Show all list and all items for each list.
 - __lists list {list name}__ - Show all items in the list {list name}.
@@ -57,8 +56,6 @@ Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the l
 
 ### tejs_varnotes
 Setup notes with variables.  Useful for reading raw data from a nicely formatted document.
-
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the varnotes lists.
 
 Can be used by other shortcut-files for dynamically reading data for other operations.
 
@@ -77,10 +74,6 @@ Can be used by other shortcut-files for dynamically reading data for other opera
 
 ### tejs_mythicv2
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
-
-Uses __tejs_state__ shortcut-file (optional).  It uses this to save & load the chaos value, the scene count, and "Details" mode.
-
-Uses __tejs_lists__ shortcut-file (optional).  Adds and uses lists for pcs, npcs and threads.  If these llists have items, then the __event__ and __detail__ shortcuts will pick from the lists for their results.
 
 - __reset mythic__ - Reset mythic state to defaults and displays scene heading.
 - __mythic details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
@@ -121,6 +114,32 @@ Zach Best, the writer and publisher of this product has, sadly, passed away.  Pr
     1 - sceming       2 - insane       3 - friendly          4 - hostile
     5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
 - __une focus__ - Generate a character's primary interest for this interaction.
+
+***
+
+### tejs_adventurecrafter
+Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
+
+- __reset adventurecrafter__ - Reset adventurecrafter state to defaults.
+- __turning point__ - Get a list of five plot points to represent a major milestone in a plotline.
+- __plot point__ - Get a single plot point, generated from the plot points table.
+- __themes__ - Show the ordered list of themes.
+- __themes fill__ - Fills the remaining theme slots with random themes.
+- __themes add__ - Fills the next theme slot with a random theme.
+- __themes add {theme id}__ - Fills the next theme slot with the theme of {theme id} (a required integer from 1 to 5).  {theme id} can be one of these options:
+    1 - Action    2 - Tension    3 - Mystery    4 - Social    5 - Personal
+- __themes reset__ - Clear the theme slots.
+- __themes pick__ - Pick a weighted random theme, as per the Adventure Crafter rules.
+- __ac chars__ - List the character items.
+- __ac chars new__ - Generate a new character description, as per the Adventure Crafter rules.
+- __ac chars pick__ - Pick a random char, as per the Adventure Crafter rules.
+- __ac chars dupe__ - List character indices to enter for duplication.
+- __ac chars dupe {character index}__ - Create a new character list item that is the same as the character with the index of {character index} (a required, positive integer).
+- __ac plots__ - List the plotline items.
+- __ac plots pick__ - Pick a random plotline, as per the Adventure Crafter rules.
+- __ac plots dupe__ - List plotline indices to enter for duplication.
+- __ac plots dupe {plotline index}__ - Create a new plotline list item that is the same as the plotline with the index of {plotline index} (a required, positive integer).
+- __lists pick__ - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_adventurecrafter" in the shortcut-files list for adventurecrafter to be able to use lists.
 
 ***
 
