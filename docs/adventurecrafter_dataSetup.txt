@@ -1,18 +1,24 @@
-The adventurecrafter shortcut-file requires a data shortcut-file that I'm not making public for
-copyright reasons.  If you have the Adventure Crafter pdf, then you can recreate the data
-shortcut-file yourself without a terrible amount of effort, after which you can use the
-adventurecrafter shortcut-file.
+The adventurecrafter shortcut-file requires a data shortcut-file, which I'm not making public for
+copyright reasons.
 
-This document is an explanation of how to do that.
+If you have the Adventure Crafter pdf, then you can email me (nethermonkey@gmail.com) with
+proof-of-purchase.  A screenshot of it in your drivethrough.com library, for example. I will reply
+with the shortcut-file as an attachment.
 
-First is the shortcut-file's layout.  Below is the shortcut file, but with most of the data
-replaced by ellipses (...).  I've left just enough data to illustrate the format that the data
-is expected to be in.  The first step is to copy the following content into a note (I suggest
-calling it "tejs_adventurecrafter_data", though it's ultimately up to you).  The rest of the steps
-are to fill the note with data from the pdf.
+Alternately, you can recreate the shortcut-file yourself with some effort.
 
+The remainder of this document is an explanation on how to make the shortcut-file from the pdf.
 
+I know it looks like a lot!  Each step is quick, though.  It's probably around 30 minutes of work.
 
+***
+
+The first step is to create the note containing shortcut-file.  Below is the shortcut-file,
+but with missing data replaced by ellipses (...).  I've left just enough data to illustrate
+the needed format.
+
+So, copy the following content into a note. I suggest calling it "tejs_adventurecrafter_data",
+though it's ultimately up to you.  The remaining steps will fill it with table data from the pdf.
 
 ~~
 ```
@@ -68,217 +74,273 @@ delete window._tejs.adventurecrafter?.plot;
 ```
 ~~
 
+***
 
+Once you have the above content in a note in Obsidian, we want to fill it with data from the pdf.
+The way to do this is to copy each table from the pdf, then use a regex editor, such as
+https://regex101.com, to modify the text until it matches the needed format.  In some cases the
+data will need to be reordered.  This can be done with a spreadsheet application, such as Google-
+sheets.
 
+Below I go over each table and explain, step-by-step, what to do.
 
-Once you have the above content into a note in Obsidian, we want to fill it with data from the pdf.
-The way to do this is to copy a table from the pdf, then use a regex editor, such as
-https://regex101.com, to modify the text until it matches the format that we want.  In some cases,
-the data lines will need reordering, which can be done with a spreadsheet application, such as
-Google sheets.  I'll go over what to do for each table individually.
+***
 
-
-
-/////////////////////////////
-// CHARACTER SPECIAL TRAIT //
-/////////////////////////////
+///////////////////////////////////
+// CHARACTER SPECIAL TRAIT TABLE //
+///////////////////////////////////
 Copy the full table contents (but not the headings) into a regex app with substitution
-capabilities.  https://regex101.com is what I'm using.  Copy the contents into "test string".  The
+capabilities.  I'm using https://regex101.com.  Copy the contents into the "test string".  The
 regex replace app needs to be in "substitution" mode.  With regex101, this is on the left side,
 beneath the heading "FUNCTION".
-Once the table content is in there, you'll enter a regex and substitution script pair to modify the
-content.  Then you'll copy the result back into the input test string.  You'll keep adding
-different regex and substitution pairs to modify the data, then copy the output back into the input
-until it's in the format that we need.  Now I'll provide the regex and substitution script pairs
-you need to work through.
+Once the table contents are entered as a "test string", you'll enter a regex and substitution
+script pair to modify the content.  Once the content is modified, you'll copy the result string
+back into the input test string so it's ready for another transformation.  You'll keep
+transforming the data through regex/substitution pairs until it's in the needed format.
+Here are the required trasnsformations.
 
-regex:
+1. Add "^" before and after each range.  Only use the last number of the range.
+REGEX:
 [0-9]+-([0-9]+)
-substitution:
+SUBSTITUTION:
 ^$1^
 
-This substitution has a single space.  I've displayed it as an underscore here for visibility.
-regex:
+2. Remove all newlines (replacing each with a space).
+note: This substitution is a single space.  I've displayed it as an underscore here for visibility.
+REGEX:
 \n
-substitution:
+SUBSTITUTION:
 _
 
-Before doing this regex, add a single space to the end of the content.
-This regex has a space character, which I've (again) displayed as an underscore for visibility.
-regex:
+3. Manually add a single space to the end of the content.  This lets the next regex work right.
+
+4. Replace all instances of "^ ", with a newline.  This adds a newline between each table entry.
+note: This regex has a space character, which I've displayed as an underscore for visibility.
+REGEX:
 \^_
-substitution:
+SUBSTITUTION:
 \n
 
-regex:
+5. Reformat each table entry into the proper format.
+REGEX:
 (.+): (.+) \^(.+)
-substitution:
+SUBSTITUTION:
 \t[ "$1", $3, "$2" ],
 
-The data is in its final form now.  When you copy it in, make sure to remove the final comma.
+6. Manually remove the final comma character.
 
+The data is in its final form now.  Copy it into the note, between the line...
+	window._tejs.adventurecrafter.character_specialTraits = [
+and the following line...
+	];
 
+***
 
-///////////////////////////////////////////
-// CHARACTER IDENTITIES AND DESCRIPTIONS //
-///////////////////////////////////////////
-Character identities and descriptions are two separate table, but the process is the same for both,
-so I'll go over them together.
+//////////////////////////////////////////////////
+// CHARACTER IDENTITIES AND DESCRIPTIONS TABLES //
+//////////////////////////////////////////////////
+Character identities and descriptions are two separate tables, but the process is the same for
+both, so follow these instructions for each of them in turn.
 First copy the full table contents (but not the headings) into the regex app of your choice.  I've
-covered setting this up in the "CHARACTER SPECIAL TRAIT" section, so read that first.
-Then, run through the following process.
+covered this in detail in the "CHARACTER SPECIAL TRAIT TABLE" introduction, so read that first.
+Then, run through the following transformations.
 
-The substitution is a single space.  I've written it as an underscore here for visibility.
-regex:
+1. Remove all newlines (replacing each with a space)
+note: This substitution is a single space.  I've written it as an underscore here for visibility.
+REGEX:
 \n
-substitution:
+SUBSTITUTION:
 _
 
-Manually change the "1-33" (or "1-21") in the first entry to just "33" (or "21").  Do the same to
-the "99-100" near the end (if it's a two numbers, make it just "100").  The final one might be
-spaced out.  Remove the extra spacing.
+2. Manually change the "1-33" (or "1-21") in the first entry to just "33" (or "21").  If the final
+entry is a pair (99-100), replace it with just 100.
 
-regex:
+3. Add "\n^" before each roll value.
+REGEX:
 ([0-9]+)
-substitution:
-^$1
+SUBSTITUTION:
+\n^$1
 
-regex:
-\^
-substitution:
-\n\^
+4. Ok, now for a complex transformation.  We need to order the entries.
+    1. Copy the content into a spreadsheet app.  The content should be in a single column.  
+    2. Select the entire column (by clicking on the column's heading).
+    3. Click the menu "Data" then "Sort".  In the popup, just click "Ok".
+    4. This will produce a version of the list that is sorted.
+    5. It's possible that the "100" item is on the wrong end of the list.  Manually move it to the
+       right position.
+    6. Copy the sorted column back into the regex editor app.
 
-Ok, now for a wrinkle.  Copy the result into a spreadsheet app.  It should be a single column.
-Select the entire column (by clicking on the column's heading).
-Then, you want to click the menu "Data" then "Sort".  In the popup, just click "Ok".
-This will produce a version of the list that is sorted (despite the leading ^ mark on each item).
-It's possible that the "100" item is on the wrong end of the list.  Copy and paste the item into
-the right spot manually.
-Copy the sorted array back into the regex editor app.  Again, you can select the column heading
-to select the entire column at once.
-
-// This substitution is an empty string: no characters.
-regex:
+5. Remove all newlines (replace with nothing: no spaces).
+note: This substitution is an empty string: no characters.
+REGEX:
 \n
-substitution:
+SUBSTITUTION:
 
-
-regex:
+6. Reformat each entry.
+REGEX:
 \^([0-9]+) ([^\^]+)
-substitution:
+SUBSTITUTION:
 ["$2",$1],
 
-// Here, as before, the regex has a space that is written as an underscore here for visibility.
-regex:
+7. Remove the extra space before each ending quote.
+note: This regex starts with a space, written here as an underscore for visibility.
+REGEX:
 _",
-substitution:
+SUBSTITUTION:
 ",
 
-Just one more step.  The first entry, the "roll for two ..." entry, should have an extra "true"
-at the end of it's block.  So, change this...
+8. Manually add an extra "true" to the end of the first entry.  So, change this...
 ["Roll for two Identities",33]
 Into this...
 ["Roll for two Identities",33,true]
 
-The data is in its final form now.  When you copy it in, make sure to remove the final comma.
+9. Manually remove the final comma character.
+
+The data is in its final form now.
+
+If it is the character identities table, copy it into the note, between the line...
+	window._tejs.adventurecrafter.character_identities = [
+and the following line...
+	];
+
+If it is the character descriptors table, copy it into the note, between the line...
+	window._tejs.adventurecrafter.character_descriptors = [
+and the following line...
+	];
+
+***
 
 ////////////////////////////
 // META PLOT POINTS TABLE //
 ////////////////////////////
 For this table and for the "plot points" table we will be relying on the full table, not the
-reduced table.  This means it includes the (often lengthy) description for each item.
-So, like the others, copy the entire table into the regex application, except for the headings,
-and paste it into the regex app.  Then go through these transformations:
+reduced table.  This means it includes the (often lengthy) description given for each item.
+First copy the full table contents (but not the headings) into the regex app of your choice.  I've
+covered this in detail in the "CHARACTER SPECIAL TRAIT TABLE" introduction, so read that first.
+Then, run through the following transformations.
 
-regex:
+1. Surround the roll range with "^", removing the first number of each range.
+REGEX:
 [0-9]+\-([0-9]+)
-substitution:
+SUBSTITUTION:
 ^$1^
 
-Again, the underscore is used to signify a space character in this substitution string.
-regex:
+2. Remove all newlines (replacing each with a space)
+note: This substitution is a single space.  I've written it as an underscore here for visibility.
+REGEX:
 \n
-substitution:
+SUBSTITUTION:
 _
 
-Before running this regex, add a single space to the end of the text.
-There are many spaces in this regex and substitution.  I've written the regex's final space as an
-underscore because it is, otherwise, hard to spot.  The others are easier to see, so I left them
-as the space character.
-regex:
+3. Manually add a single space to the end of the content.  This lets the next regex work right.
+
+4. Put each entry into the proper format.
+note: There are many spaces in this regex and substitution.  I've written the regex's final space
+as an underscore for visibility.  The other spaces are easy to see, so I didn't change them.
+REGEX:
 ([^\^]+): ([^\^]*) \^([^\^]*)\^_
-substitution:
+SUBSTITUTION:
 \t[ "$1", $3, "$2" ],\n
 
-regex:
+5. Replace each fancy quote with simple escaped quotes.
+REGEX:
 (?:“|”)
-substitution:
+SUBSTITUTION:
 \\"
 
-The data is in its final form now.  When you copy it in, make sure to remove the final comma.
+6. Manually remove the final comma character.
+
+The data is in its final form now.  Copy it into the note, between the line...
+	window._tejs.adventurecrafter.plot_meta = [
+and the following line...
+	];
+
+***
 
 ///////////////////////
 // PLOT POINTS TABLE //
 ///////////////////////
-For this table and for the "meta plot points" table we will be relying on
-the full table, not the reduced table.
+For this table and for the "plot points" table we will be relying on the full table, not the
+reduced table.  This means it includes the (often lengthy) description given for each item.
 This is the big one.  It spans many pages.  You need to copy each page's table-contents (not
-headings) into the regex application.  It could take a while.
-Also, make sure there is a new line between each page's contents in the regex  app.
-And, to emphasize, make sure you copy the full contents for each page, and do NOT copy the
+the headings) into the regex application.  I've covered this in detail in the "CHARACTER SPECIAL
+TRAIT TABLE" introduction, so read that first.
+Also, make sure there is a newline between each page's contents in the regex  app.
+And, to emphasize, make sure you copy the FULL contents for each page, and do NOT copy the
 heading text.
+Once the table is copied into the regex app, run through the following transformations.
 
-regex:
+1. Add "^" to either side of each group of roll values.
+REGEX:
 ((?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-) (?:(?:[0-9]+(?:\-[0-9]+)?)|\-))
-substitution:
+SUBSTITUTION:
 \^\n$1\n\^
 
-regex:
+2. Get rid of the first number in each roll range.
+REGEX:
 [0-9]+\-([0-9]+)
-substitution:
+SUBSTITUTION:
 $1
 
+3. Replace the blank roll values ("-") with 0.  Redo this regex 4 times, once for each possible
+blank.  Scan the result to make sure all blanks are replaced with 0.
 __Repeat this regex 4 times.__
-regex:
+REGEX:
 \^\n([^\-\n]*)\-([^~\n]*)\n\^
 substitution
 \^\n${1}0${2}\n\^
 
-regex:
+4. Add commas between the roll values.
+REGEX:
 \^\n([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)\n\^
-substitution:
+SUBSTITUTION:
 \^\n$1,$2,$3,$4,$5\n\^
 
-__This regex has a single space for the substitution string (shown here as an underscore)__
-regex:
+5. Remove all newlines (replacing each with a space)
+note: This substitution is a single space.  I've written it as an underscore here for visibility.
+REGEX:
 \n
-substitution:
+SUBSTITUTION:
 _
 
-__This regex has 2 spaces in the regex string (shown here as underscores).__
-__Add a single space at the end before running this regex.__
-regex:
+6. Manually add a single space to the end of the content.  This lets the next regex work right.
+
+7. Replace each " ^ " with a newline.
+note: This regex contains 2 spaces, which I've written with underscores here for visibility.
+REGEX:
 _\^_
-substitution:
+SUBSTITUTION:
 \n
 
-Add a blank newline at the top before running this regex.
-regex:
+8. Manually add a blank newline at the top of the content.  This lets the next regex work right.
+
+9. Put each entry into the needed format.
+REGEX:
 \n([A-Z \-\'’!,]+): ([^\n]+)\n(.+)
-substitution:
+SUBSTITUTION:
 \n\t[ "$1", $3, "$2" ],
 
-Finally, we need to add an extra value to a few entries.  The second entry, "NONE", needs an
-extra 1 at the end.  So change this:
+10. Manually add an extra "1" to the end of the "NONE" entry (the second entry).  So, change this...
 [ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll." ]
-to this:
+Into this...
 [ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll.", 1 ]
 
-And the final entry is "META" and needs an extra 2 at the end.  So change this:
+11. Manually add an extra "2" to the end of the "META" entry (the final entry).  So, change this...
 [ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point." ]
-to this:
+Into this...
 [ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point.", 2 ]
 
-The data is in its final form now.  When you copy it in, make sure to remove the final comma, and
-any extra lines at the top and bottom.
+6. Manually remove the final comma character.
 
+The data is in its final form now.  Copy it into the note, between the line...
+	window._tejs.adventurecrafter.plot = [
+and the following line...
+	];
+
+***
+
+Once all the tables are added to the shortcut-file then it is complete.
+
+The final step is to add the shortcut-file to the __Text Expander JS__ shortcut-file list ABOVE tejs_adventurecrafter.
+
+Once this is finished, then the adventurecrafter shortcuts should work.

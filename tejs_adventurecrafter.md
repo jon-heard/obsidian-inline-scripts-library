@@ -1,17 +1,19 @@
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
+Uses __tejs_adventurecrafter_data__ shortcut-file (required).
+This shortcut-file contains the major tables for this system.  It is not publicly available for copyright reasons.  Information on how to get it is available [here](https://github.com/jon-heard/obsidian-text-expander-js_shortcutFileLibrary/blob/shortcutAboutString/docs/adventurecrafter_dataSetup.txt).
+
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the theme order and final theme switch state.
 
 Uses __tejs_lists__ shortcut-file (optional).
 Adds and uses lists for plotlines and characters.
-This requires that __tejs_lists__ comes before __tejs_mythicv2__ in the shortcut-list.
+This requires that __tejs_lists__ comes before __tejs_adventurecrafter in the shortcut-list.
 
 Uses __tejs_mythicv2__ shortcut file (optional).
-If __tejs_mythicv2__ comes before __tejs_adventurecarfter__ in the shortcut-files list, the plotlines and characters lists are created to reference the __tejs_mythicv2__ lists.
+The plotlines and characters lists are created to reference the __tejs_mythicv2__ lists.
+This requires that __tejs_mythicv2__ comes before __tejs_adventurecrafter__ in the shortcut-list.
 
-Uses __tejs_adventurecrafter_data__ shortcut-file (required).
-For copyright reasons, the major tables of this system are contained in the __tejs_adventurecrafter_data__ shortcut-file, which is not publicly provided.  With a bit of effort, you should be able to recreate this shortcut-file yourself by copying text from the Adventure Crafter PDF and doing some regex transformations on it.  You can find detailed instructions for how to do this [here](https://github.com/jon-heard/obsidian-text-expander-js_shortcutFileLibrary/blob/shortcutAboutString/docs/adventurecrafter_dataSetup.txt).
 
 ~~
 ```
@@ -160,7 +162,7 @@ function isAdventurecrafterDisabled()
 {
 	if (window._tejs.adventurecrafter.disabled)
 	{
-		return "ADVENTURECRAFTER SHORTCUTS DISABLED - missing table data\n\n";
+		return "ADVENTURECRAFTER SHORTCUTS DISABLED - missing table data.\nIf __tejs_adventurecrafter_data__ exists, make sure it is listed _before_ __tejs_adventurecrafter__ in the shortcut-file list.\n\n";
 	}
 	return null;
 }
