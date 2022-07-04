@@ -1,14 +1,15 @@
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
 Uses __tejs_adventurecrafter_data__ shortcut-file (required).
-This shortcut-file contains the major tables for this system.  It is not publicly available for copyright reasons.  Information on how to get it is available [here](https://github.com/jon-heard/obsidian-text-expander-js_shortcutFileLibrary/blob/shortcutAboutString/docs/adventurecrafter_dataSetup.txt).
+This requires that __tejs_lists__ comes before __tejs_adventurecrafter__ in the shortcut-list.
+This shortcut-file contains the major tables used by this system.  It is not publicly available for copyright reasons.  Information on how to get it is available [here](https://github.com/jon-heard/obsidian-text-expander-js_shortcutFileLibrary/blob/shortcutAboutString/docs/adventurecrafter_dataSetup.txt).
+
+Uses __tejs_lists__ shortcut-file (required).
+This requires that __tejs_lists__ comes before __tejs_adventurecrafter__ in the shortcut-list.
+Adds and uses lists for plotlines and characters.
 
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the theme order and final theme switch state.
-
-Uses __tejs_lists__ shortcut-file (optional).
-Adds and uses lists for plotlines and characters.
-This requires that __tejs_lists__ comes before __tejs_adventurecrafter in the shortcut-list.
 
 Uses __tejs_mythicv2__ shortcut file (optional).
 The plotlines and characters lists are created to reference the __tejs_mythicv2__ lists.
@@ -50,6 +51,7 @@ if (!window._tejs.state.lists.plotlines)
 	if (!window._tejs.state.lists.threads)
 	{
 		window._tejs.state.lists.plotlines ||= { type: "basic", content: [] };
+		delete window._tejs.state.lists.plotline_dupes;
 	}
 	else
 	{
@@ -64,6 +66,7 @@ if (!window._tejs.state.lists.characters)
 	if (!window._tejs.state.lists.pcs || !window._tejs.state.lists.npcs)
 	{
 		window._tejs.state.lists.characters ||= { type: "basic", content: [] };
+		delete window._tejs.state.lists.character_dupes;
 	}
 	else
 	{
@@ -73,14 +76,13 @@ if (!window._tejs.state.lists.characters)
 	}
 }
 
-if (window._tejs.listeners?.state?.onReset &&
-    !window._tejs.listeners.state.onReset.adventurecrafter)
+window._tejs.listeners ||= {};
+window._tejs.listeners.state ||= {};
+window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset.adventurecrafter ||= expand =>
 {
-	window._tejs.listeners.state.onReset.adventurecrafter = (expand) =>
-	{
-		expand("reset adventurecrafter");
-	};
-}
+	expand("reset adventurecrafter");
+};
 
 ```
 ~~
@@ -113,24 +115,26 @@ window._tejs.state.lists ||= {};
 
 if (!window._tejs.state.lists.threads)
 {
-	window._tejs.state.lists.plotlines ||= { type: "basic", content: [] };
+	window._tejs.state.lists.plotlines = { type: "basic", content: [] };
+	delete window._tejs.state.lists.plotline_dupes;
 }
 else
 {
-	window._tejs.state.lists.threadDuplicates ||= { type: "basic", content: [] };
-	window._tejs.state.lists.plotlines ||=
-		{ type: "combo", content: ["threads", "threadDuplicates"] };
+	window._tejs.state.lists.plotline_dupes = { type: "basic", content: [] };
+	window._tejs.state.lists.plotlines =
+		{ type: "combo", content: ["threads", "plotline_dupes"] };
 }
 
 if (!window._tejs.state.lists.pcs || !window._tejs.state.lists.npcs)
 {
-	window._tejs.state.lists.characters ||= { type: "basic", content: [] };
+	window._tejs.state.lists.characters = { type: "basic", content: [] };
+	delete window._tejs.state.lists.character_dupes;
 }
 else
 {
-	window._tejs.state.lists.threadDuplicates ||= { type: "basic", content: [] };
-	window._tejs.state.lists.plotlines ||=
-		{ type: "combo", content: ["threads", "threadDuplicates"] };
+	window._tejs.state.lists.character_dupes = { type: "basic", content: [] };
+	window._tejs.state.lists.characters =
+		{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 }
 
 return "Adventure crafter reset.";
@@ -158,6 +162,7 @@ function aPickWeight(a, wIndex, theRoll)
 	}
 	return a.last();
 }
+function aRemoveDuplicates(a) { return [...new Set(a)]; }
 function isAdventurecrafterDisabled()
 {
 	if (window._tejs.adventurecrafter.disabled)
@@ -233,7 +238,7 @@ plot point - Get a single plot point, generated from the plot points table.
 
 ~~
 ```
-^themes$
+^themes?$
 ```
 ~~
 ```js
@@ -254,7 +259,7 @@ themes - Show the ordered list of themes.
 
 ~~
 ```
-^themes fill$
+^themes? fill$
 ```
 ~~
 ```js
@@ -267,12 +272,12 @@ while (window._tejs.state.adventurecrafter.themes.length < 5)
 return result + "...done\n\n";
 ```
 ~~
-themes fill - Fills the remaining theme slots with random themes.
+themes fill - Fills the remaining open theme slots with random themes.
 
 
 ~~
 ```
-^themes add$
+^themes? add$
 ```
 ~~
 ```js
@@ -285,12 +290,12 @@ while (window._tejs.state.adventurecrafter.themes.contains(r-1))
 return expand("themes add " + r);
 ```
 ~~
-themes add - Fills the next theme slot with a random theme.
+themes add - Fills the next open theme slot with a random theme.
 
 
 ~~
 ```
-^themes add ([1-5])$
+^themes? add ([1-5])$
 ```
 ~~
 ```js
@@ -304,13 +309,13 @@ window._tejs.state.adventurecrafter.themes.push($1-1);
 return [ "Theme slot " + window._tejs.state.adventurecrafter.themes.length + " set to " + window._tejs.adventurecrafter.themes[$1-1], "\n\n" ];
 ```
 ~~
-themes add {theme id} - Fills the next theme slot with the theme of {theme id} (a required integer from 1 to 5).  {theme id} can be one of these options:
+themes add {theme id} - Fills the next open theme slot with the theme of {theme id} (a required integer from 1 to 5).  {theme id} can be one of these options:
     1 - Action    2 - Tension    3 - Mystery    4 - Social    5 - Personal
 
 
 ~~
 ```
-^themes reset$
+^themes? reset$
 ```
 ~~
 ```js
@@ -319,12 +324,12 @@ window._tejs.state.adventurecrafter.themes = [];
 return "All theme slots cleared.\n\n";
 ```
 ~~
-themes reset - Clear the theme slots.
+themes reset - Clear all theme slots.
 
 
 ~~
 ```
-^themes pick$
+^themes? pick$
 ```
 ~~
 ```js
@@ -352,20 +357,7 @@ themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
 
 ~~
 ```
-^ac chars$
-```
-~~
-```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-return "__Characters__:\n" + expand("lists list characters")[1] + "\n\n";
-```
-~~
-ac chars - List the character items.
-
-
-~~
-```
-^ac chars new$
+^ac chars? gen$
 ```
 ~~
 ```js
@@ -418,15 +410,30 @@ else
 }
 descriptor = "- __Descriptor__ - " + descriptor.join(", ") + "\n";
 
-return "__Character__:\n" + special + identity + descriptor + "\n\n";
+return "__Character__:\n" + special + identity + descriptor + "\n";
 ```
 ~~
-ac chars new - Generate a new character description, as per the Adventure Crafter rules.
+ac chars gen - Generate a new character description, as per the Adventure Crafter rules.
+***
 
 
 ~~
 ```
-^ac chars pick$
+^ac chars?$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+let list = aRemoveDuplicates(expand("lists listraw characters")).join(", ") || "NONE";
+return "__Characters__:\n" + list + "\n\n";
+```
+~~
+ac chars - List the character items.
+
+
+~~
+```
+^ac chars? pick$
 ```
 ~~
 ```js
@@ -450,8 +457,7 @@ if (!result)
 }
 if (!result)
 {
-	let list = expand("lists listraw characters");
-	list = [...new Set(list)];
+	let list = aRemoveDuplicates(expand("lists listraw characters"));
 	result = [ "__Pick the most logical character__:\n" + list.join(", ") ];
 }
 result.push("\n\n");
@@ -463,7 +469,27 @@ ac chars pick - Pick a random char, as per the Adventure Crafter rules.
 
 ~~
 ```
-^ac chars dupe$
+^ac chars? add (.*)$
+```
+~~
+```js
+if (expand("lists type characters") == "basic")
+{
+	expand("lists add characters " + $1);
+}
+else
+{
+	expand("lists add character_dupes " + $1);
+}
+return "__" + list[$1-1] + "__ added to characters.\n\n";
+
+```
+~~
+ac chars add {character name} - Add the given {character name} (required text) to the list of characters.
+
+~~
+```
+^ac chars? dupe$
 ```
 ~~
 ```js
@@ -477,12 +503,12 @@ ac chars pick - Pick a random char, as per the Adventure Crafter rules.
 	return result + "\n";
 ```
 ~~
-ac chars dupe - List character indices to enter for duplication.
+ac chars dupe - Show indices of character list entries for duplication.
 
 
 ~~
 ```
-^ac chars dupe ([1-9][0-9]*)$
+^ac chars? dupe ([1-9][0-9]*)$
 ```
 ~~
 ```js
@@ -501,21 +527,22 @@ else
 {
 	expand("lists add character_dupes " + list[$1-1]);
 }
-return "__" + list[$1-1] + "__ added to characters.\n\n";
+return "Character entry __" + list[$1-1] + "__ duplicated.\n\n";
 ```
 ~~
-ac chars dupe {character index} - Create a new character list item that is the same as the character with the index of {character index} (a required, positive integer).
+ac chars dupe {character index} - Create a new character list entry that is the same as the character list entry with the index of {character index} (a required, positive integer).
 ***
 
 
 ~~
 ```
-^ac plots$
+^ac plots?$
 ```
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-return "__Plotlines__:\n" + expand("lists list plotlines")[1] + "\n\n";
+let list = aRemoveDuplicates(expand("lists listraw plotlines")).join(", ") || "NONE";
+return "__Plotlines__:\n" +	list + "\n\n";
 ```
 ~~
 ac plots - List the plotline items.
@@ -523,7 +550,7 @@ ac plots - List the plotline items.
 
 ~~
 ```
-^ac plots pick$
+^ac plots? pick$
 ```
 ~~
 ```js
@@ -540,8 +567,7 @@ if (!result)
 }
 if (!result)
 {
-	let list = expand("lists listraw plotlines");
-	list = [...new Set(list)];
+	let list = aRemoveDuplicates(expand("lists listraw plotlines"));
 	result = [ "__Pick the most logical plotline__:\n" + list.join(", ") ];
 
 }
@@ -554,7 +580,28 @@ ac plots pick - Pick a random plotline, as per the Adventure Crafter rules.
 
 ~~
 ```
-^ac plots dupe$
+^ac plots? add (.*)$
+```
+~~
+```js
+if (expand("lists type plotlines") == "basic")
+{
+	expand("lists add plotlines " + $1);
+}
+else
+{
+	expand("lists add plotline_dupes " + $1);
+}
+return "__" + list[$1-1] + "__ added to plotlines.\n\n";
+
+```
+~~
+ac chars add {character name} - Add the given {character name} (required text) to the list of characters.
+
+
+~~
+```
+^ac plots? dupe$
 ```
 ~~
 ```js
@@ -568,12 +615,12 @@ ac plots pick - Pick a random plotline, as per the Adventure Crafter rules.
 	return result + "\n";
 ```
 ~~
-ac plots dupe - List plotline indices to enter for duplication.
+ac plots dupe - Show indicies plotline list entries for duplication.
 
 
 ~~
 ```
-^ac plots dupe ([1-9][0-9]*)$
+^ac plots? dupe ([1-9][0-9]*)$
 ```
 ~~
 ```js
@@ -592,20 +639,7 @@ else
 {
 	expand("lists add plotline_dupes " + list[$1-1]);
 }
-return "__" + list[$1-1] + "__ added to plotlines.\n\n";
+return "Plotline entry __" + list[$1-1] + "__ duplicated.\n\n";
 ```
 ~~
-ac plots dupe {plotline index} - Create a new plotline list item that is the same as the plotline with the index of {plotline index} (a required, positive integer).
-***
-
-
-~~
-```
-^lists pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
-```
-~~
-```js
-return [];
-```
-~~
-lists pick - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_adventurecrafter" in the shortcut-files list for adventurecrafter to be able to use lists.
+ac plots dupe {plotline index} - Create a new plotline list entry that is the same as the plotline list entry with the index of {plotline index} (a required, positive integer).

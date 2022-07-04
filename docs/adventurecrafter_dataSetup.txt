@@ -1,13 +1,15 @@
 The adventurecrafter shortcut-file requires a data shortcut-file, which I'm not making public for
 copyright reasons.
 
-If you have the Adventure Crafter pdf, then you can email me (nethermonkey@gmail.com) with
-proof-of-purchase.  A screenshot of it in your drivethrough.com library, for example. I will reply
-with the shortcut-file as an attachment.
+If you have the Adventure Crafter pdf, then you can request this data shortcut-file the library's
+github discussion board:
+https://github.com/jon-heard/obsidian-text-expander-js_shortcutFileLibrary/discussions/categories
+Add it with catagory "Shortcut-file requests".  You'll need to provide proof-of-purchase for the
+Adventure Crafter book, but PLEASE don't include that on the discussion board.
 
 Alternately, you can recreate the shortcut-file yourself with some effort.
 
-The remainder of this document is an explanation on how to make the shortcut-file from the pdf.
+The remainder of this document is an explanation on how to create the shortcut-file from the pdf.
 
 I know it looks like a lot!  Each step is quick, though.  It's probably around 30 minutes of work.
 

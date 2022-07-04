@@ -69,23 +69,18 @@ if (!window._tejs.varnotes.onModified)
 	app.vault.on("modify", window._tejs.varnotes.onModified);
 }
 
-if (window._tejs.listeners?.state?.onReset &&
-    !window._tejs.listeners.state.onReset.varnotes)
+window._tejs.listeners ||= {};
+window._tejs.listeners.state ||= {};
+window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset.varnotes ||= expand =>
 {
-	window._tejs.listeners.state.onReset.varnotes = (expand) =>
-	{
-		expand("reset varnotes");
-	};
-}
-
-if (window._tejs.listeners?.state?.onLoad &&
-    !window._tejs.listeners.state.onLoad.varnotes)
+	expand("reset varnotes");
+};
+window._tejs.listeners.state.onLoad ||= [];
+window._tejs.listeners.state.onLoad.varnotes ||= expand =>
 {
-	window._tejs.listeners.state.onLoad.varnotes = (expand) =>
-	{
-		expand("varnotes refresh");
-	};
-}
+	expand("varnotes refresh");
+};
 ```
 ~~
 Sets up a state variable for varnotes.  Sets up callback for state "reset" event to reset itself. 

@@ -24,16 +24,16 @@ window._tejs.state.lists ||= {};
 window._tejs.state.lists.pcs ||= { type: "basic", content: [] };
 window._tejs.state.lists.npcs ||= { type: "basic", content: [] };
 window._tejs.state.lists.threads ||= { type: "basic", content: [] };
+window._tejs.mythicv2 ||= {};
+window._tejs.mythicv2.details ||= [];
 
-if (window._tejs.listeners?.state?.onReset &&
-    !window._tejs.listeners.state.onReset.mythicv2)
+window._tejs.listeners ||= {};
+window._tejs.listeners.state ||= {};
+window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
 {
-	window._tejs.listeners.state.onReset.mythicv2 = (expand) =>
-	{
-		expand("reset mythicv2");
-	};
-}
-
+	expand("reset mythicv2");
+};
 ```
 ~~
 Sets up a state variable for mythicv2.  Sets up callback for state "reset" event to reset itself.
@@ -439,16 +439,15 @@ return "__Action__\n" + result[0] + getDetails() + "\n\n";
 ```
 ~~
 action {dispositionAdjust} - Makes an NPC behavior check, modified by {dispositionAdjust}, the modifier of the NPC's disposition.
-***
 
 
 ~~
 ```
-^lists pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
+^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
 ~~
 ```js
 return [];
 ```
 ~~
-lists pick - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_mythicv2" in the shortcut-files list for mythicv3 to be able to use lists.
+hidden - A plaeholder shortcut in case the shortcut-file tejs_lists isn't available.

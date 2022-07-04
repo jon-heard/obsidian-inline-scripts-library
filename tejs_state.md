@@ -17,6 +17,14 @@ window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
 window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onLoad ||= {};
+
+window._tejs.listeners ||= {};
+window._tejs.listeners.state ||= {};
+window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
+{
+	expand("reset mythicv2");
+};
 ```
 ~~
 Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.
@@ -30,9 +38,9 @@ Sets up a global variable to hold the state for all shortcut-files.  Also, sets 
 ```js
 window._tejs.state = {};
 
-for (const name in window._tejs.listeners.state.onReset)
+for (const key in window._tejs.listeners.state.onReset)
 {
-	const listener = window._tejs.listeners.state.onReset[name];
+	const listener = window._tejs.listeners.state.onReset[key];
 	if (typeof listener !== "function")
 	{
 		console.warn("Non-function is registered as a listener:" + listener);
@@ -74,9 +82,9 @@ catch (e)
 	return "__State loading failed due to invalid state__:\n" + $1 + "\n\n";
 }
 
-for (const name in window._tejs.listeners.state.onLoad)
+for (const key in window._tejs.listeners.state.onLoad)
 {
-	const listener = window._tejs.listeners.state.onLoad[name];
+	const listener = window._tejs.listeners.state.onLoad[key];
 	if (typeof listener !== "function")
 	{
 		console.warn("Non-function is registered as a listener:" + listener);

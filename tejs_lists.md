@@ -14,15 +14,13 @@ window._tejs ||= {};
 window._tejs.state ||= {};
 window._tejs.state.lists ||= {};
 
-if (window._tejs.listeners?.state?.onReset &&
-    !window._tejs.listeners.state.onReset.lists)
+window._tejs.listeners ||= {};
+window._tejs.listeners.state ||= {};
+window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset.lists ||= expand =>
 {
-	window._tejs.listeners.state.onReset.lists = (expand) =>
-	{
-		expand("reset lists");
-	};
-}
-
+	expand("reset lists");
+};
 ```
 ~~
 Sets up a state variable for the lists.  Sets up callback for state "reset" event to reset itself.
@@ -95,7 +93,7 @@ getListItems - a function to get the items of a given list, regardless of list t
 
 ~~
 ```
-^lists$
+^lists?$
 ```
 ~~
 ```js
@@ -119,7 +117,7 @@ lists - Show all list and all items for each list.
 
 ~~
 ```
-^lists list ([_a-zA-Z][_a-zA-Z0-9]*)$
+^lists? list ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 ~~
 ```js
@@ -133,7 +131,7 @@ lists list {list name} - Show all items in the list {list name}.
 
 ~~
 ```
-^lists add ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
+^lists? add ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 ~~
 ```js
@@ -152,7 +150,7 @@ lists add {list name} {item} - Add {item} to the list {list name}.  Allows dupli
 
 ~~
 ```
-^lists pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
+^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
 ~~
 ```js
@@ -174,7 +172,7 @@ lists pick {list name} - Get a random item from the list {list name}.
 
 ~~
 ```
-^lists remove ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
+^lists? remove ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 ~~
 ```js
@@ -200,7 +198,7 @@ lists remove {list name} {item} - Remove an instance of {item} from the list {li
 
 ~~
 ```
-^lists removelist ([_a-zA-Z][_a-zA-Z0-9]*)$
+^lists? removelist ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 ~~
 ```js
@@ -217,7 +215,7 @@ lists removelist {list name} - Remove the entire list {list name}.
 
 ~~
 ```
-^lists addfolder ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
+^lists? addfolder ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 ~~
 ```js
@@ -231,7 +229,7 @@ lists addfolder {list name} {folder} - Create a folder-list named {list name} th
 
 ~~
 ```
-^lists addcombo ([_a-zA-Z][_a-zA-Z0-9]*) ([_a-zA-Z][ _a-zA-Z0-9]*)$
+^lists? addcombo ([_a-zA-Z][_a-zA-Z0-9]*) ([_a-zA-Z][ _a-zA-Z0-9]*)$
 ```
 ~~
 ```js
@@ -245,19 +243,19 @@ lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list na
 
 ~~
 ```
-^lists listraw ([_a-zA-Z][_a-zA-Z0-9]*)$
+^lists? listraw ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 ~~
 ```js
 return getListItems($1);
 ```
 ~~
-lists listraw {list name} - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).
+hidden - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).
 
 
 ~~
 ```
-^lists type ([_a-zA-Z][_a-zA-Z0-9]*)$
+^lists? type ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 ~~
 ```js
@@ -268,4 +266,4 @@ if (!window._tejs.state.lists.hasOwnProperty($1))
 return window._tejs.state.lists[$1].type;
 ```
 ~~
-lists type {list name} - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).
+hidden - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).
