@@ -17,14 +17,6 @@ window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
 window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onLoad ||= {};
-
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= [];
-window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
-{
-	expand("reset mythicv2");
-};
 ```
 ~~
 Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.

@@ -78,7 +78,7 @@ if (!window._tejs.state.lists.characters)
 
 window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onReset.adventurecrafter ||= expand =>
 {
 	expand("reset adventurecrafter");
@@ -102,11 +102,45 @@ Unregisters event callbacks.
 
 
 ~~
+~~
+```js
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+function aPick(a) { return a[roll(a.length)-1]; }
+function aPickWeight(a, wIndex, theRoll)
+{
+	wIndex = wIndex || 1;
+	theRoll = theRoll || roll(a.last()[wIndex]);
+	for (const item of a)
+	{
+		if (item[wIndex] >= theRoll)
+		{
+			return item;
+		}
+	}
+	return a.last();
+}
+function aRemoveDuplicates(a) { return [...new Set(a)]; }
+function isAdventurecrafterDisabled()
+{
+	if (window._tejs.adventurecrafter.disabled)
+	{
+		return "ADVENTURECRAFTER SHORTCUTS DISABLED - missing table data.\nIf __tejs_adventurecrafter_data__ exists, make sure it is listed _before_ __tejs_adventurecrafter__ in the shortcut-file list.\n\n";
+	}
+	return null;
+}
+```
+~~
+Some useful functions
+
+
+~~
 ```
 ^reset adventurecrafter$
 ```
 ~~
 ```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
 window._tejs ||= {};
 window._tejs.state ||= {};
 window._tejs.state.adventurecrafter ||= {};
@@ -142,38 +176,6 @@ return "Adventure crafter reset.";
 ~~
 reset adventurecrafter - Reset adventurecrafter state to defaults.
 ***
-
-
-~~
-~~
-```js
-function roll(max) { return Math.trunc(Math.random() * max + 1); }
-function aPick(a) { return a[roll(a.length)-1]; }
-function aPickWeight(a, wIndex, theRoll)
-{
-	wIndex = wIndex || 1;
-	theRoll = theRoll || roll(a.last()[wIndex]);
-	for (const item of a)
-	{
-		if (item[wIndex] >= theRoll)
-		{
-			return item;
-		}
-	}
-	return a.last();
-}
-function aRemoveDuplicates(a) { return [...new Set(a)]; }
-function isAdventurecrafterDisabled()
-{
-	if (window._tejs.adventurecrafter.disabled)
-	{
-		return "ADVENTURECRAFTER SHORTCUTS DISABLED - missing table data.\nIf __tejs_adventurecrafter_data__ exists, make sure it is listed _before_ __tejs_adventurecrafter__ in the shortcut-file list.\n\n";
-	}
-	return null;
-}
-```
-~~
-Some useful functions
 
 
 ~~

@@ -71,12 +71,12 @@ if (!window._tejs.varnotes.onModified)
 
 window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onReset.varnotes ||= expand =>
 {
 	expand("reset varnotes");
 };
-window._tejs.listeners.state.onLoad ||= [];
+window._tejs.listeners.state.onLoad ||= {};
 window._tejs.listeners.state.onLoad.varnotes ||= expand =>
 {
 	expand("varnotes refresh");

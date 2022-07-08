@@ -18,15 +18,14 @@ window._tejs.clips.priorExpansion ||= "";
 
 window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onReset.clips ||= expand =>
 {
 	expand("reset clips");
 };
 window._tejs.listeners.tejs ||= {};
-window._tejs.listeners.tejs.onExpansion ||= [];
-// Undocumented feature: total undocumented features = 1 (just this one).
-window._tejs.listeners.tejs.onExpansion.clips ||= expansion =>
+window._tejs.listeners.tejs.onExpansion ||= {};
+window._tejs.listeners.tejs.onExpansion.clips ||= (input, expansion) =>
 {
 	window._tejs.clips.priorExpansion = expansion;
 };

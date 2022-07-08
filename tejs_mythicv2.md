@@ -29,7 +29,7 @@ window._tejs.mythicv2.details ||= [];
 
 window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
 {
 	expand("reset mythicv2");

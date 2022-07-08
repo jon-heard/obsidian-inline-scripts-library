@@ -16,7 +16,7 @@ window._tejs.state.lists ||= {};
 
 window._tejs.listeners ||= {};
 window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= [];
+window._tejs.listeners.state.onReset ||= {};
 window._tejs.listeners.state.onReset.lists ||= expand =>
 {
 	expand("reset lists");
