@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
 Uses __tejs_adventurecrafter_data__ shortcut-file (required).

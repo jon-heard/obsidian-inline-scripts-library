@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 This shortcut-file includes shortcuts that let the user manage a session state.  Effectively allows saving and restoring data between sessions.
 
 This shortcut file can be used by other shortcut-files to help them save/restore their states.

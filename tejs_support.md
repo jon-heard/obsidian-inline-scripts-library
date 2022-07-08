@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Various helper shortcuts of minimal category.
 
 

@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" supplement, is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
 Uses __tejs_state__ shortcut-file (optional).

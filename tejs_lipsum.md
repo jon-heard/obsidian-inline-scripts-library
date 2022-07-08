@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 A decent Lorum Ipsum generator.
 
 

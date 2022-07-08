@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Shortcuts to help in playing tabletop rpgs, either group or solo.
 
 

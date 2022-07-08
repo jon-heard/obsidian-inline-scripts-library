@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Setup and manage variables within notes.  Useful for adding data points (vars) into a note, then reading from and writing to those vars.
 
 Can be used by other shortcut-files for working with data in notes.

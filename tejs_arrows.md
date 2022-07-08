@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Shortcuts for writing various arrows:
 - →←↑↓
 - ▶◀▲▼

@@ -1,3 +1,7 @@
+---
+obsidianUIMode: preview
+---
+
 Shortcuts for working with lists.
 
 Uses __tejs_state__ shortcut-file (optional).
