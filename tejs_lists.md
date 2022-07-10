@@ -105,11 +105,11 @@ let listNames = Object.keys(window._tejs.state.lists);
 listNames.sort();
 for (let i = 0; i < listNames.length; i++)
 {
-	let items = getListItems(listNames[i]);
-	let listType = window._tejs.state.lists[listNames[i]].type;
+	const items = getListItems(listNames[i]);
+	const listType = window._tejs.state.lists[listNames[i]].type;
 	if (listType !== "basic")
 	{
-		listNames[i] += " _(" + listType + ")_";
+		listNames[i] += "    _(" + listType + ": " + window._tejs.state.lists[listNames[i]].content + ")_";
 	}
 	listNames[i] = listNames[i] + "\n        " + (items.length ? items.join(", ") : "NONE");
 }
@@ -127,7 +127,13 @@ lists - Show all list and all items for each list.
 ```js
 let items = getListItems($1);
 items = (items?.length ? items.join(", ") : "NONE");
-return [ "List __" + $1 + "__:\n    ", items, "\n\n" ];
+const listType = window._tejs.state.lists[$1].type;
+let content = "";
+if (listType !== "basic")
+{
+	content += "    _(" + listType + ": " + window._tejs.state.lists[$1].content + ")_";
+}
+return [ "List __" + $1 + "__" + content + ":\n    ", items, "\n\n" ];
 ```
 ~~
 lists list {list name} - Show all items in the list {list name}.
