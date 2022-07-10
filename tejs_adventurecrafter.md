@@ -109,7 +109,6 @@ Unregisters event callbacks.
 ~~
 ```js
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
-function aPick(a) { return a[roll(a.length)-1]; }
 function aPickWeight(a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;
@@ -123,7 +122,6 @@ function aPickWeight(a, wIndex, theRoll)
 	}
 	return a.last();
 }
-function aRemoveDuplicates(a) { return [...new Set(a)]; }
 function isAdventurecrafterDisabled()
 {
 	if (window._tejs.adventurecrafter.disabled)
@@ -189,14 +187,35 @@ reset adventurecrafter - Reset adventurecrafter state to defaults.
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-if (expand("themes pick") < 4)
+
+if (expand("themes pick").length < 4)
 {
 	return "Turning point not generated.  Not all theme slots filled.\n\n";
 }
-let result = "__Turning point__:\n";
+let result = "Turning point:\n";
+let nones = [];
 for (let i = 0; i < 5; i++)
 {
-	result += "- " + expand("plot point")[1] + "\n";
+	const plotPoint = expand("plot point");
+	if (plotPoint.length < 4)
+	{
+		result += "" + plotPoint[1] + "\n";
+	}
+	else
+	{
+		if (nones.length < 3)
+		{
+			nones.push(plotPoint[1]);
+		}
+		else
+		{
+			i--;
+		}
+	}
+}
+for (const none of nones)
+{
+	result += "" + none + "\n";
 }
 return result + "\n";
 ```
@@ -211,27 +230,29 @@ turning point - Get a list of five plot points to represent a major milestone in
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
 const theme = expand("themes pick");
 if (theme.length < 4)
 {
 	return "Plot point not generated.  Not all theme slots filled.\n\n";
 }
-let result = ["__Plot point__:\n"];
+let result = [ "Plot point:\n" ];
 const plotPoint = aPickWeight(window._tejs.adventurecrafter.plot, theme[3]);
 if (!plotPoint[7])
 {
-	result.push(plotPoint[0] + "\n    " + plotPoint[6]);
+	result.push("    " + plotPoint[0] + "    _(" + theme[1] + ")_\n        " + plotPoint[6]);
 }
 else
 {
-	if (plotPoint[7] == 1)
+	if (plotPoint[7] === 1)
 	{
-		result.push(plotPoint[0]);
+		result.push("    " + plotPoint[0]);
+		result.push(""); // Blank entry signifies this as a "none" plotpoint
 	}
-	else if (plotPoint[7] == 2)
+	else if (plotPoint[7] === 2)
 	{
 		const metaPoint = aPickWeight(window._tejs.adventurecrafter.plot_meta);
-		result.push(metaPoint[0] + "\n    " + metaPoint[2]);
+		result.push("    " + metaPoint[0] + "    _(META)_\n        " + metaPoint[2]);
 	}
 }
 result.push("\n\n");
@@ -244,103 +265,13 @@ plot point - Get a single plot point, generated from the plot points table.
 
 ~~
 ```
-^themes?$
-```
-~~
-```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-let result = "__Current theme set__:\n";
-for (let i = 0; i < 5; i++)
-{
-	result += (i+1) + ". " +
-		(window._tejs.adventurecrafter.themes[
-			window._tejs.state.adventurecrafter.themes[i] ?? 9] || "") +
-		"\n"
-}
-return result + "__Theme options__:\n   1 - Action    2 - Tension    3 - Mystery    4 - Social    5 - Personal\n\n";
-```
-~~
-themes - Show the ordered list of themes.
-
-
-~~
-```
-^themes? fill$
-```
-~~
-```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-let result = "Rolling remaining themes...\n";
-while (window._tejs.state.adventurecrafter.themes.length < 5)
-{
-	result += "- " + expand("themes add")[0] + "\n";
-}
-return result + "...done\n\n";
-```
-~~
-themes fill - Fills the remaining open theme slots with random themes.
-
-
-~~
-```
-^themes? add$
-```
-~~
-```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-let r = roll(5);
-while (window._tejs.state.adventurecrafter.themes.contains(r-1))
-{
-	r = roll(5);
-}
-return expand("themes add " + r);
-```
-~~
-themes add - Fills the next open theme slot with a random theme.
-
-
-~~
-```
-^themes? add ([1-5])$
-```
-~~
-```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-if (window._tejs.state.adventurecrafter.themes.length >= 5)
-{
-	return "No theme added.  All five theme slots are already filled.\n\n";
-}
-$1 = Number($1);
-window._tejs.state.adventurecrafter.themes.push($1-1);
-return [ "Theme slot " + window._tejs.state.adventurecrafter.themes.length + " set to " + window._tejs.adventurecrafter.themes[$1-1], "\n\n" ];
-```
-~~
-themes add {theme id} - Fills the next open theme slot with the theme of {theme id} (a required integer from 1 to 5).  {theme id} can be one of these options:
-    1 - Action    2 - Tension    3 - Mystery    4 - Social    5 - Personal
-
-
-~~
-```
-^themes? reset$
-```
-~~
-```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-window._tejs.state.adventurecrafter.themes = [];
-return "All theme slots cleared.\n\n";
-```
-~~
-themes reset - Clear all theme slots.
-
-
-~~
-```
 ^themes? pick$
 ```
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-if (window._tejs.state.adventurecrafter.themes.length != 5)
+
+if (window._tejs.state.adventurecrafter.themes.length < 5)
 {
 	return [ "Theme not picked.  Not all theme slots filled.\n\n" ];
 }
@@ -354,10 +285,120 @@ else
 	window._tejs.state.priorPickWas3rd = !window._tejs.state.priorPickWas3rd;
 }
 pick = window._tejs.state.adventurecrafter.themes[pick];
-return [ "Theme ", window._tejs.adventurecrafter.themes[pick], " (", (pick+1), ") picked.\n\n" ];
+return [ "Theme __", window._tejs.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
 ```
 ~~
 themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
+
+
+~~
+```
+^themes?$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+let result = "Current theme set:\n";
+for (let i = 0; i < 5; i++)
+{
+	result += "    " + (i+1) + ". " +
+		(window._tejs.adventurecrafter.themes[
+			window._tejs.state.adventurecrafter.themes[i] ?? 9] || "") +
+		"\n"
+}
+return result + "\n";
+```
+~~
+themes - Show the ordered list of themes.
+
+
+~~
+```
+^themes? fill$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+let result = "";
+// Do-whlie causes at least 1 roll.  If already filled, this prodces an error msg.
+do
+{
+	result += expand("themes roll")[0] + "\n";
+}
+while (window._tejs.state.adventurecrafter.themes.length < 5);
+return result + "\n";
+```
+~~
+themes fill - Fills the remaining open theme slots with random themes.
+
+
+~~
+```
+^themes? roll$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+const themes = window._tejs.state.adventurecrafter.themes;
+let r = roll(5);
+// Only seek unused theme if theme slots aren't already filled
+while (themes.length < 5 && window._tejs.state.adventurecrafter.themes.contains(r-1))
+{
+	r = roll(5);
+}
+return expand("themes add " + r);
+```
+~~
+themes roll - Fills the next open theme slot with a random theme.
+
+
+~~
+```
+^themes? add((?: [1-5])?)$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+$1 = Number($1);
+if (!$1)
+{
+	return "" +
+		"Enter \"__themes add__\" again with one of these indices:\n" +
+		"    1. Action\n    2. Tension\n    3. Mystery\n" +
+		"    4. Social\n    5. Personal\n\n";
+}
+else
+{
+	let themes = window._tejs.state.adventurecrafter.themes;
+	if (themes.length >= 5)
+	{
+		return [ "No theme added.  All five theme slots are already filled.", "\n\n" ];
+	}
+	themes.push($1-1);
+	return [ "Theme slot __" + themes.length + "__ set to __" + window._tejs.adventurecrafter.themes[$1-1] + "__", "\n\n" ];
+}
+```
+~~
+themes add {theme id} - If {theme id} (an optional number from 1 to 5) is NOT included, this shortcut shows the options for {theme id}.  If {theme id} IS included, this shortcut fills the next open theme slot with the theme of {theme id}.  {theme id} can be one of these options: 1 (Action), 2 (Tension), 3 (Mystery), 4 (Social), 5 (Personal).
+
+
+~~
+```
+^themes? clear$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+window._tejs.state.adventurecrafter.themes = [];
+return "All theme slots cleared.\n\n";
+```
+~~
+themes clear - Clear all theme slots.
 ***
 
 
@@ -370,7 +411,7 @@ themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
 
 let special = aPickWeight(window._tejs.adventurecrafter?.character_specialTraits, 1);
-special = "- __Special trait__ - " + special[0] + "\n    " + special[2] + "\n";
+special = "    Special trait - " + special[0] + "\n        " + special[2] + "\n";
 
 let identity = aPickWeight(window._tejs.adventurecrafter?.character_identities, 1);
 if (identity[2])
@@ -392,7 +433,7 @@ else
 {
 	identity = [ identity[0] ];
 }
-identity = "- __Identity__ - " + identity.join(", ") + "\n";
+identity = "    Identity - " + identity.join(", ") + "\n";
 
 let descriptor = aPickWeight(window._tejs.adventurecrafter?.character_descriptors, 1);
 if (descriptor[2])
@@ -414,9 +455,9 @@ else
 {
 	descriptor = [ descriptor[0] ];
 }
-descriptor = "- __Descriptor__ - " + descriptor.join(", ") + "\n";
+descriptor = "    Descriptor - " + descriptor.join(", ") + "\n";
 
-return "__Character__:\n" + special + identity + descriptor + "\n";
+return "Character:\n" + special + identity + descriptor + "\n";
 ```
 ~~
 ac chars gen - Generate a new character description, as per the Adventure Crafter rules.
@@ -424,17 +465,48 @@ ac chars gen - Generate a new character description, as per the Adventure Crafte
 
 
 ~~
-```
-^ac chars?$
-```
 ~~
 ```js
-if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-let list = aRemoveDuplicates(expand("lists listraw characters")).join(", ") || "NONE";
-return "__Characters__:\n" + list + "\n\n";
+function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
+{
+	let formattedEntries = {};
+	const rawEntries = expand("lists listraw " + listName);
+	for (let i = 0; i < rawEntries.length; i++)
+	{
+		if (formattedEntries[rawEntries[i]])
+		{
+			formattedEntries[rawEntries[i]].count++;
+		}
+		else
+		{
+			formattedEntries[rawEntries[i]] = { index: (i+1), count: 1 };
+		}
+	}
+	let result = [];
+	let isEmpty = true;
+	for (const entry of rawEntries)
+	{
+		if (formattedEntries[entry])
+		{
+			const e = formattedEntries[entry];
+			result.push(
+				(prefixType===1 ? "" : prefixType===2 ? "- " : (e.index + ". ")) +
+				entry +
+				((hideCount || e.count === 1) ? "" : " _(x " + e.count + ")_")
+			);
+			delete formattedEntries[entry];
+			isEmpty = false;
+		}
+	}
+	if (isEmpty)
+	{
+		result.push("NONE");
+	}
+	return result;
+}
 ```
 ~~
-ac chars - List the character items.
+Used by a lot of "ac chars" and "ac plots" shortcuts.
 
 
 ~~
@@ -444,27 +516,36 @@ ac chars - List the character items.
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+const NEW_CHAR_MSG = "Create a new character";
 const r = roll(25);
 let result = expand("lists pick characters " + r)[1];
 if (result)
 {
-	result = [ "__Character picked__:\n", result ];
+	result = [ "Character __", result, "__ picked." ];
 }
 if (!result)
 {
 	if (r < 13)
 	{
-		result = r%4 ? [ "Create a new character" ] : null;
+		result = r%4 ? [ NEW_CHAR_MSG ] : null;
 	}
 	else
 	{
-		result = (r-1)%4 ? null : [ "Create a new character" ];
+		result = (r-1)%4 ? null : [ NEW_CHAR_MSG ];
 	}
 }
 if (!result)
 {
-	let list = aRemoveDuplicates(expand("lists listraw characters"));
-	result = [ "__Pick the most logical character__:\n" + list.join(", ") ];
+	let list = getFormattedList("characters", true, 1);
+	if (list[0] !== "NONE" || list.length > 1)
+	{
+		result = [ "Pick the most logical character:\n    " + list.join("\n    ") ];
+	}
+	else
+	{
+		result = [ NEW_CHAR_MSG ];
+	}
 }
 result.push("\n\n");
 return result;
@@ -475,83 +556,89 @@ ac chars pick - Pick a random char, as per the Adventure Crafter rules.
 
 ~~
 ```
+^ac chars?$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+return "Characters:\n    " + getFormattedList("characters", false, 1).join("\n    ") + "\n\n";
+```
+~~
+ac chars - List the character entries.
+
+
+~~
+```
 ^ac chars? add (.*)$
 ```
 ~~
 ```js
-if (expand("lists type characters") == "basic")
-{
-	expand("lists add characters " + $1);
-}
-else
-{
-	expand("lists add character_dupes " + $1);
-}
-return "__" + list[$1-1] + "__ added to characters.\n\n";
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
 
+return expand("lists add characters " + $1);
 ```
 ~~
-ac chars add {character name} - Add the given {character name} (required text) to the list of characters.
-
-~~
-```
-^ac chars? dupe$
-```
-~~
-```js
-	if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-	const list = expand("lists listraw characters");
-	let result = "__Pick a character to duplicate.  Enter the shortcut again with the index__:\n";
-	for (let i = 0; i < list.length; i++)
-	{
-		result += (i+1) + ". " + list[i] + "\n";
-	}
-	return result + "\n";
-```
-~~
-ac chars dupe - Show indices of character list entries for duplication.
+ac chars add {character} - Add the given {character} (required text) to the list of character entries.
 
 
 ~~
 ```
-^ac chars? dupe ([1-9][0-9]*)$
+^ac chars? dupe((?: [1-9][0-9]*)?)$
 ```
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-const list = expand("lists listraw characters");
+
 $1 = Number($1);
-if ($1 > list.length)
+if (!$1)
 {
-	return "Character not duplicated.  Invalid index given (" + $1 + ").\n\n";
-}
-if (expand("lists type characters") == "basic")
-{
-	expand("lists add characters " + list[$1-1]);
+	return "" +
+		"Enter \"__ac chars dupe__\" again with one of these indices:\n    " +
+		getFormattedList("characters").join("\n    ") + "\n\n";
 }
 else
 {
-	expand("lists add character_dupes " + list[$1-1]);
+	const list = expand("lists listraw characters");
+	if ($1 > list.length)
+	{
+		return "Character not duplicated.  Invalid index given (" + $1 + ").\n\n";
+	}
+	return expand("lists add characters " + list[$1-1]);
 }
-return "Character entry __" + list[$1-1] + "__ duplicated.\n\n";
 ```
 ~~
-ac chars dupe {character index} - Create a new character list entry that is the same as the character list entry with the index of {character index} (a required, positive integer).
-***
+ac plots dupe {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
 
 
 ~~
 ```
-^ac plots?$
+^ac chars? remove((?: [1-9][0-9]*)?)$
 ```
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-let list = aRemoveDuplicates(expand("lists listraw plotlines")).join(", ") || "NONE";
-return "__Plotlines__:\n" +	list + "\n\n";
+
+$1 = Number($1);
+if (!$1)
+{
+	return "" +
+		"Enter \"__ac chars remove__\" again with one of these indices:\n    " +
+		getFormattedList("characters").join("\n    ") + "\n\n";
+}
+else
+{
+	const list = expand("lists listraw characters");
+	if ($1 > list.length)
+	{
+		return "Character not removed.  Invalid index given (" + $1 + ").\n\n";
+	}
+	return expand("lists remove characters " + list[$1-1]);
+}
 ```
 ~~
-ac plots - List the plotline items.
+ac chars remove {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut removes one entry of the character that is indexed by {character index}.
+***
 
 
 ~~
@@ -561,11 +648,12 @@ ac plots - List the plotline items.
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
 const r = roll(25);
 let result = expand("lists pick plotlines " + r)[1];
 if (result)
 {
-	result = [ "__Plotline picked__:\n", result ];
+	result = [ "Plotline __", result, "__ picked." ];
 }
 if (!result)
 {
@@ -573,8 +661,8 @@ if (!result)
 }
 if (!result)
 {
-	let list = aRemoveDuplicates(expand("lists listraw plotlines"));
-	result = [ "__Pick the most logical plotline__:\n" + list.join(", ") ];
+	let list = getFormattedList("plotlines", true, 1);
+	result = [ "Pick the most logical plotline:\n    " + list.join("\n    ") ];
 
 }
 result.push("\n\n");
@@ -586,66 +674,85 @@ ac plots pick - Pick a random plotline, as per the Adventure Crafter rules.
 
 ~~
 ```
-^ac plots? add (.*)$
-```
-~~
-```js
-if (expand("lists type plotlines") == "basic")
-{
-	expand("lists add plotlines " + $1);
-}
-else
-{
-	expand("lists add plotline_dupes " + $1);
-}
-return "__" + list[$1-1] + "__ added to plotlines.\n\n";
-
-```
-~~
-ac chars add {character name} - Add the given {character name} (required text) to the list of characters.
-
-
-~~
-```
-^ac plots? dupe$
-```
-~~
-```js
-	if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-	const list = expand("lists listraw plotlines");
-	let result = "__Pick a plotline to duplicate.  Enter the shortcut again with the index__:\n";
-	for (let i = 0; i < list.length; i++)
-	{
-		result += (i+1) + ". " + list[i] + "\n";
-	}
-	return result + "\n";
-```
-~~
-ac plots dupe - Show indicies plotline list entries for duplication.
-
-
-~~
-```
-^ac plots? dupe ([1-9][0-9]*)$
+^ac plots?$
 ```
 ~~
 ```js
 if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
-const list = expand("lists listraw plotlines");
+
+return "Plotlines:\n    " + getFormattedList("plotlines", false, 1).join("\n    ") + "\n\n";
+```
+~~
+ac plots - List the plotline entries.
+
+
+~~
+```
+^ac plots? add (.*)$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+return expand("lists add plotlines " + $1);
+```
+~~
+ac plots add {plotline} - Add the given {plotline} (required text) to the list of plotline entries.
+
+
+~~
+```
+^ac plots? dupe((?: [1-9][0-9]*)?)$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
 $1 = Number($1);
-if ($1 > list.length)
+if (!$1)
 {
-	return "Plotline not duplicated.  Invalid index given (" + $1 + ").";
-}
-if (expand("lists type plotlines") == "basic")
-{
-	expand("lists add plotlines " + list[$1-1]);
+	return "" +
+		"Enter \"__ac plots dupe__\" again with one of these indices:\n    " +
+		getFormattedList("plotlines").join("\n    ") + "\n\n";
 }
 else
 {
-	expand("lists add plotline_dupes " + list[$1-1]);
+	const list = expand("lists listraw plotlines");
+	if ($1 > list.length)
+	{
+		return "Plotline not duplicated.  Invalid index given (" + $1 + ").\n\n";
+	}
+	return expand("lists add plotlines " + list[$1-1]);
 }
-return "Plotline entry __" + list[$1-1] + "__ duplicated.\n\n";
 ```
 ~~
-ac plots dupe {plotline index} - Create a new plotline list entry that is the same as the plotline list entry with the index of {plotline index} (a required, positive integer).
+ac plots dupe {plotline index} - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut duplicates the plotline that is indexed by {plotline index}.
+
+
+~~
+```
+^ac plots? remove((?: [1-9][0-9]*)?)$
+```
+~~
+```js
+if (isDisabled = isAdventurecrafterDisabled()) { return isDisabled; }
+
+$1 = Number($1);
+if (!$1)
+{
+	return "" +
+		"Enter \"__ac plots remove__\" again with one of these indices:\n    " +
+		getFormattedList("plotlines").join("\n    ") + "\n\n";
+}
+else
+{
+	const list = expand("lists listraw plotlines");
+	if ($1 > list.length)
+	{
+		return "Plotline not removed.  Invalid index given (" + $1 + ").\n\n";
+	}
+	return expand("lists remove plotlines " + list[$1-1]);
+}
+```
+~~
+ac plots remove {plotline index} - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut removes one entry of the plotline that is indexed by {plotline index}.

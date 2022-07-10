@@ -74,7 +74,7 @@ let result = "";
 for (let i = 0; i < $1; i++)
 {
 	let pSize = aPick(window._tejs.lipsum.pSizes);
-	if (i == 0)
+	if (i === 0)
 	{
 		pSize--;
 		result += window._tejs.lipsum.first + ". ";

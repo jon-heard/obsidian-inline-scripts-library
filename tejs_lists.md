@@ -44,7 +44,7 @@ Unregisters event callbacks.
 
 ~~
 ```
-^reset lists$
+^reset lists?$
 ```
 ~~
 ```js
@@ -107,13 +107,13 @@ for (let i = 0; i < listNames.length; i++)
 {
 	let items = getListItems(listNames[i]);
 	let listType = window._tejs.state.lists[listNames[i]].type;
-	if (listType != "basic")
+	if (listType !== "basic")
 	{
 		listNames[i] += " _(" + listType + ")_";
 	}
-	listNames[i] = "- " + listNames[i] + "\n      " + (items.length ? items.join(", ") : "NONE");
+	listNames[i] = listNames[i] + "\n        " + (items.length ? items.join(", ") : "NONE");
 }
-return "__Lists__\n" + (listNames.length ? listNames.join("\n") : "NONE") + "\n\n";
+return "Lists:\n    " + (listNames.length ? listNames.join("\n    ") : "NONE") + "\n\n";
 ```
 ~~
 lists - Show all list and all items for each list.
@@ -127,29 +127,10 @@ lists - Show all list and all items for each list.
 ```js
 let items = getListItems($1);
 items = (items?.length ? items.join(", ") : "NONE");
-return [ "__List \"" + $1 + "\"__\n", items, "\n\n" ];
+return [ "List __" + $1 + "__:\n    ", items, "\n\n" ];
 ```
 ~~
 lists list {list name} - Show all items in the list {list name}.
-
-
-~~
-```
-^lists? add ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
-```
-~~
-```js
-window._tejs.state.lists[$1] ||= { type: "basic", content: [] };
-if (window._tejs.state.lists[$1].type != "basic")
-{
-	return "Failed to add to list \"" + $1 + "\".  Not a basic list.\n\n";
-}
-window._tejs.state.lists[$1].content.push($2);
-window._tejs.state.lists[$1].content.sort();
-return "\"" + $2 + "\" added to list \"" + $1 + "\".\n\n";
-```
-~~
-lists add {list name} {item} - Add {item} to the list {list name}.  Allows duplicate items.  Cannot add to folder-lists or combo-lists.
 
 
 ~~
@@ -166,7 +147,7 @@ if (items?.length || $2)
 {
 	let result = Number($2) || roll(items.length);
 	result = items[result - 1];
-	return [ "\"", result, "\" picked from list \"", $1, "\".\n\n" ];
+	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
 }
 return [ "Failed to pick from list \"" + $1 + "\".  List is empty.\n\n" ];
 ```
@@ -176,28 +157,95 @@ lists pick {list name} - Get a random item from the list {list name}.
 
 ~~
 ```
+^lists? add ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
+```
+~~
+```js
+window._tejs.state.lists[$1] ||= { type: "basic", content: [] };
+const ERROR_PREFIX = "Failed to add \"" + $2 + "\" to list \"" + $1 + "\".  ";
+const type = window._tejs.state.lists[$1].type;
+if (type === "basic")
+{
+	const c = window._tejs.state.lists[$1].content;
+	c.push($2);
+	c.sort();
+	return "__" + $2 + "__ added to list __" + $1 + "__.\n\n";
+}
+else if (type === "combo")
+{
+	const c = window._tejs.state.lists[$1].content;
+	// Iterate in reverse order, to add to the LAST sublist
+	for (let i = c.length-1; i >= 0; i--)
+	{
+		let result = expand("lists add " + c[i] + " " + $2);
+		if (!result.startsWith("Failed"))
+		{
+			return "__" + $2 + "__ added to list __" + $1 + "__.\n\n";
+		}
+	}
+	return ERROR_PREFIX + "No sub-lists support this operation.\n\n";
+}
+else
+{
+	return ERROR_PREFIX + "List type does not support this operation.\n\n";
+}
+```
+~~
+lists add {list name} {item} - Add {item} to the list {list name}.  Allows duplicate items.
+    - Can only add to basic lists and combo lists that contain basic lists.
+
+
+~~
+```
 ^lists? remove ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 ~~
 ```js
-// warning: Wierd, but necessary logic here
-if (window._tejs.state.lists[$1])
+const ERROR_PREFIX = "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  ";
+if (!window._tejs.state.lists[$1])
 {
-	if (window._tejs.state.lists[$1].type != "basic")
-	{
-		return "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  Not a basic list.\n\n";
-	}
-	let i = window._tejs.state.lists[$1].content.lastIndexOf($2);
-	if (i >= 0)
-	{
-	    window._tejs.state.lists[$1].content.splice(i, 1);
-	    return "\"" + $2 + "\" removed from list \"" + $1 + "\".\n\n";
-	}
+	return ERROR_PREFIX + "Entry not found.\n\n";
 }
-	return "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  Not found in list.\n\n";
+const type = window._tejs.state.lists[$1].type;
+if (type === "basic")
+{
+	const list = getListItems($1);
+	if (!list.contains($2))
+	{
+		return ERROR_PREFIX + "Entry not found.\n\n";
+	}
+	const c = window._tejs.state.lists[$1].content;
+	let i = c.lastIndexOf($2);
+	c.splice(i, 1);
+	return "__" + $2 + "__ removed from list __" + $1 + "__.\n\n";
+}
+else if (type === "combo")
+{
+	const list = getListItems($1);
+	if (!list.contains($2))
+	{
+		return ERROR_PREFIX + "Entry not found.\n\n";
+	}
+	const c = window._tejs.state.lists[$1].content;
+	// Iterate in reverse order, to be sure and remove LAST entry
+	for (let i = c.length-1; i >= 0; i--)
+	{
+		let result = expand("lists remove " + c[i] + " " + $2);
+		if (!result.startsWith("Failed"))
+		{
+			return "__" + $2 + "__ removed from list __" + $1 + "__.\n\n";
+		}
+	}
+	return ERROR_PREFIX + "Failed on sub-list of this combo-list.\n\n";
+}
+else
+{
+	return ERROR_PREFIX + "List type does not support this operation.\n\n";
+}
 ```
 ~~
-lists remove {list name} {item} - Remove an instance of {item} from the list {list name}.  Cannot remove from folder-lists or combo-lists.
+lists remove {list name} {item} - Remove an instance of {item} from the list {list name}.
+    - Can only remove from basic lists and combo lists that contain basic lists.
 
 
 ~~
@@ -209,9 +257,9 @@ lists remove {list name} {item} - Remove an instance of {item} from the list {li
 if (window._tejs.state.lists[$1])
 {
 	delete window._tejs.state.lists[$1];
-	return "List \"" + $1 + "\" removed.\n\n";
+	return "List __" + $1 + "__ removed.\n\n";
 }
-return "Failed to remove list \"" + $1 + "\".  List does not exist.\n\n";
+return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
 ```
 ~~
 lists removelist {list name} - Remove the entire list {list name}.
@@ -225,10 +273,10 @@ lists removelist {list name} - Remove the entire list {list name}.
 ```js
 if (!$2.endsWith("/")) { $2 += "/"; }
 window._tejs.state.lists[$1] = { type: "folder", content: $2 };
-return "List \"" + $1 + "\" added as a folder-list that is linked to the folder \"" + $2 + "\".\n\n";
+return "List __" + $1 + "__ added as a folder-list that is linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 ~~
-lists addfolder {list name} {folder} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the files in the linked folder.
+lists addfolder {list name} {folder} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 
 
 ~~
@@ -239,7 +287,7 @@ lists addfolder {list name} {folder} - Create a folder-list named {list name} th
 ```js
 let links = $2.split(" ");
 window._tejs.state.lists[$1] = { type: "combo", content: links };
-return "List \"" + $1 + "\" added as a combo-list linked to: " + links.join(", ") + ".\n\n";
+return "List __" + $1 + "__ added as a combo-list linked to:\n    " + links.join(", ") + "\n\n";
 ```
 ~~
 lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.

@@ -23,7 +23,7 @@ if ($1)
 		};
 	}
 	Math.rngseed = $1;
-	return "Random number generator set up with seed '" + $1 + "'.\n\n";
+	return "Random number generator set up with seed '__" + $1 + "__'.\n\n";
 }
 else
 {

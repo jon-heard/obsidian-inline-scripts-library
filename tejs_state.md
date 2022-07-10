@@ -57,7 +57,7 @@ reset state - Clear all state.
 ```
 ~~
 ```js
-return "__State__\n" + JSON.stringify(window._tejs.state) + "\n\n";
+return "State:\n" + JSON.stringify(window._tejs.state) + "\n\n";
 ```
 ~~
 state - Expands to a string representing the current state (for session saving).
@@ -75,7 +75,7 @@ try
 }
 catch (e)
 {
-	return "__State loading failed due to invalid state__:\n" + $1 + "\n\n";
+	return "State loading failed due to invalid state:\n    " + $1 + "\n\n";
 }
 
 for (const key in window._tejs.listeners.state.onLoad)

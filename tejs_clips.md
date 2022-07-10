@@ -2,7 +2,7 @@
 obsidianUIMode: preview
 ---
 
-Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but more simplistic.
+Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but simplistic and tied to the session state.
 
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the clips.
@@ -53,7 +53,7 @@ Unregisters event callbacks.
 
 ~~
 ```
-^reset clips$
+^reset clips?$
 ```
 ~~
 ```js
@@ -71,7 +71,7 @@ reset clips - Remove all clips.
 ~~
 ```js
 let clipNames = Object.keys(window._tejs.state.clips);
-return "__Clips__\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
+return "Clips:\n    " + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 ~~
 clips - Lists all stored clips.
@@ -89,7 +89,7 @@ return text || "";
 ```
 ~~
 clips get {name} - Expands to the value stored in clip {name} (a required name string).
-	- Alternative shortcut: __cg {name}__.
+        Alternative shortcut: __cg {name}__.
 
 
 ~~
@@ -100,7 +100,7 @@ clips get {name} - Expands to the value stored in clip {name} (a required name s
 ```js
 $1 = $1.toLowerCase();
 window._tejs.state.clips[$1] = $2;
-return "__Clip \"" + $1 + "\" set to__\n" + $2 + "\n\n";
+return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 ~~
 clips add {name} {value} - Creates a clip named {name} (a required name string) that stores the string {value} (a required text).
@@ -113,9 +113,8 @@ clips add {name} {value} - Creates a clip named {name} (a required name string) 
 ~~
 ```js
 $1 = $1.toLowerCase();
-console.log("Clipping: ''" + window._tejs.clips.priorExpansion + "'");
 window._tejs.state.clips[$1] = window._tejs.clips.priorExpansion;
-return "__Clip \"" + $1 + "\" set to__\n" + window._tejs.clips.priorExpansion + "\n\n";
+return "Clip __" + $1 + "__ set to:\n" + window._tejs.clips.priorExpansion + "\n\n";
 ```
 ~~
 clips expansion {name} - Creates a clip named {name} (a required name string) that stores the previous expansion.
@@ -131,9 +130,9 @@ $1 = $1.toLowerCase();
 if (window._tejs.state.clips[$1])
 {
 	delete window._tejs.state.clips[$1];
-	return "Clip \"" + $1 + "\" removed.\n\n";
+	return "Clip __" + $1 + "__ removed.\n\n";
 }
-return "Failed to remove clip \"" + $1 + "\".  Does not exist.\n\n";
+return "Failed to remove clip __" + $1 + "__.  Does not exist.\n\n";
 ```
 ~~
 clips remove {name} - Removes the clip named {name} (a required name string).

@@ -45,44 +45,45 @@ Shortcuts for working with lists.
 - __reset lists__ - Clear all lists.
 - __lists__ - Show all list and all items for each list.
 - __lists list {list name}__ - Show all items in the list {list name}.
-- __lists add {list name} {item}__ - Add {item} to the list {list name}.  Allows duplicate items.  Cannot add to folder-lists or combo-lists.
 - __lists pick {list name}__ - Get a random item from the list {list name}.
-- __lists remove {list name} {item}__ - Remove an instance of {item} from the list {list name}.  Cannot remove from folder-lists or combo-lists.
+- __lists add {list name} {item}__ - Add {item} to the list {list name}.  Allows duplicate items.
+    - Can only add to basic lists and combo lists that contain basic lists.
+- __lists remove {list name} {item}__ - Remove an instance of {item} from the list {list name}.
+    - Can only remove from basic lists and combo lists that contain basic lists.
 - __lists removelist {list name}__ - Remove the entire list {list name}.
-- __lists addfolder {list name} {folder}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the files in the linked folder.
+- __lists addfolder {list name} {folder}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name} {sub list 1} {sub list 2}...__ - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
 
 ***
 
 ### tejs_varnotes
-Setup notes with variables.  Useful for reading raw data from a nicely formatted document.
-
-Can be used by other shortcut-files for dynamically reading data for other operations.
+Setup and manage variables within notes.  Can be used by other shortcut-files for working with data in notes.
 
 - __reset varnotes__ - Removes all stored varnotes from the session state.
 - __varnotes__ - Lists all varnotes and the files they are connected to.
-- __varnotes data {varnote name}__ - Lists all the data for varnote {varnote name} (an required name paroperty).
+- __varnotes vars {varnote name}__ - Lists all the vars for the varnote named {varnote name} (a required name property).
 - __varnotes add {varnote name} {file address}__ - Adds a varnote named {varnote name} (a required name parameter) that is attached to the file at {file address} (a required file address parameter).
 - __varnotes remove {varnote name}__ - Removes the varnote {var name} (a required name parameter).
-- __varnotes get {varnote name} {data name}__ - Gets the data named {data name} (a required name parameter) from the varnote named {varnote name} (a required name parameter).
-    - Alternative shortcut: __vn {varnote name} {data name}__.
-- __varnotes refresh__ - Pull the data from all varnotes.
-    - Alternative shortcut: __vn refresh__.
-- __varnotes refresh {varnote name}__ - Pull the data from varnote {varnote name} (a required "name" parameter).
+- __varnotes get {varnote name} {var name}__ - Gets the value of the var named {var name} (a required name parameter) in the varnote named {varnote name} (a required name parameter).
+        Alternative shortcut: __vn {varnote name} {var name}__.
+- __varnotes set {varnote name} {var name} {value}__ - Sets the var named {var name} (a required name parameter) to {value} (a required text parameter), in the varnote named {varnote name} (a required name parameter).
+        Alternative shortcut: __vnset {varnote name} {var name} {value}__.
+- __varnotes refresh__ - Get the latest vars from all varnotes and store it all.
+- __varnotes refresh {varnote name}__ - Pull the vars from varnote {varnote name} (a required "name" parameter).
 
 ***
 
 ### tejs_mythicv2
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
-- __reset mythic__ - Reset mythic state to defaults and displays scene heading.
-- __mythic details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
+- __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
+- __mythicv2 details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 - __detail__ - Make a detail check.
 - __event__ - Make an event check.
 - __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
-    - Alternative shortcut: __f {odds} {wanted}____.
+        Alternative shortcut: __f {odds} {wanted}__.
 - __meaning action__ - Roll on the action meaning table.
-    - Alternative shortcut: __meaning__.
+        Alternative shortcut: __meaning__.
 - __meaning description__ - Roll on the description meaning table.
 - __scene__ - Show the current scene.
 - __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
@@ -121,25 +122,26 @@ Zach Best, the writer and publisher of this product has, sadly, passed away.  Pr
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
 - __reset adventurecrafter__ - Reset adventurecrafter state to defaults.
+***
 - __turning point__ - Get a list of five plot points to represent a major milestone in a plotline.
 - __plot point__ - Get a single plot point, generated from the plot points table.
-- __themes__ - Show the ordered list of themes.
-- __themes fill__ - Fills the remaining theme slots with random themes.
-- __themes add__ - Fills the next theme slot with a random theme.
-- __themes add {theme id}__ - Fills the next theme slot with the theme of {theme id} (a required integer from 1 to 5).  {theme id} can be one of these options:
-    1 - Action    2 - Tension    3 - Mystery    4 - Social    5 - Personal
-- __themes reset__ - Clear the theme slots.
 - __themes pick__ - Pick a weighted random theme, as per the Adventure Crafter rules.
-- __ac chars__ - List the character items.
-- __ac chars new__ - Generate a new character description, as per the Adventure Crafter rules.
+- __themes__ - Show the ordered list of themes.
+- __themes fill__ - Fills the remaining open theme slots with random themes.
+- __themes roll__ - Fills the next open theme slot with a random theme.
+- __themes add {theme id}__ - If {theme id} (an optional number from 1 to 5) is NOT included, this shortcut shows the options for {theme id}.  If {theme id} IS included, this shortcut fills the next open theme slot with the theme of {theme id}.  {theme id} can be one of these options: 1 (Action), 2 (Tension), 3 (Mystery), 4 (Social), 5 (Personal).
+- __themes clear__ - Clear all theme slots.
+- __ac chars gen__ - Generate a new character description, as per the Adventure Crafter rules.
 - __ac chars pick__ - Pick a random char, as per the Adventure Crafter rules.
-- __ac chars dupe__ - List character indices to enter for duplication.
-- __ac chars dupe {character index}__ - Create a new character list item that is the same as the character with the index of {character index} (a required, positive integer).
-- __ac plots__ - List the plotline items.
+- __ac chars__ - List the character entries.
+- __ac chars add {character}__ - Add the given {character} (required text) to the list of character entries.
+- __ac plots dupe {character index}__ - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
+- __ac chars remove {character index}__ - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut removes one entry of the character that is indexed by {character index}.
 - __ac plots pick__ - Pick a random plotline, as per the Adventure Crafter rules.
-- __ac plots dupe__ - List plotline indices to enter for duplication.
-- __ac plots dupe {plotline index}__ - Create a new plotline list item that is the same as the plotline with the index of {plotline index} (a required, positive integer).
-- __lists pick__ - This does nothing.  It's just a placeholder, for when "tejs_lists" isn't available.  Make sure "tejs_lists" comes before "tejs_adventurecrafter" in the shortcut-files list for adventurecrafter to be able to use lists.
+- __ac plots__ - List the plotline entries.
+- __ac plots add {plotline}__ - Add the given {plotline} (required text) to the list of plotline entries.
+- __ac plots dupe {plotline index}__ - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut duplicates the plotline that is indexed by {plotline index}.
+- __ac plots remove {plotline index}__ - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut removes one entry of the plotline that is indexed by {plotline index}.
 
 ***
 
@@ -151,13 +153,15 @@ Shortcuts to help in playing tabletop rpgs, either group or solo.
 ***
 
 ### tejs_clips
-Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but more simplistic.
+Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but simplistic and tied to the session state.
 
-- __reset state__ - Remove all clips.
-- __clip__ - Lists all stored clips.
-- __clip {name}__ - Expands to the value stored in clip {name}.
-- __clipadd {name} {value}__ - Creates a clip {name} that stores the string {value}.
-- __clipremove {name}__ - Removes the clip {name}.
+- __reset clips__ - Remove all clips.
+- __clips__ - Lists all stored clips.
+- __clips get {name}__ - Expands to the value stored in clip {name} (a required name string).
+        Alternative shortcut: __cg {name}__.
+- __clips add {name} {value}__ - Creates a clip named {name} (a required name string) that stores the string {value} (a required text).
+- __clips expansion {name}__ - Creates a clip named {name} (a required name string) that stores the previous expansion.
+- __clips remove {name}__ - Removes the clip named {name} (a required name string).
 
 ***
 
