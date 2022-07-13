@@ -4,6 +4,8 @@ obsidianUIMode: preview
 
 Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" supplement, is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
+Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs_mythicv2__ in the shortcut-list, then __tejs_mythicv2__ will be disabled.
+
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the chaos value, the scene count, and "Details" mode.
 
@@ -19,15 +21,23 @@ If the pc, npc and thread lists have items, then the __event__ and __detail__ sh
 ```
 ~~
 ```js
+if (expand("help").contains("\n    - mythicgme"))
+{
+	print("The mythicv2 shortcut-file is disabled as it is incompatible with the mythicgme shortcut-file.");
+	return true;
+}
+
 window._tejs ||= {};
 window._tejs.state ||= {};
 window._tejs.state.mythicv2 ||= {};
 window._tejs.state.mythicv2.chaos ||= 4;
 window._tejs.state.mythicv2.scene ||= 1;
+
 window._tejs.state.lists ||= {};
 window._tejs.state.lists.pcs ||= { type: "basic", content: [] };
 window._tejs.state.lists.npcs ||= { type: "basic", content: [] };
 window._tejs.state.lists.threads ||= { type: "basic", content: [] };
+
 window._tejs.mythicv2 ||= {};
 window._tejs.mythicv2.details ||= [];
 
@@ -40,7 +50,8 @@ window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
 };
 ```
 ~~
-Sets up a state variable for mythicv2.  Sets up callback for state "reset" event to reset itself.
+Disables mythicv2 if mythicgme is already registered.  Sets up a state variable for mythicv2.  Sets up lists for mythicv2.  Sets up a callback for the state "reset" event in order to to reset mythicv2.
+
 
 
 ~~
@@ -148,42 +159,6 @@ Some useful functions.  Suped up versions to incorporate  details mode.
 
 ~~
 ```
-^detail$
-```
-~~
-```js
-clearDetailsIfUserTriggered();
-let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
-let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
-result = aPickWeight("", outcomes, 1, result);
-let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
-return "Detail:\n    " + result[0] + focus + getDetails() + "\n\n";
-```
-~~
-detail - Make a detail check.
-
-
-~~
-```
-^event$
-```
-~~
-```js
-clearDetailsIfUserTriggered();
-let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,"pcs",true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
-let result = aPickWeight("eventRoll", outcomes);
-let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
-let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
-return [ "Event:\n    ", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
-```
-~~
-event - Make an event check.
-
-
-~~
-```
 ^f(?:ate)?[ ]?(|[0-4]|(?:-[0-4]))[ ]?([y|n]?)$
 ```
 ~~
@@ -210,8 +185,44 @@ let evtText = isEvent ? ( "\n    event - " + expand("event")[1] ) : "";
 return "Fate check (" + odds[$1+4] + ")\n    " + result + evtText + getDetails() + "\n\n";
 ```
 ~~
-fate {odds} {wanted} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
+fate {odds} {wanted} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting at 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
+
+
+~~
+```
+^detail$
+```
+~~
+```js
+clearDetailsIfUserTriggered();
+let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
+let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
+result = aPickWeight("", outcomes, 1, result);
+let focus = expand("lists pick " + (result[2] || ""));
+focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
+return "Detail:\n    " + result[0] + focus + getDetails() + "\n\n";
+```
+~~
+detail - Make a detail check.
+
+
+~~
+```
+^event$
+```
+~~
+```js
+clearDetailsIfUserTriggered();
+let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,null,true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
+let result = aPickWeight("eventRoll", outcomes);
+let focus = expand("lists pick " + (result[2] || ""));
+focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
+let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
+return [ "Event:\n    ", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
+```
+~~
+event - Make an event check.
 
 
 ~~
@@ -227,7 +238,7 @@ let result = aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", va
 return [ "Meaning (action):\n    ", result, getDetails(), "\n\n" ];
 ```
 ~~
-meaning action - Roll on the action meaning table.
+meaning action - Roll on the action meaning tables.
         Alternative shortcut: __meaning__.
 ***
 
@@ -245,7 +256,7 @@ let result = aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", v
 return [ "Meaning (description):\n    ", result, getDetails(), "\n\n" ];
 ```
 ~~
-meaning description - Roll on the description meaning table.
+meaning description - Roll on the description meaning tables.
 
 
 ~~
@@ -286,7 +297,7 @@ if (chk <= window._tejs.state.mythicv2.chaos)
 		result += "\n   __Scene modified__";
 	}
 }
-return result + getDetails().replace("\n", "\n   ") + "\n   __setup__: ";
+return result + getDetails().replace("\n", "\n   ") + "\n   __setup__\n        ";
 ```
 ~~
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.

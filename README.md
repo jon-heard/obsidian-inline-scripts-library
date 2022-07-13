@@ -18,6 +18,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [tejs_lists](#tejs_lists)
 - [tejs_varnotes](#tejs_varnotes)
 - [tejs_mythicv2](#tejs_mythicv2)
+- [tejs_mythicgme](#tejs_mythicgme)
 - [tejs_une](#tejs_une)
 - [tejs_adventurecrafter](#tejs_adventurecrafter)
 - [tejs_rpgtools](#tejs_rpgtools)
@@ -76,6 +77,8 @@ Setup and manage variables within notes.  Can be used by other shortcut-files fo
 ### tejs_mythicv2
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
+Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs_mythicv2__ in the shortcut-list, then __tejs_mythicv2__ will be disabled.
+
 - __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
 - __mythicv2 details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 - __detail__ - Make a detail check.
@@ -96,6 +99,25 @@ Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system fo
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
 - __disposition {base} {descriptorCount}__ - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  See "disposition {descriptor count}" for an explanation of {descriptor count}.
 - __action {dispositionAdjust}__ - Makes an NPC behavior check, modified by {dispositionAdjust}, the modifier of the NPC's disposition.
+
+***
+
+### tejs_mythicgme
+Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic GME at [wordmill games](http://wordmillgames.com/mythic-game-master-emulator.html).
+
+Incompatible with __tejs_mythicv2__.  If __tejs_mythicv2__ comes before __tejs_mythicgme__ in the shortcut-list, then __tejs_mythicgme__ will be disabled.
+
+- __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
+- __fate {odds}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 6 (has to be), defaulting at 0 (50/50).
+        Alternative shortcut: __f {odds}__.
+- __scene__ - Show the current scene.
+- __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
+- __event__ - Make an event check.
+- __meaning__ - Roll on the meaning tables.
+- __chaos__ - Show the current chaos value.
+- __chaos--__ - Decrease the chaos value by 1 (minimum of 1).
+- __chaos++__ - Increase the chaos value by 1 (maximum of 9).
+- __chaos={value}__ - Set the chaos value to {value}, an integer from 1 to 9.
 
 ***
 

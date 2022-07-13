@@ -11,9 +11,9 @@ Adds and uses lists for plotlines and characters.
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the theme order and final theme switch state.
 
-Uses __tejs_mythicv2__ shortcut file (optional).
-If __tejs_mythicv2__ is avilable, then the plotlines and characters lists will be created to reference the __tejs_mythicv2__ lists.
-This requires that __tejs_mythicv2__ comes before __tejs_adventurecrafter__ in the shortcut-list.
+Uses __tejs_mythicv2__ or __tejs_mythicgme__ shortcut file (optional).
+If __tejs_mythicv2__ or __tejs_mythicgme__ is available, then the plotlines and characters lists will be created to reference the __tejs_mythicv2__ or __tejs_mythicgme__ lists.
+This requires that __tejs_mythicv2__ or __tejs_mythicgme__ comes before __tejs_adventurecrafter__ in the shortcut-list.
 
 
 ~~

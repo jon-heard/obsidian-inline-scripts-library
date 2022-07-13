@@ -155,7 +155,7 @@ if (items?.length || $2)
 	result = items[result - 1];
 	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
 }
-return [ "Failed to pick from list \"" + $1 + "\".  List is empty.\n\n" ];
+return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
 ~~
 lists pick {list name} - Get a random item from the list {list name}.
@@ -168,7 +168,7 @@ lists pick {list name} - Get a random item from the list {list name}.
 ~~
 ```js
 window._tejs.state.lists[$1] ||= { type: "basic", content: [] };
-const ERROR_PREFIX = "Failed to add \"" + $2 + "\" to list \"" + $1 + "\".  ";
+const ERROR_PREFIX = "Failed to add __" + $2 + "__ to list __" + $1 + "__.  ";
 const type = window._tejs.state.lists[$1].type;
 if (type === "basic")
 {
@@ -207,7 +207,7 @@ lists add {list name} {item} - Add {item} to the list {list name}.  Allows dupli
 ```
 ~~
 ```js
-const ERROR_PREFIX = "Failed to remove \"" + $2 + "\" from list \"" + $1 + "\".  ";
+const ERROR_PREFIX = "Failed to remove __" + $2 + "__ from list __" + $1 + "__.  ";
 if (!window._tejs.state.lists[$1])
 {
 	return ERROR_PREFIX + "Entry not found.\n\n";
