@@ -13,6 +13,7 @@ Various helper shortcuts of minimal category.
 ```js
 if ($1)
 {
+	$1 = Number($1)
 	if (!Math._oldRandom)
 	{
 		Math._oldRandom = Math.random;

@@ -71,7 +71,7 @@ reset clips - Remove all clips.
 ~~
 ```js
 let clipNames = Object.keys(window._tejs.state.clips);
-return "Clips:\n    " + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
+return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 ~~
 clips - Lists all stored clips.
