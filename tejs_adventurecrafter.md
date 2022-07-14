@@ -98,7 +98,7 @@ for (let i = 0; i < 5; i++)
 	const plotPoint = expand("plot point");
 	if (plotPoint.length < 4)
 	{
-		result += "" + plotPoint[1] + "\n";
+		result += plotPoint[1] + "\n";
 	}
 	else
 	{
@@ -137,19 +137,19 @@ let result = [ "Plot point:\n" ];
 const plotPoint = aPickWeight(window._tejs.adventurecrafter.plot, theme[3]);
 if (!plotPoint[7])
 {
-	result.push("    " + plotPoint[0] + "    _(" + theme[1] + ")_\n        " + plotPoint[6]);
+	result.push("- " + plotPoint[0] + "    _(" + theme[1] + ")_\n    - " + plotPoint[6]);
 }
 else
 {
 	if (plotPoint[7] === 1)
 	{
-		result.push("    " + plotPoint[0]);
+		result.push("- " + plotPoint[0]);
 		result.push(""); // Blank entry signifies this as a "none" plotpoint
 	}
 	else if (plotPoint[7] === 2)
 	{
 		const metaPoint = aPickWeight(window._tejs.adventurecrafter.plot_meta);
-		result.push("    " + metaPoint[0] + "    _(META)_\n        " + metaPoint[2]);
+		result.push("- " + metaPoint[0] + "    _(META)_\n    - " + metaPoint[2]);
 	}
 }
 result.push("\n\n");
@@ -195,7 +195,7 @@ themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
 let result = "Current theme set:\n";
 for (let i = 0; i < 5; i++)
 {
-	result += "    " + (i+1) + ". " +
+	result += "" + (i+1) + " - " +
 		(window._tejs.adventurecrafter.themes[
 			window._tejs.state.adventurecrafter.themes[i] ?? 9] || "") +
 		"\n"
@@ -255,8 +255,8 @@ if (!$1)
 {
 	return "" +
 		"Enter \"__themes add__\" again with one of these indices:\n" +
-		"    1. Action\n    2. Tension\n    3. Mystery\n" +
-		"    4. Social\n    5. Personal\n\n";
+		"1 - Action\n2 - Tension\n3 - Mystery\n4 - Social\n" +
+		"5 - Personal\n\n";
 }
 else
 {
@@ -307,7 +307,7 @@ const specialTraits = [
 ];
 
 let special = aPickWeight(specialTraits);
-special = "    Special trait - " + special[0] + "\n        " + special[2] + "\n";
+special = "Special trait - " + special[0] + "\n. " + special[2] + "\n";
 
 let identity = aPickWeight(identities);
 if (identity[0][2])
@@ -328,7 +328,7 @@ else
 {
 	identity = [ identity[0] ];
 }
-identity = "    Identity - " + identity.join(", ") + "\n";
+identity = "Identity - " + identity.join(", ") + "\n";
 
 let descriptor = aPickWeight(descriptors);
 if (descriptor[2])
@@ -349,7 +349,7 @@ else
 {
 	descriptor = [ descriptor[0] ];
 }
-descriptor = "    Descriptor - " + descriptor.join(", ") + "\n";
+descriptor = "Descriptor - " + descriptor.join(", ") + "\n";
 
 return "Character:\n" + special + identity + descriptor + "\n";
 ```
@@ -384,7 +384,7 @@ function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bu
 		{
 			const e = formattedEntries[entry];
 			result.push(
-				(prefixType===1 ? "" : prefixType===2 ? "- " : (e.index + ". ")) +
+				(prefixType===1 ? "" : prefixType===2 ? ". " : (e.index + " - ")) +
 				entry +
 				((hideCount || e.count === 1) ? "" : " _(x " + e.count + ")_")
 			);
@@ -429,10 +429,10 @@ if (!result)
 }
 if (!result)
 {
-	let list = getFormattedList("characters", true, 1);
+	let list = getFormattedList("characters", true, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
-		result = [ "Pick the most logical character:\n    " + list.join("\n    ") ];
+		result = [ "Pick the most logical character:\n" + list.join("\n") ];
 	}
 	else
 	{
@@ -452,7 +452,7 @@ ac chars pick - Pick a random char, as per the Adventure Crafter rules.
 ```
 ~~
 ```js
-return "Characters:\n    " + getFormattedList("characters", false, 1).join("\n    ") + "\n\n";
+return "Characters:\n" + getFormattedList("characters", false, 2).join("\n") + "\n\n";
 ```
 ~~
 ac chars - List the character entries.
@@ -480,8 +480,8 @@ $1 = Number($1);
 if (!$1)
 {
 	return "" +
-		"Enter \"__ac chars dupe__\" again with one of these indices:\n    " +
-		getFormattedList("characters").join("\n    ") + "\n\n";
+		"Enter \"__ac chars dupe__\" again with one of these indices:\n" +
+		getFormattedList("characters").join("\n") + "\n\n";
 }
 else
 {
@@ -507,8 +507,8 @@ $1 = Number($1);
 if (!$1)
 {
 	return "" +
-		"Enter \"__ac chars remove__\" again with one of these indices:\n    " +
-		getFormattedList("characters").join("\n    ") + "\n\n";
+		"Enter \"__ac chars remove__\" again with one of these indices:\n" +
+		getFormattedList("characters").join("\n") + "\n\n";
 }
 else
 {
@@ -544,10 +544,10 @@ if (!result)
 }
 if (!result)
 {
-	let list = getFormattedList("plotlines", true, 1);
+	let list = getFormattedList("plotlines", true, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
-		result = [ "Pick the most logical plotline:\n    " + list.join("\n    ") ];
+		result = [ "Pick the most logical plotline:\n" + list.join("\n") ];
 	}
 	else
 	{
@@ -567,7 +567,7 @@ ac plots pick - Pick a random plotline, as per the Adventure Crafter rules.
 ```
 ~~
 ```js
-return "Plotlines:\n    " + getFormattedList("plotlines", false, 1).join("\n    ") + "\n\n";
+return "Plotlines:\n" + getFormattedList("plotlines", false, 2).join("\n") + "\n\n";
 ```
 ~~
 ac plots - List the plotline entries.
@@ -595,8 +595,8 @@ $1 = Number($1);
 if (!$1)
 {
 	return "" +
-		"Enter \"__ac plots dupe__\" again with one of these indices:\n    " +
-		getFormattedList("plotlines").join("\n    ") + "\n\n";
+		"Enter \"__ac plots dupe__\" again with one of these indices:\n" +
+		getFormattedList("plotlines").join("\n") + "\n\n";
 }
 else
 {
@@ -622,8 +622,8 @@ $1 = Number($1);
 if (!$1)
 {
 	return "" +
-		"Enter \"__ac plots remove__\" again with one of these indices:\n    " +
-		getFormattedList("plotlines").join("\n    ") + "\n\n";
+		"Enter \"__ac plots remove__\" again with one of these indices:\n" +
+		getFormattedList("plotlines").join("\n") + "\n\n";
 }
 else
 {
