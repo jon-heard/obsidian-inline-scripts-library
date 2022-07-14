@@ -296,7 +296,7 @@ lists addfolder {list name} {folder} - Create a folder-list named {list name} th
 ```js
 let links = $2.split(" ");
 window._tejs.state.lists[$1] = { type: "combo", content: links };
-return "List __" + $1 + "__ added as a combo-list linked to:\n- " + links.join("\n- ") + "\n\n";
+return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 ~~
 lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
