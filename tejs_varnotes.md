@@ -40,16 +40,6 @@ window._tejs.varnotes ||= {};
 window._tejs.varnotes.REGEX_VARS ||= /\*\*%%[ ]*([_a-zA-Z_][_a-zA-Z_0-9]*)[ ]*%%\*\*_([^_]+)_/g;
 window._tejs.varnotes.REGEX_VAR ||= "\\*\\*%%([ ]*)~1~([ ]*)%%\\*\\*_([^_]+)_";
 
-if (!window._tejs.varnotes.revLookup)
-{
-	window._tejs.varnotes.revLookup = {};
-	for (const noteName in window._tejs.state.varnotes)
-	{
-		window._tejs.varnotes.revLookup
-			[window._tejs.state.varnotes[noteName]] = noteName;
-	}
-}
-
 if (!window._tejs.varnotes.variables)
 {
 	window._tejs.varnotes.variables ||= {};
@@ -63,10 +53,12 @@ if (!window._tejs.varnotes.onModified)
 {
 	window._tejs.varnotes.onModified = file =>
 	{
-		let varnoteName = window._tejs.varnotes.revLookup[file.path];
-		if (varnoteName)
+		for (const key in window._tejs.state.varnotes)
 		{
-			expand("varnotes refresh " + varnoteName);
+			if (window._tejs.state.varnotes[key] == file.path)
+			{
+				expand("varnotes refresh " + key);
+			}
 		}
 	};
 	app.vault.on("modify", window._tejs.varnotes.onModified);
@@ -190,7 +182,6 @@ varnotes vars {varnote name} - Lists all the variables for the varnote named {va
 ```js
 $2 = $2.endsWith(".md") ? $2 : $2 + ".md";
 window._tejs.state.varnotes[$1] = $2
-window._tejs.varnotes.revLookup[$2] = $1;
 expand("varnotes refresh " + $1);
 return "Varnote __" + $1 + "__ added.\n\n";
 ```
@@ -208,7 +199,6 @@ if (!window._tejs.state.varnotes[$1])
 {
 	return "Varnote __" + $1 + "__ not removed.  Does not exist.\n\n";
 }
-delete window._tejs.varnotes.revLookup[window._tejs.state.varnotes[$1]];
 delete window._tejs.state.varnotes[$1];
 delete window._tejs.varnotes.variables[$1];
 return "Varnote __" + $1 + "__ removed.\n\n";
