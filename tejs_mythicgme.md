@@ -64,7 +64,7 @@ Unregisters event callbacks.
 
 ~~
 ```
-^reset mythicgme$
+^reset mythic(?:gme)?$
 ```
 ~~
 ```js
@@ -77,7 +77,7 @@ window._tejs.state.lists ||= {};
 window._tejs.state.lists.pcs = { type: "basic", content: [] };
 window._tejs.state.lists.npcs = { type: "basic", content: [] };
 window._tejs.state.lists.threads = { type: "basic", content: [] };
-return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n__Setup__: ";
+return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 ~~
 reset mythicgme - Reset mythic state to defaults and displays scene heading.
@@ -139,9 +139,9 @@ if (Math.trunc(r/10) == r%10 &&
     r%10 < window._tejs.state.mythicgme.chaos)
 {
 	eventOutput =
-		"\n    event - " + expand("event")[1];
+		"\nevent - " + expand("event")[1];
 }
-return "Fate check (" + ODDS[$1+4] + ")\n    " + result + eventOutput + "\n\n";
+return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
 ```
 ~~
 fate {odds} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 6 (has to be), defaulting at 0 (50/50).
@@ -178,14 +178,16 @@ if (chk <= window._tejs.state.mythicgme.chaos)
 {
 	if (chk % 2)
 	{
-		result += "\n   __Scene replaced__\n       event - " + expand("event")[1];
+		result +=
+			"\n- Scene replaced:\n" +
+			"    - event - " + expand("event")[1];
 	}
 	else
 	{
-		result += "\n   __Scene modified__";
+		result += "\n- Scene modified";
 	}
 }
-return result + "\n   __setup__\n        ";
+return result + "\n- setup:\n    - ";
 ```
 ~~
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
@@ -201,9 +203,9 @@ scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then 
 const FOCUS_TABLE = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight(FOCUS_TABLE);
 let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
+focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning")[1];
-return [ "Event:\n    ", result[0] + focus + " - " + meaning, "\n\n" ];
+return [ "Event:\n", result[0] + focus + " - " + meaning, "\n\n" ];
 ```
 ~~
 event - Make an event check.
@@ -218,7 +220,7 @@ event - Make an event check.
 const ACTION_TABLE = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
 const SUBJECT_TABLE = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
 let result = aPick(ACTION_TABLE) + " _(of)_ " + aPick(SUBJECT_TABLE);
-return [ "Meaning (action):\n    ", result, "\n\n" ];
+return [ "Meaning:\n", result, "\n\n" ];
 ```
 ~~
 meaning - Roll on the meaning tables.
@@ -249,7 +251,7 @@ if (window._tejs.state.mythicgme.chaos < 1)
 	window._tejs.state.mythicgme.chaos = 1;
 	return [ "Chaos remains at __1__ (hit minimum).", "\n\n" ];
 }
-return [ "Chaos is lowered to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
+return [ "Chaos lowered to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
 ```
 ~~
 chaos-- - Decrease the chaos value by 1 (minimum of 1).
@@ -267,7 +269,7 @@ if (window._tejs.state.mythicgme.chaos > 9)
 	window._tejs.state.mythicgme.chaos = 9;
 	return [ "Chaos remains at __9__ (hit maximum).", "\n\n" ];
 }
-return [ "Chaos is raised to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
+return [ "Chaos raised to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
 ```
 ~~
 chaos++ - Increase the chaos value by 1 (maximum of 9).
