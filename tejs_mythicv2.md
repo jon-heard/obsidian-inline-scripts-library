@@ -304,7 +304,7 @@ if (chk <= window._tejs.state.mythicv2.chaos)
 		result += "\n- Scene modified";
 	}
 }
-return result + getDetails().replace("\n", "\n   ") + "\n- setup:\n    - ";
+return result + getDetails() + "\n- setup:\n    - ";
 ```
 ~~
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
