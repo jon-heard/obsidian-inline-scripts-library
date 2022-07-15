@@ -68,7 +68,7 @@ Unregisters event callbacks.
 
 ~~
 ```
-^reset mythicv2$
+^reset mythic(?:v2)?$
 ```
 ~~
 ```js
@@ -83,10 +83,11 @@ window._tejs.state.lists.npcs = { type: "basic", content: [] };
 window._tejs.state.lists.threads = { type: "basic", content: [] };
 window._tejs.mythicv2 ||= {};
 window._tejs.mythicv2.details ||= []; // Track the details of a shortcut
-return "***\n\n\n### SCENE " + window._tejs.state.mythicv2.scene + "\n__Setup__: ";
+return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 ~~
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
+        Alternative shortcut: __reset mythic__.
 
 
 ~~
@@ -136,11 +137,14 @@ function addDetails()
 	}
 	return arguments[arguments.length - 1];
 }
-function getDetails(sameLine)
+function getDetails()
 {
-	if (!window._tejs.state.mythicv2.showDetails) { return ""; }
-	if (!window._tejs.mythicv2.details.length) { return ""; }
-	return (sameLine?"":"\n") + "_" + window._tejs.mythicv2.details.join(" ") + "_";
+	if (!window._tejs.state.mythicv2.showDetails ||
+	    !window._tejs.mythicv2.details.length)
+	{
+		return "";
+	}
+	return "\n- _" + window._tejs.mythicv2.details.join(" ") + "_";
 }
 clearDetailsIfUserTriggered = () =>
 {
@@ -181,8 +185,8 @@ let isEvent = isChaotic && !(fateRoll1 % 2) && !(fateRoll2 % 2);
 if (isChaotic && fateRoll1 === fateRoll2) isExtreme = isEvent = true;
 
 result = (isExtreme ? "EXTREME " : "") + result;
-let evtText = isEvent ? ( "\n    event - " + expand("event")[1] ) : "";
-return "Fate check (" + odds[$1+4] + ")\n    " + result + evtText + getDetails() + "\n\n";
+let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
+return "Fate check (" + odds[$1+4] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
 ~~
 fate {odds} {wanted} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting at 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
@@ -200,8 +204,8 @@ let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"thre
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
 let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
-return "Detail:\n    " + result[0] + focus + getDetails() + "\n\n";
+focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
+return "Detail:\n" + result[0] + focus + getDetails() + "\n\n";
 ```
 ~~
 detail - Make a detail check.
@@ -217,12 +221,13 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,null,true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight("eventRoll", outcomes);
 let focus = expand("lists pick " + (result[2] || ""));
-focus = (focus.length === 1) ? "" : (" (" + focus[1] + ")");
+focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
-return [ "Event:\n    ", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
+return [ "Event:\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
 ```
 ~~
 event - Make an event check.
+***
 
 
 ~~
@@ -235,12 +240,11 @@ clearDetailsIfUserTriggered();
 let value1 = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
 let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
 let result = aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", value2);
-return [ "Meaning (action):\n    ", result, getDetails(), "\n\n" ];
+return [ "Meaning (action):\n", result, getDetails(), "\n\n" ];
 ```
 ~~
 meaning action - Roll on the action meaning tables.
         Alternative shortcut: __meaning__.
-***
 
 
 ~~
@@ -253,10 +257,11 @@ clearDetailsIfUserTriggered();
 let value1 = ["ABNORMALLY","ADVENTUROUSLY","AGGRESSIVELY","ANGRILY","ANXIOUSLY","AWKWARDLY","BEAUTIFULLY","BLEAKLY","BOLDLY","BRAVELY","BUSILY","CALMLY","CAREFULLY","CARELESSLY","CAUTIOUSLY","CEASELESSLY","CHEERFULLY","COMBATIVELY","COOLLY","CRAZILY","CURIOUSLY","DAINTILY","DANGEROUSLY","DEFIANTLY","DELIBERATELY","DELIGHTFULLY","DIMLY","EFFICIENTLY","ENERGETICALLY","ENORMOUSLY","ENTHUSIASTICALLY","EXCITEDLY","FEARFULLY","FEROCIOUSLY","FIERCELY","FOOLISHLY","FORTUNATELY","FRANTICALLY","FREELY","FRIGHTENINGLY","FULLY","GENEROUSLY","GENTLY","GLADLY","GRACEFULLY","GRATEFULLY","HAPPILY","HASTILY","HEALTHILY","HELPFULLY","HELPLESSLY","HOPELESSLY","INNOCENTLY","INTENSELY","INTERESTINGLY","IRRITATINGLY","JOVIALLY","JOYFULLY","JUDGEMENTALLY","KINDLY","KOOKILY","LAZILY","LIGHTLY","LOOSELY","LOUDLY","LOVINGLY","LOYALLY","MAJESTICALLY","MEANINGFULLY","MECHANICALLY","MISERABLY","MOCKINGLY","MYSTERIOUSLY","NATURALLY","NEATLY","NICELY","ODDLY","OFFENSIVELY","OFFICIALLY","PARTIALLY","PEACEFULLY","PERFECTLY","PLAYFULLY","POLITELY","POSITIVELY","POWERFULLY","QUAINTLY","QUARRELSOMELY","QUIETLY","ROUGHLY","RUDELY","RUTHLESSLY","SLOWLY","SOFTLY","SWIFTLY","THREATENINGLY","VERY","VIOLENTLY","WILDLY","YIELDINGLY"];
 let value2 = ["ABANDONED","ABNORMAL","AMUSING","ANCIENT","AROMATIC","AVERAGE","BEAUTIFUL","BIZARRE","CLASSY","CLEAN","COLD","COLORFUL","CREEPY","CUTE","DAMAGED","DARK","DEFEATED","DELICATE","DELIGHTFUL","DIRTY","DISAGREEABLE","DISGUSTING","DRAB","DRY","DULL","EMPTY","ENORMOUS","EXOTIC","FADED","FAMILIAR","FANCY","FAT","FEEBLE","FEMININE","FESTIVE","FLAWLESS","FRESH","FULL","GLORIOUS","GOOD","GRACEFUL","HARD","HARSH","HEALTHY","HEAVY","HISTORICAL","HORRIBLE","IMPORTANT","INTERESTING","JUVENILE","LACKING","LAME","LARGE","LAVISH","LEAN","LESS","LETHAL","LONELY","LOVELY","MACABRE","MAGNIFICENT","MASCULINE","MATURE","MESSY","MIGHTY","MILITARY","MODERN","EXTRAVAGANT","MUNDANE","MYSTERIOUS","NATURAL","NONDESCRIPT","ODD","PALE","PETITE","POOR","POWERFUL","QUAINT","RARE","REASSURING","REMARKABLE","ROTTEN","ROUGH","RUINED","RUSTIC","SCARY","SIMPLE","SMALL","SMELLY","SMOOTH","SOFT","STRONG","TRANQUIL","UGLY","VALUABLE","WARLIKE","WARM","WATERY","WEAK","YOUNG"];
 let result = aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", value2);
-return [ "Meaning (description):\n    ", result, getDetails(), "\n\n" ];
+return [ "Meaning (description):\n", result, getDetails(), "\n\n" ];
 ```
 ~~
 meaning description - Roll on the description meaning tables.
+***
 
 
 ~~
@@ -290,14 +295,16 @@ if (chk <= window._tejs.state.mythicv2.chaos)
 {
 	if (chk % 2)
 	{
-		result += "\n   __Scene replaced__\n       event - " + expand("event")[1];
+		result +=
+			"\n- Scene replaced:\n" +
+		    "    - event - " + expand("event")[1];
 	}
 	else
 	{
-		result += "\n   __Scene modified__";
+		result += "\n- Scene modified";
 	}
 }
-return result + getDetails().replace("\n", "\n   ") + "\n   __setup__\n        ";
+return result + getDetails().replace("\n", "\n   ") + "\n- setup:\n    - ";
 ```
 ~~
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
@@ -327,7 +334,7 @@ if (window._tejs.state.mythicv2.chaos < 3)
 	window._tejs.state.mythicv2.chaos = 3;
 	return [ "Chaos remains at __3__ (hit minimum).", "\n\n" ];
 }
-return [ "Chaos is lowered to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
+return [ "Chaos lowered to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
 ```
 ~~
 chaos-- - Decrease the chaos value by 1 (minimum of 3).
@@ -345,7 +352,7 @@ if (window._tejs.state.mythicv2.chaos > 6)
 	window._tejs.state.mythicv2.chaos = 6;
 	return [ "Chaos remains at __6__ (hit maximum).", "\n\n" ];
 }
-return [ "Chaos is raised to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
+return [ "Chaos raised to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
 ```
 ~~
 chaos++ - Increase the chaos value by 1 (maximum of 6).
@@ -367,15 +374,16 @@ chaos={value} - Set the chaos value to {value}, an integer from 3 to 6.
 
 ~~
 ```
-^descriptor$
+^descriptors?$
 ```
 ~~
 ```js
 clearDetailsIfUserTriggered();
-return "__Descriptor__\n", "personality:\n     " + expand("meaning description")[1] + "\nactivity:\n    " + expand("meaning action")[1] + getDetails() + "\n\n";
+return "Descriptors:\n" + "- personality:\n    - " + expand("meaning description")[1] + "\n- activity:\n    - " + expand("meaning action")[1] + getDetails() + "\n\n";
 ```
 ~~
-descriptor - Generates a personality and activity descriptor for an NPC.
+descriptors - Generates a personality and activity descriptor for an NPC.
+        Alternative shortcut: __descriptor__.
 
 
 ~~
@@ -388,8 +396,8 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
 let base = roll("roll1", 10) + roll("roll2", 10);
 let result = base + addDetails("descriptorAdjust", Number($1) * 2);
-result = aPickWeight("", outcomes, 1, result)[0] + "\n    BASE=" + base;
-return "Disposition:\n    " + result + getDetails() + "\n\n";
+result = aPickWeight("", outcomes, 1, result)[0] + "\n. BASE = " + base;
+return "Disposition:\n. " + result + getDetails() + "\n\n";
 ```
 ~~
 disposition {descriptor count} - Rolls for an NPC's disposition, modified by {descriptor count}: a required parameter representing the total of the NPC's activated descriptors (integer from -3 to 3).
@@ -398,7 +406,7 @@ disposition {descriptor count} - Rolls for an NPC's disposition, modified by {de
 
 ~~
 ```
-^disposition ([0-2]?[0-9]) (-?[0-3])$
+^disposition (-?[0-3]) ([0-2]?[0-9])$
 ```
 ~~
 ```js
@@ -408,10 +416,10 @@ let result =
 		addDetails("base", Number($1)) +
 		addDetails("descriptorAdjust", Number($2) * 2);
 result = aPickWeight("", outcomes, 1, result);
-return "Disposition\n    " + result[0] + getDetails() + "\n\n";
+return "Disposition:\n" + result[0] + getDetails() + "\n\n";
 ```
 ~~
-disposition {base} {descriptorCount} - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  See "disposition {descriptor count}" for an explanation of {descriptor count}.
+disposition {descriptorCount} {base} - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  See "disposition {descriptor count}" for an explanation of {descriptor count}.
 
 
 ~~
@@ -436,9 +444,9 @@ if (!result[0])
 	{
 		result[0] = result[0].replace("%1", aPick("descriptorRoll", descriptors));
 	}
-	result[0] += "\n    +2/0/-2 DISPOSITION TO MATCH ACTION.";
+	result[0] += "\n+2/0/-2 DISPOSITION TO MATCH ACTION.";
 }
-return "Action\n    " + result[0] + getDetails() + "\n\n";
+return "Action:\n" + result[0] + getDetails() + "\n\n";
 ```
 ~~
 action {dispositionAdjust} - Makes an NPC behavior check, modified by {dispositionAdjust}, the modifier of the NPC's disposition.

@@ -81,6 +81,7 @@ return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\
 ```
 ~~
 reset mythicgme - Reset mythic state to defaults and displays scene heading.
+        Alternative shortcut: __reset mythic__.
 ***
 
 
