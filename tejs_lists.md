@@ -1,3 +1,6 @@
+
+
+
 ---
 obsidianUIMode: preview
 ---
@@ -111,9 +114,9 @@ for (let i = 0; i < listNames.length; i++)
 	{
 		listNames[i] += "    _(" + listType + ": " + window._tejs.state.lists[listNames[i]].content + ")_";
 	}
-	listNames[i] = listNames[i] + "\n        " + (items.length ? items.join(", ") : "NONE");
+	listNames[i] = listNames[i] + "\n    - " + (items.length ? items.join("\n    - ") : "NONE");
 }
-return "Lists:\n    " + (listNames.length ? listNames.join("\n    ") : "NONE") + "\n\n";
+return "Lists:\n- " + (listNames.length ? listNames.join("\n- ") : "NONE") + "\n\n";
 ```
 ~~
 lists - Show all list and all items for each list.
@@ -126,14 +129,14 @@ lists - Show all list and all items for each list.
 ~~
 ```js
 let items = getListItems($1);
-items = (items?.length ? items.join(", ") : "NONE");
+items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
 const listType = window._tejs.state.lists[$1].type;
 let content = "";
 if (listType !== "basic")
 {
 	content += "    _(" + listType + ": " + window._tejs.state.lists[$1].content + ")_";
 }
-return [ "List __" + $1 + "__" + content + ":\n    ", items, "\n\n" ];
+return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
 ~~
 lists list {list name} - Show all items in the list {list name}.
@@ -279,7 +282,7 @@ lists removelist {list name} - Remove the entire list {list name}.
 ```js
 if (!$2.endsWith("/")) { $2 += "/"; }
 window._tejs.state.lists[$1] = { type: "folder", content: $2 };
-return "List __" + $1 + "__ added as a folder-list that is linked to the folder \"__" + $2 + "__\".\n\n";
+return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 ~~
 lists addfolder {list name} {folder} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
@@ -293,7 +296,7 @@ lists addfolder {list name} {folder} - Create a folder-list named {list name} th
 ```js
 let links = $2.split(" ");
 window._tejs.state.lists[$1] = { type: "combo", content: links };
-return "List __" + $1 + "__ added as a combo-list linked to:\n    " + links.join(", ") + "\n\n";
+return "List __" + $1 + "__ added as a combo-list linked to:\n- " + links.join("\n- ") + "\n\n";
 ```
 ~~
 lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
