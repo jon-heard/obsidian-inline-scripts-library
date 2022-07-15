@@ -75,6 +75,8 @@ Setup and manage variables within notes.  Can be used by other shortcut-files fo
 ***
 
 ### tejs_mythicv2
+_(disabled by default, due to incompatibility with tejs_mythicgme)_
+
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
 Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs_mythicv2__ in the shortcut-list, then __tejs_mythicv2__ will be disabled.
