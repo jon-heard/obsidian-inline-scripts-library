@@ -124,6 +124,7 @@ return "All varnotes cleared.\n\n";
 ```
 ~~
 reset varnotes - Removes all stored varnotes from the session state.
+***
 
 
 ~~
@@ -136,10 +137,10 @@ let result = ["Varnotes:\n"];
 let hasNone = true;
 for (const key in window._tejs.state.varnotes)
 {
-	result.push("    " + key + "    _(" + window._tejs.state.varnotes[key] + ")_\n");
+	result.push(". " + key + "    _(" + window._tejs.state.varnotes[key] + ")_\n");
 	hasNone = false;
 }
-if (hasNone) { result.push("    NONE\n"); }
+if (hasNone) { result.push("NONE\n"); }
 result.push("\n");
 return result;
 ```
@@ -163,12 +164,12 @@ if (variables)
 		if (varName === "varnote") { continue; }
 		if (!hasVariables)
 		{
-			result.push("|name|value|\n|-:|:-|\n");
+			result.push("\n|name|value|\n|-:|:-|\n");
 			hasVariables = true;
 		}
 		result.push("    |" + varName + "|" + variables[varName] + "|\n");
 	}
-	if (!hasVariables) { result.push("    NO VARS\n"); }
+	if (!hasVariables) { result.push("NO VARS\n"); }
 	result.push("\n");
 }
 else
@@ -230,7 +231,7 @@ return variable;
 ```
 ~~
 varnotes get {varnote name} {variable name} - Gets the value of the variable named {variable name} (a required name parameter) in the varnote named {varnote name} (a required name parameter).
-        Alternative shortcut: __vn {varnote name} {variable name}__.
+        Alternative shortcut: __vn {varnote name} {variable name}__
 
 
 ~~
@@ -268,7 +269,7 @@ return [ "Variable __", $2, "__ in varnote __", $1, "__ set to \"__", $3, "__\".
 ```
 ~~
 varnotes set {varnote name} {variable name} {value} - Sets the variable named {variable name} (a required name parameter) to {value} (a required text parameter), in the varnote named {varnote name} (a required name parameter).
-        Alternative shortcut: __vnset {varnote name} {variable name} {value}__.
+        Alternative shortcut: __vnset {varnote name} {variable name} {value}__
 
 
 ~~
@@ -286,7 +287,7 @@ for (const name in window._tejs.state.varnotes)
 		result.push(newResult, "\n");
 	}
 }
-result.push("Varnote refreshing finished.\n\n");
+result.push("Varnotes refreshed.\n\n");
 return result;
 ```
 ~~
