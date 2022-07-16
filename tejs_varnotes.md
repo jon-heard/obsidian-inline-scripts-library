@@ -7,23 +7,18 @@ Setup and manage variables within notes.  Can be used by other shortcut-files fo
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the managed varnotes.
 
-The syntax for a variable in a note is \*\*\%\%variable name\%\%\*\*\_variable value\_:
-- double-asterisk
-- double-percentages
-- __variable name__
-- double-percentages
-- double-asterisk
-- single-underscore
-- __variable value__
-- single-underscore
+A variable in a note follows one of these forms (where \\\n is the end of a line):
+- \*\*\%\%    variable_name    \%\%\*\*    variable_value    \\\n
+- \*\*\%\%    variable_name    \%\%\*\*\    \_    variable_value    \_
 
-The variable name is case-INsensitive, so STR, str and Str are all considered the same name.
-The variable name _can_ have spaces before and/or after it.
+A few points about these forms
+- In both forms above, any place where you see spaces can have 0 or more spaces.
+* The variable_name is case-INsensitive, so STR, str and Str are all considered the same name.
 
 Examples:
 - \*\*\%\%Name\%\%\*\*\_Maggie Smith\_.
     - This specifies that the variable named "name" (case-insensitive) holds the value "Maggie Smith".
-- \*\*\%\%str\%\%\*\*\_18\_.
+- \*\*\%\% str \%\%\*\*\  18
     - This specifies that the variable named "str" (case-insensitive) holds the value 18.
 
 
@@ -37,8 +32,8 @@ window._tejs ||= {};
 window._tejs.state ||= {};
 window._tejs.state.varnotes ||= {};
 window._tejs.varnotes ||= {};
-window._tejs.varnotes.REGEX_VARS ||= /\*\*%%[ ]*([_a-zA-Z_][_a-zA-Z_0-9]*)[ ]*%%\*\*_([^_]+)_/g;
-window._tejs.varnotes.REGEX_VAR ||= "\\*\\*%%([ ]*)~1~([ ]*)%%\\*\\*_([^_]+)_";
+window._tejs.varnotes.REGEX_VARS ||= /\*\*%%[ ]*([_a-zA-Z_][_a-zA-Z_0-9]*)[ ]*%%\*\*[ ]*(?:_[ ]*([^_]*[^_ ])[ ]*_|([^\n]*[^\n ])[ ]*$)/g;
+window._tejs.varnotes.REGEX_VAR ||= "(\\*\\*%%[ ]*~1~[ ]*%%\\*\\*[ ]*)(?:(_[ ]*)([^_]*[^_ ])[ ]*_|([^\n]*[^\n ])[ ]*$)";
 
 if (!window._tejs.varnotes.variables)
 {
@@ -238,10 +233,27 @@ let content = variables["varnote"];
 if (!content) { return ERROR_PREFIX + "Varnote __" + $1 + "__ has no content.\n\n"; }
 
 const regex = window._tejs.varnotes.REGEX_VAR.replace("~1~", $2);
-const r = content.match(regex);
-if (!r) { return [ ERROR_PREFIX + "Not found in varnote __" + $1 + "__.\n\n" ]; }
-const valueStart = r.index + 9 + $2.length + r[1].length + r[2].length;
-content = content.slice(0, valueStart) + $3 + content.slice(valueStart + r[3].length);
+let changeBlocks = [];
+for (const r of content.matchAll(regex))
+{
+	changeBlocks.push(
+	{
+		start: r.index + r[1].length + (r[2]||"").length,
+		length: Math.max((r[3]||"").length, (r[4]||"").length)
+	});
+}
+if (!changeBlocks.length)
+{
+	return [ ERROR_PREFIX + "Not found in varnote __" + $1 + "__.\n\n" ];
+}
+
+changeBlocks.reverse();
+for (const changeBlock of changeBlocks)
+{
+	content =
+		content.slice(0, changeBlock.start) + $3 +
+		content.slice(changeBlock.start + changeBlock.length);
+}
 
 const filename = window._tejs.state.varnotes[$1];
 if (!filename)
@@ -304,9 +316,19 @@ if (!file)
 app.vault.cachedRead(file).then(r =>
 {
 	window._tejs.varnotes.variables[$1] = {};
-	for (let ri of r.matchAll(window._tejs.varnotes.REGEX_VARS))
+	for (const match of r.matchAll(window._tejs.varnotes.REGEX_VARS))
 	{
-		window._tejs.varnotes.variables[$1][ri[1].toLowerCase()] = ri[2];
+		const varName = match[1].toLowerCase();
+
+		// Only take the first value of a variable (if it has multiple
+		// instances in note)
+		if (window._tejs.varnotes.variables[$1][varName])
+		{
+			continue;
+		}
+
+		window._tejs.varnotes.variables[$1][varName] =
+			((match[2]||"") + (match[3]||""));
 	}
 	window._tejs.varnotes.variables[$1]["varnote"] = r;
 });
