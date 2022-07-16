@@ -7,19 +7,29 @@ Setup and manage variables within notes.  Can be used by other shortcut-files fo
 Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the managed varnotes.
 
-A variable in a note follows one of these forms (where \\\n is the end of a line):
-- \*\*\%\%    variable_name    \%\%\*\*    variable_value    \\\n
-- \*\*\%\%    variable_name    \%\%\*\*\    \_    variable_value    \_
+A variable in a note follows one of these forms (where $ is the end of a line):
+
+```
+**%%  variable_name  %%**  variable_value  $
+```
+
+```
+**%%  variable_name  %%**  _  variable_value  _
+```
 
 A few points about these forms
 - In both forms above, any place where you see spaces can have 0 or more spaces.
 * The variable_name is case-INsensitive, so STR, str and Str are all considered the same name.
 
 Examples:
-- \*\*\%\%Name\%\%\*\*\_Maggie Smith\_.
-    - This specifies that the variable named "name" (case-insensitive) holds the value "Maggie Smith".
-- \*\*\%\% str \%\%\*\*\  18
-    - This specifies that the variable named "str" (case-insensitive) holds the value 18.
+```
+**%%Name%%**_Maggie Smith_
+```
+This specifies that the variable named "name" (case-insensitive) holds the value "Maggie Smith".
+```
+**%% str %%**  18
+```
+This specifies that the variable named "str" (case-insensitive) holds the value 18.
 
 
 ~~
