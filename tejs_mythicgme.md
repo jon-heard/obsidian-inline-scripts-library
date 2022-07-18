@@ -110,10 +110,16 @@ Some useful functions
 
 ~~
 ```
-^f(?:ate)?[ ]?(|[0-6]|(?:-[1-4]))$
+^f(?:ate)?((?: .*)?)$
 ```
 ~~
 ```js
+const INPUT_ODDS =
+{
+	"-4": 0, "-3": 1, "-2": 2, "-1": 3, "0": 4, "1": 5, "2": 6, "3": 7, "4": 8, "5": 9, "6": 10,
+	"impossible": 0, "no way": 1, "very unlikely": 2, "unlikely": 3, "50/50": 4, "somewhat likely": 5, "likely": 6, "very likely": 7, "near sure thing": 8, "sure thing": 9, "has to be": 10
+};
+const DEFAULT_ODDS = 4;
 const ODDS = ["impossible","no way","very unlikely","unlikely","50/50","somewhat likely","likely","very likely","near sure thing","sure thing","has to be"];
 const FATE_CHART = [
 [ [ 10, 50, 91],[  5, 25, 86],[  3, 15, 84],[  2, 10, 83],[  1,  5, 82],[  1,  5, 82],[  0,  0, 81],[  0,  0, 81],[  0,-20, 77] ],
@@ -127,9 +133,9 @@ const FATE_CHART = [
 [ [ 23,115,  0],[ 20,100,  0],[ 19, 95,100],[ 19, 95,100],[ 18, 90, 99],[ 16, 80, 97],[ 15, 75, 96],[ 11, 55, 92],[ 10, 50, 91] ],
 [ [ 25,125,  0],[ 22,110,  0],[ 19, 95,100],[ 19, 95,100],[ 18, 90, 99],[ 16, 85, 97],[ 16, 80, 97],[ 13, 65, 94],[ 11, 55, 92] ],
 [ [ 26,145,  0],[ 26,130,  0],[ 20,100,  0],[ 20,100,  0],[ 19, 95,100],[ 19, 95,100],[ 18, 90, 99],[ 16, 85, 97],[ 16, 80, 97] ] ];
-$1 = Number($1 || 0);
+const inputOdds = INPUT_ODDS[$1.trim().toLowerCase()] ?? DEFAULT_ODDS;
 const r = roll(100);
-const ranges = FATE_CHART[$1+4][9-window._tejs.state.mythicgme.chaos];
+const ranges = FATE_CHART[inputOdds][9-window._tejs.state.mythicgme.chaos];
 let result =
 	(r <= ranges[0]) ? "EXTEREME YES" :
 	(r <= ranges[1]) ? "YES" :
@@ -142,10 +148,10 @@ if (Math.trunc(r/10) == r%10 &&
 	eventOutput =
 		"\nevent - " + expand("event")[1];
 }
-return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
+return "Fate check (" + ODDS[inputOdds] + "):\n" + result + eventOutput + "\n\n";
 ```
 ~~
-fate {odds} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 6 (has to be), defaulting at 0 (50/50).
+fate {odds} - Make a fate check based on {odds}: an optional value defaulting to 0 (50/50).  It can be from -4 (impossible) to 6 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
         Alternative shortcut: __f {odds}__.
 
 

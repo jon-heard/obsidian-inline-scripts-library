@@ -163,20 +163,37 @@ Some useful functions.  Suped up versions to incorporate  details mode.
 
 ~~
 ```
-^f(?:ate)?[ ]?(|[0-4]|(?:-[0-4]))[ ]?([y|n]?)$
+^f(?:ate)?((?: .*)?)$
 ```
 ~~
 ```js
 clearDetailsIfUserTriggered();
-let odds = ["impossible","no way","very unlikely","unlikely","50/50","likely","very likely","sure thing","has to be"];
-$1 = Number($1 || 0);
+const INPUT_ODDS =
+{
+	"-4": 0, "-3": 1, "-2": 2, "-1": 3, "0": 4, "1": 5, "2": 6, "3": 7, "4": 8,
+	"impossible": 0, "no way": 1, "very unlikely": 2, "unlikely": 3, "50/50": 4, "likely": 5, "very likely": 6, "sure thing": 7, "has to be": 8
+};
+const DEFAULT_ODDS = 4;
+const ODDS = ["impossible","no way","very unlikely","unlikely","50/50","likely","very likely","sure thing","has to be"];
+$1 = $1.trim().toLowerCase();
+let wanted = true;
+if ($1.endsWith(" y"))
+{
+	$1 = $1.substr(0, $1.length - 2);
+}
+else if ($1.endsWith(" n"))
+{
+	wanted = false;
+	$1 = $1.substr(0, $1.length - 2);
+}
+const inputOdds = INPUT_ODDS[$1.trim()] ?? DEFAULT_ODDS;
 let fateRoll1 = roll("fateRoll1", 10);
 let fateRoll2 = roll("fateRoll2", 10);
 let chaosRoll = roll("chaosRoll", 10);
 let result =
 	fateRoll1 + fateRoll2 +
-	addDetails("oddsAdjust", $1 * 2) +
-	getChaosAdjust($2 === "n" ? -1 : 1);
+	addDetails("oddsAdjust", (inputOdds-4) * 2) +
+	getChaosAdjust(wanted ? 1 : -1);
 result = result > 10 ? "YES" : "NO";
 
 let isChaotic = (chaosRoll <= window._tejs.state.mythicv2.chaos);
@@ -186,10 +203,12 @@ if (isChaotic && fateRoll1 === fateRoll2) isExtreme = isEvent = true;
 
 result = (isExtreme ? "EXTREME " : "") + result;
 let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
-return "Fate check (" + odds[$1+4] + "):\n" + result + evtText + getDetails() + "\n\n";
+return "Fate check (" + ODDS[inputOdds] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
 ~~
-fate {odds} {wanted} - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting at 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
+fate {odds} {wanted} - Make a fate check based on {odds}: an optional value defaulting to 0 {50/50}.
+ It can be from -4 (impossible) to 4 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
+ This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
 
 
