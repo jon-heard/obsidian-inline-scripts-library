@@ -85,7 +85,9 @@ Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs
 - __mythicv2 details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 - __detail__ - Make a detail check.
 - __event__ - Make an event check.
-- __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 4 (has to be), defaulting to 0 (50/50).  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
+- __fate {odds} {wanted}__ - Make a fate check based on {odds}: an optional value defaulting to 0 {50/50}.
+ It can be from -4 (impossible) to 4 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
+ This shortcut is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
 - __meaning action__ - Roll on the action meaning table.
         Alternative shortcut: __meaning__.
@@ -110,7 +112,7 @@ Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emula
 Incompatible with __tejs_mythicv2__.  If __tejs_mythicv2__ comes before __tejs_mythicgme__ in the shortcut-list, then __tejs_mythicgme__ will be disabled.
 
 - __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
-- __fate {odds}__ - Make a fate check based on {odds}: an optional number from -4 (impossible) to 6 (has to be), defaulting at 0 (50/50).
+- __fate {odds}__ - Make a fate check based on {odds}: an optional value defaulting to 0 (50/50).  It can be from -4 (impossible) to 6 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
         Alternative shortcut: __f {odds}__.
 - __scene__ - Show the current scene.
 - __scene {chaosAdjust}__ - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
@@ -124,9 +126,8 @@ Incompatible with __tejs_mythicv2__.  If __tejs_mythicv2__ comes before __tejs_m
 ***
 
 ### tejs_une
-Shortcuts for UNE: The Universal NPC Emulator.  This is an excellent character generation system for tabletop role playing and general storytelling.  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
-
-Zach Best, the writer and publisher of this product has, sadly, passed away.  Proceeds from buying UNE, and other [conjecture games](https://www.drivethrurpg.com/browse/pub/7251/Conjecture-Games) products go to supporting his family.
+Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
+ You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
 - __une {randomness} {relationship to pc} {demeanor}__ - Runs "une character" and "une interact" together.  {randomness} is an optional value for "une character".  {relationship to pc} and {demeanor} are optional values for "une interact".
 - __une character {randomness}__ - Runs "identity", "power" and "motive" together.  {randomness} is an optional value for "power".
