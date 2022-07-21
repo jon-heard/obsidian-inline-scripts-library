@@ -148,7 +148,7 @@ function getDetails()
 }
 clearDetailsIfUserTriggered = () =>
 {
-	if (isUserTriggered) { window._tejs.mythicv2.details = []; }
+	if (expansionInfo.isUserTriggered) { window._tejs.mythicv2.details = []; }
 }
 function getChaosAdjust(multiplier)
 {
