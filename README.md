@@ -1,11 +1,11 @@
 # Text Expander JS (Obsidian Plugin) - Shortcut-file library
 
-These are sample shortcut-files for the Obsidian plugin [Text Expander JS](https://github.com/jon-heard/obsidian-text-expander-js).
+These are sample shortcut-files for the Obsidian plugin [Inline Scripts](https://github.com/jon-heard/obsidian-inline-scripts).
 
-The easiest way to use these shortcut-files in your Obsidian vault is to click the "Import Full Library" button, near the top of the plugin settings, beside "Shortcut-files".  This will download the full library into your vault, after which point you can remove shortcut-files as you wish.
+The easiest way to use these shortcut-files in your Obsidian vault is to click the "Import Full Library" button, near the top of the plugin settings, beside "Shortcut-files".  This will download the full library into your vault, after which point you can disable or remove shortcut-files as you wish.
 
 To use an indiviual shortcut-file from this library in your Obsidian vault, you can copy the raw text of the shortcut-file and paste it into a note in your vault.  Then:
-1. Make sure that [Text Expander JS](https://github.com/jon-heard/obsidian-text-expander-js) is installed in your vault.
+1. Make sure that the plugin [Inline scripts](https://github.com/jon-heard/obsidian-inline-scripts) is installed in your vault.
 2. Open The Text Expander JS settings.
 3. Go to the first setting: "Shortcut-files".
 4. Click the "Add file reference" button.  This adds a new textfield below the setting.
@@ -14,22 +14,22 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 
 ## Reference - All shortcut-files in this repo
 
-- [tejs_state](#tejs_state)
-- [tejs_lists](#tejs_lists)
-- [tejs_varnotes](#tejs_varnotes)
-- [tejs_mythicv2](#tejs_mythicv2)
-- [tejs_mythicgme](#tejs_mythicgme)
-- [tejs_une](#tejs_une)
-- [tejs_adventurecrafter](#tejs_adventurecrafter)
-- [tejs_rpgtools](#tejs_rpgtools)
-- [tejs_clips](#tejs_clips)
-- [tejs_arrows](#tejs_arrows)
-- [tejs_lipsum](#tejs_lipsum)
-- [tejs_support](#tejs_support)
+- [state.sfile](#statesfile)
+- [lists.sfile](#listssfile)
+- [varnotes.sfile](#varnotessfile)
+- [mythicv2.sfile](#mythicv2sfile)
+- [mythicgme.sfile](#mythicgmesfile)
+- [une.sfile](#unesfile)
+- [adventurecrafter.sfile](#adventurecraftersfile)
+- [rpgtools.sfile](#rpgtoolssfile)
+- [clips.sfile](#clipssfile)
+- [arrows.sfile](#arrowssfile)
+- [lipsum.sfile](#lipsumsfile)
+- [support.sfile](#supportsfile)
 
 ***
 
-### tejs_state
+### state.sfile
 This shortcut-file includes shortcuts that let the user manage a session state.  Effectively allows saving and restoring data between sessions.
 
 This shortcut file can be used by other shortcut-files to help them save/restore their states.
@@ -40,7 +40,7 @@ This shortcut file can be used by other shortcut-files to help them save/restore
 
 ***
 
-### tejs_lists
+### lists.sfile
 Shortcuts for working with lists.
 
 - __reset lists__ - Clear all lists.
@@ -57,7 +57,7 @@ Shortcuts for working with lists.
 
 ***
 
-### tejs_varnotes
+### varnotes.sfile
 Setup and manage variables within notes.  Can be used by other shortcut-files for working with data in notes.
 
 - __reset varnotes__ - Removes all stored varnotes from the session state.
@@ -74,12 +74,12 @@ Setup and manage variables within notes.  Can be used by other shortcut-files fo
 
 ***
 
-### tejs_mythicv2
-_(disabled by default, due to incompatibility with tejs_mythicgme)_
+### mythicv2.sfile
+_(disabled by default, due to incompatibility with mythicgme.sfile)_
 
 Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system for solo and GM'less gaming.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
-Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs_mythicv2__ in the shortcut-list, then __tejs_mythicv2__ will be disabled.
+Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __mythicv2.sfile__ in the shortcut-list, then __mythicv2.sfile__ will be disabled.
 
 - __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
 - __mythicv2 details {state}__ - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
@@ -106,10 +106,10 @@ Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs
 
 ***
 
-### tejs_mythicgme
+### mythicgme.sfile
 Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic GME at [wordmill games](http://wordmillgames.com/mythic-game-master-emulator.html).
 
-Incompatible with __tejs_mythicv2__.  If __tejs_mythicv2__ comes before __tejs_mythicgme__ in the shortcut-list, then __tejs_mythicgme__ will be disabled.
+Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __mythicgme.sfile__ in the shortcut-list, then __mythicgme.sfile__ will be disabled.
 
 - __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
 - __fate {odds}__ - Make a fate check based on {odds}: an optional value defaulting to 0 (50/50).  It can be from -4 (impossible) to 6 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
@@ -125,7 +125,7 @@ Incompatible with __tejs_mythicv2__.  If __tejs_mythicv2__ comes before __tejs_m
 
 ***
 
-### tejs_une
+### une.sfile
 Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
@@ -143,7 +143,7 @@ Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character ge
 
 ***
 
-### tejs_adventurecrafter
+### adventurecrafter.sfile
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
 - __reset adventurecrafter__ - Reset adventurecrafter state to defaults.
@@ -170,14 +170,14 @@ Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create cohere
 
 ***
 
-### tejs_rpgtools
+### rpgtools.sfile
 Shortcuts to help in playing tabletop rpgs, either group or solo.
 
 - __tbl twist__ - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).
 
 ***
 
-### tejs_clips
+### clips.sfile
 Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but simplistic and tied to the session state.
 
 - __reset clips__ - Remove all clips.
@@ -190,7 +190,7 @@ Shortcuts that let the user manage clips of text.  A "clip" is a bit of named te
 
 ***
 
-### tejs_arrows
+### arrows.sfile
 Shortcuts for writing various arrows:
 - →←↑↓
 - ▶◀▲▼
@@ -201,14 +201,14 @@ Shortcuts for writing various arrows:
 
 ***
 
-### tejs_lipsum
+### lipsum.sfile
 A decent Lorum Ipsum generator.
 
 - __lipsum {paragraph count}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
 
 ***
 
-### tejs_support
+### support.sfile
 Various helper shortcuts of minimal category.
 
 - __rngseed {seed}__ - Sets Math.random to a custom random number generator with a seed of {seed} (a non-zero integer).  Useful for testing.  If {seed} is omitted, random number generator is returned to javascript default.
