@@ -4,14 +4,14 @@ obsidianUIMode: preview
 
 Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic GME at [wordmill games](http://wordmillgames.com/mythic-game-master-emulator.html).
 
-Incompatible with __tejs_mythicv2__.  If __tejs_mythicv2__ comes before __tejs_mythicgme__ in the shortcut-list, then __tejs_mythicgme__ will be disabled.
+Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __mythicgme.sfile__ in the shortcut-list, then __mythicgme.sfile__ will be disabled.
 
-Uses __tejs_state__ shortcut-file (optional).
+Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the chaos value and the scene count.
 
-Uses __tejs_lists__ shortcut-file (optional).
+Uses __lists.sfile__ shortcut-file (optional).
 Adds and uses lists for pcs, npcs and threads.
-This requires that __tejs_lists__ comes before __tejs_mythicgme__ in the shortcut-list.
+This requires that __lists.sfile__ comes before __mythicgme.sfile__ in the shortcut-list.
 If the pc, npc and thread lists have items, then the __event__ and __detail__ shortcuts will incorporate them into their results.
 
 
@@ -304,4 +304,4 @@ __
 return [];
 ```
 __
-hidden - A placeholder shortcut in case the shortcut-file tejs_lists isn't available.
+hidden - A placeholder shortcut in case the shortcut-file lists.sfile isn't available.

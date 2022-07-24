@@ -4,14 +4,14 @@ obsidianUIMode: preview
 
 Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" supplement, is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
 
-Incompatible with __tejs_mythicgme__.  If __tejs_mythicgme__ comes before __tejs_mythicv2__ in the shortcut-list, then __tejs_mythicv2__ will be disabled.
+Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __mythicv2.sfile__ in the shortcut-list, then __mythicv2.sfile__ will be disabled.
 
-Uses __tejs_state__ shortcut-file (optional).
+Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the chaos value, the scene count, and "Details" mode.
 
-Uses __tejs_lists__ shortcut-file (optional).
+Uses __lists.sfile__ shortcut-file (optional).
 Adds and uses lists for pcs, npcs and threads.
-This requires that __tejs_lists__ comes before __tejs_mythicv2__ in the shortcut-list.
+This requires that __lists.sfile__ comes before __mythicv2.sfile__ in the shortcut-list.
 If the pc, npc and thread lists have items, then the __event__ and __detail__ shortcuts will incorporate them into their results.
 
 
@@ -480,4 +480,4 @@ __
 return [];
 ```
 __
-hidden - A placeholder shortcut in case the shortcut-file tejs_lists isn't available.
+hidden - A placeholder shortcut in case the shortcut-file lists.sfile isn't available.

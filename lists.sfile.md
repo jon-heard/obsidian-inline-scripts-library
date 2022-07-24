@@ -7,7 +7,7 @@ obsidianUIMode: preview
 
 Shortcuts for working with lists.
 
-Uses __tejs_state__ shortcut-file (optional).
+Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the lists.
 
 

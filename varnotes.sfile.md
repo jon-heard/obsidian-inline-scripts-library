@@ -4,7 +4,7 @@ obsidianUIMode: preview
 
 Setup and manage variables within notes.  Can be used by other shortcut-files for working with data in notes.
 
-Uses __tejs_state__ shortcut-file (optional).
+Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the managed varnotes.
 
 A variable in a note follows one of these forms (where $ is the end of a line):

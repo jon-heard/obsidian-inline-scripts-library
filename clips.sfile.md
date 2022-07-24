@@ -4,7 +4,7 @@ obsidianUIMode: preview
 
 Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but simplistic and tied to the session state.
 
-Uses __tejs_state__ shortcut-file (optional).
+Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the clips.
 
 

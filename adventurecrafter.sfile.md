@@ -4,16 +4,16 @@ obsidianUIMode: preview
 
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  It was designed by Tana Pigeon.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
-Uses __tejs_lists__ shortcut-file (required).
-This requires that __tejs_lists__ comes before __tejs_adventurecrafter__ in the shortcut-list.
+Uses __lists.sfile__ shortcut-file (required).
+This requires that __lists.sfile__ comes before __adventurecrafter.sfile__ in the shortcut-list.
 Adds and uses lists for plotlines and characters.
 
-Uses __tejs_state__ shortcut-file (optional).
+Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the theme order and final theme switch state.
 
-Uses __tejs_mythicv2__ or __tejs_mythicgme__ shortcut file (optional).
-If __tejs_mythicv2__ or __tejs_mythicgme__ is available, then the plotlines and characters lists will be created to reference the __tejs_mythicv2__ or __tejs_mythicgme__ lists.
-This requires that __tejs_mythicv2__ or __tejs_mythicgme__ comes before __tejs_adventurecrafter__ in the shortcut-list.
+Uses __mythicv2.sfile__ or __mythicgme.sfile__ shortcut file (optional).
+If __mythicv2.sfile__ or __mythicgme.sfile__ is available, then the plotlines and characters lists will be created to reference the __mythicv2.sfile__ or __mythicgme.sfile__ lists.
+This requires that __mythicv2.sfile__ or __mythicgme.sfile__ comes before __adventurecrafter.sfile__ in the shortcut-list.
 
 
 __
