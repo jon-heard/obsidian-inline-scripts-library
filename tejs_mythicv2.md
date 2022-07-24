@@ -15,11 +15,11 @@ This requires that __tejs_lists__ comes before __tejs_mythicv2__ in the shortcut
 If the pc, npc and thread lists have items, then the __event__ and __detail__ shortcuts will incorporate them into their results.
 
 
-~~
+__
 ```
 ^tejs setup$
 ```
-~~
+__
 ```js
 if (expand("help").contains("\n    - mythicgme"))
 {
@@ -49,28 +49,28 @@ window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
 	expand("reset mythicv2");
 };
 ```
-~~
+__
 Disables mythicv2 if mythicgme is already registered.  Sets up a state variable for mythicv2.  Sets up lists for mythicv2.  Sets up a callback for the state "reset" event in order to to reset mythicv2.
 
 
 
-~~
+__
 ```
 ^tejs shutdown$
 ```
-~~
+__
 ```js
 delete window._tejs.listeners?.state?.onReset?.mythicv2;
 ```
-~~
+__
 Unregisters event callbacks.
 
 
-~~
+__
 ```
 ^reset mythic(?:v2)?$
 ```
-~~
+__
 ```js
 window._tejs ||= {};
 window._tejs.state ||= {};
@@ -85,16 +85,16 @@ window._tejs.mythicv2 ||= {};
 window._tejs.mythicv2.details ||= []; // Track the details of a shortcut
 return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
-~~
+__
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
         Alternative shortcut: __reset mythic__.
 
 
-~~
+__
 ```
 ^mythicv2 details((?: [y|n])?)$
 ```
-~~
+__
 ```js
 if ($1)
 {
@@ -102,12 +102,12 @@ if ($1)
 }
 return "Mythic details are " + (window._tejs.state.mythicv2.showDetails ? "ENABLED" : "DISABLED") + "\n\n";
 ```
-~~
+__
 mythicv2 details {state} - If {state} is given (must be "y" or "n"), assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 ***
 
-~~
-~~
+__
+__
 ```js
 function roll(name, max)
 {
@@ -157,15 +157,15 @@ function getChaosAdjust(multiplier)
 	return addDetails("chaosAdjust", result);
 }
 ```
-~~
+__
 Some useful functions.  Suped up versions to incorporate  details mode.
 
 
-~~
+__
 ```
 ^f(?:ate)?((?: .*)?)$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 const INPUT_ODDS =
@@ -205,18 +205,18 @@ result = (isExtreme ? "EXTREME " : "") + result;
 let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
 return "Fate check (" + ODDS[inputOdds] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
-~~
+__
 fate {odds} {wanted} - Make a fate check based on {odds}: an optional value defaulting to 0 {50/50}.
  It can be from -4 (impossible) to 4 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
  This is also based on {wanted}: an optional value of either 'n' or 'y', defaulting to 'y'.  The value {wanted} specifies the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
 
 
-~~
+__
 ```
 ^detail$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
@@ -226,15 +226,15 @@ let focus = expand("lists pick " + (result[2] || ""));
 focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 return "Detail:\n" + result[0] + focus + getDetails() + "\n\n";
 ```
-~~
+__
 detail - Make a detail check.
 
 
-~~
+__
 ```
 ^event$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,null,true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
@@ -244,16 +244,16 @@ focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
 return [ "Event:\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
 ```
-~~
+__
 event - Make an event check.
 ***
 
 
-~~
+__
 ```
 ^meaning(| action)$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let value1 = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
@@ -261,16 +261,16 @@ let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIE
 let result = aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", value2);
 return [ "Meaning (action):\n", result, getDetails(), "\n\n" ];
 ```
-~~
+__
 meaning action - Roll on the action meaning tables.
         Alternative shortcut: __meaning__.
 
 
-~~
+__
 ```
 ^meaning description$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let value1 = ["ABNORMALLY","ADVENTUROUSLY","AGGRESSIVELY","ANGRILY","ANXIOUSLY","AWKWARDLY","BEAUTIFULLY","BLEAKLY","BOLDLY","BRAVELY","BUSILY","CALMLY","CAREFULLY","CARELESSLY","CAUTIOUSLY","CEASELESSLY","CHEERFULLY","COMBATIVELY","COOLLY","CRAZILY","CURIOUSLY","DAINTILY","DANGEROUSLY","DEFIANTLY","DELIBERATELY","DELIGHTFULLY","DIMLY","EFFICIENTLY","ENERGETICALLY","ENORMOUSLY","ENTHUSIASTICALLY","EXCITEDLY","FEARFULLY","FEROCIOUSLY","FIERCELY","FOOLISHLY","FORTUNATELY","FRANTICALLY","FREELY","FRIGHTENINGLY","FULLY","GENEROUSLY","GENTLY","GLADLY","GRACEFULLY","GRATEFULLY","HAPPILY","HASTILY","HEALTHILY","HELPFULLY","HELPLESSLY","HOPELESSLY","INNOCENTLY","INTENSELY","INTERESTINGLY","IRRITATINGLY","JOVIALLY","JOYFULLY","JUDGEMENTALLY","KINDLY","KOOKILY","LAZILY","LIGHTLY","LOOSELY","LOUDLY","LOVINGLY","LOYALLY","MAJESTICALLY","MEANINGFULLY","MECHANICALLY","MISERABLY","MOCKINGLY","MYSTERIOUSLY","NATURALLY","NEATLY","NICELY","ODDLY","OFFENSIVELY","OFFICIALLY","PARTIALLY","PEACEFULLY","PERFECTLY","PLAYFULLY","POLITELY","POSITIVELY","POWERFULLY","QUAINTLY","QUARRELSOMELY","QUIETLY","ROUGHLY","RUDELY","RUTHLESSLY","SLOWLY","SOFTLY","SWIFTLY","THREATENINGLY","VERY","VIOLENTLY","WILDLY","YIELDINGLY"];
@@ -278,28 +278,28 @@ let value2 = ["ABANDONED","ABNORMAL","AMUSING","ANCIENT","AROMATIC","AVERAGE","B
 let result = aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", value2);
 return [ "Meaning (description):\n", result, getDetails(), "\n\n" ];
 ```
-~~
+__
 meaning description - Roll on the description meaning tables.
 ***
 
 
-~~
+__
 ```
 ^scene$
 ```
-~~
+__
 ```js
 return "The current scene is " + window._tejs.state.mythicv2.scene + ".\n\n";
 ```
-~~
+__
 scene - Show the current scene.
 
 
-~~
+__
 ```
 ^scene (1|-1)$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let result =
@@ -325,27 +325,27 @@ if (chk <= window._tejs.state.mythicv2.chaos)
 }
 return result + getDetails() + "\n- setup:\n    - ";
 ```
-~~
+__
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
 
 
-~~
+__
 ```
 ^chaos$
 ```
-~~
+__
 ```js
 return [ "Chaos is __", window._tejs.state.mythicv2.chaos, "__.\n\n" ];
 ```
-~~
+__
 chaos - Show the current chaos value.
 
 
-~~
+__
 ```
 ^chaos--$
 ```
-~~
+__
 ```js
 window._tejs.state.mythicv2.chaos--;
 if (window._tejs.state.mythicv2.chaos < 3)
@@ -355,15 +355,15 @@ if (window._tejs.state.mythicv2.chaos < 3)
 }
 return [ "Chaos lowered to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
 ```
-~~
+__
 chaos-- - Decrease the chaos value by 1 (minimum of 3).
 
 
-~~
+__
 ```
 ^chaos\+\+$
 ```
-~~
+__
 ```js
 window._tejs.state.mythicv2.chaos++;
 if (window._tejs.state.mythicv2.chaos > 6)
@@ -373,43 +373,43 @@ if (window._tejs.state.mythicv2.chaos > 6)
 }
 return [ "Chaos raised to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
 ```
-~~
+__
 chaos++ - Increase the chaos value by 1 (maximum of 6).
 
 
-~~
+__
 ```
 ^chaos=([3-6])$
 ```
-~~
+__
 ```js
 window._tejs.state.mythicv2.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
-~~
+__
 chaos={value} - Set the chaos value to {value}, an integer from 3 to 6.
 ***
 
 
-~~
+__
 ```
 ^descriptors?$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 return "Descriptors:\n" + "- personality:\n    - " + expand("meaning description")[1] + "\n- activity:\n    - " + expand("meaning action")[1] + getDetails() + "\n\n";
 ```
-~~
+__
 descriptors - Generates a personality and activity descriptor for an NPC.
         Alternative shortcut: __descriptor__.
 
 
-~~
+__
 ```
 ^disposition (-?[0-3])$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
@@ -418,16 +418,16 @@ let result = base + addDetails("descriptorAdjust", Number($1) * 2);
 result = aPickWeight("", outcomes, 1, result)[0] + "\n. BASE = " + base;
 return "Disposition:\n. " + result + getDetails() + "\n\n";
 ```
-~~
+__
 disposition {descriptor count} - Rolls for an NPC's disposition, modified by {descriptor count}: a required parameter representing the total of the NPC's activated descriptors (integer from -3 to 3).
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
 
 
-~~
+__
 ```
 ^disposition (-?[0-3]) ([0-2]?[0-9])$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
@@ -437,15 +437,15 @@ let result =
 result = aPickWeight("", outcomes, 1, result);
 return "Disposition:\n" + result[0] + getDetails() + "\n\n";
 ```
-~~
+__
 disposition {descriptorCount} {base} - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  See "disposition {descriptor count}" for an explanation of {descriptor count}.
 
 
-~~
+__
 ```
 ^action (-2|0|2|4)$
 ```
-~~
+__
 ```js
 clearDetailsIfUserTriggered();
 let outcomes1 = [ ["NEW ACTION BASED ON THEME",3],["CONTINUE CURRENT ACTION",5],["CONTINUE CURRENT ACTION, +2 DISPOSITION",6],["CONTINUE CURRENT ACTION, -2 DISPOSITION",7],[false,8,0],[false,9,-4],[false,10,4] ];
@@ -467,17 +467,17 @@ if (!result[0])
 }
 return "Action:\n" + result[0] + getDetails() + "\n\n";
 ```
-~~
+__
 action {dispositionAdjust} - Makes an NPC behavior check, modified by {dispositionAdjust}, the modifier of the NPC's disposition.
 
 
-~~
+__
 ```
 ^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 return [];
 ```
-~~
+__
 hidden - A placeholder shortcut in case the shortcut-file tejs_lists isn't available.

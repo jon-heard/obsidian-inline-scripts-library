@@ -15,11 +15,11 @@ This requires that __tejs_lists__ comes before __tejs_mythicgme__ in the shortcu
 If the pc, npc and thread lists have items, then the __event__ and __detail__ shortcuts will incorporate them into their results.
 
 
-~~
+__
 ```
 ^tejs setup$
 ```
-~~
+__
 ```js
 if (expand("help").contains("\n    - mythicv2"))
 {
@@ -46,27 +46,27 @@ window._tejs.listeners.state.onReset.mythicgme ||= expand =>
 	expand("reset mythicgme");
 };
 ```
-~~
+__
 Disables mythicgme if mythicv2 is already registered.  Sets up a state variable for mythicgme.  Sets up lists for mythicgme.  Sets up a callback for the state "reset" event in order to to reset mythicgme.
 
 
-~~
+__
 ```
 ^tejs shutdown$
 ```
-~~
+__
 ```js
 delete window._tejs.listeners?.state?.onReset?.mythicgme;
 ```
-~~
+__
 Unregisters event callbacks.
 
 
-~~
+__
 ```
 ^reset mythic(?:gme)?$
 ```
-~~
+__
 ```js
 window._tejs ||= {};
 window._tejs.state ||= {};
@@ -79,14 +79,14 @@ window._tejs.state.lists.npcs = { type: "basic", content: [] };
 window._tejs.state.lists.threads = { type: "basic", content: [] };
 return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
-~~
+__
 reset mythicgme - Reset mythic state to defaults and displays scene heading.
         Alternative shortcut: __reset mythic__.
 ***
 
 
-~~
-~~
+__
+__
 ```js
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
@@ -104,15 +104,15 @@ function aPickWeight(a, wIndex, theRoll)
 	return a.last();
 }
 ```
-~~
+__
 Some useful functions
 
 
-~~
+__
 ```
 ^f(?:ate)?((?: .*)?)$
 ```
-~~
+__
 ```js
 const INPUT_ODDS =
 {
@@ -150,28 +150,28 @@ if (Math.trunc(r/10) == r%10 &&
 }
 return "Fate check (" + ODDS[inputOdds] + "):\n" + result + eventOutput + "\n\n";
 ```
-~~
+__
 fate {odds} - Make a fate check based on {odds}: an optional value defaulting to 0 (50/50).  It can be from -4 (impossible) to 6 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
         Alternative shortcut: __f {odds}__.
 
 
-~~
+__
 ```
 ^scene$
 ```
-~~
+__
 ```js
 return "The current scene is " + window._tejs.state.mythicgme.scene + ".\n\n";
 ```
-~~
+__
 scene - Show the current scene.
 
 
-~~
+__
 ```
 ^scene (1|-1)$
 ```
-~~
+__
 ```js
 let result =
 	($1 === "1") ? expand("chaos++")[0] :
@@ -196,16 +196,16 @@ if (chk <= window._tejs.state.mythicgme.chaos)
 }
 return result + "\n- setup:\n    - ";
 ```
-~~
+__
 scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
 ***
 
 
-~~
+__
 ```
 ^event$
 ```
-~~
+__
 ```js
 const FOCUS_TABLE = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight(FOCUS_TABLE);
@@ -214,43 +214,43 @@ focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning")[1];
 return [ "Event:\n", result[0] + focus + " - " + meaning, "\n\n" ];
 ```
-~~
+__
 event - Make an event check.
 
 
-~~
+__
 ```
 ^meaning$
 ```
-~~
+__
 ```js
 const ACTION_TABLE = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
 const SUBJECT_TABLE = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
 let result = aPick(ACTION_TABLE) + " _(of)_ " + aPick(SUBJECT_TABLE);
 return [ "Meaning:\n", result, "\n\n" ];
 ```
-~~
+__
 meaning - Roll on the meaning tables.
 ***
 
 
-~~
+__
 ```
 ^chaos$
 ```
-~~
+__
 ```js
 return [ "Chaos is __", window._tejs.state.mythicgme.chaos, "__.\n\n" ];
 ```
-~~
+__
 chaos - Show the current chaos value.
 
 
-~~
+__
 ```
 ^chaos--$
 ```
-~~
+__
 ```js
 window._tejs.state.mythicgme.chaos--;
 if (window._tejs.state.mythicgme.chaos < 1)
@@ -260,15 +260,15 @@ if (window._tejs.state.mythicgme.chaos < 1)
 }
 return [ "Chaos lowered to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
 ```
-~~
+__
 chaos-- - Decrease the chaos value by 1 (minimum of 1).
 
 
-~~
+__
 ```
 ^chaos\+\+$
 ```
-~~
+__
 ```js
 window._tejs.state.mythicgme.chaos++;
 if (window._tejs.state.mythicgme.chaos > 9)
@@ -278,30 +278,30 @@ if (window._tejs.state.mythicgme.chaos > 9)
 }
 return [ "Chaos raised to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
 ```
-~~
+__
 chaos++ - Increase the chaos value by 1 (maximum of 9).
 
 
-~~
+__
 ```
 ^chaos=([1-9])$
 ```
-~~
+__
 ```js
 window._tejs.state.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
-~~
+__
 chaos={value} - Set the chaos value to {value}, an integer from 1 to 9.
 
 
-~~
+__
 ```
 ^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 return [];
 ```
-~~
+__
 hidden - A placeholder shortcut in case the shortcut-file tejs_lists isn't available.

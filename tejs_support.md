@@ -5,11 +5,11 @@ obsidianUIMode: preview
 Various helper shortcuts of minimal category.
 
 
-~~
+__
 ```
 ^rngseed((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 if ($1)
 {
@@ -38,5 +38,5 @@ else
 	return "Random number generator unchanged.\n\n";
 }
 ```
-~~
+__
 rngseed {seed} - Sets Math.random to a custom random number generator with a seed of {seed}, a non-zero, positive integer.  Useful for testing.  If {seed} is omitted, the random number generator is returned to javascript default.

@@ -11,11 +11,11 @@ Uses __tejs_state__ shortcut-file (optional).
 It uses this to save & load the lists.
 
 
-~~
+__
 ```
 ^tejs setup$
 ```
-~~
+__
 ```js
 window._tejs ||= {};
 window._tejs.state ||= {};
@@ -29,39 +29,39 @@ window._tejs.listeners.state.onReset.lists ||= expand =>
 	expand("reset lists");
 };
 ```
-~~
+__
 Sets up a state variable for the lists.  Sets up callback for state "reset" event to reset itself.
 
 
-~~
+__
 ```
 ^tejs shutdown$
 ```
-~~
+__
 ```js
 delete window._tejs.listeners?.state?.onReset?.lists;
 ```
-~~
+__
 Unregisters event callbacks.
 
 
-~~
+__
 ```
 ^reset lists?$
 ```
-~~
+__
 ```js
 window._tejs ||= {};
 window._tejs.state ||= {};
 window._tejs.state.lists = {};
 return "All lists cleared.\n\n";
 ```
-~~
+__
 reset lists - Clear all lists.
 
 
-~~
-~~
+__
+__
 ```js
 function getListItems(name)
 {
@@ -94,15 +94,15 @@ function getListItems(name)
 	return result;
 }
 ```
-~~
+__
 getListItems - a function to get the items of a given list, regardless of list type.
 
 
-~~
+__
 ```
 ^lists?$
 ```
-~~
+__
 ```js
 let listNames = Object.keys(window._tejs.state.lists);
 listNames.sort();
@@ -118,15 +118,15 @@ for (let i = 0; i < listNames.length; i++)
 }
 return "Lists:\n- " + (listNames.length ? listNames.join("\n- ") : "NONE") + "\n\n";
 ```
-~~
+__
 lists - Show all list and all items for each list.
 
 
-~~
+__
 ```
 ^lists? list ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
-~~
+__
 ```js
 let items = getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
@@ -138,15 +138,15 @@ if (listType !== "basic")
 }
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
-~~
+__
 lists list {list name} - Show all items in the list {list name}.
 
 
-~~
+__
 ```
 ^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 // note: Test string accepts empty {list name} for use as a sub-shortcut.
 // note: Success returns string array for use as a sub-shortcut.
@@ -160,15 +160,15 @@ if (items?.length || $2)
 }
 return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
-~~
+__
 lists pick {list name} - Get a random item from the list {list name}.
 
 
-~~
+__
 ```
 ^lists? add ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
-~~
+__
 ```js
 window._tejs.state.lists[$1] ||= { type: "basic", content: [] };
 const ERROR_PREFIX = "Failed to add __" + $2 + "__ to list __" + $1 + "__.  ";
@@ -199,16 +199,16 @@ else
 	return ERROR_PREFIX + "List type does not support this operation.\n\n";
 }
 ```
-~~
+__
 lists add {list name} {item} - Add {item} to the list {list name}.  Allows duplicate items.
     - Can only add to basic lists and combo lists that contain basic lists.
 
 
-~~
+__
 ```
 ^lists? remove ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
-~~
+__
 ```js
 const ERROR_PREFIX = "Failed to remove __" + $2 + "__ from list __" + $1 + "__.  ";
 if (!window._tejs.state.lists[$1])
@@ -252,16 +252,16 @@ else
 	return ERROR_PREFIX + "List type does not support this operation.\n\n";
 }
 ```
-~~
+__
 lists remove {list name} {item} - Remove an instance of {item} from the list {list name}.
     - Can only remove from basic lists and combo lists that contain basic lists.
 
 
-~~
+__
 ```
 ^lists? removelist ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
-~~
+__
 ```js
 if (window._tejs.state.lists[$1])
 {
@@ -270,55 +270,55 @@ if (window._tejs.state.lists[$1])
 }
 return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
 ```
-~~
+__
 lists removelist {list name} - Remove the entire list {list name}.
 
 
-~~
+__
 ```
 ^lists? addfolder ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
-~~
+__
 ```js
 if (!$2.endsWith("/")) { $2 += "/"; }
 window._tejs.state.lists[$1] = { type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
-~~
+__
 lists addfolder {list name} {folder} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 
 
-~~
+__
 ```
 ^lists? addcombo ([_a-zA-Z][_a-zA-Z0-9]*) ([_a-zA-Z][ _a-zA-Z0-9]*)$
 ```
-~~
+__
 ```js
 let links = $2.split(" ");
 window._tejs.state.lists[$1] = { type: "combo", content: links };
 return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
-~~
+__
 lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
 
 
-~~
+__
 ```
 ^lists? listraw ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
-~~
+__
 ```js
 return getListItems($1);
 ```
-~~
+__
 hidden - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).
 
 
-~~
+__
 ```
 ^lists? type ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
-~~
+__
 ```js
 if (!window._tejs.state.lists.hasOwnProperty($1))
 {
@@ -326,5 +326,5 @@ if (!window._tejs.state.lists.hasOwnProperty($1))
 }
 return window._tejs.state.lists[$1].type;
 ```
-~~
+__
 hidden - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).

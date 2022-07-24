@@ -5,8 +5,8 @@ obsidianUIMode: preview
 Shortcuts to help in playing tabletop rpgs, either group or solo.
 
 
-~~
-~~
+__
+__
 ```js
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
@@ -24,20 +24,20 @@ function aPickWeight(a, wIndex, theRoll)
 	return a.last();
 }
 ```
-~~
+__
 Some useful functions
 
 
-~~
+__
 ```
 ^tbl twist$
 ```
-~~
+__
 ```js
 let target = ["ENVIRONMENT","ALLY","ENEMY","UNKNOWN","SOMETHING","INFORMATION"];
 let circumstance = ["MISSING / GONE / LOST / FORGOTTEN","EXPLOSIVE / DANGEROUS / SENSITIVE","BLOCKED / HIDDEN / TRAPPED","ARRIVED / RECENT / NEW","DEAD / DESTROYED / UNRECOVERABLE","BROKEN / DAMAGED / INJURED","FLOODED / OVERFLOWED / EXCEEDED","SABOTAGED / CAPTURED / TAKEN","CORRUPTED / TWISTED / INSANE","FALSE / FAKE / LYING / TREASON","MISTAKEN / ERROR / FALSE / WRONG","LEAKED / DISCOVERED / KNOWN","ERRATIC / UNRELIABLE / FAILING / INSUFFICIENT","DISRUPTED / MODIFIED / ARTIFICIAL","SURPRISING / ALTERED / UNEXPECTED","YOUNGER / OLDER / NEWER / OBSOLETE","SICK / HAZARDOUS / POISON / TOXIC","PREPARED / ARMED / EXPECTING","UNPREPARED / UNARMED / UNEXPECTED","DELAYED / TIMED / WAIT"];
 return [ "Twist:\n", aPick(target), " - ", aPick(circumstance), "\n\n" ]
 
 ```
-~~
+__
 tbl twist - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).

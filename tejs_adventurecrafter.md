@@ -16,8 +16,8 @@ If __tejs_mythicv2__ or __tejs_mythicgme__ is available, then the plotlines and 
 This requires that __tejs_mythicv2__ or __tejs_mythicgme__ comes before __tejs_adventurecrafter__ in the shortcut-list.
 
 
-~~
-~~
+__
+__
 ```js
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPickWeight(a, wIndex, theRoll)
@@ -34,15 +34,15 @@ function aPickWeight(a, wIndex, theRoll)
 	return a.last();
 }
 ```
-~~
+__
 Some useful functions
 
 
-~~
+__
 ```
 ^reset adventurecrafter$
 ```
-~~
+__
 ```js
 window._tejs ||= {};
 window._tejs.state ||= {};
@@ -76,16 +76,16 @@ else
 
 return "Adventure crafter reset.\n\n";
 ```
-~~
+__
 reset adventurecrafter - Reset adventurecrafter state to defaults.
 ***
 
 
-~~
+__
 ```
 ^turning point$
 ```
-~~
+__
 ```js
 if (expand("themes pick").length < 4)
 {
@@ -118,15 +118,15 @@ for (const none of nones)
 }
 return result + "\n";
 ```
-~~
+__
 turning point - Get a list of five plot points to represent a major milestone in a plotline.
 
 
-~~
+__
 ```
 ^plot point$
 ```
-~~
+__
 ```js
 const theme = expand("themes pick");
 if (theme.length < 4)
@@ -155,16 +155,16 @@ else
 result.push("\n\n");
 return result;
 ```
-~~
+__
 plot point - Get a single plot point, generated from the plot points table.
 ***
 
 
-~~
+__
 ```
 ^themes? pick$
 ```
-~~
+__
 ```js
 if (window._tejs.state.adventurecrafter.themes.length < 5)
 {
@@ -182,15 +182,15 @@ else
 pick = window._tejs.state.adventurecrafter.themes[pick];
 return [ "Theme __", window._tejs.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
 ```
-~~
+__
 themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
 
 
-~~
+__
 ```
 ^themes?$
 ```
-~~
+__
 ```js
 let result = "Current theme set:\n";
 for (let i = 0; i < 5; i++)
@@ -202,15 +202,15 @@ for (let i = 0; i < 5; i++)
 }
 return result + "\n";
 ```
-~~
+__
 themes - Show the ordered list of themes.
 
 
-~~
+__
 ```
 ^themes? fill$
 ```
-~~
+__
 ```js
 let result = "";
 // Do-whlie causes at least 1 roll.  If already filled, this prodces an error msg.
@@ -221,15 +221,15 @@ do
 while (window._tejs.state.adventurecrafter.themes.length < 5);
 return result + "\n";
 ```
-~~
+__
 themes fill - Fills the remaining open theme slots with random themes.
 
 
-~~
+__
 ```
 ^themes? roll$
 ```
-~~
+__
 ```js
 const themes = window._tejs.state.adventurecrafter.themes;
 let r = roll(5);
@@ -240,15 +240,15 @@ while (themes.length < 5 && window._tejs.state.adventurecrafter.themes.contains(
 }
 return expand("themes add " + r);
 ```
-~~
+__
 themes roll - Fills the next open theme slot with a random theme.
 
 
-~~
+__
 ```
 ^themes? add((?: [1-5])?)$
 ```
-~~
+__
 ```js
 $1 = Number($1);
 if (!$1)
@@ -269,29 +269,29 @@ else
 	return [ "Theme slot __" + themes.length + "__ set to __" + window._tejs.adventurecrafter.themes[$1-1] + "__", "\n\n" ];
 }
 ```
-~~
+__
 themes add {theme id} - If {theme id} (an optional number from 1 to 5) is NOT included, this shortcut shows the options for {theme id}.  If {theme id} IS included, this shortcut fills the next open theme slot with the theme of {theme id}.  {theme id} can be one of these options: 1 (Action), 2 (Tension), 3 (Mystery), 4 (Social), 5 (Personal).
 
 
-~~
+__
 ```
 ^themes? clear$
 ```
-~~
+__
 ```js
 window._tejs.state.adventurecrafter.themes = [];
 return "All theme slots cleared.\n\n";
 ```
-~~
+__
 themes clear - Clear all theme slots.
 ***
 
 
-~~
+__
 ```
 ^ac chars? gen$
 ```
-~~
+__
 ```js
 const identities = [ ["TWO IDENTITIES",33,true],["WARRIOR",34],["HEALER",35],["PROTECTOR",36],["ASSISTANT",37],["DEPENDENT",38],["RULER",39],["ADMINISTRATOR",40],["VICTIM",41],["SCHOLAR",42],["EXPERT",43],["ELITE",44],["INVESTIGATOR",45],["CRIMINAL",46],["SUPPORTER",47],["HELPLESS",48],["MEDIATOR",50],["ENTERTAINER",51],["SOCIALITE",52],["ATHLETE",53],["PERFORMER",54],["REPRESENTATIVE",55],["MERCHANT",56],["TRADER",57],["CREATOR",58],["ARTIST",59],["SERVANT",60],["LABORER",61],["RELIGIOUS",62],["HUNTER",63],["LEADER",64],["FIGHTER",65],["THIEF",67],["RADICAL",68],["EXECUTIVE",69],["THUG",70],["GUARD",71],["GUARDIAN",72],["EXPLORER",73],["HERO",74],["VILLAIN",75],["DECEIVER",76],["ENGINEER",77],["SCOUT",78],["FIXER",79],["WANDERER",80],["SUBVERTER",81],["SOLDIER",82],["SCIENTIST",84],["GATHERER",85],["FOREIGNER",86],["SURVIVOR",87],["GAMBLER",88],["ROGUE",89],["FARMER",90],["KILLER",91],["PROFESSIONAL",92],["DRIVER/PILOT",93],["STUDENT",94],["ORGANIZER",95],["DELIVERER",96],["LACKEY",97],["TEACHER",98],["EXOTIC",100] ];
 const descriptors = [ ["TWO DESCRIPTORS",21,true],["UGLY",22],["BEAUTIFUL",23],["FOUL",24],["SWEET",25],["UNUSUAL",26],["COMMON",27],["INTELLIGENT",28],["IGNORANT",29],["EDUCATED",30],["SKILLED",31],["TRAINED",32],["RUDE",33],["POLITE",34],["FANCY",35],["ROUGH",36],["DIRTY",37],["CLEAN",38],["WEALTHY",39],["POOR",40],["SMALL",41],["LARGE",42],["QUIET",43],["LOUD",44],["FAST",45],["SLOW",46],["EXOTIC",47],["UNIFORMED",48],["INTERESTING",49],["COLORFUL",50],["INFORMATIVE",51],["DANGEROUS",52],["INEPT",53],["CLUMSY",54],["CAPABLE",55],["INTRUSIVE",56],["RESPECTFUL",57],["PRIMITIVE",58],["SOPHISTICATED",59],["ELEGANT",60],["ARMED",61],["DIFFERENT",62],["YOUNG",63],["OLD",64],["DIFFICULT",65],["HELPFUL",66],["HARMFUL",67],["DISCIPLINED",68],["ERRATIC",69],["WILD",70],["CRAZY",71],["COMMANDING",72],["MEEK",73],["HUMOROUS",74],["FRIGHTENED",75],["BRAVE",76],["STRONG",77],["WEAK",78],["IMPULSIVE",79],["STRATEGIC",80],["NAIVE",81],["CONFIDENT",82],["SURPRISING",83],["PASSIVE",84],["BOLD",85],["CARELESS",86],["CAUTIOUS",87],["SNEAKY",88],["INTIMIDATING",89],["POWERFUL",90],["POWERLESS",91],["HURT",92],["ROUGH",93],["GENTLE",94],["CARING",95],["PRINCIPLED",96],["ARROGANT",97],["CURIOUS",98],["SUPPORTIVE",99],["HEROIC",100] ];
@@ -353,13 +353,13 @@ descriptor = "Descriptor - " + descriptor.join(", ") + "\n";
 
 return "Character:\n" + special + identity + descriptor + "\n";
 ```
-~~
+__
 ac chars gen - Generate a new character description, as per the Adventure Crafter rules.
 ***
 
 
-~~
-~~
+__
+__
 ```js
 function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
 {
@@ -399,15 +399,15 @@ function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bu
 	return result;
 }
 ```
-~~
+__
 Used by a lot of "ac chars" and "ac plots" shortcuts.
 
 
-~~
+__
 ```
 ^ac chars? pick$
 ```
-~~
+__
 ```js
 const NEW_ENTRY_MSG = "Create a new character";
 const r = roll(25);
@@ -442,39 +442,39 @@ if (!result)
 result.push("\n\n");
 return result;
 ```
-~~
+__
 ac chars pick - Pick a random char, as per the Adventure Crafter rules.
 
 
-~~
+__
 ```
 ^ac chars?$
 ```
-~~
+__
 ```js
 return "Characters:\n" + getFormattedList("characters", false, 2).join("\n") + "\n\n";
 ```
-~~
+__
 ac chars - List the character entries.
 
 
-~~
+__
 ```
 ^ac chars? add (.*)$
 ```
-~~
+__
 ```js
 return expand("lists add characters " + $1);
 ```
-~~
+__
 ac chars add {character} - Add the given {character} (required text) to the list of character entries.
 
 
-~~
+__
 ```
 ^ac chars? dupe((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 $1 = Number($1);
 if (!$1)
@@ -493,15 +493,15 @@ else
 	return expand("lists add characters " + list[$1-1]);
 }
 ```
-~~
+__
 ac plots dupe {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
 
 
-~~
+__
 ```
 ^ac chars? remove((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 $1 = Number($1);
 if (!$1)
@@ -520,16 +520,16 @@ else
 	return expand("lists remove characters " + list[$1-1]);
 }
 ```
-~~
+__
 ac chars remove {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut removes one entry of the character that is indexed by {character index}.
 ***
 
 
-~~
+__
 ```
 ^ac plots? pick$
 ```
-~~
+__
 ```js
 const NEW_ENTRY_MSG = "Create a new plotline";
 const r = roll(25);
@@ -557,39 +557,39 @@ if (!result)
 result.push("\n\n");
 return result;
 ```
-~~
+__
 ac plots pick - Pick a random plotline, as per the Adventure Crafter rules.
 
 
-~~
+__
 ```
 ^ac plots?$
 ```
-~~
+__
 ```js
 return "Plotlines:\n" + getFormattedList("plotlines", false, 2).join("\n") + "\n\n";
 ```
-~~
+__
 ac plots - List the plotline entries.
 
 
-~~
+__
 ```
 ^ac plots? add (.*)$
 ```
-~~
+__
 ```js
 return expand("lists add plotlines " + $1);
 ```
-~~
+__
 ac plots add {plotline} - Add the given {plotline} (required text) to the list of plotline entries.
 
 
-~~
+__
 ```
 ^ac plots? dupe((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 $1 = Number($1);
 if (!$1)
@@ -608,15 +608,15 @@ else
 	return expand("lists add plotlines " + list[$1-1]);
 }
 ```
-~~
+__
 ac plots dupe {plotline index} - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut duplicates the plotline that is indexed by {plotline index}.
 
 
-~~
+__
 ```
 ^ac plots? remove((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 $1 = Number($1);
 if (!$1)
@@ -635,30 +635,30 @@ else
 	return expand("lists remove plotlines " + list[$1-1]);
 }
 ```
-~~
+__
 ac plots remove {plotline index} - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut removes one entry of the plotline that is indexed by {plotline index}.
 
 
-~~
+__
 ```
 ^tejs shutdown$
 ```
-~~
+__
 ```js
 delete window._tejs.listeners?.state?.onReset?.adventurecrafter;
 delete window._tejs.adventurecrafter?.themes;
 delete window._tejs.adventurecrafter?.plot_meta;
 delete window._tejs.adventurecrafter?.plot;
 ```
-~~
+__
 Unregisters event callbacks.
 
 
-~~
+__
 ```
 ^tejs setup$
 ```
-~~
+__
 ```js
 window._tejs ||= {};
 window._tejs.state ||= {};
@@ -908,5 +908,5 @@ window._tejs.adventurecrafter.plot = [
 	[ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point.", 2 ]
 ];
 ```
-~~
+__
 Sets up a state variable for adventurecrafter.  Sets up callback for state "reset" event to reset itself.

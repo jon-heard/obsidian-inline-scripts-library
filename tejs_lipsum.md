@@ -5,11 +5,11 @@ obsidianUIMode: preview
 A decent Lorum Ipsum generator.
 
 
-~~
+__
 ```
 ^tejs setup$
 ```
-~~
+__
 ```js
 if (window._tejs?.lipsum) { return; }
 let l = `
@@ -49,25 +49,25 @@ let first = sentences.shift();
 window._tejs ||= {};
 window._tejs.lipsum = { first: first, pSizes: pSizes, sentences: sentences };
 ```
-~~
+__
 Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source's paragraphs.
 
 
-~~
-~~
+__
+__
 ```js
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
 ```
-~~
+__
 Helper script - some useful functions
 
 
-~~
+__
 ```
 ^lipsum((?: [1-9][0-9]*)?)$
 ```
-~~
+__
 ```js
 $1 = Number($1) || 1;
 let result = "";
@@ -91,5 +91,5 @@ for (let i = 0; i < $1; i++)
 }
 return result;
 ```
-~~
+__
 lipsum {paragraph count} - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
