@@ -39,4 +39,4 @@ else
 }
 ```
 __
-rngseed {seed} - Sets Math.random to a custom random number generator with a seed of {seed}, a non-zero, positive integer.  Useful for testing.  If {seed} is omitted, the random number generator is returned to javascript default.
+rngseed {seed: optional, >0} - Sets Math.random to a custom random number generator with a seed of {seed}.  Useful for testing.  If {seed} is omitted, the random number generator is returned to javascript default.

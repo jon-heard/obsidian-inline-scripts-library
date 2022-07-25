@@ -270,7 +270,8 @@ else
 }
 ```
 __
-themes add {theme id} - If {theme id} (an optional number from 1 to 5) is NOT included, this shortcut shows the options for {theme id}.  If {theme id} IS included, this shortcut fills the next open theme slot with the theme of {theme id}.  {theme id} can be one of these options: 1 (Action), 2 (Tension), 3 (Mystery), 4 (Social), 5 (Personal).
+themes add {theme id: optional, 1 to 5} - If {theme id} is NOT included, this shortcut shows the options for {theme id}.  If {theme id} IS included, this shortcut fills the next open theme slot with the theme of {theme id}.  {theme id} can be one of these options:
+1 (Action), 2 (Tension), 3 (Mystery), 4 (Social), 5 (Personal).
 
 
 __
@@ -467,7 +468,7 @@ __
 return expand("lists add characters " + $1);
 ```
 __
-ac chars add {character} - Add the given {character} (required text) to the list of character entries.
+ac chars add {character: required, text} - Add {character} to the list of character entries.
 
 
 __
@@ -494,7 +495,7 @@ else
 }
 ```
 __
-ac plots dupe {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
+ac plots dupe {character index: optional, >0} - If {character index} is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
 
 
 __
@@ -521,7 +522,7 @@ else
 }
 ```
 __
-ac chars remove {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut removes one entry of the character that is indexed by {character index}.
+ac chars remove {character index: optional, >0} - If {character index} is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut removes one entry of the character that is indexed by {character index}.
 ***
 
 
@@ -582,7 +583,7 @@ __
 return expand("lists add plotlines " + $1);
 ```
 __
-ac plots add {plotline} - Add the given {plotline} (required text) to the list of plotline entries.
+ac plots add {plotline: required, text} - Add {plotline} to the list of plotline entries.
 
 
 __
@@ -609,7 +610,7 @@ else
 }
 ```
 __
-ac plots dupe {plotline index} - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut duplicates the plotline that is indexed by {plotline index}.
+ac plots dupe {plotline index: optional, >0} - If {plotline index} is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut duplicates the plotline that is indexed by {plotline index}.
 
 
 __
@@ -636,7 +637,7 @@ else
 }
 ```
 __
-ac plots remove {plotline index} - If {plotline index} (an optional, positive integer) is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut removes one entry of the plotline that is indexed by {plotline index}.
+ac plots remove {plotline index: optional, >0} - If {plotline index} is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut removes one entry of the plotline that is indexed by {plotline index}.
 
 
 __

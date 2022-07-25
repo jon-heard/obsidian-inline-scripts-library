@@ -176,7 +176,7 @@ else
 return result;
 ```
 __
-varnotes vars {varnote name} - Lists all the variables for the varnote named {varnote name} (a required name property).
+varnotes vars {varnote name: required, name} - Lists all the variables for the varnote named {varnote name}.
 
 
 __
@@ -191,7 +191,7 @@ expand("varnotes refresh " + $1);
 return "Varnote __" + $1 + "__ added.\n\n";
 ```
 __
-varnotes add {varnote name} {file address} - Adds a varnote named {varnote name} (a required name parameter) that is attached to the file at {file address} (a required file address parameter).
+varnotes add {varnote name: required, name} {file address: required, text} - Adds a varnote named {varnote name} that is attached to the file at {file address}.
 
 
 __
@@ -209,7 +209,7 @@ delete window._tejs.varnotes.variables[$1];
 return "Varnote __" + $1 + "__ removed.\n\n";
 ```
 __
-varnotes remove {varnote name} - Removes the varnote {varnote name} (a required name parameter).
+varnotes remove {varnote name: required, name} - Removes the varnote {varnote name}.
 
 
 __
@@ -225,7 +225,7 @@ if (!variable) { return [ "Variable __", $2, "__ not found.\n\n" ]; }
 return variable;
 ```
 __
-varnotes get {varnote name} {variable name} - Gets the value of the variable named {variable name} (a required name parameter) in the varnote named {varnote name} (a required name parameter).
+varnotes get {varnote name: required, name} {variable name: required name} - Gets the value of the variable named {variable name} in the varnote named {varnote name}.
         Alternative shortcut: __vn {varnote name} {variable name}__
 
 
@@ -280,7 +280,7 @@ app.vault.modify(file, content);
 return [ "Variable __", $2, "__ in varnote __", $1, "__ set to \"__", $3, "__\".\n\n" ];
 ```
 __
-varnotes set {varnote name} {variable name} {value} - Sets the variable named {variable name} (a required name parameter) to {value} (a required text parameter), in the varnote named {varnote name} (a required name parameter).
+varnotes set {varnote name: required, name} {variable name: required name} {value: required text} - Sets the variable named {variable name} to {value}, in the varnote named {varnote name}.
         Alternative shortcut: __vnset {varnote name} {variable name} {value}__
 
 
@@ -345,4 +345,4 @@ app.vault.cachedRead(file).then(r =>
 return [ "Varnote __", $1, "__ refreshed.\n\n" ];
 ```
 __
-varnotes refresh {varnote name} - Pull the variables from varnote {varnote name} (a required "name" parameter).
+varnotes refresh {varnote name: required, name} - Pull the variables from varnote {varnote name}.

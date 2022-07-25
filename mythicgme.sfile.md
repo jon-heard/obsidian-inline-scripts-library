@@ -151,7 +151,7 @@ if (Math.trunc(r/10) == r%10 &&
 return "Fate check (" + ODDS[inputOdds] + "):\n" + result + eventOutput + "\n\n";
 ```
 __
-fate {odds} - Make a fate check based on {odds}: an optional value defaulting to 0 (50/50).  It can be from -4 (impossible) to 6 (has to be).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
+fate {odds: optional, text} - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
         Alternative shortcut: __f {odds}__.
 
 
@@ -197,7 +197,7 @@ if (chk <= window._tejs.state.mythicgme.chaos)
 return result + "\n- setup:\n    - ";
 ```
 __
-scene {chaosAdjust} - Shift the chaos value by {chaosAdjust} (1, 0 or -1), then increment the current scene and run a scene check.
+scene {chaosAdjust: required, -1 or 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 ***
 
 
@@ -292,7 +292,7 @@ window._tejs.state.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __
-chaos={value} - Set the chaos value to {value}, an integer from 1 to 9.
+chaos={value: required, 1 to 9} - Set the chaos value to {value}.
 
 
 __

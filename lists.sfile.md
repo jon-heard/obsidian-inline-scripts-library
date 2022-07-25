@@ -58,6 +58,7 @@ return "All lists cleared.\n\n";
 ```
 __
 reset lists - Clear all lists.
+***
 
 
 __
@@ -139,7 +140,7 @@ if (listType !== "basic")
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
 __
-lists list {list name} - Show all items in the list {list name}.
+lists list {list name: required, name} - Show all items in the list {list name}.
 
 
 __
@@ -161,7 +162,8 @@ if (items?.length || $2)
 return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
 __
-lists pick {list name} - Get a random item from the list {list name}.
+lists pick {list name: required, name} - Get a random item from the list {list name}.
+***
 
 
 __
@@ -200,7 +202,7 @@ else
 }
 ```
 __
-lists add {list name} {item} - Add {item} to the list {list name}.  Allows duplicate items.
+lists add {list name: required, name} {item: required, text} - Add {item} to the list {list name}.  Allows duplicate items.
     - Can only add to basic lists and combo lists that contain basic lists.
 
 
@@ -253,7 +255,7 @@ else
 }
 ```
 __
-lists remove {list name} {item} - Remove an instance of {item} from the list {list name}.
+lists remove {list name: required, name} {item: required, text} - Remove an instance of {item} from the list {list name}.
     - Can only remove from basic lists and combo lists that contain basic lists.
 
 
@@ -271,7 +273,8 @@ if (window._tejs.state.lists[$1])
 return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
 ```
 __
-lists removelist {list name} - Remove the entire list {list name}.
+lists removelist {list name: required, name} - Remove the entire list {list name}.
+***
 
 
 __
@@ -285,7 +288,7 @@ window._tejs.state.lists[$1] = { type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
-lists addfolder {list name} {folder} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
+lists addfolder {list name: required, name} {folder: required, text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 
 
 __
@@ -299,7 +302,7 @@ window._tejs.state.lists[$1] = { type: "combo", content: links };
 return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 __
-lists addcombo {list name} {sub list 1} {sub list 2}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+lists addcombo {list name: required, name} {sub list 1: optional, name} {sub list 2: optional, name}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
 
 
 __

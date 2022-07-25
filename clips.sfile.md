@@ -88,7 +88,7 @@ let text = window._tejs.state.clips[$1];
 return text || "";
 ```
 __
-clips get {name} - Expands to the value stored in clip {name} (a required name string).
+clips get {name: required, name} - Expands to the value stored in clip {name}.
         Alternative shortcut: __cg {name}__.
 
 
@@ -103,7 +103,7 @@ window._tejs.state.clips[$1] = $2;
 return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 __
-clips add {name} {value} - Creates a clip named {name} (a required name string) that stores the string {value} (a required text).
+clips add {name: required, name} {value, required, text} - Creates a clip named {name} that stores the string {value}.
 
 
 __
@@ -117,7 +117,7 @@ window._tejs.state.clips[$1] = window._tejs.clips.priorExpansion;
 return "Clip __" + $1 + "__ set to:\n" + window._tejs.clips.priorExpansion + "\n\n";
 ```
 __
-clips expansion {name} - Creates a clip named {name} (a required name string) that stores the previous expansion.
+clips expansion {name: required name} - Creates a clip named {name} that stores the previous expansion.
 
 
 __
@@ -135,4 +135,4 @@ if (window._tejs.state.clips[$1])
 return "Failed to remove clip __" + $1 + "__.  Does not exist.\n\n";
 ```
 __
-clips remove {name} - Removes the clip named {name} (a required name string).
+clips remove {name: required, name} - Removes the clip named {name}.

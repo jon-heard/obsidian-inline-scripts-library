@@ -92,4 +92,4 @@ for (let i = 0; i < $1; i++)
 return result;
 ```
 __
-lipsum {paragraph count} - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
+lipsum {paragraph count: optional, >0} - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.

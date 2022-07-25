@@ -92,4 +92,4 @@ for (const key in window._tejs.listeners.state.onLoad)
 return "State loaded.\n\n";
 ```
 __
-state {state} - Sets the current state based on {state}: a string created with the parameterless "state" shortcut.
+state {state: required, text} - Sets the current state based on {state}: a string created with the parameterless "state" shortcut.
