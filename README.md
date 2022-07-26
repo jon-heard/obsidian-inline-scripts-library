@@ -1,4 +1,4 @@
-# Text Expander JS (Obsidian Plugin) - Shortcut-file library
+# Inline Scripts (Obsidian Plugin) - Shortcut-file library
 
 These are sample shortcut-files for the Obsidian plugin [Inline Scripts](https://github.com/jon-heard/obsidian-inline-scripts).
 
@@ -6,7 +6,7 @@ The easiest way to use these shortcut-files in your Obsidian vault is to click t
 
 To use an indiviual shortcut-file from this library in your Obsidian vault, you can copy the raw text of the shortcut-file and paste it into a note in your vault.  Then:
 1. Make sure that the plugin [Inline scripts](https://github.com/jon-heard/obsidian-inline-scripts) is installed in your vault.
-2. Open The Text Expander JS settings.
+2. Open The Inline Scripts plugin settings.
 3. Go to the first setting: "Shortcut-files".
 4. Click the "Add file reference" button.  This adds a new textfield below the setting.
 5. Type the address of the vault-note into the new textfield.  The textfield will be red until the address is recognized.

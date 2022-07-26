@@ -10,28 +10,28 @@ It uses this to save & load the clips.
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.clips ||= {};
-window._tejs.clips ||= {};
-window._tejs.clips.priorExpansion ||= "";
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.clips ||= {};
+window._inlineScripts.clips ||= {};
+window._inlineScripts.clips.priorExpansion ||= "";
 
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onReset.clips ||= expand =>
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onReset.clips ||= expand =>
 {
 	expand("reset clips");
 };
-window._tejs.listeners.tejs ||= {};
-window._tejs.listeners.tejs.onExpansion ||= {};
-window._tejs.listeners.tejs.onExpansion.clips ||= (input, expansion) =>
+window._inlineScripts.listeners.inlineScripts ||= {};
+window._inlineScripts.listeners.inlineScripts.onExpansion ||= {};
+window._inlineScripts.listeners.inlineScripts.onExpansion.clips ||= (input, expansion) =>
 {
-	window._tejs.clips.priorExpansion = expansion;
+	window._inlineScripts.clips.priorExpansion = expansion;
 };
 ```
 __
@@ -40,12 +40,12 @@ Sets up a state variable for the clips.  Sets up callback for state "reset" even
 
 __
 ```
-^tejs shutdown$
+^sfile shutdown$
 ```
 __
 ```js
-delete window._tejs.listeners?.state?.onReset?.clips;
-delete window._tejs.listeners?.tejs?.onExpansion?.clips;
+delete window._inlineScripts.listeners?.state?.onReset?.clips;
+delete window._inlineScripts.listeners?.inlineScripts?.onExpansion?.clips;
 ```
 __
 Unregisters event callbacks.
@@ -57,7 +57,7 @@ __
 ```
 __
 ```js
-window._tejs.state.clips = {};
+window._inlineScripts.state.clips = {};
 return "All clips cleared.\n\n";
 ```
 __
@@ -70,7 +70,7 @@ __
 ```
 __
 ```js
-let clipNames = Object.keys(window._tejs.state.clips);
+let clipNames = Object.keys(window._inlineScripts.state.clips);
 return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 __
@@ -84,7 +84,7 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-let text = window._tejs.state.clips[$1];
+let text = window._inlineScripts.state.clips[$1];
 return text || "";
 ```
 __
@@ -99,7 +99,7 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-window._tejs.state.clips[$1] = $2;
+window._inlineScripts.state.clips[$1] = $2;
 return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 __
@@ -113,8 +113,8 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-window._tejs.state.clips[$1] = window._tejs.clips.priorExpansion;
-return "Clip __" + $1 + "__ set to:\n" + window._tejs.clips.priorExpansion + "\n\n";
+window._inlineScripts.state.clips[$1] = window._inlineScripts.clips.priorExpansion;
+return "Clip __" + $1 + "__ set to:\n" + window._inlineScripts.clips.priorExpansion + "\n\n";
 ```
 __
 clips expansion {name: required name} - Creates a clip named {name} that stores the previous expansion.
@@ -127,9 +127,9 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-if (window._tejs.state.clips[$1])
+if (window._inlineScripts.state.clips[$1])
 {
-	delete window._tejs.state.clips[$1];
+	delete window._inlineScripts.state.clips[$1];
 	return "Clip __" + $1 + "__ removed.\n\n";
 }
 return "Failed to remove clip __" + $1 + "__.  Does not exist.\n\n";

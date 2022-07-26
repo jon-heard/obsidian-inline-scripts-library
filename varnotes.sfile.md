@@ -34,50 +34,50 @@ This specifies that the variable named "str" (case-insensitive) holds the value 
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.varnotes ||= {};
-window._tejs.varnotes ||= {};
-window._tejs.varnotes.REGEX_VARS ||= /\*\*%%[ ]*([_a-zA-Z_][_a-zA-Z_0-9]*)[ ]*%%\*\*[ ]*(?:_[ ]*([^_]*[^_ ])[ ]*_|([^\n]*[^\n ])[ ]*$)/g;
-window._tejs.varnotes.REGEX_VAR ||= "(\\*\\*%%[ ]*~1~[ ]*%%\\*\\*[ ]*)(?:(_[ ]*)([^_]*[^_ ])[ ]*_|([^\n]*[^\n ])[ ]*$)";
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.varnotes ||= {};
+window._inlineScripts.varnotes ||= {};
+window._inlineScripts.varnotes.REGEX_VARS ||= /\*\*%%[ ]*([_a-zA-Z_][_a-zA-Z_0-9]*)[ ]*%%\*\*[ ]*(?:_[ ]*([^_]*[^_ ])[ ]*_|([^\n]*[^\n ])[ ]*$)/g;
+window._inlineScripts.varnotes.REGEX_VAR ||= "(\\*\\*%%[ ]*~1~[ ]*%%\\*\\*[ ]*)(?:(_[ ]*)([^_]*[^_ ])[ ]*_|([^\n]*[^\n ])[ ]*$)";
 
-if (!window._tejs.varnotes.variables)
+if (!window._inlineScripts.varnotes.variables)
 {
-	window._tejs.varnotes.variables ||= {};
-	for (const varnoteName in window._tejs.state.varnotes)
+	window._inlineScripts.varnotes.variables ||= {};
+	for (const varnoteName in window._inlineScripts.state.varnotes)
 	{
 		expand("varnotes refresh " + varnoteName);
 	}
 }
 
-if (!window._tejs.varnotes.onModified)
+if (!window._inlineScripts.varnotes.onModified)
 {
-	window._tejs.varnotes.onModified = file =>
+	window._inlineScripts.varnotes.onModified = file =>
 	{
-		for (const key in window._tejs.state.varnotes)
+		for (const key in window._inlineScripts.state.varnotes)
 		{
-			if (window._tejs.state.varnotes[key] == file.path)
+			if (window._inlineScripts.state.varnotes[key] == file.path)
 			{
 				expand("varnotes refresh " + key);
 			}
 		}
 	};
-	app.vault.on("modify", window._tejs.varnotes.onModified);
+	app.vault.on("modify", window._inlineScripts.varnotes.onModified);
 }
 
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onReset.varnotes ||= expand =>
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onReset.varnotes ||= expand =>
 {
 	expand("reset varnotes");
 };
-window._tejs.listeners.state.onLoad ||= {};
-window._tejs.listeners.state.onLoad.varnotes ||= expand =>
+window._inlineScripts.listeners.state.onLoad ||= {};
+window._inlineScripts.listeners.state.onLoad.varnotes ||= expand =>
 {
 	expand("varnotes refresh");
 };
@@ -89,20 +89,20 @@ Sets up a state variable for varnotes.  Sets up callback for state "reset" event
 
 __
 ```
-^tejs shutdown$
+^sfile shutdown$
 ```
 __
 ```js
 // Unregister note-modify event listener
-if (window._tejs.varnotes?.onModified)
+if (window._inlineScripts.varnotes?.onModified)
 {
-	app.vault.off("modify", window._tejs.varnotes.onModified);
-	delete window._tejs.varnotes.onModified;
+	app.vault.off("modify", window._inlineScripts.varnotes.onModified);
+	delete window._inlineScripts.varnotes.onModified;
 }
 
 // Unregister state shortut-file listeners
-delete window._tejs.listeners?.state?.onReset?.varnotes;
-delete window._tejs.listeners?.state?.onLoad?.varnotes;
+delete window._inlineScripts.listeners?.state?.onReset?.varnotes;
+delete window._inlineScripts.listeners?.state?.onLoad?.varnotes;
 ```
 __
 Unregisters event callbacks.
@@ -114,9 +114,9 @@ __
 ```
 __
 ```js
-window._tejs.state ||= {};
-window._tejs.state.varnotes = {};
-window._tejs.varnotes.variables = {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.varnotes = {};
+window._inlineScripts.varnotes.variables = {};
 return "All varnotes cleared.\n\n";
 ```
 __
@@ -132,9 +132,9 @@ __
 ```js
 let result = ["Varnotes:\n"];
 let hasNone = true;
-for (const key in window._tejs.state.varnotes)
+for (const key in window._inlineScripts.state.varnotes)
 {
-	result.push(". " + key + "    _(" + window._tejs.state.varnotes[key] + ")_\n");
+	result.push(". " + key + "    _(" + window._inlineScripts.state.varnotes[key] + ")_\n");
 	hasNone = false;
 }
 if (hasNone) { result.push("NONE\n"); }
@@ -152,7 +152,7 @@ __
 __
 ```js
 let result = [ "Varnote __", $1, "__:\n" ];
-const variables = window._tejs.varnotes.variables[$1];
+const variables = window._inlineScripts.varnotes.variables[$1];
 if (variables)
 {
 	let hasVariables = false;
@@ -186,7 +186,7 @@ __
 __
 ```js
 $2 = $2.endsWith(".md") ? $2 : $2 + ".md";
-window._tejs.state.varnotes[$1] = $2
+window._inlineScripts.state.varnotes[$1] = $2
 expand("varnotes refresh " + $1);
 return "Varnote __" + $1 + "__ added.\n\n";
 ```
@@ -200,12 +200,12 @@ __
 ```
 __
 ```js
-if (!window._tejs.state.varnotes[$1])
+if (!window._inlineScripts.state.varnotes[$1])
 {
 	return "Varnote __" + $1 + "__ not removed.  Does not exist.\n\n";
 }
-delete window._tejs.state.varnotes[$1];
-delete window._tejs.varnotes.variables[$1];
+delete window._inlineScripts.state.varnotes[$1];
+delete window._inlineScripts.varnotes.variables[$1];
 return "Varnote __" + $1 + "__ removed.\n\n";
 ```
 __
@@ -218,7 +218,7 @@ __
 ```
 __
 ```js
-const variables = window._tejs.varnotes.variables[$1];
+const variables = window._inlineScripts.varnotes.variables[$1];
 if (!variables) { return [ "Varnote __", $1, "__ not found.\n\n" ]; }
 const variable = variables[$2.toLowerCase()];
 if (!variable) { return [ "Variable __", $2, "__ not found.\n\n" ]; }
@@ -237,12 +237,12 @@ __
 ```js
 const ERROR_PREFIX = "Variable __" + $2 + "__ not set.  ";
 if ($3.contains("_")) { return ERROR_PREFIX + "New value contains underscore: \"__" + $3 + "__\"."; }
-const variables = window._tejs.varnotes.variables[$1];
+const variables = window._inlineScripts.varnotes.variables[$1];
 if (!variables) { return ERROR_PREFIX + "Varnote __" + $1 + "__ not registered.\n\n"; }
 let content = variables["varnote"];
 if (!content) { return ERROR_PREFIX + "Varnote __" + $1 + "__ has no content.\n\n"; }
 
-const regex = window._tejs.varnotes.REGEX_VAR.replace("~1~", $2);
+const regex = window._inlineScripts.varnotes.REGEX_VAR.replace("~1~", $2);
 let changeBlocks = [];
 for (const r of content.matchAll(regex))
 {
@@ -265,7 +265,7 @@ for (const changeBlock of changeBlocks)
 		content.slice(changeBlock.start + changeBlock.length);
 }
 
-const filename = window._tejs.state.varnotes[$1];
+const filename = window._inlineScripts.state.varnotes[$1];
 if (!filename)
 {
 	return ERROR_PREFIX + "Varnote __" + $1 + "__ not registered.\n\n";
@@ -291,7 +291,7 @@ __
 __
 ```js
 let result = [];
-for (const name in window._tejs.state.varnotes)
+for (const name in window._inlineScripts.state.varnotes)
 {
 	const newResult = expand("varnotes refresh " + name);
 	if (!Array.isArray(newResult))
@@ -313,7 +313,7 @@ __
 __
 ```js
 const ERROR_PREFIX = "Varnote __" + $1 + "__ not refreshed.  ";
-const filename = window._tejs.state.varnotes[$1];
+const filename = window._inlineScripts.state.varnotes[$1];
 if (!filename)
 {
 	return ERROR_PREFIX + "Not registered.\n\n";
@@ -325,22 +325,22 @@ if (!file)
 }
 app.vault.cachedRead(file).then(r =>
 {
-	window._tejs.varnotes.variables[$1] = {};
-	for (const match of r.matchAll(window._tejs.varnotes.REGEX_VARS))
+	window._inlineScripts.varnotes.variables[$1] = {};
+	for (const match of r.matchAll(window._inlineScripts.varnotes.REGEX_VARS))
 	{
 		const varName = match[1].toLowerCase();
 
 		// Only take the first value of a variable (if it has multiple
 		// instances in note)
-		if (window._tejs.varnotes.variables[$1][varName])
+		if (window._inlineScripts.varnotes.variables[$1][varName])
 		{
 			continue;
 		}
 
-		window._tejs.varnotes.variables[$1][varName] =
+		window._inlineScripts.varnotes.variables[$1][varName] =
 			((match[2]||"") + (match[3]||""));
 	}
-	window._tejs.varnotes.variables[$1]["varnote"] = r;
+	window._inlineScripts.varnotes.variables[$1]["varnote"] = r;
 });
 return [ "Varnote __", $1, "__ refreshed.\n\n" ];
 ```

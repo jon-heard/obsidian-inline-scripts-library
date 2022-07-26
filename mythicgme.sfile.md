@@ -17,7 +17,7 @@ If the pc, npc and thread lists have items, then the __event__ and __detail__ sh
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
@@ -27,21 +27,21 @@ if (expand("help").contains("\n    - mythicv2"))
 	return true;
 }
 
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.mythicgme ||= {};
-window._tejs.state.mythicgme.chaos ||= 5;
-window._tejs.state.mythicgme.scene ||= 1;
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.mythicgme ||= {};
+window._inlineScripts.state.mythicgme.chaos ||= 5;
+window._inlineScripts.state.mythicgme.scene ||= 1;
 
-window._tejs.state.lists ||= {};
-window._tejs.state.lists.pcs ||= { type: "basic", content: [] };
-window._tejs.state.lists.npcs ||= { type: "basic", content: [] };
-window._tejs.state.lists.threads ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists ||= {};
+window._inlineScripts.state.lists.pcs ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists.npcs ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists.threads ||= { type: "basic", content: [] };
 
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onReset.mythicgme ||= expand =>
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onReset.mythicgme ||= expand =>
 {
 	expand("reset mythicgme");
 };
@@ -52,11 +52,11 @@ Disables mythicgme if mythicv2 is already registered.  Sets up a state variable 
 
 __
 ```
-^tejs shutdown$
+^sfile shutdown$
 ```
 __
 ```js
-delete window._tejs.listeners?.state?.onReset?.mythicgme;
+delete window._inlineScripts.listeners?.state?.onReset?.mythicgme;
 ```
 __
 Unregisters event callbacks.
@@ -68,16 +68,16 @@ __
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.mythicgme ||= {};
-window._tejs.state.mythicgme.chaos = 5;
-window._tejs.state.mythicgme.scene = 1;
-window._tejs.state.lists ||= {};
-window._tejs.state.lists.pcs = { type: "basic", content: [] };
-window._tejs.state.lists.npcs = { type: "basic", content: [] };
-window._tejs.state.lists.threads = { type: "basic", content: [] };
-return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.mythicgme ||= {};
+window._inlineScripts.state.mythicgme.chaos = 5;
+window._inlineScripts.state.mythicgme.scene = 1;
+window._inlineScripts.state.lists ||= {};
+window._inlineScripts.state.lists.pcs = { type: "basic", content: [] };
+window._inlineScripts.state.lists.npcs = { type: "basic", content: [] };
+window._inlineScripts.state.lists.threads = { type: "basic", content: [] };
+return "***\n\n\n### SCENE " + window._inlineScripts.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 __
 reset mythicgme - Reset mythic state to defaults and displays scene heading.
@@ -135,7 +135,7 @@ const FATE_CHART = [
 [ [ 26,145,  0],[ 26,130,  0],[ 20,100,  0],[ 20,100,  0],[ 19, 95,100],[ 19, 95,100],[ 18, 90, 99],[ 16, 85, 97],[ 16, 80, 97] ] ];
 const inputOdds = INPUT_ODDS[$1.trim().toLowerCase()] ?? DEFAULT_ODDS;
 const r = roll(100);
-const ranges = FATE_CHART[inputOdds][9-window._tejs.state.mythicgme.chaos];
+const ranges = FATE_CHART[inputOdds][9-window._inlineScripts.state.mythicgme.chaos];
 let result =
 	(r <= ranges[0]) ? "EXTEREME YES" :
 	(r <= ranges[1]) ? "YES" :
@@ -143,7 +143,7 @@ let result =
 	"EXTREME NO";
 let eventOutput = "";
 if (Math.trunc(r/10) == r%10 &&
-    r%10 < window._tejs.state.mythicgme.chaos)
+    r%10 < window._inlineScripts.state.mythicgme.chaos)
 {
 	eventOutput =
 		"\nevent - " + expand("event")[1];
@@ -161,7 +161,7 @@ __
 ```
 __
 ```js
-return "The current scene is " + window._tejs.state.mythicgme.scene + ".\n\n";
+return "The current scene is " + window._inlineScripts.state.mythicgme.scene + ".\n\n";
 ```
 __
 scene - Show the current scene.
@@ -178,10 +178,10 @@ let result =
 	($1 === "-1") ? expand("chaos--")[0] :
 	"Chaos is unchanged at " + expand("chaos")[1];
 result += "\n\n\n***\n\n\n";
-window._tejs.state.mythicgme.scene++;
-result += "### SCENE " + window._tejs.state.mythicgme.scene;
+window._inlineScripts.state.mythicgme.scene++;
+result += "### SCENE " + window._inlineScripts.state.mythicgme.scene;
 let chk = roll(10);
-if (chk <= window._tejs.state.mythicgme.chaos)
+if (chk <= window._inlineScripts.state.mythicgme.chaos)
 {
 	if (chk % 2)
 	{
@@ -240,7 +240,7 @@ __
 ```
 __
 ```js
-return [ "Chaos is __", window._tejs.state.mythicgme.chaos, "__.\n\n" ];
+return [ "Chaos is __", window._inlineScripts.state.mythicgme.chaos, "__.\n\n" ];
 ```
 __
 chaos - Show the current chaos value.
@@ -252,13 +252,13 @@ __
 ```
 __
 ```js
-window._tejs.state.mythicgme.chaos--;
-if (window._tejs.state.mythicgme.chaos < 1)
+window._inlineScripts.state.mythicgme.chaos--;
+if (window._inlineScripts.state.mythicgme.chaos < 1)
 {
-	window._tejs.state.mythicgme.chaos = 1;
+	window._inlineScripts.state.mythicgme.chaos = 1;
 	return [ "Chaos remains at __1__ (hit minimum).", "\n\n" ];
 }
-return [ "Chaos lowered to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
+return [ "Chaos lowered to __" + window._inlineScripts.state.mythicgme.chaos + "__.", "\n\n" ];
 ```
 __
 chaos-- - Decrease the chaos value by 1 (minimum of 1).
@@ -270,13 +270,13 @@ __
 ```
 __
 ```js
-window._tejs.state.mythicgme.chaos++;
-if (window._tejs.state.mythicgme.chaos > 9)
+window._inlineScripts.state.mythicgme.chaos++;
+if (window._inlineScripts.state.mythicgme.chaos > 9)
 {
-	window._tejs.state.mythicgme.chaos = 9;
+	window._inlineScripts.state.mythicgme.chaos = 9;
 	return [ "Chaos remains at __9__ (hit maximum).", "\n\n" ];
 }
-return [ "Chaos raised to __" + window._tejs.state.mythicgme.chaos + "__.", "\n\n" ];
+return [ "Chaos raised to __" + window._inlineScripts.state.mythicgme.chaos + "__.", "\n\n" ];
 ```
 __
 chaos++ - Increase the chaos value by 1 (maximum of 9).
@@ -288,7 +288,7 @@ __
 ```
 __
 ```js
-window._tejs.state.mythicgme.chaos = $1;
+window._inlineScripts.state.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __

@@ -44,33 +44,33 @@ __
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.adventurecrafter ||= {};
-window._tejs.state.adventurecrafter.themes = [];
-window._tejs.state.lists ||= {};
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.adventurecrafter ||= {};
+window._inlineScripts.state.adventurecrafter.themes = [];
+window._inlineScripts.state.lists ||= {};
 
-if (!window._tejs.state.lists.threads)
+if (!window._inlineScripts.state.lists.threads)
 {
-	window._tejs.state.lists.plotlines = { type: "basic", content: [] };
-	delete window._tejs.state.lists.plotline_dupes;
+	window._inlineScripts.state.lists.plotlines = { type: "basic", content: [] };
+	delete window._inlineScripts.state.lists.plotline_dupes;
 }
 else
 {
-	window._tejs.state.lists.plotline_dupes = { type: "basic", content: [] };
-	window._tejs.state.lists.plotlines =
+	window._inlineScripts.state.lists.plotline_dupes = { type: "basic", content: [] };
+	window._inlineScripts.state.lists.plotlines =
 		{ type: "combo", content: ["threads", "plotline_dupes"] };
 }
 
-if (!window._tejs.state.lists.pcs || !window._tejs.state.lists.npcs)
+if (!window._inlineScripts.state.lists.pcs || !window._inlineScripts.state.lists.npcs)
 {
-	window._tejs.state.lists.characters = { type: "basic", content: [] };
-	delete window._tejs.state.lists.character_dupes;
+	window._inlineScripts.state.lists.characters = { type: "basic", content: [] };
+	delete window._inlineScripts.state.lists.character_dupes;
 }
 else
 {
-	window._tejs.state.lists.character_dupes = { type: "basic", content: [] };
-	window._tejs.state.lists.characters =
+	window._inlineScripts.state.lists.character_dupes = { type: "basic", content: [] };
+	window._inlineScripts.state.lists.characters =
 		{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 }
 
@@ -134,7 +134,7 @@ if (theme.length < 4)
 	return "Plot point not generated.  Not all theme slots filled.\n\n";
 }
 let result = [ "Plot point:\n" ];
-const plotPoint = aPickWeight(window._tejs.adventurecrafter.plot, theme[3]);
+const plotPoint = aPickWeight(window._inlineScripts.adventurecrafter.plot, theme[3]);
 if (!plotPoint[7])
 {
 	result.push("- " + plotPoint[0] + "    _(" + theme[1] + ")_\n    - " + plotPoint[6]);
@@ -148,7 +148,7 @@ else
 	}
 	else if (plotPoint[7] === 2)
 	{
-		const metaPoint = aPickWeight(window._tejs.adventurecrafter.plot_meta);
+		const metaPoint = aPickWeight(window._inlineScripts.adventurecrafter.plot_meta);
 		result.push("- " + metaPoint[0] + "    _(META)_\n    - " + metaPoint[2]);
 	}
 }
@@ -166,7 +166,7 @@ __
 ```
 __
 ```js
-if (window._tejs.state.adventurecrafter.themes.length < 5)
+if (window._inlineScripts.state.adventurecrafter.themes.length < 5)
 {
 	return [ "Theme not picked.  Not all theme slots filled.\n\n" ];
 }
@@ -176,11 +176,11 @@ else if (pick <  8) { pick = 1; }
 else if (pick < 10) { pick = 2; }
 else
 {
-	pick = (window._tejs.state.priorPickWas3rd ? 4 : 3);
-	window._tejs.state.priorPickWas3rd = !window._tejs.state.priorPickWas3rd;
+	pick = (window._inlineScripts.state.priorPickWas3rd ? 4 : 3);
+	window._inlineScripts.state.priorPickWas3rd = !window._inlineScripts.state.priorPickWas3rd;
 }
-pick = window._tejs.state.adventurecrafter.themes[pick];
-return [ "Theme __", window._tejs.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
+pick = window._inlineScripts.state.adventurecrafter.themes[pick];
+return [ "Theme __", window._inlineScripts.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
 ```
 __
 themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
@@ -196,8 +196,8 @@ let result = "Current theme set:\n";
 for (let i = 0; i < 5; i++)
 {
 	result += "" + (i+1) + " - " +
-		(window._tejs.adventurecrafter.themes[
-			window._tejs.state.adventurecrafter.themes[i] ?? 9] || "") +
+		(window._inlineScripts.adventurecrafter.themes[
+			window._inlineScripts.state.adventurecrafter.themes[i] ?? 9] || "") +
 		"\n"
 }
 return result + "\n";
@@ -218,7 +218,7 @@ do
 {
 	result += expand("themes roll")[0] + "\n";
 }
-while (window._tejs.state.adventurecrafter.themes.length < 5);
+while (window._inlineScripts.state.adventurecrafter.themes.length < 5);
 return result + "\n";
 ```
 __
@@ -231,10 +231,10 @@ __
 ```
 __
 ```js
-const themes = window._tejs.state.adventurecrafter.themes;
+const themes = window._inlineScripts.state.adventurecrafter.themes;
 let r = roll(5);
 // Only seek unused theme if theme slots aren't already filled
-while (themes.length < 5 && window._tejs.state.adventurecrafter.themes.contains(r-1))
+while (themes.length < 5 && window._inlineScripts.state.adventurecrafter.themes.contains(r-1))
 {
 	r = roll(5);
 }
@@ -260,13 +260,13 @@ if (!$1)
 }
 else
 {
-	let themes = window._tejs.state.adventurecrafter.themes;
+	let themes = window._inlineScripts.state.adventurecrafter.themes;
 	if (themes.length >= 5)
 	{
 		return [ "No theme added.  All five theme slots are already filled.", "\n\n" ];
 	}
 	themes.push($1-1);
-	return [ "Theme slot __" + themes.length + "__ set to __" + window._tejs.adventurecrafter.themes[$1-1] + "__", "\n\n" ];
+	return [ "Theme slot __" + themes.length + "__ set to __" + window._inlineScripts.adventurecrafter.themes[$1-1] + "__", "\n\n" ];
 }
 ```
 __
@@ -280,7 +280,7 @@ __
 ```
 __
 ```js
-window._tejs.state.adventurecrafter.themes = [];
+window._inlineScripts.state.adventurecrafter.themes = [];
 return "All theme slots cleared.\n\n";
 ```
 __
@@ -642,14 +642,14 @@ ac plots remove {plotline index: optional, >0} - If {plotline index} is NOT incl
 
 __
 ```
-^tejs shutdown$
+^sfile shutdown$
 ```
 __
 ```js
-delete window._tejs.listeners?.state?.onReset?.adventurecrafter;
-delete window._tejs.adventurecrafter?.themes;
-delete window._tejs.adventurecrafter?.plot_meta;
-delete window._tejs.adventurecrafter?.plot;
+delete window._inlineScripts.listeners?.state?.onReset?.adventurecrafter;
+delete window._inlineScripts.adventurecrafter?.themes;
+delete window._inlineScripts.adventurecrafter?.plot_meta;
+delete window._inlineScripts.adventurecrafter?.plot;
 ```
 __
 Unregisters event callbacks.
@@ -657,60 +657,60 @@ Unregisters event callbacks.
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.adventurecrafter ||= {};
-window._tejs.state.adventurecrafter.themes ||= [];
-window._tejs.state.lists ||= {};
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.adventurecrafter ||= {};
+window._inlineScripts.state.adventurecrafter.themes ||= [];
+window._inlineScripts.state.lists ||= {};
 
-if (!window._tejs.state.lists.plotlines)
+if (!window._inlineScripts.state.lists.plotlines)
 {
-	if (!window._tejs.state.lists.threads)
+	if (!window._inlineScripts.state.lists.threads)
 	{
-		window._tejs.state.lists.plotlines ||= { type: "basic", content: [] };
-		delete window._tejs.state.lists.plotline_dupes;
+		window._inlineScripts.state.lists.plotlines ||= { type: "basic", content: [] };
+		delete window._inlineScripts.state.lists.plotline_dupes;
 	}
 	else
 	{
-		window._tejs.state.lists.plotline_dupes ||= { type: "basic", content: [] };
-		window._tejs.state.lists.plotlines ||=
+		window._inlineScripts.state.lists.plotline_dupes ||= { type: "basic", content: [] };
+		window._inlineScripts.state.lists.plotlines ||=
 			{ type: "combo", content: ["threads", "plotline_dupes"] };
 	}
 }
 
-if (!window._tejs.state.lists.characters)
+if (!window._inlineScripts.state.lists.characters)
 {
-	if (!window._tejs.state.lists.pcs || !window._tejs.state.lists.npcs)
+	if (!window._inlineScripts.state.lists.pcs || !window._inlineScripts.state.lists.npcs)
 	{
-		window._tejs.state.lists.characters ||= { type: "basic", content: [] };
-		delete window._tejs.state.lists.character_dupes;
+		window._inlineScripts.state.lists.characters ||= { type: "basic", content: [] };
+		delete window._inlineScripts.state.lists.character_dupes;
 	}
 	else
 	{
-		window._tejs.state.lists.character_dupes ||= { type: "basic", content: [] };
-		window._tejs.state.lists.characters ||=
+		window._inlineScripts.state.lists.character_dupes ||= { type: "basic", content: [] };
+		window._inlineScripts.state.lists.characters ||=
 			{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 	}
 }
 
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onReset.adventurecrafter ||= expand =>
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onReset.adventurecrafter ||= expand =>
 {
 	expand("reset adventurecrafter");
 };
 
-window._tejs ||= {};
-window._tejs.adventurecrafter ||= {};
+window._inlineScripts ||= {};
+window._inlineScripts.adventurecrafter ||= {};
 
-window._tejs.adventurecrafter.themes = [ "ACTION", "TENSION", "MYSTERY", "SOCIAL", "PERSONAL" ];
+window._inlineScripts.adventurecrafter.themes = [ "ACTION", "TENSION", "MYSTERY", "SOCIAL", "PERSONAL" ];
 
-window._tejs.adventurecrafter.plot_meta = [
+window._inlineScripts.adventurecrafter.plot_meta = [
 	[ "CHARACTER EXITS THE ADVENTURE", 18, "A Character, who is not a Player Character, is removed from the Characters List completely. Cross out all references to that Character on the Characters List. If there are no non-Player Characters, then re-roll for another Meta Plot Point. This change can be reflected in the activity in this Turning Point or not. For instance, you may explain the Character being removed from the Adventure by having that Character die in the Turning Point. Or, you simply remove them from the Characters List and decide that their involvement in the Adventure is over. If, when rolling on the Characters List to determine who this Character is, you roll a Player Character or \"New Character\", then consider it a result of \"Choose The Most Logical Character\"." ],
 	[ "CHARACTER RETURNS", 27, "A Character who previously had been removed from the Adventure returns. Write that Character back into the Characters List with a single listing. If there are no Characters to return, then treat this as a \"New Character\" result and use this Plot Point to introduce a new Character into the Turning Point. If there is more than one Character who can return, then choose the most logical Character to return. This change can be reflected in the activity in this Turning Point or not." ],
 	[ "CHARACTER STEPS UP", 36, "A Character becomes more important, gaining another slot on the Characters List even if it pushes them past 3 slots. When you roll on the Characters List to see who the Character is, treat a result of \"New Character\" as \"Choose The Most Logical Character\". This change can be reflected in the activity in this Turning Point or not." ],
@@ -720,7 +720,7 @@ window._tejs.adventurecrafter.plot_meta = [
 	[ "PLOTLINE COMBO", 100, "This Turning Point is about more than one Plotline at the same time. Roll again on the Plotlines List and add that Plotline to this Turning Point along with the original Plotline rolled. If when rolling for an additional Plotline you roll the same Plotline already in use for this Turning Point, then treat the result as a \"Choose The Most Logical Plotline\". If there are no other Plotlines to choose from, then create a new Plotline as the additional Plotline. If a Conclusion is rolled as a Plot Point during this Turning Point, apply it to the Plotline that seems most appropriate. If another Conclusion is rolled, continue to apply them to the additional Plotlines in this Turning Point if you can. It is possible with repeated results of \"Plotline Combo\" to have more than two Plotlines combined in this way." ]
 ];
 
-window._tejs.adventurecrafter.plot = [
+window._inlineScripts.adventurecrafter.plot = [
 	[ "CONCLUSION", 8,8,8,8,8, "If this Turning Point is currently a Plotline Development, then it becomes a Plotline Conclusion. Incorporate anything necessary into this Turning Point to end this Plotline and remove it from the Plotlines List. If this Turning Point is a New Plotline or already a Conclusion, then consider this Plot Point a None." ],
 	[ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll.", 1 ],
 	[ "INTO THE UNKNOWN", 0,26,26,0,0, "This Turning Point involves Characters entering a situation with unknown factors. To know the unknown, you have to commit to it. For instance, a magic portal where there is no way of knowing what’s on the other side except by walking through it. Or, you discover a machine that is very powerful but you have no idea what it does, except if you turn it on. The only way to discover the unknown is to engage it, when it will be too late if you regret it." ],

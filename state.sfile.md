@@ -11,16 +11,16 @@ To save the session state, use the "state" shortcut (no parameters).  This expan
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onLoad ||= {};
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onLoad ||= {};
 ```
 __
 Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.
@@ -32,11 +32,11 @@ __
 ```
 __
 ```js
-window._tejs.state = {};
+window._inlineScripts.state = {};
 
-for (const key in window._tejs.listeners.state.onReset)
+for (const key in window._inlineScripts.listeners.state.onReset)
 {
-	const listener = window._tejs.listeners.state.onReset[key];
+	const listener = window._inlineScripts.listeners.state.onReset[key];
 	if (typeof listener !== "function")
 	{
 		console.warn("Non-function is registered as a listener:" + listener);
@@ -57,7 +57,7 @@ __
 ```
 __
 ```js
-return "State:\n" + JSON.stringify(window._tejs.state) + "\n\n";
+return "State:\n" + JSON.stringify(window._inlineScripts.state) + "\n\n";
 ```
 __
 state - Expands to a string representing the current state (for session saving).
@@ -71,16 +71,16 @@ __
 ```js
 try
 {
-	window._tejs.state = JSON.parse($1);
+	window._inlineScripts.state = JSON.parse($1);
 }
 catch (e)
 {
 	return "State loading failed due to invalid state:\n    " + $1 + "\n\n";
 }
 
-for (const key in window._tejs.listeners.state.onLoad)
+for (const key in window._inlineScripts.listeners.state.onLoad)
 {
-	const listener = window._tejs.listeners.state.onLoad[key];
+	const listener = window._inlineScripts.listeners.state.onLoad[key];
 	if (typeof listener !== "function")
 	{
 		console.warn("Non-function is registered as a listener:" + listener);

@@ -17,7 +17,7 @@ If the pc, npc and thread lists have items, then the __event__ and __detail__ sh
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
@@ -27,24 +27,24 @@ if (expand("help").contains("\n    - mythicgme"))
 	return true;
 }
 
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.mythicv2 ||= {};
-window._tejs.state.mythicv2.chaos ||= 4;
-window._tejs.state.mythicv2.scene ||= 1;
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.mythicv2 ||= {};
+window._inlineScripts.state.mythicv2.chaos ||= 4;
+window._inlineScripts.state.mythicv2.scene ||= 1;
 
-window._tejs.state.lists ||= {};
-window._tejs.state.lists.pcs ||= { type: "basic", content: [] };
-window._tejs.state.lists.npcs ||= { type: "basic", content: [] };
-window._tejs.state.lists.threads ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists ||= {};
+window._inlineScripts.state.lists.pcs ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists.npcs ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists.threads ||= { type: "basic", content: [] };
 
-window._tejs.mythicv2 ||= {};
-window._tejs.mythicv2.details ||= [];
+window._inlineScripts.mythicv2 ||= {};
+window._inlineScripts.mythicv2.details ||= [];
 
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onReset.mythicv2 ||= expand =>
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onReset.mythicv2 ||= expand =>
 {
 	expand("reset mythicv2");
 };
@@ -56,11 +56,11 @@ Disables mythicv2 if mythicgme is already registered.  Sets up a state variable 
 
 __
 ```
-^tejs shutdown$
+^sfile shutdown$
 ```
 __
 ```js
-delete window._tejs.listeners?.state?.onReset?.mythicv2;
+delete window._inlineScripts.listeners?.state?.onReset?.mythicv2;
 ```
 __
 Unregisters event callbacks.
@@ -72,18 +72,18 @@ __
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.mythicv2 ||= {};
-window._tejs.state.mythicv2.chaos = 4;
-window._tejs.state.mythicv2.scene = 1;
-window._tejs.state.lists ||= {};
-window._tejs.state.lists.pcs = { type: "basic", content: [] };
-window._tejs.state.lists.npcs = { type: "basic", content: [] };
-window._tejs.state.lists.threads = { type: "basic", content: [] };
-window._tejs.mythicv2 ||= {};
-window._tejs.mythicv2.details ||= []; // Track the details of a shortcut
-return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.mythicv2 ||= {};
+window._inlineScripts.state.mythicv2.chaos = 4;
+window._inlineScripts.state.mythicv2.scene = 1;
+window._inlineScripts.state.lists ||= {};
+window._inlineScripts.state.lists.pcs = { type: "basic", content: [] };
+window._inlineScripts.state.lists.npcs = { type: "basic", content: [] };
+window._inlineScripts.state.lists.threads = { type: "basic", content: [] };
+window._inlineScripts.mythicv2 ||= {};
+window._inlineScripts.mythicv2.details ||= []; // Track the details of a shortcut
+return "***\n\n\n### SCENE " + window._inlineScripts.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 __
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
@@ -98,9 +98,9 @@ __
 ```js
 if ($1)
 {
-	window._tejs.state.mythicv2.showDetails = ($1 === " y");
+	window._inlineScripts.state.mythicv2.showDetails = ($1 === " y");
 }
-return "Mythic details are " + (window._tejs.state.mythicv2.showDetails ? "ENABLED" : "DISABLED") + "\n\n";
+return "Mythic details are " + (window._inlineScripts.state.mythicv2.showDetails ? "ENABLED" : "DISABLED") + "\n\n";
 ```
 __
 mythicv2 details {state: optional, y or n} - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
@@ -133,26 +133,26 @@ function addDetails()
 	for (let i = 0; i < arguments.length; i+= 2)
 	{
 		if (!arguments[i]) { continue; }
-		window._tejs.mythicv2.details.push(arguments[i] + "=" + arguments[i+1]);
+		window._inlineScripts.mythicv2.details.push(arguments[i] + "=" + arguments[i+1]);
 	}
 	return arguments[arguments.length - 1];
 }
 function getDetails()
 {
-	if (!window._tejs.state.mythicv2.showDetails ||
-	    !window._tejs.mythicv2.details.length)
+	if (!window._inlineScripts.state.mythicv2.showDetails ||
+	    !window._inlineScripts.mythicv2.details.length)
 	{
 		return "";
 	}
-	return "\n- _" + window._tejs.mythicv2.details.join(" ") + "_";
+	return "\n- _" + window._inlineScripts.mythicv2.details.join(" ") + "_";
 }
 clearDetailsIfUserTriggered = () =>
 {
-	if (expansionInfo.isUserTriggered) { window._tejs.mythicv2.details = []; }
+	if (expansionInfo.isUserTriggered) { window._inlineScripts.mythicv2.details = []; }
 }
 function getChaosAdjust(multiplier)
 {
-	let chaos = window._tejs.state.mythicv2.chaos;
+	let chaos = window._inlineScripts.state.mythicv2.chaos;
 	let result = ( (chaos === 3) ? 2 : (chaos === 6) ? -2 : 0 ) * (multiplier || 1);
 	return addDetails("chaosAdjust", result);
 }
@@ -196,7 +196,7 @@ let result =
 	getChaosAdjust(wanted ? 1 : -1);
 result = result > 10 ? "YES" : "NO";
 
-let isChaotic = (chaosRoll <= window._tejs.state.mythicv2.chaos);
+let isChaotic = (chaosRoll <= window._inlineScripts.state.mythicv2.chaos);
 let isExtreme = isChaotic && !!(fateRoll1 % 2) && !!(fateRoll2 % 2);
 let isEvent = isChaotic && !(fateRoll1 % 2) && !(fateRoll2 % 2);
 if (isChaotic && fateRoll1 === fateRoll2) isExtreme = isEvent = true;
@@ -289,7 +289,7 @@ __
 ```
 __
 ```js
-return "The current scene is " + window._tejs.state.mythicv2.scene + ".\n\n";
+return "The current scene is " + window._inlineScripts.state.mythicv2.scene + ".\n\n";
 ```
 __
 scene - Show the current scene.
@@ -307,10 +307,10 @@ let result =
 	($1 === "-1") ? expand("chaos--")[0] :
 	"Chaos is unchanged at " + expand("chaos")[1];
 result += "\n\n\n***\n\n\n";
-window._tejs.state.mythicv2.scene++;
-result += "### SCENE " + window._tejs.state.mythicv2.scene;
+window._inlineScripts.state.mythicv2.scene++;
+result += "### SCENE " + window._inlineScripts.state.mythicv2.scene;
 let chk = roll("sceneCheck", 10);
-if (chk <= window._tejs.state.mythicv2.chaos)
+if (chk <= window._inlineScripts.state.mythicv2.chaos)
 {
 	if (chk % 2)
 	{
@@ -335,7 +335,7 @@ __
 ```
 __
 ```js
-return [ "Chaos is __", window._tejs.state.mythicv2.chaos, "__.\n\n" ];
+return [ "Chaos is __", window._inlineScripts.state.mythicv2.chaos, "__.\n\n" ];
 ```
 __
 chaos - Show the current chaos value.
@@ -347,13 +347,13 @@ __
 ```
 __
 ```js
-window._tejs.state.mythicv2.chaos--;
-if (window._tejs.state.mythicv2.chaos < 3)
+window._inlineScripts.state.mythicv2.chaos--;
+if (window._inlineScripts.state.mythicv2.chaos < 3)
 {
-	window._tejs.state.mythicv2.chaos = 3;
+	window._inlineScripts.state.mythicv2.chaos = 3;
 	return [ "Chaos remains at __3__ (hit minimum).", "\n\n" ];
 }
-return [ "Chaos lowered to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
+return [ "Chaos lowered to __" + window._inlineScripts.state.mythicv2.chaos + "__.", "\n\n" ];
 ```
 __
 chaos-- - Decrease the chaos value by 1 (minimum of 3).
@@ -365,13 +365,13 @@ __
 ```
 __
 ```js
-window._tejs.state.mythicv2.chaos++;
-if (window._tejs.state.mythicv2.chaos > 6)
+window._inlineScripts.state.mythicv2.chaos++;
+if (window._inlineScripts.state.mythicv2.chaos > 6)
 {
-	window._tejs.state.mythicv2.chaos = 6;
+	window._inlineScripts.state.mythicv2.chaos = 6;
 	return [ "Chaos remains at __6__ (hit maximum).", "\n\n" ];
 }
-return [ "Chaos raised to __" + window._tejs.state.mythicv2.chaos + "__.", "\n\n" ];
+return [ "Chaos raised to __" + window._inlineScripts.state.mythicv2.chaos + "__.", "\n\n" ];
 ```
 __
 chaos++ - Increase the chaos value by 1 (maximum of 6).
@@ -383,7 +383,7 @@ __
 ```
 __
 ```js
-window._tejs.state.mythicv2.chaos = $1;
+window._inlineScripts.state.mythicv2.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __

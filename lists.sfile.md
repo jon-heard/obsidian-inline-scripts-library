@@ -10,18 +10,18 @@ It uses this to save & load the lists.
 
 __
 ```
-^tejs setup$
+^sfile setup$
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.lists ||= {};
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.lists ||= {};
 
-window._tejs.listeners ||= {};
-window._tejs.listeners.state ||= {};
-window._tejs.listeners.state.onReset ||= {};
-window._tejs.listeners.state.onReset.lists ||= expand =>
+window._inlineScripts.listeners ||= {};
+window._inlineScripts.listeners.state ||= {};
+window._inlineScripts.listeners.state.onReset ||= {};
+window._inlineScripts.listeners.state.onReset.lists ||= expand =>
 {
 	expand("reset lists");
 };
@@ -32,11 +32,11 @@ Sets up a state variable for the lists.  Sets up callback for state "reset" even
 
 __
 ```
-^tejs shutdown$
+^sfile shutdown$
 ```
 __
 ```js
-delete window._tejs.listeners?.state?.onReset?.lists;
+delete window._inlineScripts.listeners?.state?.onReset?.lists;
 ```
 __
 Unregisters event callbacks.
@@ -48,9 +48,9 @@ __
 ```
 __
 ```js
-window._tejs ||= {};
-window._tejs.state ||= {};
-window._tejs.state.lists = {};
+window._inlineScripts ||= {};
+window._inlineScripts.state ||= {};
+window._inlineScripts.state.lists = {};
 return "All lists cleared.\n\n";
 ```
 __
@@ -63,7 +63,7 @@ __
 ```js
 function getListItems(name)
 {
-	let list = window._tejs.state.lists[name];
+	let list = window._inlineScripts.state.lists[name];
 	if (!list) { return []; }
 	let result = [];
 	switch (list.type)
@@ -102,15 +102,15 @@ __
 ```
 __
 ```js
-let listNames = Object.keys(window._tejs.state.lists);
+let listNames = Object.keys(window._inlineScripts.state.lists);
 listNames.sort();
 for (let i = 0; i < listNames.length; i++)
 {
 	const items = getListItems(listNames[i]);
-	const listType = window._tejs.state.lists[listNames[i]].type;
+	const listType = window._inlineScripts.state.lists[listNames[i]].type;
 	if (listType !== "basic")
 	{
-		listNames[i] += "    _(" + listType + ": " + window._tejs.state.lists[listNames[i]].content + ")_";
+		listNames[i] += "    _(" + listType + ": " + window._inlineScripts.state.lists[listNames[i]].content + ")_";
 	}
 	listNames[i] = listNames[i] + "\n    - " + (items.length ? items.join("\n    - ") : "NONE");
 }
@@ -128,11 +128,11 @@ __
 ```js
 let items = getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
-const listType = window._tejs.state.lists[$1].type;
+const listType = window._inlineScripts.state.lists[$1].type;
 let content = "";
 if (listType !== "basic")
 {
-	content += "    _(" + listType + ": " + window._tejs.state.lists[$1].content + ")_";
+	content += "    _(" + listType + ": " + window._inlineScripts.state.lists[$1].content + ")_";
 }
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
@@ -169,19 +169,19 @@ __
 ```
 __
 ```js
-window._tejs.state.lists[$1] ||= { type: "basic", content: [] };
+window._inlineScripts.state.lists[$1] ||= { type: "basic", content: [] };
 const ERROR_PREFIX = "Failed to add __" + $2 + "__ to list __" + $1 + "__.  ";
-const type = window._tejs.state.lists[$1].type;
+const type = window._inlineScripts.state.lists[$1].type;
 if (type === "basic")
 {
-	const c = window._tejs.state.lists[$1].content;
+	const c = window._inlineScripts.state.lists[$1].content;
 	c.push($2);
 	c.sort();
 	return "__" + $2 + "__ added to list __" + $1 + "__.\n\n";
 }
 else if (type === "combo")
 {
-	const c = window._tejs.state.lists[$1].content;
+	const c = window._inlineScripts.state.lists[$1].content;
 	// Iterate in reverse order, to add to the LAST sublist
 	for (let i = c.length-1; i >= 0; i--)
 	{
@@ -210,11 +210,11 @@ __
 __
 ```js
 const ERROR_PREFIX = "Failed to remove __" + $2 + "__ from list __" + $1 + "__.  ";
-if (!window._tejs.state.lists[$1])
+if (!window._inlineScripts.state.lists[$1])
 {
 	return ERROR_PREFIX + "Entry not found.\n\n";
 }
-const type = window._tejs.state.lists[$1].type;
+const type = window._inlineScripts.state.lists[$1].type;
 if (type === "basic")
 {
 	const list = getListItems($1);
@@ -222,7 +222,7 @@ if (type === "basic")
 	{
 		return ERROR_PREFIX + "Entry not found.\n\n";
 	}
-	const c = window._tejs.state.lists[$1].content;
+	const c = window._inlineScripts.state.lists[$1].content;
 	let i = c.lastIndexOf($2);
 	c.splice(i, 1);
 	return "__" + $2 + "__ removed from list __" + $1 + "__.\n\n";
@@ -234,7 +234,7 @@ else if (type === "combo")
 	{
 		return ERROR_PREFIX + "Entry not found.\n\n";
 	}
-	const c = window._tejs.state.lists[$1].content;
+	const c = window._inlineScripts.state.lists[$1].content;
 	// Iterate in reverse order, to be sure and remove LAST entry
 	for (let i = c.length-1; i >= 0; i--)
 	{
@@ -262,9 +262,9 @@ __
 ```
 __
 ```js
-if (window._tejs.state.lists[$1])
+if (window._inlineScripts.state.lists[$1])
 {
-	delete window._tejs.state.lists[$1];
+	delete window._inlineScripts.state.lists[$1];
 	return "List __" + $1 + "__ removed.\n\n";
 }
 return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
@@ -281,7 +281,7 @@ __
 __
 ```js
 if (!$2.endsWith("/")) { $2 += "/"; }
-window._tejs.state.lists[$1] = { type: "folder", content: $2 };
+window._inlineScripts.state.lists[$1] = { type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
@@ -295,7 +295,7 @@ __
 __
 ```js
 let links = $2.split(" ");
-window._tejs.state.lists[$1] = { type: "combo", content: links };
+window._inlineScripts.state.lists[$1] = { type: "combo", content: links };
 return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 __
@@ -320,11 +320,11 @@ __
 ```
 __
 ```js
-if (!window._tejs.state.lists.hasOwnProperty($1))
+if (!window._inlineScripts.state.lists.hasOwnProperty($1))
 {
 	return "none";
 }
-return window._tejs.state.lists[$1].type;
+return window._inlineScripts.state.lists[$1].type;
 ```
 __
 hidden - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).
