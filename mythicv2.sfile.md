@@ -206,9 +206,9 @@ let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
 return "Fate check (" + ODDS[inputOdds] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
 __
-fate {odds: optional, -4 to 4} {wanted: optional, y or n} - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting in 0 {50/50}.
+fate {odds: optional (0), -4 to 4} {wanted: optional (y), y or n} - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting to 0 {50/50}.
  {odds} can also be the specific text of the odds, such as "impossible", "sure thing", etc.
- This is also based on {wanted}: a y/n, defaulting in y.  {wanted} specifies the direction of the chaos modifier.
+ This is also based on {wanted}: a y/n, defaulting to y.  {wanted} specifies the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
 
 

@@ -36,7 +36,7 @@ This shortcut file can be used by other shortcut-files to help them save/restore
 
 - __reset state__ - Clear all state.
 - __state__ - Expands to a string representing the current state (for session saving).
-- __state {state: required, text}__ - Sets the current state based on {state}: a string created with the parameterless "state" shortcut.
+- __state {state: required, text}__ - Sets the current state based on {state}: a string created previously with the parameterless "state" shortcut.
 
 ***
 
@@ -84,9 +84,9 @@ Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __my
 - __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
         Alternative shortcut: __reset mythic__.
 - __mythicv2 details {state: optional, y or n}__ - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
-- __fate {odds: optional, -4 to 4} {wanted: optional, y or n}__ - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting in 0 {50/50}.
+- __fate {odds: optional (0), -4 to 4} {wanted: optional (y), y or n}__ - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting to 0 {50/50}.
  {odds} can also be the specific text of the odds, such as "impossible", "sure thing", etc.
- This is also based on {wanted}: a y/n, defaulting in y.  {wanted} specifies the direction of the chaos modifier.
+ This is also based on {wanted}: a y/n, defaulting to y.  {wanted} specifies the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
 - __detail__ - Make a detail check.
 - __event__ - Make an event check.
@@ -116,7 +116,7 @@ Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __myth
 
 - __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
         Alternative shortcut: __reset mythic__.
-- __fate {odds: optional, text}__ - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
+- __fate {odds: optional (0), text}__ - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
         Alternative shortcut: __f {odds}__.
 - __scene__ - Show the current scene.
 - __scene {chaosAdjust: required, -1 or 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
@@ -133,14 +133,14 @@ Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __myth
 Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
-- __une {randomness: optional, 1 to 5} {relationship to pc: optional, 1 to 7} {demeanor: optional, 1 to 8}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
-- __une character {randomness: optional, 1 to 5}__ - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
-- __une interact {relationship to pc: optional, 1 to 7} {demeanor: optional, 1 to 8}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
+- __une {randomness: optional (3), 1 to 5} {relationship to pc: optional (4), 1 to 7} {demeanor: optional (random), 1 to 8}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
+- __une character {randomness: optional (3), 1 to 5}__ - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
+- __une interact {relationship to pc: optional (4), 1 to 7} {demeanor: optional (random), 1 to 8}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
 - __une identity__ - Generates a 2-word description for a character.
-- __une power {randomness: optional, 1 to 5}__ - Generates a character's power level relative to pc's power level, based on {randomness}: a number from 1 (order), to 5 (chaos), defaulting at 3 (standard).
+- __une power {randomness: optional (3), 1 to 5}__ - Generates a character's power level relative to pc's power level, based on {randomness}: a number from 1 (order), to 5 (chaos), defaulting to 3 (standard).
 - __une motive__ - Generates three 2-word descriptions for a character's motivations.
-- __une mood {relationship to pc: optional, 1 to 7}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: a number from 1 (love), to 7 (hate), defaulting at 4 (neutral).
-- __une bearing {demeanor: optional, 1 to 8}__ - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
+- __une mood {relationship to pc: optional (4), 1 to 7}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}: a number from 1 (love), to 7 (hate), defaulting to 4 (neutral).
+- __une bearing {demeanor: optional (random), 1 to 8}__ - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
     1 - sceming       2 - insane       3 - friendly          4 - hostile
     5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
 - __une focus__ - Generate a character's primary interest for this interaction.
@@ -208,7 +208,7 @@ Shortcuts for writing various arrows:
 ### lipsum.sfile
 A decent Lorum Ipsum generator.
 
-- __lipsum {paragraph count: optional, >0}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
+- __lipsum {paragraph count: optional (1), >0}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
 
 ***
 

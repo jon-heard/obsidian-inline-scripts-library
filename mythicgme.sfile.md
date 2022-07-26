@@ -151,7 +151,7 @@ if (Math.trunc(r/10) == r%10 &&
 return "Fate check (" + ODDS[inputOdds] + "):\n" + result + eventOutput + "\n\n";
 ```
 __
-fate {odds: optional, text} - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
+fate {odds: optional (0), text} - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
         Alternative shortcut: __f {odds}__.
 
 
