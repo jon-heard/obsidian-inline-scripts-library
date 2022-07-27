@@ -152,8 +152,8 @@ clearDetailsIfUserTriggered = () =>
 }
 function getChaosAdjust(multiplier)
 {
-	let chaos = window._inlineScripts.state.mythicv2.chaos;
-	let result = ( (chaos === 3) ? 2 : (chaos === 6) ? -2 : 0 ) * (multiplier || 1);
+	const chaos = Number(window._inlineScripts.state.mythicv2.chaos);
+	const result = ( (chaos === 3) ? 2 : (chaos === 6) ? -2 : 0 ) * (multiplier || 1);
 	return addDetails("chaosAdjust", result);
 }
 ```
@@ -163,37 +163,21 @@ Some useful functions.  Suped up versions to incorporate  details mode.
 
 __
 ```
-^f(?:ate)?((?: .*)?)$
+^f(?:ate)?\s?(|-4|-3|-2|-1|0|1|2|3|4)\s?(|y|n)$
 ```
 __
 ```js
 clearDetailsIfUserTriggered();
-const INPUT_ODDS =
-{
-	"-4": 0, "-3": 1, "-2": 2, "-1": 3, "0": 4, "1": 5, "2": 6, "3": 7, "4": 8,
-	"impossible": 0, "no way": 1, "very unlikely": 2, "unlikely": 3, "50/50": 4, "likely": 5, "very likely": 6, "sure thing": 7, "has to be": 8
-};
-const DEFAULT_ODDS = 4;
 const ODDS = ["impossible","no way","very unlikely","unlikely","50/50","likely","very likely","sure thing","has to be"];
-$1 = $1.trim().toLowerCase();
-let wanted = true;
-if ($1.endsWith(" y"))
-{
-	$1 = $1.substr(0, $1.length - 2);
-}
-else if ($1.endsWith(" n"))
-{
-	wanted = false;
-	$1 = $1.substr(0, $1.length - 2);
-}
-const inputOdds = INPUT_ODDS[$1.trim()] ?? DEFAULT_ODDS;
+$1 = Number($1) || 0;
+let wanted = "n" ? false : true;
 let fateRoll1 = roll("fateRoll1", 10);
 let fateRoll2 = roll("fateRoll2", 10);
 let chaosRoll = roll("chaosRoll", 10);
 let result =
 	fateRoll1 + fateRoll2 +
-	addDetails("oddsAdjust", (inputOdds-4) * 2) +
-	getChaosAdjust(wanted ? 1 : -1);
+	addDetails("oddsAdjust", ($1) * 2) +
+	getChaosAdjust($2==="n" ? -1 : 1);
 result = result > 10 ? "YES" : "NO";
 
 let isChaotic = (chaosRoll <= window._inlineScripts.state.mythicv2.chaos);
@@ -203,12 +187,42 @@ if (isChaotic && fateRoll1 === fateRoll2) isExtreme = isEvent = true;
 
 result = (isExtreme ? "EXTREME " : "") + result;
 let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
-return "Fate check (" + ODDS[inputOdds] + "):\n" + result + evtText + getDetails() + "\n\n";
+return "Fate check (" + ODDS[$1 + 4] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
 __
-fate {odds: optional (0), -4 to 4} {wanted: optional (y), y or n} - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting to 0 {50/50}.
- {odds} can also be the specific text of the odds, such as "impossible", "sure thing", etc.
- This is also based on {wanted}: a y/n, defaulting to y.  {wanted} specifies the direction of the chaos modifier.
+fate {odds: optional (~0), -4 to 4} {wanted: optional (y), y or n} - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting to 0 {50/50}.
+This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
+        Alternative shortcut: __f {odds} {wanted}__.
+
+
+__
+```
+^f(?:ate)?\s?(.*)$
+```
+__
+```js
+clearDetailsIfUserTriggered();
+const INPUT_ODDS =
+{
+	"impossible": -4, "no way": -3, "very unlikely": -2, "unlikely": -1, "50/50": 0, "likely": 1, "very likely": 2, "sure thing": 3, "has to be": 4
+};
+$1 = $1.trim().toLowerCase();
+let wanted = " y";
+if ($1.endsWith(" y"))
+{
+	$1 = $1.substr(0, $1.length - 2);
+}
+else if ($1.endsWith(" n"))
+{
+	wanted = " n";
+	$1 = $1.substr(0, $1.length - 2);
+}
+const inputOdds = INPUT_ODDS[$1.trim()] || 0;
+return expand("fate " + inputOdds + wanted);
+```
+__
+fate {odds: optional ("50/50"), text} {wanted: optional (y), y or n} - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
+This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
         Alternative shortcut: __f {odds} {wanted}__.
 
 

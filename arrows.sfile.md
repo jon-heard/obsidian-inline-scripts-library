@@ -20,7 +20,7 @@ __
 return "→";
 ```
 __
--<wbr>> - → (RIGHT arrow).
+-> - → (RIGHT arrow).
         Alternative shortcut: __arrow right__.
 
 
@@ -33,7 +33,7 @@ __
 return "←";
 ```
 __
-<<wbr>- - ← (LEFT arrow).
+<- - ← (LEFT arrow).
         Alternative shortcut: __arrow left__.
 
 
@@ -126,7 +126,7 @@ __
 return "⇒";
 ```
 __
- =<wbr>> - ⇒ (RIGHT double-arrow).
+=> - ⇒ (RIGHT double-arrow).
         Alternative shortcut: __arrow dbl right__.
 
 
@@ -139,7 +139,7 @@ __
 return "⇐";
 ```
 __
-<<wbr>= - ⇐ (LEFT double-arrow).
+<= - ⇐ (LEFT double-arrow).
         Alternative shortcut: __arrow dbl left__.
 
 
@@ -179,7 +179,7 @@ __
 return "↔";
 ```
 __
- <<wbr>-<wbr>> - ↔ (LEFT / RIGHT arrow).
+<-> - ↔ (LEFT / RIGHT arrow).
         Alternative shortcut: __arrow leftright__.
 
 
@@ -205,7 +205,7 @@ __
 return "⇔";
 ```
 __
-<<wbr>=<wbr>> - ⇔ (LEFT / RIGHT double arrow).
+<=> - ⇔ (LEFT / RIGHT double arrow).
         Alternative shortcut: __arrow dbl leftright__.
 
 
@@ -363,7 +363,7 @@ __
 return "↝";
 ```
 __
-~> - ↝ (RIGHT wavy arrow).
+\~> - ↝ (RIGHT wavy arrow).
         Alternative shortcut: __arrow wavy right__.
 
 
@@ -376,5 +376,5 @@ __
 return "↜";
 ```
 __
-<~ - ↜ (LEFT wavy arrow).
+<\~ - ↜ (LEFT wavy arrow).
         Alternative shortcut: __arrow wavy left__.

@@ -495,7 +495,7 @@ else
 }
 ```
 __
-ac plots dupe {character index: optional, >0} - If {character index} is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
+ac chars dupe {character index: optional, >0} - If {character index} is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
 
 
 __
