@@ -58,6 +58,7 @@ return "All lists cleared.\n\n";
 ```
 ~~
 reset lists - Clear all lists.
+***
 
 
 ~~

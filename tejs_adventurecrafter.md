@@ -307,7 +307,7 @@ const specialTraits = [
 ];
 
 let special = aPickWeight(specialTraits);
-special = "Special trait - " + special[0] + "\n. " + special[2] + "\n";
+special = "- Special trait - " + special[0] + "\n    - " + special[2] + "\n";
 
 let identity = aPickWeight(identities);
 if (identity[0][2])
@@ -328,7 +328,7 @@ else
 {
 	identity = [ identity[0] ];
 }
-identity = "Identity - " + identity.join(", ") + "\n";
+identity = "- Identity - " + identity.join(", ") + "\n";
 
 let descriptor = aPickWeight(descriptors);
 if (descriptor[2])
@@ -349,7 +349,7 @@ else
 {
 	descriptor = [ descriptor[0] ];
 }
-descriptor = "Descriptor - " + descriptor.join(", ") + "\n";
+descriptor = "- Descriptor - " + descriptor.join(", ") + "\n";
 
 return "Character:\n" + special + identity + descriptor + "\n";
 ```
@@ -494,7 +494,7 @@ else
 }
 ```
 ~~
-ac plots dupe {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
+ac chars dupe {character index} - If {character index} (an optional, positive integer) is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
 
 
 ~~
