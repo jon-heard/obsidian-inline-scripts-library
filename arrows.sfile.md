@@ -13,7 +13,7 @@ Shortcuts for writing various arrows:
 
 __
 ```
-(?:^arrow right$)|(?:^\-\>$)
+^(?:arrow right|\-\>)$
 ```
 __
 ```js
@@ -26,7 +26,7 @@ __
 
 __
 ```
-(?:^arrow left$)|(?:^\<\-$)
+^(?:arrow left|\<\-)$
 ```
 __
 ```js
@@ -39,7 +39,7 @@ __
 
 __
 ```
-(?:^arrow up$)|(?:^\-\^$)
+^(?:arrow up|\-\^)$
 ```
 __
 ```js
@@ -52,7 +52,7 @@ __
 
 __
 ```
-(?:^arrow down$)|(?:^\-v$)
+^(?:arrow down|\-v)$
 ```
 __
 ```js
@@ -66,7 +66,7 @@ __
 
 __
 ```
-(?:^tri right$)|(?:^\|\>$)
+^(?:tri right|\|\>)$
 ```
 __
 ```js
@@ -79,7 +79,7 @@ __
 
 __
 ```
-(?:^tri left$)|(?:^\<\|$)
+^(?:tri left|\<\|)$
 ```
 __
 ```js
@@ -92,7 +92,7 @@ __
 
 __
 ```
-(?:^tri up$)|(?:^\|\^$)
+^(?:tri up|\|\^)$
 ```
 __
 ```js
@@ -105,7 +105,7 @@ __
 
 __
 ```
-(?:^tri down$)|(?:^\|v$)
+^(?:tri down|\|v)$
 ```
 __
 ```js
@@ -119,7 +119,7 @@ __
 
 __
 ```
-(?:^arrow dbl right$)|(?:^\=\>$)
+^(?:arrow dbl right|\=\>)$
 ```
 __
 ```js
@@ -132,7 +132,7 @@ __
 
 __
 ```
-(?:^arrow dbl left$)|(?:^\<\=$)
+^(?:arrow dbl left|\<\=)$
 ```
 __
 ```js
@@ -145,7 +145,7 @@ __
 
 __
 ```
-(?:^arrow dbl up$)|(?:^\=\^$)
+^(?:arrow dbl up|\=\^)$
 ```
 __
 ```js
@@ -158,7 +158,7 @@ __
 
 __
 ```
-(?:^arrow dbl down$)|(?:^\=v$)
+^(?:arrow dbl down|\=v)$
 ```
 __
 ```js
@@ -172,7 +172,7 @@ __
 
 __
 ```
-(?:^arrow leftright$)|(?:^\<\-\>$)
+^(?:arrow leftright|\<\-\>)$
 ```
 __
 ```js
@@ -185,7 +185,7 @@ __
 
 __
 ```
-(?:^arrow updown$)|(?:^\^\-v$)
+^(?:arrow updown|\^\-v)$
 ```
 __
 ```js
@@ -198,7 +198,7 @@ __
 
 __
 ```
-(?:^arrow dbl leftright$)|(?:^\<\=\>$)
+^(?:arrow dbl leftright|\<\=\>)$
 ```
 __
 ```js
@@ -211,7 +211,7 @@ __
 
 __
 ```
-(?:^arrow dbl updown$)|(?:^\^\=v$)
+^(?:arrow dbl updown|\^\=v)$
 ```
 __
 ```js
@@ -224,7 +224,7 @@ __
 
 __
 ```
-(?:^arrow left right$)|(?:^\<\/\/\>$)
+^(?:arrow left right|\<\/\/\>)$
 ```
 __
 ```js
@@ -237,7 +237,7 @@ __
 
 __
 ```
-(?:^arrow up down$)|(?:^\^\/\/v$)
+^(?:arrow up down|\^\/\/v)$
 ```
 __
 ```js
@@ -251,7 +251,7 @@ __
 
 __
 ```
-(?:^arrow rightup$)|(?:^\-\^\>$)
+^(?:arrow rightup|\-\^\>)$
 ```
 __
 ```js
@@ -264,7 +264,7 @@ __
 
 __
 ```
-(?:^arrow rightdown$)|(?:^\-v\>$)
+^(?:arrow rightdown|\-v\>)$
 ```
 __
 ```js
@@ -277,7 +277,7 @@ __
 
 __
 ```
-(?:^arrow leftup$)|(?:^\<\^\-$)
+^(?:arrow leftup|\<\^\-)$
 ```
 __
 ```js
@@ -290,7 +290,7 @@ __
 
 __
 ```
-(?:^arrow leftdown$)|(?:^\<v\-$)
+^(?:arrow leftdown|\<v\-)$
 ```
 __
 ```js
@@ -304,7 +304,7 @@ __
 
 __
 ```
-(?:^arrow curve right$)|(?:^u\>$)
+^(?:arrow curve right|u\>)$
 ```
 __
 ```js
@@ -317,7 +317,7 @@ __
 
 __
 ```
-(?:^arrow curve left$)|(?:^\<u$)
+^(?:arrow curve left|\<u)$
 ```
 __
 ```js
@@ -330,7 +330,7 @@ __
 
 __
 ```
-(?:^arrow clock$)|(?:^c\>$)
+^(?:arrow clock|c\>)$
 ```
 __
 ```js
@@ -343,7 +343,7 @@ c> - ↻ (CLOCKWISE arrow).
 
 __
 ```
-(?:^arrow cclock$)|(?:^\<c$)
+^(?:arrow cclock|\<c)$
 ```
 __
 ```js
@@ -356,7 +356,7 @@ __
 
 __
 ```
-(?:^arrow wavy right$)|(?:^\~\>$)
+^(?:arrow wavy right|\~\>)$
 ```
 __
 ```js
@@ -369,7 +369,7 @@ __
 
 __
 ```
-(?:^arrow wavy left$)|(?:^\<\~$)
+^(?:arrow wavy left|\<\~)$
 ```
 __
 ```js

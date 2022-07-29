@@ -7,7 +7,7 @@ Various helper shortcuts of minimal category.
 
 __
 ```
-^rngseed((?: [1-9][0-9]*)?)$
+^rngseed(| [1-9][0-9]*)$
 ```
 __
 ```js

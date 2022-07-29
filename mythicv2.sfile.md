@@ -92,7 +92,7 @@ reset mythicv2 - Reset mythic state to defaults and displays scene heading.
 
 __
 ```
-^mythicv2 details((?: [y|n])?)$
+^mythicv2 details(| [y|n])$
 ```
 __
 ```js
@@ -210,12 +210,12 @@ $1 = $1.trim().toLowerCase();
 let wanted = " y";
 if ($1.endsWith(" y"))
 {
-	$1 = $1.substr(0, $1.length - 2);
+	$1 = $1.slice(0,-2);
 }
 else if ($1.endsWith(" n"))
 {
 	wanted = " n";
-	$1 = $1.substr(0, $1.length - 2);
+	$1 = $1.slice(0,-2);
 }
 const inputOdds = INPUT_ODDS[$1.trim()] || 0;
 return expand("fate " + inputOdds + wanted);
@@ -265,7 +265,7 @@ event - Make an event check.
 
 __
 ```
-^meaning(| action)$
+^meaning(?:| action)$
 ```
 __
 ```js
@@ -439,7 +439,7 @@ disposition {descriptor count: required, -3 to 3} - Rolls for an NPC's dispositi
 
 __
 ```
-^disposition (-?[0-3]) ([0-2]?[0-9])$
+^disposition (-?[0-3]) ([2-9]|1[0-9]|20)$
 ```
 __
 ```js
@@ -488,7 +488,7 @@ action {dispositionAdjust: required, -2, 0, 2, 4} - Makes an NPC behavior check,
 
 __
 ```
-^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*)(| [1-9][0-9]*)$
 ```
 __
 ```js

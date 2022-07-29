@@ -35,13 +35,12 @@ Aliquam nec sapien urna. Aliquam bibendum, ligula id lobortis elementum, odio nu
 Ut pharetra semper leo at convallis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean vulputate, ex in imperdiet pharetra, leo libero mattis nunc, at tristique turpis libero ac lectus. Suspendisse potenti. Integer sed dolor at urna ultricies ornare. Ut auctor vulputate diam, sit amet condimentum lectus mattis at. Aenean placerat molestie arcu at pretium. Donec consequat nibh nulla, vel mollis lacus tincidunt et.
 
 `
-
 let pSizes = [];
 let sentences = [];
 l = l.trim().split("\n\n");
 for (let i = 0; i < l.length; i++)
 {
-	l[i] = l[i].substring(0, l[i].length-1).split(". ");
+	l[i] = l[i].slice(0,-1).split(". ");
 	pSizes.push(l[i].length);
 	sentences = sentences.concat(l[i]);
 }
@@ -65,7 +64,7 @@ Helper script - some useful functions
 
 __
 ```
-^lipsum((?: [1-9][0-9]*)?)$
+^lipsum(| [1-9][0-9]*)$
 ```
 __
 ```js
@@ -87,7 +86,7 @@ for (let i = 0; i < $1; i++)
 	{
 		result += aPick(window._inlineScripts.lipsum.sentences) + ". ";
 	}
-	result = result.substring(0, result.length-1);
+	result = result.slice(0,-1);
 }
 return result;
 ```

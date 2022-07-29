@@ -75,10 +75,10 @@ function getListItems(name)
 			for (let key in app.fileManager.vault.fileMap)
 			{
 				if (!key.startsWith(list.content)) { continue; }
-				key = key.substr(list.content.length);
+				key = key.slice(list.content.length);
 				if (key.contains("/")) { continue; }
 				if (!key.endsWith(".md")) { continue; }
-				result.push("[[" + key.substring(0, key.length-3) + "]]");
+				result.push("[[" + key.slice(0,-3) + "]]");
 			}
 			break;
 		case "combo":
@@ -142,7 +142,7 @@ lists list {list name: required, name} - Show all items in the list {list name}.
 
 __
 ```
-^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*)(| [1-9][0-9]*)$
 ```
 __
 ```js
@@ -153,13 +153,17 @@ let items = getListItems($1);
 if (items?.length || $2)
 {
 	let result = Number($2) || roll(items.length);
+	if (result-1 >= items.length)
+	{
+		return [ "Failed to pick from list __" + $1 + "__.  The item index " + result + " is out of range.\n\n" ];
+	}
 	result = items[result - 1];
 	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
 }
 return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
 __
-lists pick {list name: required, name} - Get a random item from the list {list name}.
+lists pick {list name: required, name} {item index: optional, >0} - Get a random item from the list {list name}.  If {item index} is specified, then its item is picked, instead of random.
 ***
 
 

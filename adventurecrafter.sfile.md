@@ -246,7 +246,7 @@ themes roll - Fills the next open theme slot with a random theme.
 
 __
 ```
-^themes? add((?: [1-5])?)$
+^themes? add(| [1-5])$
 ```
 __
 ```js
@@ -473,7 +473,7 @@ ac chars add {character: required, text} - Add {character} to the list of charac
 
 __
 ```
-^ac chars? dupe((?: [1-9][0-9]*)?)$
+^ac chars? dupe(| [1-9][0-9]*)$
 ```
 __
 ```js
@@ -500,7 +500,7 @@ ac chars dupe {character index: optional, >0} - If {character index} is NOT incl
 
 __
 ```
-^ac chars? remove((?: [1-9][0-9]*)?)$
+^ac chars? remove(| [1-9][0-9]*)$
 ```
 __
 ```js
@@ -588,7 +588,7 @@ ac plots add {plotline: required, text} - Add {plotline} to the list of plotline
 
 __
 ```
-^ac plots? dupe((?: [1-9][0-9]*)?)$
+^ac plots? dupe(| [1-9][0-9]*)$
 ```
 __
 ```js
@@ -615,7 +615,7 @@ ac plots dupe {plotline index: optional, >0} - If {plotline index} is NOT includ
 
 __
 ```
-^ac plots? remove((?: [1-9][0-9]*)?)$
+^ac plots? remove(| [1-9][0-9]*)$
 ```
 __
 ```js

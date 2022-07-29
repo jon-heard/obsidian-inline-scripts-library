@@ -31,7 +31,7 @@ Some useful functions
 
 __
 ```
-^une((?: [1-5])?)((?: [1-7])?)((?: [1-8])?)$
+^une(| [1-5])(| [1-7])(| [1-8])$
 ```
 __
 ```js
@@ -44,7 +44,7 @@ une {randomness: optional (3), 1 to 5} {relationship to pc: optional (4), 1 to 7
 
 __
 ```
-^une character((?: [1-5])?)$
+^une character(| [1-5])$
 ```
 __
 ```js
@@ -56,7 +56,7 @@ une character {randomness: optional (3), 1 to 5} - Runs "identity", "power" and 
 
 __
 ```
-^une interact((?: [1-7])?)((?: [1-8])?)$
+^une interact(| [1-7])(| [1-8])$
 ```
 __
 ```js
@@ -85,7 +85,7 @@ une identity - Generates a 2-word description for a character.
 
 __
 ```
-^une power((?: [1-5])?)$
+^une power(| [1-5])$
 ```
 __
 ```js
@@ -139,7 +139,7 @@ une motive - Generates three 2-word descriptions for a character's motivations.
 
 __
 ```
-^une mood((?: [1-7])?)$
+^une mood(| [1-7])$
 ```
 __
 ```js
@@ -160,7 +160,7 @@ une mood {relationship to pc: optional (4), 1 to 7} - Generates a character's wi
 
 __
 ```
-^une bearing((?: [1-8])?)$
+^une bearing(| [1-8])$
 ```
 __
 ```js

@@ -307,7 +307,7 @@ chaos={value: required, 1 to 9} - Set the chaos value to {value}.
 
 __
 ```
-^lists? pick ((?:[_a-zA-Z][_a-zA-Z0-9]*)?)((?: [1-9][0-9]*)?)$
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*)(| [1-9][0-9]*)$
 ```
 __
 ```js
