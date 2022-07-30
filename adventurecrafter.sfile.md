@@ -255,8 +255,11 @@ if (!$1)
 {
 	return "" +
 		"Enter \"__themes add__\" again with one of these indices:\n" +
-		"1 - Action\n2 - Tension\n3 - Mystery\n4 - Social\n" +
-		"5 - Personal\n\n";
+		"1 - Action - _direct and physical_\n" +
+		"2 - Tension - _Anxiety provoking_\n" +
+		"3 - Mystery - _Question raising & answering_\n" +
+		"4 - Social - _Interaction of people and/or factions_\n" +
+		"5 - Personal - _Individual and intimate_\n\n";
 }
 else
 {
