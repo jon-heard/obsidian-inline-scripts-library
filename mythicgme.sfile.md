@@ -41,7 +41,7 @@ window._inlineScripts.state.lists.threads ||= { type: "basic", content: [] };
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.mythicgme ||= expand =>
+window._inlineScripts.listeners.state.onReset.mythicgme ||= async expand =>
 {
 	expand("reset mythicgme");
 };

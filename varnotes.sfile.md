@@ -56,7 +56,7 @@ if (!window._inlineScripts.varnotes.variables)
 
 if (!window._inlineScripts.varnotes.onModified)
 {
-	window._inlineScripts.varnotes.onModified = file =>
+	window._inlineScripts.varnotes.onModified = async file =>
 	{
 		for (const key in window._inlineScripts.state.varnotes)
 		{
@@ -72,12 +72,12 @@ if (!window._inlineScripts.varnotes.onModified)
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.varnotes ||= expand =>
+window._inlineScripts.listeners.state.onReset.varnotes ||= async expand =>
 {
 	expand("reset varnotes");
 };
 window._inlineScripts.listeners.state.onLoad ||= {};
-window._inlineScripts.listeners.state.onLoad.varnotes ||= expand =>
+window._inlineScripts.listeners.state.onLoad.varnotes ||= async expand =>
 {
 	expand("varnotes refresh");
 };

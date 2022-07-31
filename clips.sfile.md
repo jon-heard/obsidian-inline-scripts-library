@@ -23,7 +23,7 @@ window._inlineScripts.clips.priorExpansion ||= "";
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.clips ||= expand =>
+window._inlineScripts.listeners.state.onReset.clips ||= async expand =>
 {
 	expand("reset clips");
 };

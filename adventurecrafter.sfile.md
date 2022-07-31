@@ -365,7 +365,7 @@ ac chars gen - Generate a new character description, as per the Adventure Crafte
 __
 __
 ```js
-function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
+async function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
 {
 	let formattedEntries = {};
 	const rawEntries = expand("lists listraw " + listName);
@@ -703,7 +703,7 @@ if (!window._inlineScripts.state.lists.characters)
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.adventurecrafter ||= expand =>
+window._inlineScripts.listeners.state.onReset.adventurecrafter ||= async expand =>
 {
 	expand("reset adventurecrafter");
 };

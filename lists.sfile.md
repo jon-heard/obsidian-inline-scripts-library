@@ -21,7 +21,7 @@ window._inlineScripts.state.lists ||= {};
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.lists ||= expand =>
+window._inlineScripts.listeners.state.onReset.lists ||= async expand =>
 {
 	expand("reset lists");
 };
