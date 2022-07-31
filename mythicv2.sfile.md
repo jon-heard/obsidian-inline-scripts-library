@@ -83,7 +83,7 @@ window._inlineScripts.state.lists.npcs = { type: "basic", content: [] };
 window._inlineScripts.state.lists.threads = { type: "basic", content: [] };
 window._inlineScripts.mythicv2 ||= {};
 window._inlineScripts.mythicv2.details ||= []; // Track the details of a shortcut
-return "***\n\n\n### SCENE " + window._inlineScripts.state.mythicgme.scene + "\n- Setup:\n    - ";
+return "***\n\n\n### SCENE " + window._inlineScripts.state.mythicv2.scene + "\n- Setup:\n    - ";
 ```
 __
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
