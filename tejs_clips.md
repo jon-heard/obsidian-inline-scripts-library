@@ -31,7 +31,7 @@ window._tejs.listeners.tejs ||= {};
 window._tejs.listeners.tejs.onExpansion ||= {};
 window._tejs.listeners.tejs.onExpansion.clips ||= (expansionInfo) =>
 {
-	window._inlineScripts.clips.priorExpansion =
+	window._tejs.clips.priorExpansion =
 		expansionInfo.expansionText;
 };
 ```
