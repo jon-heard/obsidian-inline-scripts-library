@@ -29,9 +29,10 @@ window._tejs.listeners.state.onReset.clips ||= expand =>
 };
 window._tejs.listeners.tejs ||= {};
 window._tejs.listeners.tejs.onExpansion ||= {};
-window._tejs.listeners.tejs.onExpansion.clips ||= (input, expansion) =>
+window._tejs.listeners.tejs.onExpansion.clips ||= (expansionInfo) =>
 {
-	window._tejs.clips.priorExpansion = expansion;
+	window._inlineScripts.clips.priorExpansion =
+		expansionInfo.expansionText;
 };
 ```
 ~~
