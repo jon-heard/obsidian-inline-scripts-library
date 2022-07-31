@@ -83,7 +83,7 @@ window._tejs.state.lists.npcs = { type: "basic", content: [] };
 window._tejs.state.lists.threads = { type: "basic", content: [] };
 window._tejs.mythicv2 ||= {};
 window._tejs.mythicv2.details ||= []; // Track the details of a shortcut
-return "***\n\n\n### SCENE " + window._tejs.state.mythicgme.scene + "\n- Setup:\n    - ";
+return "***\n\n\n### SCENE " + window._tejs.state.mythicv2.scene + "\n- Setup:\n    - ";
 ```
 ~~
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
