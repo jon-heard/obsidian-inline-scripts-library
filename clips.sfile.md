@@ -23,15 +23,16 @@ window._inlineScripts.clips.priorExpansion ||= "";
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.clips ||= async expand =>
+window._inlineScripts.listeners.state.onReset.clips ||= function(expand)
 {
 	expand("reset clips");
 };
 window._inlineScripts.listeners.inlineScripts ||= {};
 window._inlineScripts.listeners.inlineScripts.onExpansion ||= {};
-window._inlineScripts.listeners.inlineScripts.onExpansion.clips ||= (input, expansion) =>
+window._inlineScripts.listeners.inlineScripts.onExpansion.clips ||= function(expansionInfo)
 {
-	window._inlineScripts.clips.priorExpansion = expansion;
+	window._inlineScripts.clips.priorExpansion =
+		expansionInfo.expansionText;
 };
 ```
 __

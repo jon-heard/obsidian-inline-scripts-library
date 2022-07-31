@@ -44,7 +44,7 @@ window._inlineScripts.mythicv2.details ||= [];
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.mythicv2 ||= expand =>
+window._inlineScripts.listeners.state.onReset.mythicv2 ||= function(expand)
 {
 	expand("reset mythicv2");
 };
@@ -146,9 +146,12 @@ function getDetails()
 	}
 	return "\n- _" + window._inlineScripts.mythicv2.details.join(" ") + "_";
 }
-clearDetailsIfUserTriggered = () =>
+clearDetailsIfUserTriggered = function()
 {
-	if (expansionInfo.isUserTriggered) { window._inlineScripts.mythicv2.details = []; }
+	if (expansionInfo.isUserTriggered)
+	{
+		window._inlineScripts.mythicv2.details = [];
+	}
 }
 function getChaosAdjust(multiplier)
 {

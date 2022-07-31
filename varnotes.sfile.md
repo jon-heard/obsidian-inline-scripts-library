@@ -56,7 +56,7 @@ if (!window._inlineScripts.varnotes.variables)
 
 if (!window._inlineScripts.varnotes.onModified)
 {
-	window._inlineScripts.varnotes.onModified = async file =>
+	window._inlineScripts.varnotes.onModified = function(file)
 	{
 		for (const key in window._inlineScripts.state.varnotes)
 		{
@@ -72,12 +72,12 @@ if (!window._inlineScripts.varnotes.onModified)
 window._inlineScripts.listeners ||= {};
 window._inlineScripts.listeners.state ||= {};
 window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.varnotes ||= async expand =>
+window._inlineScripts.listeners.state.onReset.varnotes ||= function(expand)
 {
 	expand("reset varnotes");
 };
 window._inlineScripts.listeners.state.onLoad ||= {};
-window._inlineScripts.listeners.state.onLoad.varnotes ||= async expand =>
+window._inlineScripts.listeners.state.onLoad.varnotes ||= function(expand)
 {
 	expand("varnotes refresh");
 };
@@ -323,7 +323,7 @@ if (!file)
 {
 	return ERROR_PREFIX + "File __" + filename + "__ not found.\n\n";
 }
-app.vault.cachedRead(file).then(r =>
+app.vault.cachedRead(file).then(function(r)
 {
 	window._inlineScripts.varnotes.variables[$1] = {};
 	for (const match of r.matchAll(window._inlineScripts.varnotes.REGEX_VARS))
