@@ -87,7 +87,6 @@ return "***\n\n\n### SCENE " + window._inlineScripts.state.mythicv2.scene + "\n-
 ```
 __
 reset mythicv2 - Reset mythic state to defaults and displays scene heading.
-        Alternative shortcut: __reset mythic__.
 
 
 __
@@ -195,7 +194,6 @@ return "Fate check (" + ODDS[$1 + 4] + "):\n" + result + evtText + getDetails() 
 __
 fate {odds: optional (~0), -4 to 4} {wanted: optional (y), y or n} - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting to 0 {50/50}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
-        Alternative shortcut: __f {odds} {wanted}__.
 
 
 __
@@ -226,7 +224,6 @@ return expand("fate " + inputOdds + wanted);
 __
 fate {odds: optional ("50/50"), text} {wanted: optional (y), y or n} - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
-        Alternative shortcut: __f {odds} {wanted}__.
 
 
 __
@@ -280,7 +277,7 @@ return [ "Meaning (action):\n", result, getDetails(), "\n\n" ];
 ```
 __
 meaning action - Roll on the action meaning tables.
-        Alternative shortcut: __meaning__.
+	- Alternative: __meaning__
 
 
 __
@@ -419,7 +416,6 @@ return "Descriptors:\n" + "- personality:\n    - " + expand("meaning description
 ```
 __
 descriptors - Generates a personality and activity descriptor for an NPC.
-        Alternative shortcut: __descriptor__.
 
 
 __

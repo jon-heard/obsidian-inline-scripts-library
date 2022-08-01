@@ -21,7 +21,7 @@ return "→";
 ```
 __
 -> - → (RIGHT arrow).
-        Alternative shortcut: __arrow right__.
+	- Alternative: __arrow right__
 
 
 __
@@ -34,7 +34,7 @@ return "←";
 ```
 __
 <- - ← (LEFT arrow).
-        Alternative shortcut: __arrow left__.
+	- Alternative: __arrow left__
 
 
 __
@@ -47,7 +47,7 @@ return "↑";
 ```
 __
 -^ - ↑ (UP arrow).
-        Alternative shortcut: __arrow up__.
+	- Alternative: __arrow up__
 
 
 __
@@ -60,7 +60,7 @@ return "↓";
 ```
 __
 -v - ↓ (DOWN arrow).
-        Alternative shortcut: __arrow down__.
+	- Alternative: __arrow down__
 ***
 
 
@@ -74,7 +74,7 @@ return "▶";
 ```
 __
  |> - ▶ (RIGHT triangle).
-        Alternative shortcut: __tri right__.
+	- Alternative: __tri right__
 
 
 __
@@ -87,7 +87,7 @@ return "◀";
 ```
 __
 <| - ◀ (LEFT triangle).
-        Alternative shortcut: __tri left__.
+	- Alternative: __tri left__
 
 
 __
@@ -100,7 +100,7 @@ return "▲";
 ```
 __
 |^ - ▲ (UP triangle).
-        Alternative shortcut: __tri up__.
+	- Alternative: __tri up__
 
 
 __
@@ -113,7 +113,7 @@ return "▼";
 ```
 __
 |v - ▼ (DOWN triangle).
-        Alternative shortcut: __tri down__.
+	- Alternative: __tri down__
 ***
 
 
@@ -127,7 +127,7 @@ return "⇒";
 ```
 __
 => - ⇒ (RIGHT double-arrow).
-        Alternative shortcut: __arrow dbl right__.
+	- Alternative: __arrow dbl right__
 
 
 __
@@ -140,7 +140,7 @@ return "⇐";
 ```
 __
 <= - ⇐ (LEFT double-arrow).
-        Alternative shortcut: __arrow dbl left__.
+	- Alternative: __arrow dbl left__
 
 
 __
@@ -153,7 +153,7 @@ return "⇑";
 ```
 __
 =^ - ⇑ (UP double-arrow).
-        Alternative shortcut: __arrow dbl up__.
+	- Alternative: __arrow dbl up__
 
 
 __
@@ -166,7 +166,7 @@ return "⇓";
 ```
 __
 =v - ⇓ (DOWN double-arrow).
-        Alternative shortcut: __arrow dbl down__.
+	- Alternative: __arrow dbl down__
 ***
 
 
@@ -180,7 +180,7 @@ return "↔";
 ```
 __
 <-> - ↔ (LEFT / RIGHT arrow).
-        Alternative shortcut: __arrow leftright__.
+	- Alternative: __arrow leftright__
 
 
 __
@@ -193,7 +193,7 @@ return "↕";
 ```
 __
 ^-v - ↕ (UP / DOWN arrow).
-        Alternative shortcut: __arrow updown__.
+	- Alternative: __arrow updown__
 
 
 __
@@ -206,7 +206,7 @@ return "⇔";
 ```
 __
 <=> - ⇔ (LEFT / RIGHT double arrow).
-        Alternative shortcut: __arrow dbl leftright__.
+	- Alternative: __arrow dbl leftright__
 
 
 __
@@ -219,7 +219,7 @@ return "⇕";
 ```
 __
 ^=v - ⇕ (UP / DOWN double arrow).
-        Alternative shortcut: __arrow dbtl updown__.
+	- Alternative: __arrow dbtl updown__
 
 
 __
@@ -232,7 +232,7 @@ return "⇄";
 ```
 __
 <//> - ⇄ (LEFT arrow & RIGHT arrow).
-        Alternative shortcut: __arrow left right__.
+	- Alternative: __arrow left right__
 
 
 __
@@ -245,7 +245,7 @@ return "⇅";
 ```
 __
 ^//v - ⇅ (UP arrow & DOWN arrow).
-        Alternative shortcut: __arrow up down__.
+	- Alternative: __arrow up down__
 ***
 
 
@@ -259,7 +259,7 @@ return "↗";
 ```
 __
  -^> - ↗ (RIGHT / UP arrow).
-        Alternative shortcut: __arrow rightup__.
+	- Alternative: __arrow rightup__
 
 
 __
@@ -272,7 +272,7 @@ return "↘";
 ```
 __
 -v> - ↘ (RIGHT / DOWN arrow).
-        Alternative shortcut: __arrow rightdown__.
+	- Alternative: __arrow rightdown__
 
 
 __
@@ -285,7 +285,7 @@ return "↖";
 ```
 __
 <^- - ↖ (LEFT / UP arrow).
-        Alternative shortcut: __arrow leftup__.
+	- Alternative: __arrow leftup__
 
 
 __
@@ -298,7 +298,7 @@ return "↙";
 ```
 __
 <v- - ↙ (LEFT / DOWN arrow).
-        Alternative shortcut: __arrow leftdown__.
+	- Alternative: __arrow leftdown__
 ***
 
 
@@ -312,7 +312,7 @@ return "↪";
 ```
 __
  u> - ↪ (RIGHT curve arrow).
-        Alternative shortcut: __arrow curve right__.
+	- Alternative: __arrow curve right__
 
 
 __
@@ -325,7 +325,7 @@ return "↩";
 ```
 __
 <u - ↩ (LEFT curve arrow).
-        Alternative shortcut: __arrow curve left__.
+	- Alternative: __arrow curve left__
 
 
 __
@@ -338,7 +338,7 @@ return "↻";
 ```
 __
 c> - ↻ (CLOCKWISE arrow).
-        Alternative shortcut: __arrow clock__.
+	- Alternative: __arrow clock__
 
 
 __
@@ -351,7 +351,7 @@ return "↺";
 ```
 __
 <c - ↺ (COUNTER-CLOCKWISE arrow).
-        Alternative shortcut: __arrow cclock__.
+	- Alternative: __arrow cclock__
 
 
 __
@@ -364,7 +364,7 @@ return "↝";
 ```
 __
 \~> - ↝ (RIGHT wavy arrow).
-        Alternative shortcut: __arrow wavy right__.
+	- Alternative: __arrow wavy right__
 
 
 __
@@ -377,4 +377,4 @@ return "↜";
 ```
 __
 <\~ - ↜ (LEFT wavy arrow).
-        Alternative shortcut: __arrow wavy left__.
+	- Alternative: __arrow wavy left__

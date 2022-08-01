@@ -90,7 +90,7 @@ return text || "";
 ```
 __
 clips get {name: required, name} - Expands to the value stored in clip {name}.
-        Alternative shortcut: __cg {name}__.
+	- Alternative: __cg {name: required, name}__
 
 
 __

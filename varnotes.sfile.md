@@ -225,8 +225,8 @@ if (!variable) { return [ "Variable __", $2, "__ not found.\n\n" ]; }
 return variable;
 ```
 __
-varnotes get {varnote name: required, name} {variable name: required name} - Gets the value of the variable named {variable name} in the varnote named {varnote name}.
-        Alternative shortcut: __vn {varnote name} {variable name}__
+varnotes get {varnote name: required, name} {variable name: required, name} - Gets the value of the variable named {variable name} in the varnote named {varnote name}.
+	- Alternative: __vn {varnote name: required, name} {variable name: required, name}__
 
 
 __
@@ -280,8 +280,8 @@ app.vault.modify(file, content);
 return [ "Variable __", $2, "__ in varnote __", $1, "__ set to \"__", $3, "__\".\n\n" ];
 ```
 __
-varnotes set {varnote name: required, name} {variable name: required name} {value: required text} - Sets the variable named {variable name} to {value}, in the varnote named {varnote name}.
-        Alternative shortcut: __vnset {varnote name} {variable name} {value}__
+varnotes set {varnote name: required, name} {variable name: required, name} {value: required text} - Sets the variable named {variable name} to {value}, in the varnote named {varnote name}.
+	- Alternative: __vnset {varnote name: required, name} {variable name: required, name} {value: required, text}__
 
 
 __

@@ -66,9 +66,9 @@ Setup and manage variables within notes.  Can be used by other shortcut-files fo
 - __varnotes add {varnote name: required, name} {file address: required, text}__ - Adds a varnote named {varnote name} that is attached to the file at {file address}.
 - __varnotes remove {varnote name: required, name}__ - Removes the varnote {varnote name}.
 - __varnotes get {varnote name: required, name} {variable name: required name}__ - Gets the value of the variable named {variable name} in the varnote named {varnote name}.
-        Alternative shortcut: __vn {varnote name} {variable name}__
-- __varnotes set {varnote name: required, name} {variable name: required name} {value: required text}__ - Sets the variable named {variable name} to {value}, in the varnote named {varnote name}.
-        Alternative shortcut: __vnset {varnote name} {variable name} {value}__
+	- Alternative: __vn {varnote name: required, name} {variable name: required name}__
+- __varnotes set {varnote name: required, name} {variable name: required, name} {value: required, text}__ - Sets the variable named {variable name} to {value}, in the varnote named {varnote name}.
+	- Alternative: __vnset {varnote name: required, name} {variable name: required, name} {value: required, text}__
 - __varnotes refresh__ - Get the latest variables from all varnotes.
 - __varnotes refresh {varnote name: required, name}__ - Pull the variables from varnote {varnote name}.
 
@@ -82,16 +82,15 @@ Shortcuts for Mythic Variations 2.  This is an excellent "GM emulator" system fo
 Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __mythicv2.sfile__ in the shortcut-list, then __mythicv2.sfile__ will be disabled.
 
 - __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
-        Alternative shortcut: __reset mythic__.
 - __mythicv2 details {state: optional, y or n}__ - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 - __fate {odds: optional (0), -4 to 4} {wanted: optional (y), y or n}__ - Make a fate check based on {odds}: a value from -4 (impossible) to 4 (has to be), defaulting to 0 {50/50}.
- {odds} can also be the specific text of the odds, such as "impossible", "sure thing", etc.
- This is also based on {wanted}: a y/n, defaulting to y.  {wanted} specifies the direction of the chaos modifier.
-        Alternative shortcut: __f {odds} {wanted}__.
+This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
+- __fate {odds: optional ("50/50"), text} {wanted: optional (y), y or n}__ - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
+This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 - __detail__ - Make a detail check.
 - __event__ - Make an event check.
 - __meaning action__ - Roll on the action meaning tables.
-        Alternative shortcut: __meaning__.
+	- Alternative: __meaning__
 - __meaning description__ - Roll on the description meaning tables.
 - __scene__ - Show the current scene.
 - __scene {chaos adjust: required, -1 or 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
@@ -100,7 +99,6 @@ Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __my
 - __chaos++__ - Increase the chaos value by 1 (maximum of 6).
 - __chaos={value: required, 3 to 6}__ - Set the chaos value to {value}, an integer from 3 to 6.
 - __descriptors__ - Generates a personality and activity descriptor for an NPC.
-        Alternative shortcut: __descriptor__.
 - __disposition {descriptor count: required, -3 to 3}__ - Rolls for an NPC's disposition, modified by {descriptor count}, which represents the total of the NPC's activated descriptors.
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
 - __disposition {descriptorCount: required, -3 to 3} {base: required, 2 to 20}__ - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  {descriptor count} represents the total of the NPC's activated descriptors.
@@ -115,9 +113,8 @@ Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emula
 Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __mythicgme.sfile__ in the shortcut-list, then __mythicgme.sfile__ will be disabled.
 
 - __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
-        Alternative shortcut: __reset mythic__.
-- __fate {odds: optional (0), text}__ - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).  It can also be the specific text of the odds, such as "impossible", "sure thing", etc.
-        Alternative shortcut: __f {odds}__.
+- __fate {odds: optional (0), -4 to 6}__ - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).
+- __fate {odds: optional ("50/50"), text}__ - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
 - __scene__ - Show the current scene.
 - __scene {chaosAdjust: required, -1 or 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 - __event__ - Make an event check.
@@ -187,7 +184,7 @@ Shortcuts that let the user manage clips of text.  A "clip" is a bit of named te
 - __reset clips__ - Remove all clips.
 - __clips__ - Lists all stored clips.
 - __clips get {name: required, name}__ - Expands to the value stored in clip {name}.
-        Alternative shortcut: __cg {name}__.
+	- Alternative: __cg {name: required, name}__
 - __clips add {name: required, name} {value, required, text}__ - Creates a clip named {name} that stores the string {value}.
 - __clips expansion {name: required name}__ - Creates a clip named {name} that stores the previous expansion.
 - __clips remove {name: required, name}__ - Removes the clip named {name}.

@@ -81,7 +81,6 @@ return "***\n\n\n### SCENE " + window._inlineScripts.state.mythicgme.scene + "\n
 ```
 __
 reset mythicgme - Reset mythic state to defaults and displays scene heading.
-        Alternative shortcut: __reset mythic__.
 ***
 
 
@@ -146,7 +145,6 @@ return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
 ```
 __
 fate {odds: optional (~0), -4 to 6} - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).
-        Alternative shortcut: __f {odds}__.
 
 
 __
@@ -163,7 +161,6 @@ return expand("fate " + (INPUT_ODDS[$1.trim().toLowerCase()] ?? 0));
 ```
 __
 fate {odds: optional ("50/50"), text} - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
-        Alternative shortcut: __f {odds}__.
 
 __
 ```
