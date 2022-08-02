@@ -21,11 +21,10 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [mythicgme.sfile](#mythicgmesfile)
 - [une.sfile](#unesfile)
 - [adventurecrafter.sfile](#adventurecraftersfile)
-- [rpgtools.sfile](#rpgtoolssfile)
 - [clips.sfile](#clipssfile)
+- [rpgtools.sfile](#rpgtoolssfile)
 - [arrows.sfile](#arrowssfile)
 - [lipsum.sfile](#lipsumsfile)
-- [support.sfile](#supportsfile)
 
 ***
 
@@ -171,13 +170,6 @@ Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create cohere
 
 ***
 
-### rpgtools.sfile
-Shortcuts to help in playing tabletop rpgs, either group or solo.
-
-- __tbl twist__ - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).
-
-***
-
 ### clips.sfile
 Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but simplistic and tied to the session state.
 
@@ -185,9 +177,16 @@ Shortcuts that let the user manage clips of text.  A "clip" is a bit of named te
 - __clips__ - Lists all stored clips.
 - __clips get {name: required, name}__ - Expands to the value stored in clip {name}.
 	- Alternative: __cg {name: required, name}__
-- __clips add {name: required, name} {value, required, text}__ - Creates a clip named {name} that stores the string {value}.
+- __clips set {name: required, name} {value, required, text}__ - Creates / Sets a clip named {name} to the string {value}.
 - __clips expansion {name: required name}__ - Creates a clip named {name} that stores the previous expansion.
 - __clips remove {name: required, name}__ - Removes the clip named {name}.
+
+***
+
+### rpgtools.sfile
+Shortcuts to help in playing tabletop rpgs, either group or solo.
+
+- __tbl twist__ - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).
 
 ***
 
@@ -206,12 +205,5 @@ Shortcuts for writing various arrows:
 A decent Lorum Ipsum generator.
 
 - __lipsum {paragraph count: optional (1), >0}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
-
-***
-
-### support.sfile
-Various helper shortcuts of minimal category.
-
-- __rngseed {seed: optional, >0}__ - Sets Math.random to a custom random number generator with a seed of {seed}.  Useful for testing.  If {seed} is omitted, the random number generator is returned to javascript default.
 
 ***

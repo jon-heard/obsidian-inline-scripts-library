@@ -95,7 +95,7 @@ clips get {name: required, name} - Expands to the value stored in clip {name}.
 
 __
 ```
-^clips? add ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
+^clips? set ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 __
 ```js
@@ -104,7 +104,7 @@ window._inlineScripts.state.clips[$1] = $2;
 return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 __
-clips add {name: required, name} {value, required, text} - Creates a clip named {name} that stores the string {value}.
+clips set {name: required, name} {value, required, text} - Creates / Sets a clip named {name} to the string {value}.
 
 
 __
