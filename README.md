@@ -16,7 +16,6 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 
 - [tejs_state](#tejs_state)
 - [tejs_lists](#tejs_lists)
-- [tejs_varnotes](#tejs_varnotes)
 - [tejs_mythicv2](#tejs_mythicv2)
 - [tejs_mythicgme](#tejs_mythicgme)
 - [tejs_une](#tejs_une)
@@ -54,23 +53,6 @@ Shortcuts for working with lists.
 - __lists removelist {list name}__ - Remove the entire list {list name}.
 - __lists addfolder {list name} {folder}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name} {sub list 1} {sub list 2}...__ - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
-
-***
-
-### tejs_varnotes
-Setup and manage variables within notes.  Can be used by other shortcut-files for working with data in notes.
-
-- __reset varnotes__ - Removes all stored varnotes from the session state.
-- __varnotes__ - Lists all varnotes and the files they are connected to.
-- __varnotes vars {varnote name}__ - Lists all the vars for the varnote named {varnote name} (a required name property).
-- __varnotes add {varnote name} {file address}__ - Adds a varnote named {varnote name} (a required name parameter) that is attached to the file at {file address} (a required file address parameter).
-- __varnotes remove {varnote name}__ - Removes the varnote {var name} (a required name parameter).
-- __varnotes get {varnote name} {var name}__ - Gets the value of the var named {var name} (a required name parameter) in the varnote named {varnote name} (a required name parameter).
-        Alternative shortcut: __vn {varnote name} {var name}__.
-- __varnotes set {varnote name} {var name} {value}__ - Sets the var named {var name} (a required name parameter) to {value} (a required text parameter), in the varnote named {varnote name} (a required name parameter).
-        Alternative shortcut: __vnset {varnote name} {var name} {value}__.
-- __varnotes refresh__ - Get the latest vars from all varnotes and store it all.
-- __varnotes refresh {varnote name}__ - Pull the vars from varnote {varnote name} (a required "name" parameter).
 
 ***
 
