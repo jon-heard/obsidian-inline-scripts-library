@@ -16,7 +16,6 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 
 - [state.sfile](#statesfile)
 - [lists.sfile](#listssfile)
-- [varnotes.sfile](#varnotessfile)
 - [mythicv2.sfile](#mythicv2sfile)
 - [mythicgme.sfile](#mythicgmesfile)
 - [une.sfile](#unesfile)
@@ -53,23 +52,6 @@ Shortcuts for working with lists.
 - __lists removelist {list name: required, name}__ - Remove the entire list {list name}.
 - __lists addfolder {list name: required, name} {folder: required, text}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name: required, name} {sub list 1: optional, name} {sub list 2: optional, name}...__ - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
-
-***
-
-### varnotes.sfile
-Setup and manage variables within notes.  Can be used by other shortcut-files for working with data in notes.
-
-- __reset varnotes__ - Removes all stored varnotes from the session state.
-- __varnotes__ - Lists all varnotes and the files they are connected to.
-- __varnotes vars {varnote name: required, name}__ - Lists all the variables for the varnote named {varnote name}.
-- __varnotes add {varnote name: required, name} {file address: required, text}__ - Adds a varnote named {varnote name} that is attached to the file at {file address}.
-- __varnotes remove {varnote name: required, name}__ - Removes the varnote {varnote name}.
-- __varnotes get {varnote name: required, name} {variable name: required name}__ - Gets the value of the variable named {variable name} in the varnote named {varnote name}.
-	- Alternative: __vn {varnote name: required, name} {variable name: required name}__
-- __varnotes set {varnote name: required, name} {variable name: required, name} {value: required, text}__ - Sets the variable named {variable name} to {value}, in the varnote named {varnote name}.
-	- Alternative: __vnset {varnote name: required, name} {variable name: required, name} {value: required, text}__
-- __varnotes refresh__ - Get the latest variables from all varnotes.
-- __varnotes refresh {varnote name: required, name}__ - Pull the variables from varnote {varnote name}.
 
 ***
 
