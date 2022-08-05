@@ -61,7 +61,7 @@ reset lists - Clear all lists.
 __
 __
 ```js
-function getListItems(name)
+async function getListItems(name)
 {
 	let list = window._inlineScripts.state.lists[name];
 	if (!list) { return []; }
@@ -84,7 +84,7 @@ function getListItems(name)
 		case "combo":
 			for (const sublist of list.content)
 			{
-				result = result.concat(getListItems(sublist));
+				result = result.concat(await getListItems(sublist));
 			}
 			result.sort();
 			break;
@@ -106,7 +106,7 @@ let listNames = Object.keys(window._inlineScripts.state.lists);
 listNames.sort();
 for (let i = 0; i < listNames.length; i++)
 {
-	const items = getListItems(listNames[i]);
+	const items = await getListItems(listNames[i]);
 	const listType = window._inlineScripts.state.lists[listNames[i]].type;
 	if (listType !== "basic")
 	{
@@ -126,7 +126,7 @@ __
 ```
 __
 ```js
-let items = getListItems($1);
+let items = await getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
 const listType = window._inlineScripts.state.lists[$1].type;
 let content = "";
@@ -149,7 +149,7 @@ __
 // note: Test string accepts empty {list name} for use as a sub-shortcut.
 // note: Success returns string array for use as a sub-shortcut.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
-let items = getListItems($1);
+let items = await getListItems($1);
 if (items?.length || $2)
 {
 	let result = Number($2) || roll(items.length);
@@ -221,7 +221,7 @@ if (!window._inlineScripts.state.lists[$1])
 const type = window._inlineScripts.state.lists[$1].type;
 if (type === "basic")
 {
-	const list = getListItems($1);
+	const list = await getListItems($1);
 	if (!list.contains($2))
 	{
 		return ERROR_PREFIX + "Entry not found.\n\n";
@@ -233,7 +233,7 @@ if (type === "basic")
 }
 else if (type === "combo")
 {
-	const list = getListItems($1);
+	const list = await getListItems($1);
 	if (!list.contains($2))
 	{
 		return ERROR_PREFIX + "Entry not found.\n\n";
@@ -312,7 +312,7 @@ __
 ```
 __
 ```js
-return getListItems($1);
+return await getListItems($1);
 ```
 __
 hidden - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).

@@ -365,7 +365,7 @@ ac chars gen - Generate a new character description, as per the Adventure Crafte
 __
 __
 ```js
-function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
+async function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
 {
 	let formattedEntries = {};
 	const rawEntries = expand("lists listraw " + listName);
@@ -433,7 +433,7 @@ if (!result)
 }
 if (!result)
 {
-	let list = getFormattedList("characters", true, 2);
+	let list = await getFormattedList("characters", true, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
 		result = [ "Pick the most logical character:\n" + list.join("\n") ];
@@ -456,7 +456,7 @@ __
 ```
 __
 ```js
-return "Characters:\n" + getFormattedList("characters", false, 2).join("\n") + "\n\n";
+return "Characters:\n" + (await getFormattedList("characters", false, 2)).join("\n") + "\n\n";
 ```
 __
 ac chars - List the character entries.
@@ -485,7 +485,7 @@ if (!$1)
 {
 	return "" +
 		"Enter \"__ac chars dupe__\" again with one of these indices:\n" +
-		getFormattedList("characters").join("\n") + "\n\n";
+		(await getFormattedList("characters")).join("\n") + "\n\n";
 }
 else
 {
@@ -512,7 +512,7 @@ if (!$1)
 {
 	return "" +
 		"Enter \"__ac chars remove__\" again with one of these indices:\n" +
-		getFormattedList("characters").join("\n") + "\n\n";
+		(await getFormattedList("characters")).join("\n") + "\n\n";
 }
 else
 {
@@ -548,7 +548,7 @@ if (!result)
 }
 if (!result)
 {
-	let list = getFormattedList("plotlines", true, 2);
+	let list = await getFormattedList("plotlines", true, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
 		result = [ "Pick the most logical plotline:\n" + list.join("\n") ];
@@ -571,7 +571,7 @@ __
 ```
 __
 ```js
-return "Plotlines:\n" + getFormattedList("plotlines", false, 2).join("\n") + "\n\n";
+return "Plotlines:\n" + (await getFormattedList("plotlines", false, 2)).join("\n") + "\n\n";
 ```
 __
 ac plots - List the plotline entries.
@@ -600,7 +600,7 @@ if (!$1)
 {
 	return "" +
 		"Enter \"__ac plots dupe__\" again with one of these indices:\n" +
-		getFormattedList("plotlines").join("\n") + "\n\n";
+		(await getFormattedList("plotlines")).join("\n") + "\n\n";
 }
 else
 {
@@ -627,7 +627,7 @@ if (!$1)
 {
 	return "" +
 		"Enter \"__ac plots remove__\" again with one of these indices:\n" +
-		getFormattedList("plotlines").join("\n") + "\n\n";
+		(await getFormattedList("plotlines")).join("\n") + "\n\n";
 }
 else
 {
