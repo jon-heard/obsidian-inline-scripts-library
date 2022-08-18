@@ -64,7 +64,7 @@ Helper script - some useful functions
 
 __
 ```
-^lipsum(| [1-9][0-9]*)$
+^lipsum ?(|[1-9][0-9]*)$
 ```
 __
 ```js

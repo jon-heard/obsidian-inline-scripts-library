@@ -9,31 +9,45 @@ It uses this to save & load the clips.
 
 
 __
+__
+```js
+// confirm that an object path is available
+function confirmObjPath(path, leaf)
+{
+    path = path.split(".");
+    let parent = window;
+    for (let i = 0; i < path.length-1; i++)
+    {
+        parent = (parent[path[i]] ||= {});
+    }
+    parent[path[path.length-1]] ||= (leaf || {});
+}
+```
+__
+Some userful functions
+
+
+__
 ```
 ^sfile setup$
 ```
 __
 ```js
-window._inlineScripts ||= {};
-window._inlineScripts.state ||= {};
-window._inlineScripts.state.clips ||= {};
-window._inlineScripts.clips ||= {};
-window._inlineScripts.clips.priorExpansion ||= "";
-
-window._inlineScripts.listeners ||= {};
-window._inlineScripts.listeners.state ||= {};
-window._inlineScripts.listeners.state.onReset ||= {};
-window._inlineScripts.listeners.state.onReset.clips ||= function(expand)
-{
-	expand("reset clips");
-};
-window._inlineScripts.listeners.inlineScripts ||= {};
-window._inlineScripts.listeners.inlineScripts.onExpansion ||= {};
-window._inlineScripts.listeners.inlineScripts.onExpansion.clips ||= function(expansionInfo)
-{
-	window._inlineScripts.clips.priorExpansion =
-		expansionInfo.expansionText;
-};
+confirmObjPath("_inlineScripts.state.clips");
+confirmObjPath("_inlineScripts.clips.priorExpansion", "");
+confirmObjPath(
+	"_inlineScripts.listeners.state.onReset.clips",
+	function(expand)
+	{
+		expand("reset clips");
+	});
+confirmObjPath(
+	"_inlineScripts.listeners.inlineScripts.onExpansion.clips",
+	function(expansionInfo)
+	{
+		_inlineScripts.clips.priorExpansion =
+			expansionInfo.expansionText;
+	});
 ```
 __
 Sets up a state variable for the clips.  Sets up callback for state "reset" event to reset itself.
@@ -45,8 +59,8 @@ __
 ```
 __
 ```js
-delete window._inlineScripts.listeners?.state?.onReset?.clips;
-delete window._inlineScripts.listeners?.inlineScripts?.onExpansion?.clips;
+delete _inlineScripts.listeners?.state?.onReset?.clips;
+delete _inlineScripts.listeners?.inlineScripts?.onExpansion?.clips;
 ```
 __
 Unregisters event callbacks.
@@ -58,7 +72,7 @@ __
 ```
 __
 ```js
-window._inlineScripts.state.clips = {};
+_inlineScripts.state.clips = {};
 return "All clips cleared.\n\n";
 ```
 __
@@ -71,7 +85,7 @@ __
 ```
 __
 ```js
-let clipNames = Object.keys(window._inlineScripts.state.clips);
+let clipNames = Object.keys(_inlineScripts.state.clips);
 return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 __
@@ -85,7 +99,7 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-let text = window._inlineScripts.state.clips[$1];
+let text = _inlineScripts.state.clips[$1];
 return text || "";
 ```
 __
@@ -100,11 +114,11 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-window._inlineScripts.state.clips[$1] = $2;
+_inlineScripts.state.clips[$1] = $2;
 return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 __
-clips set {name: required, name} {value, required, text} - Creates / Sets a clip named {name} to the string {value}.
+clips set {name: required, name} {value: required, text} - Creates / Sets a clip named {name} to the string {value}.
 
 
 __
@@ -114,8 +128,8 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-window._inlineScripts.state.clips[$1] = window._inlineScripts.clips.priorExpansion;
-return "Clip __" + $1 + "__ set to:\n" + window._inlineScripts.clips.priorExpansion + "\n\n";
+_inlineScripts.state.clips[$1] = _inlineScripts.clips.priorExpansion;
+return "Clip __" + $1 + "__ set to:\n" + _inlineScripts.clips.priorExpansion + "\n\n";
 ```
 __
 clips expansion {name: required name} - Creates a clip named {name} that stores the previous expansion.
@@ -128,9 +142,9 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-if (window._inlineScripts.state.clips[$1])
+if (_inlineScripts.state.clips[$1])
 {
-	delete window._inlineScripts.state.clips[$1];
+	delete _inlineScripts.state.clips[$1];
 	return "Clip __" + $1 + "__ removed.\n\n";
 }
 return "Failed to remove clip __" + $1 + "__.  Does not exist.\n\n";
