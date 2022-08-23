@@ -56,7 +56,7 @@ __
 __
 ```js
 confirmObjPath("_inlineScripts.state.adventurecrafter");
-_inlineScripts.state.adventurecrafter.themes = [];
+_inlineScripts.state.adventurecrafter.themeSlots = [];
 confirmObjPath("_inlineScripts.state.lists");
 
 if (!_inlineScripts.state.lists.threads)
@@ -142,16 +142,16 @@ __
 ```
 __
 ```js
-const theme = expand("themes pick");
-if (theme.length < 4)
+const themePick = expand("themes pick");
+if (themePick.length < 4)
 {
 	return "Plot point not generated.  Not all theme slots filled.\n\n";
 }
 let result = [ "Plot point:\n" ];
-const plotPoint = aPickWeight(_inlineScripts.adventurecrafter.plot, theme[3]);
+const plotPoint = aPickWeight(_inlineScripts.adventurecrafter.plot, themePick[3]);
 if (!plotPoint[7])
 {
-	result.push("- " + plotPoint[0] + "    _(" + theme[1] + ")_\n    - " + plotPoint[6]);
+	result.push("- " + plotPoint[0] + "    _(" + themePick[1] + ")_\n    - " + plotPoint[6]);
 }
 else
 {
@@ -180,7 +180,7 @@ __
 ```
 __
 ```js
-if (_inlineScripts.state.adventurecrafter.themes.length < 5)
+if (_inlineScripts.state.adventurecrafter.themeSlots.length < 5)
 {
 	return [ "Theme not picked.  Not all theme slots filled.\n\n" ];
 }
@@ -193,11 +193,11 @@ else
 	pick = (_inlineScripts.state.priorPickWas3rd ? 4 : 3);
 	_inlineScripts.state.priorPickWas3rd = !_inlineScripts.state.priorPickWas3rd;
 }
-pick = _inlineScripts.state.adventurecrafter.themes[pick];
+pick = _inlineScripts.state.adventurecrafter.themeSlots[pick];
 return [ "Theme __", _inlineScripts.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
 ```
 __
-themes pick - Pick a weighted random theme, as per the Adventure Crafter rules.
+themes pick - Pick a random theme from the chosen themes, as per the Adventure Crafter rules.
 
 
 __
@@ -206,18 +206,74 @@ __
 ```
 __
 ```js
-let result = "Current theme set:\n";
+let result =
+	[ "Current theme set:\n", "" ];
+const themes = _inlineScripts.adventurecrafter.themes;
+const themeSlots =
+	  _inlineScripts.state.adventurecrafter.themeSlots;
 for (let i = 0; i < 5; i++)
 {
-	result += "" + (i+1) + " - " +
-		(_inlineScripts.adventurecrafter.themes[
-			_inlineScripts.state.adventurecrafter.themes[i] ?? 9] || "") +
-		"\n"
+	result[1] +=
+		(i+1) + " - " +
+		(themes[ themeSlots[i] ?? 9 ] || "") +
+		"\n";
 }
-return result + "\n";
+result.push("\n");
+return result;
 ```
 __
-themes - Show the ordered list of themes.
+themes - Show the list of chosen themes.
+
+
+__
+```
+^themes? add$
+```
+__
+```js
+let themeSlots = _inlineScripts.state.adventurecrafter.themeSlots;
+if (themeSlots.length >= 5)
+{
+	return "Theme not added.  All five theme slots are already filled.\n\n";
+}
+const themes = _inlineScripts.adventurecrafter.themes;
+let message = "Select the next theme.\n\nCurrent theme slots:\n";
+message +=
+	"<div style='display:inline-block;text-align:left'>" +
+	expand("themes")[1] + "</div><br/><br/>";
+let pick = popups.pick(message, themes);
+if (pick === null) { return null; }
+themeSlots.push(selection);
+return "Theme slot __" + themeSlots.length + "__ set to __" + themes[pick] + "__" + "\n\n";
+```
+__
+themes add - Choose a theme for the next unchosen theme-slot.
+
+
+__
+```
+^themes? roll$
+```
+__
+```js
+let themeSlots =
+	_inlineScripts.state.adventurecrafter.themeSlots;
+if (themeSlots.length >= 5)
+{
+	return [ "Theme not added.  All five theme slots are already filled.", "\n\n" ];
+}
+let r = roll(5);
+// Seek unused theme (if theme slots aren't already filled)
+while (themeSlots.length < 5 && themeSlots.includes(r-1))
+{
+	r = roll(5);
+}
+themeSlots.push(r-1);
+const themes = _inlineScripts.adventurecrafter.themes;
+return [ "Theme slot __" + themeSlots.length + "__ set to __" + themes[r-1] + "__", "\n\n" ];
+```
+__
+themes roll - Pick a random theme for the next unchosen theme-slot.
 
 
 __
@@ -227,68 +283,15 @@ __
 __
 ```js
 let result = "";
-// Do-whlie causes at least 1 roll.  If already filled, this prodces an error msg.
 do
 {
 	result += expand("themes roll")[0] + "\n";
 }
-while (_inlineScripts.state.adventurecrafter.themes.length < 5);
+while (_inlineScripts.state.adventurecrafter.themeSlots.length < 5);
 return result + "\n";
 ```
 __
-themes fill - Fills the remaining open theme slots with random themes.
-
-
-__
-```
-^themes? roll$
-```
-__
-```js
-const themes = _inlineScripts.state.adventurecrafter.themes;
-let r = roll(5);
-// Only seek unused theme if theme slots aren't already filled
-while (themes.length < 5 && _inlineScripts.state.adventurecrafter.themes.contains(r-1))
-{
-	r = roll(5);
-}
-return expand("themes add " + r);
-```
-__
-themes roll - Fills the next open theme slot with a random theme.
-
-
-__
-```
-^themes? add ?(|[1-5])$
-```
-__
-```js
-$1 = Number($1);
-if (!$1)
-{
-	return "" +
-		"Enter \"__themes add__\" again with one of these indices:\n" +
-		"1 - Action - _direct and physical_\n" +
-		"2 - Tension - _Anxiety provoking_\n" +
-		"3 - Mystery - _Question raising & answering_\n" +
-		"4 - Social - _Interaction of people and/or factions_\n" +
-		"5 - Personal - _Individual and intimate_\n\n";
-}
-else
-{
-	let themes = _inlineScripts.state.adventurecrafter.themes;
-	if (themes.length >= 5)
-	{
-		return [ "No theme added.  All five theme slots are already filled.", "\n\n" ];
-	}
-	themes.push($1-1);
-	return [ "Theme slot __" + themes.length + "__ set to __" + _inlineScripts.adventurecrafter.themes[$1-1] + "__", "\n\n" ];
-}
-```
-__
-themes add {theme id: optional, 1 to 5} - If {theme id} is NOT included, this shortcut shows the options for {theme id}.  If {theme id} IS included, this shortcut fills the next open theme slot with the theme of {theme id}.  {theme id} can be one of these options:
-1 (Action), 2 (Tension), 3 (Mystery), 4 (Social), 5 (Personal).
+themes fill - Pick random themes for the remaining unchosen theme-slots.
 
 
 __
@@ -297,11 +300,11 @@ __
 ```
 __
 ```js
-_inlineScripts.state.adventurecrafter.themes = [];
+_inlineScripts.state.adventurecrafter.themeSlots = [];
 return "All theme slots cleared.\n\n";
 ```
 __
-themes clear - Clear all theme slots.
+themes clear - Clear all chosen themes.
 ***
 
 
@@ -450,7 +453,7 @@ if (!result)
 	let list = await getFormattedList("characters", true, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
-		result = [ "Pick the most logical character:\n" + list.join("\n") ];
+		result = [ "Choose the most logical character:\n" + list.join("\n") ];
 	}
 	else
 	{
@@ -461,7 +464,7 @@ result.push("\n\n");
 return result;
 ```
 __
-ac chars pick - Pick a random char, as per the Adventure Crafter rules.
+ac chars pick - Pick a random character, as per the Adventure Crafter rules.
 
 
 __
@@ -473,7 +476,7 @@ __
 return "Characters:\n" + (await getFormattedList("characters", false, 2)).join("\n") + "\n\n";
 ```
 __
-ac chars - List the character entries.
+ac chars - List all character entries.
 
 
 __
@@ -485,61 +488,135 @@ __
 return expand("lists add characters " + $1);
 ```
 __
-ac chars add {character: required, text} - Add {character} to the list of character entries.
+ac chars add {character: text} - Add {character} to the list of character entries.
 
 
 __
 ```
-^ac chars? dupe ?(|[1-9][0-9]*)$
+^ac chars? dupe$
 ```
 __
 ```js
-$1 = Number($1);
-if (!$1)
+const rawCharacters = expand("lists listraw characters");
+if (!rawCharacters.length)
 {
-	return "" +
-		"Enter \"__ac chars dupe__\" again with one of these indices:\n" +
-		(await getFormattedList("characters")).join("\n") + "\n\n";
+	return "No character Duplicated.  There are no characters.\n\n";
 }
-else
+
+const characters = [...new Set(rawCharacters)];
+let characterDisplays = [...characters];
+for (let i = 0; i < characters.length; i++)
 {
-	const list = expand("lists listraw characters");
-	if ($1 > list.length)
+	let count = 0;
+	for (let j = 0; j < rawCharacters.length; j++)
 	{
-		return "Character not duplicated.  Invalid index given (" + $1 + ").\n\n";
+		if (rawCharacters[j] === characters[i])
+		{
+			count++;
+		}
 	}
-	return expand("lists add characters " + list[$1-1]);
+	if (count > 1)
+	{
+		characterDisplays[i] += " (x " + count + ")"
+	}
 }
+
+const pick = popups.pick(
+	"Choose a character to duplicate",
+	characterDisplays);
+if (pick === null) { return null; }
+expand("lists add characters " + characters[pick]);
+return "Character __" + characters[pick] + "__ duplicated.\n\n";
 ```
 __
-ac chars dupe {character index: optional, >0} - If {character index} is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut duplicates the character that is indexed by {character index}.
+ac chars dupe - Choose a character from the characters list and add a new entry for it.
 
 
 __
 ```
-^ac chars? remove ?(|[1-9][0-9]*)$
+^ac chars? reduce ?(|[1-9][0-9]*)$
 ```
 __
 ```js
-$1 = Number($1);
-if (!$1)
+const rawCharacters = expand("lists listraw characters");
+if (!rawCharacters.length)
 {
-	return "" +
-		"Enter \"__ac chars remove__\" again with one of these indices:\n" +
-		(await getFormattedList("characters")).join("\n") + "\n\n";
+	return "No character reduced.  " +
+		"There are no characters.\n\n";
 }
-else
+
+const characters = [...new Set(rawCharacters)];
+let characterDisplays = [...characters];
+for (let i = 0; i < characters.length; i++)
 {
-	const list = expand("lists listraw characters");
-	if ($1 > list.length)
+	let count = 0;
+	for (let j = 0; j < rawCharacters.length; j++)
 	{
-		return "Character not removed.  Invalid index given (" + $1 + ").\n\n";
+		if (rawCharacters[j] === characters[i])
+		{
+			count++;
+		}
 	}
-	return expand("lists remove characters " + list[$1-1]);
+	characterDisplays[i] += " (x " + count + ")"
 }
+
+const pick = popups.pick(
+	"Choose a character to Reduce",
+	characterDisplays);
+if (pick === null) { return null; }
+expand("lists remove characters " + characters[pick]);
+return "Character __" + characters[pick] + "__ reduced.\n\n";
 ```
 __
-ac chars remove {character index: optional, >0} - If {character index} is NOT included, this shortcut shows the options for {character index}.  If {character index} IS included, this shortcut removes one entry of the character that is indexed by {character index}.
+ac chars reduce - Choose a character from the characters list and remove one entry for it.
+
+
+__
+```
+^ac chars? rename$
+```
+__
+```js
+let rawCharacters = expand("lists listraw characters");
+if (!rawCharacters.length)
+{
+	return "No character renamed.  " +
+		"There are no characters.\n\n";
+}
+
+let characters = [...new Set(rawCharacters)];
+let characterDisplays = [...characters];
+for (let i = 0; i < characters.length; i++)
+{
+	let count = 0;
+	for (let j = 0; j < rawCharacters.length; j++)
+	{
+		if (rawCharacters[j] === characters[i])
+		{
+			count++;
+		}
+	}
+	if (count > 1)
+	{
+		characterDisplays[i] += " (x " + count + ")"
+	}
+}
+
+const pick = popups.pick(
+	"Choose a character to rename", characterDisplays);
+if (pick == null) { return null; }
+const replacement =
+	  popups.input("Enter a new text for the character.", characters[pick]);
+if (!replacement) { return null; }
+expand(
+	"lists replace characters " +
+	characters[pick] + " " + replacement);
+return "Character __" +
+	characters[pick] + "__ renamed to __" +
+	replacement + "__.\n\n";
+```
+__
+ac chars rename - Choose a character from the characters list and change it's text to something else.
 ***
 
 
@@ -565,7 +642,7 @@ if (!result)
 	let list = await getFormattedList("plotlines", true, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
-		result = [ "Pick the most logical plotline:\n" + list.join("\n") ];
+		result = [ "Choose the most logical plotline:\n" + list.join("\n") ];
 	}
 	else
 	{
@@ -588,7 +665,7 @@ __
 return "Plotlines:\n" + (await getFormattedList("plotlines", false, 2)).join("\n") + "\n\n";
 ```
 __
-ac plots - List the plotline entries.
+ac plots - List all plotline entries.
 
 
 __
@@ -600,61 +677,136 @@ __
 return expand("lists add plotlines " + $1);
 ```
 __
-ac plots add {plotline: required, text} - Add {plotline} to the list of plotline entries.
+ac plots add {plotline: text} - Add {plotline} to the list of plotline entries.
 
 
 __
 ```
-^ac plots? dupe ?(|[1-9][0-9]*)$
+^ac plots? dupe$
 ```
 __
 ```js
-$1 = Number($1);
-if (!$1)
+const rawPlots = expand("lists listraw plotlines");
+if (!rawPlots.length)
 {
-	return "" +
-		"Enter \"__ac plots dupe__\" again with one of these indices:\n" +
-		(await getFormattedList("plotlines")).join("\n") + "\n\n";
+	return "No plotline duplicated.  " +
+		"There are no plotlines.\n\n";
 }
-else
+
+const plots = [...new Set(rawPlots)];
+let plotDisplays = [...plots];
+for (let i = 0; i < plots.length; i++)
 {
-	const list = expand("lists listraw plotlines");
-	if ($1 > list.length)
+	let count = 0;
+	for (let j = 0; j < rawPlots.length; j++)
 	{
-		return "Plotline not duplicated.  Invalid index given (" + $1 + ").\n\n";
+		if (rawPlots[j] === plots[i])
+		{
+			count++;
+		}
 	}
-	return expand("lists add plotlines " + list[$1-1]);
+	if (count > 1)
+	{
+		plotDisplays[i] += " (x " + count + ")"
+	}
 }
+
+const pick = popups.pick(
+	"Choose a plotline to duplicate",
+	plotDisplays);
+if (pick === null) { return null; }
+expand("lists add plotlines " + plots[pick]);
+return "Plotline __" + plots[pick] + "__ duplicated.\n\n";
 ```
 __
-ac plots dupe {plotline index: optional, >0} - If {plotline index} is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut duplicates the plotline that is indexed by {plotline index}.
+ac plots dupe - Choose a plotline from the plotlines list and add a new entry for it.
 
 
 __
 ```
-^ac plots? remove ?(|[1-9][0-9]*)$
+^ac plots? reduce ?(|[1-9][0-9]*)$
 ```
 __
 ```js
-$1 = Number($1);
-if (!$1)
+const rawPlots = expand("lists listraw plotlines");
+if (!rawPlots.length)
 {
-	return "" +
-		"Enter \"__ac plots remove__\" again with one of these indices:\n" +
-		(await getFormattedList("plotlines")).join("\n") + "\n\n";
+	return "No plotlines reduced.  " +
+		"There are no plotline.\n\n";
 }
-else
+
+const plots = [...new Set(rawPlots)];
+let plotDisplays = [...plots];
+for (let i = 0; i < plots.length; i++)
 {
-	const list = expand("lists listraw plotlines");
-	if ($1 > list.length)
+	let count = 0;
+	for (let j = 0; j < rawPlots.length; j++)
 	{
-		return "Plotline not removed.  Invalid index given (" + $1 + ").\n\n";
+		if (rawPlots[j] === plots[i])
+		{
+			count++;
+		}
 	}
-	return expand("lists remove plotlines " + list[$1-1]);
+	plotDisplays[i] += " (x " + count + ")"
 }
+
+const pick = popups.pick(
+	"Choose a plotline to Reduce",
+	plotDisplays);
+if (pick === null) { return null; }
+expand("lists remove plotlines " + plots[pick]);
+return "Plotline __" + plots[pick] + "__ reduced.\n\n";
 ```
 __
-ac plots remove {plotline index: optional, >0} - If {plotline index} is NOT included, this shortcut shows the options for {plotline index}.  If {plotline index} IS included, this shortcut removes one entry of the plotline that is indexed by {plotline index}.
+ac plots reduce - Choose a plotline from the plotlines list and remove one entry for it.
+
+
+__
+```
+^ac plots? rename$
+```
+__
+```js
+let rawPlots = expand("lists listraw plotlines");
+if (!rawPlots.length)
+{
+	return "No plotlines renamed.  " +
+		"There are no plotlines.\n\n";
+}
+
+let plots = [...new Set(rawPlots)];
+let plotDisplays = [...plots];
+for (let i = 0; i < plots.length; i++)
+{
+	let count = 0;
+	for (let j = 0; j < rawPlots.length; j++)
+	{
+		if (rawPlots[j] === plots[i])
+		{
+			count++;
+		}
+	}
+	if (count > 1)
+	{
+		plotDisplays[i] += " (x " + count + ")"
+	}
+}
+
+const pick = popups.pick(
+	"Choose a plotline to rename", plotDisplays);
+if (pick == null) { return null; }
+const replacement =
+	  popups.input("Enter a new text for the plotline.", plots[pick]);
+if (!replacement) { return null; }
+expand(
+	"lists replace plotlines " +
+	plots[pick] + " " + replacement);
+return "Plotline __" +
+	plots[pick] + "__ renamed to __" +
+	replacement + "__.\n\n";
+```
+__
+ac plots rename - Choose a plotline from the plotlines list and change it's text to something else.
 
 
 __
@@ -678,7 +830,7 @@ __
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state.adventurecrafter.themes", []);
+confirmObjPath("_inlineScripts.state.adventurecrafter.themeSlots", []);
 confirmObjPath("_inlineScripts.state.lists");
 
 if (!_inlineScripts.state.lists.plotlines)

@@ -145,7 +145,7 @@ __
 ```js
 let items = await getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
-const listType = _inlineScripts.state.lists[$1].type;
+const listType = _inlineScripts.state.lists[$1]?.type || "basic";
 let content = "";
 if (listType !== "basic")
 {
@@ -156,34 +156,7 @@ if (listType !== "basic")
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
 __
-lists list {list name: required, name} - Show all items in the list {list name}.
-
-
-__
-```
-^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*) ?(|[1-9][0-9]*)$
-```
-__
-```js
-// note: Test string accepts empty {list name} for use as a sub-shortcut.
-// note: Success returns string array for use as a sub-shortcut.
-function roll(max) { return Math.trunc(Math.random() * max + 1); }
-let items = await getListItems($1);
-if (items?.length || $2)
-{
-	let result = Number($2) || roll(items.length);
-	if (result-1 >= items.length)
-	{
-		return [ "Failed to pick from list __" + $1 + "__.  The item index " + result + " is out of range.\n\n" ];
-	}
-	result = items[result - 1];
-	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
-}
-return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
-```
-__
-lists pick {list name: required, name} {item index: optional, >0} - Get a random item from the list {list name}.  If {item index} is specified, then its item is picked, instead of random.
-***
+lists list {list name: name text} - Show all items in the list {list name}.
 
 
 __
@@ -193,7 +166,7 @@ __
 __
 ```js
 _inlineScripts.state.lists[$1] ||= { type: "basic", content: [] };
-const ERROR_PREFIX = "Failed to add __" + $2 + "__ to list __" + $1 + "__.  ";
+const ERROR_PREFIX = "Item __" + $2 + "__ not added to list __" + $1 + "__.  ";
 const type = _inlineScripts.state.lists[$1].type;
 if (type === "basic")
 {
@@ -222,8 +195,36 @@ else
 }
 ```
 __
-lists add {list name: required, name} {item: required, text} - Add {item} to the list {list name}.  Allows duplicate items.
-    - Can only add to basic lists and combo lists that contain basic lists.
+lists add {list name: name text} {item: text} - Add {item} to the list {list name}.  Allows duplicate items.
+    - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
+
+
+__
+```
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*) ?(|[1-9][0-9]*)$
+```
+__
+```js
+// note: Test string accepts empty {list name} for use as a sub-shortcut.
+// note: Success returns string array for use as a sub-shortcut.
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+
+let items = await getListItems($1);
+if (items?.length || $2)
+{
+	let result = Number($2) || roll(items.length);
+	if (result-1 >= items.length)
+	{
+		return [ "Failed to pick from list __" + $1 + "__.  The item index " + result + " is out of range.\n\n" ];
+	}
+	result = items[result - 1];
+	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
+}
+return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
+```
+__
+lists pick {list name: name text} {item index: >0, default: ""} - Get a random item from the list {list name}.  If {item index} is specified, then the item at that index is picked, instead of random.
+***
 
 
 __
@@ -232,10 +233,12 @@ __
 ```
 __
 ```js
-const ERROR_PREFIX = "Failed to remove __" + $2 + "__ from list __" + $1 + "__.  ";
+const ERROR_PREFIX =
+	  "Item __" + $2 + "__ not removed from list __" +
+	  $1 + "__.  ";
 if (!_inlineScripts.state.lists[$1])
 {
-	return ERROR_PREFIX + "Entry not found.\n\n";
+	return ERROR_PREFIX + "Item not found.\n\n";
 }
 const type = _inlineScripts.state.lists[$1].type;
 if (type === "basic")
@@ -243,40 +246,96 @@ if (type === "basic")
 	const list = await getListItems($1);
 	if (!list.contains($2))
 	{
-		return ERROR_PREFIX + "Entry not found.\n\n";
+		return ERROR_PREFIX + "Item not found.\n\n";
 	}
 	const c = _inlineScripts.state.lists[$1].content;
 	let i = c.lastIndexOf($2);
 	c.splice(i, 1);
-	return "__" + $2 + "__ removed from list __" + $1 + "__.\n\n";
+	return "__" +
+		$2 + "__ removed from list __" + $1 +
+		"__.\n\n";
 }
 else if (type === "combo")
 {
 	const list = await getListItems($1);
 	if (!list.contains($2))
 	{
-		return ERROR_PREFIX + "Entry not found.\n\n";
+		return ERROR_PREFIX + "Item not found.\n\n";
 	}
 	const c = _inlineScripts.state.lists[$1].content;
 	// Iterate in reverse order, to be sure and remove LAST entry
 	for (let i = c.length-1; i >= 0; i--)
 	{
-		let result = expand("lists remove " + c[i] + " " + $2);
-		if (!result.startsWith("Failed"))
+		let result = expand(
+			"lists remove " + c[i] + " " + $2);
+		if (!result.startsWith("Item"))
 		{
-			return "__" + $2 + "__ removed from list __" + $1 + "__.\n\n";
+			return "__" +
+				$2 + "__ removed from list __" + $1 +
+				"__.\n\n";
 		}
 	}
-	return ERROR_PREFIX + "Failed on sub-list of this combo-list.\n\n";
+	return ERROR_PREFIX +
+		"Failed on sub-list of this combo-list.\n\n";
 }
 else
 {
-	return ERROR_PREFIX + "List type does not support this operation.\n\n";
+	return ERROR_PREFIX +
+		"List type does not support this operation.\n\n";
 }
 ```
 __
-lists remove {list name: required, name} {item: required, text} - Remove an instance of {item} from the list {list name}.
-    - Can only remove from basic lists and combo lists that contain basic lists.
+lists remove {list name: name text} {item: text} - Remove an instance of {item} from the list {list name}.
+    - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
+
+
+__
+```
+^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ([^ ]+) (.+)$
+```
+__
+```js
+const ERROR_PREFIX =
+	  "Item __" + $2 + "__ not replaced in list __" +
+	  $1 + "__.  ";
+if (!_inlineScripts.state.lists[$1])
+{
+	return ERROR_PREFIX + "Item not found.\n\n";
+}
+const type = _inlineScripts.state.lists[$1].type;
+if (type === "basic")
+{
+	const c = _inlineScripts.state.lists[$1].content;
+	for (let i = 0; i < c.length; i++)
+	{
+		if (c[i] == $2.replaceAll("\t", " "))
+		{
+			c[i] = $3;
+		}
+	}
+	return "All items of __" +
+		$2 + "__ in list __" + $1 +
+		"__ replaced with __" + $3 + "__.\n\n";
+}
+else if (type === "combo")
+{
+	const subLists = _inlineScripts.state.lists[$1].content;
+	for (const subList of subLists)
+	{
+		expand("lists replace " + subList + " " + $2 + " " + $3);
+	}
+	return "All items of __" +
+		$2 + "__ in list __" + $1 +
+		"__ replaced with __" + $3 + "__.\n\n";
+}
+else
+{
+	return ERROR_PREFIX +
+		"List type does not support this operation.\n\n";
+}
+```
+__
+lists replace {list name: name text} {item: non-space text} {replacement: text} - Replace all instances of {item} with {replacement}.  Any space characters in {item} should be replaced by a tab character to reserve the space character for the end of {item}.
 
 
 __
@@ -293,7 +352,7 @@ if (_inlineScripts.state.lists[$1])
 return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
 ```
 __
-lists removelist {list name: required, name} - Remove the entire list {list name}.
+lists removelist {list name: name text} - Remove the entire list {list name}.
 ***
 
 
@@ -308,7 +367,7 @@ _inlineScripts.state.lists[$1] = { type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
-lists addfolder {list name: required, name} {folder: required, text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
+lists addfolder {list name: name text} {folder: text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 
 
 __
@@ -322,7 +381,7 @@ _inlineScripts.state.lists[$1] = { type: "combo", content: links };
 return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 __
-lists addcombo {list name: required, name} {sub list 1: optional, name} {sub list 2: optional, name}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
 
 
 __

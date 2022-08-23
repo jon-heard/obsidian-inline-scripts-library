@@ -94,7 +94,7 @@ __
 return "State:\n" + JSON.stringify(_inlineScripts.state) + "\n\n";
 ```
 __
-state get - Expands to a state-string - a string which includes all data in the current session state.
+state get - Expands to a state-string - a string containing all data for the current session state.
 
 
 __
@@ -123,7 +123,7 @@ const stateString =
 return expand("state set " + stateString);
 ```
 __
-state restore - Load the session state from the final "state get" shortcut expansion in the current note.
+state restore - Load the session state from the last "state get" shortcut expansion in the current note.
 
 
 __
@@ -150,4 +150,4 @@ callFunctionCollection(
 return "State loaded.\n\n";
 ```
 __
-state set {state: required, text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.
+state set {state: text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.

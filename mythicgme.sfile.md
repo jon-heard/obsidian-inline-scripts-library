@@ -157,7 +157,7 @@ if (Math.trunc(r/10) == r%10 &&
 return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
 ```
 __
-fate {odds: optional (~0), -4 to 6} - Make a fate check based on {odds}.  Odds can be from -4 (impossible) to 6 (has to be) and defaults 0 (50/50).
+fate {odds: -4 to 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Make a fate check based on {odds}.
 
 
 __
@@ -173,7 +173,7 @@ const INPUT_ODDS =
 return expand("fate " + (INPUT_ODDS[$1.trim().toLowerCase()] ?? 0));
 ```
 __
-fate {odds: optional ("50/50"), text} - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
+fate {odds: text, default: "50/50"} - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
 
 __
 ```
@@ -217,7 +217,7 @@ if (chk <= _inlineScripts.state.mythicgme.chaos)
 return result + "\n- setup:\n    - ";
 ```
 __
-scene {chaosAdjust: required, -1 or 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+scene {chaosAdjust: -1 or 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 ***
 
 
@@ -312,7 +312,7 @@ _inlineScripts.state.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __
-chaos={value: required, 1 to 9} - Set the chaos value to {value}.
+chaos={value: 1 to 9} - Set the chaos value to {value}.
 
 
 __

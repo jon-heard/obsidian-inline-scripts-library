@@ -40,4 +40,4 @@ return [ "Twist:\n", aPick(target), " - ", aPick(circumstance), "\n\n" ]
 
 ```
 __
-tbl twist - Random table: a plot twist.  [Source](https://jvhouse.xyz/plot-twist-situations).
+tbl twist - Random table: a plot twist.  <a href='https://jvhouse.xyz/plot-twist-situations'>Source</a>.

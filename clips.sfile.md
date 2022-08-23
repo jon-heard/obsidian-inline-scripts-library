@@ -94,21 +94,6 @@ clips - Lists all stored clips.
 
 __
 ```
-^(?:clips? get|cg) ([_a-zA-Z][_a-zA-Z0-9]*)$
-```
-__
-```js
-$1 = $1.toLowerCase();
-let text = _inlineScripts.state.clips[$1];
-return text || "";
-```
-__
-clips get {name: required, name} - Expands to the value stored in clip {name}.
-	- Alternative: __cg {name: required, name}__
-
-
-__
-```
 ^clips? set ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 __
@@ -118,7 +103,22 @@ _inlineScripts.state.clips[$1] = $2;
 return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 __
-clips set {name: required, name} {value: required, text} - Creates / Sets a clip named {name} to the string {value}.
+clips set {name: name text} {value: text} - Creates / Sets a clip named {name} to the string {value}.
+
+
+__
+```
+^(?:clips? get|cg) ([_a-zA-Z][_a-zA-Z0-9]*)$
+```
+__
+```js
+$1 = $1.toLowerCase();
+let text = _inlineScripts.state.clips[$1];
+return text || "";
+```
+__
+clips get {name: name text} - Expands to the value stored in clip {name}.
+	- Alternative: __cg {name: name text}__
 
 
 __
@@ -129,10 +129,10 @@ __
 ```js
 $1 = $1.toLowerCase();
 _inlineScripts.state.clips[$1] = _inlineScripts.clips.priorExpansion;
-return "Clip __" + $1 + "__ set to:\n" + _inlineScripts.clips.priorExpansion + "\n\n";
+return "Clip __" + $1 + "__ set to:\n***\n" + _inlineScripts.clips.priorExpansion + "\n***\n\n";
 ```
 __
-clips expansion {name: required name} - Creates a clip named {name} that stores the previous expansion.
+clips expansion {name: name text} - Creates a clip named {name} that stores the previous expansion.
 
 
 __
@@ -147,7 +147,7 @@ if (_inlineScripts.state.clips[$1])
 	delete _inlineScripts.state.clips[$1];
 	return "Clip __" + $1 + "__ removed.\n\n";
 }
-return "Failed to remove clip __" + $1 + "__.  Does not exist.\n\n";
+return "Clip __" + $1 + "__ not removed.  Does not exist.\n\n";
 ```
 __
-clips remove {name: required, name} - Removes the clip named {name}.
+clips remove {name: name text} - Removes the clip named {name}.
