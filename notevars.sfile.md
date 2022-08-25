@@ -39,6 +39,67 @@ notevars get {note name: path text} {variable name: name text} - Expands to the 
 
 __
 ```
+^notevars getArray (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*) ([0-9]+)$
+```
+__
+```js
+if ($1 === ".") { $1 = app.workspace.getActiveFile()?.basename; }
+const file = $1 ? app.vault.fileMap[$1 + ".md"] : null;
+if (!file)
+{
+	return [ "", "No value.  Note __" + $1 + "__ not found.\n\n" ];
+}
+const cache = app.metadataCache.getFileCache(file);
+if (!cache)
+{
+	return [ "", "No value.  Note __" + $1 + "__ is not properly cached by Obsidian.\n\n" ];
+}
+const fm = cache.frontmatter;
+if (!fm)
+{
+	return null;
+}
+const result =
+	fm[$2] || fm[$2 + ":"] || null;
+return Array.isArray(result) ? result[$3] : ($3 === "0") ? result : null;
+```
+__
+notevars getArray {note name: path text} {array name: name text} {index: >=0} - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
+
+__
+__
+```js
+const REFRESH_MARKDOWN_DELAY = 500;
+function refreshPreviewOnNextModify(file)
+{
+	// Find the view for the given file
+	let view = null;
+	for (const leaf of app.workspace.getLeavesOfType("markdown"))
+	{
+		if (leaf.view.file === file)
+		{
+			view = leaf.view;
+			break;
+		}
+	}
+	if (!view) { return; }
+	const onChanged = (changedFile) =>
+	{
+		if (changedFile === file)
+		{
+			app.metadataCache.off("changed", onChanged);
+			setTimeout(() =>
+				view.modes.preview.rerender(true), 0);
+		}
+	}
+	app.metadataCache.on("changed", onChanged);
+}
+```
+__
+Allow refreshing a  file's markdown
+
+__
+```
 ^notevars set (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
 ```
 __
@@ -102,43 +163,14 @@ else
 			content.slice(fmMatch[0].length);
 	}
 }
-setTimeout(() => app.vault.modify(file, result), 0);
+refreshPreviewOnNextModify(file);
+app.vault.modify(file, result);
 return "Note __" +
 	$1 + "__, variable __" + $2 +
 	"__ set to __" + $3 + "__.\n\n";
 ```
 __
 notevars set {note name: path text} {variable name: name text} {value: text} - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
-
-
-__
-```
-^notevars getArray (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*) ([0-9]+)$
-```
-__
-```js
-if ($1 === ".") { $1 = app.workspace.getActiveFile()?.basename; }
-const file = $1 ? app.vault.fileMap[$1 + ".md"] : null;
-if (!file)
-{
-	return [ "", "No value.  Note __" + $1 + "__ not found.\n\n" ];
-}
-const cache = app.metadataCache.getFileCache(file);
-if (!cache)
-{
-	return [ "", "No value.  Note __" + $1 + "__ is not properly cached by Obsidian.\n\n" ];
-}
-const fm = cache.frontmatter;
-if (!fm)
-{
-	return null;
-}
-const result =
-	fm[$2] || fm[$2 + ":"] || null;
-return Array.isArray(result) ? result[$3] : ($3 === "0") ? result : null;
-```
-__
-notevars getArray {note name: path text} {array name: name text} {index: >=0} - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
 
 
 __
@@ -223,6 +255,7 @@ else
 			content.slice(fmMatch[0].length);
 	}
 }
+refreshPreviewOnNextModify(file);
 app.vault.modify(file, result);
 return "Note __" +
 	$1 + "__, variable __" + $2 +
