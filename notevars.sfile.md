@@ -60,6 +60,9 @@ if (content === null || content === undefined)
 		"__ not set.  Error reading content of note __" +
 		$1 + "__.\n\n" ];
 }
+$3 = $3
+	.replaceAll("\\n", "\n")
+	.replaceAll("\\t", "\t");
 const fmMatch = content.match(/^(\n*---)(\n[\S\s]*\n)(\n*---\n)/);
 let result = content;
 if (!fmMatch)
@@ -69,14 +72,17 @@ if (!fmMatch)
 else
 {
 	const varMatch =
-		fmMatch[2].match("(\n\s*" + $2 + ":)[^\n]*\n");
+		fmMatch[2].match("(\n" + $2 + ":)[^\n]*\n");
 	if (varMatch)
 	{
-		let valueEndIndex = varMatch.index + varMatch[0].length;
-		while(fmMatch[2][valueEndIndex] === "-")
+		let valueEndIndex =
+			varMatch.index + varMatch[0].length;
+		while(fmMatch[2][valueEndIndex] === "-" ||
+		      fmMatch[2][valueEndIndex] === " ")
 		{
 			valueEndIndex =
-				fmMatch[2].indexOf("\n", valueEndIndex) + 1;
+				fmMatch[2].indexOf("\n", valueEndIndex)
+				+ 1;
 		}
 		result =
 			fmMatch[1] +
@@ -96,7 +102,7 @@ else
 			content.slice(fmMatch[0].length);
 	}
 }
-app.vault.modify(file, result);
+setTimeout(() => app.vault.modify(file, result), 0);
 return "Note __" +
 	$1 + "__, variable __" + $2 +
 	"__ set to __" + $3 + "__.\n\n";
@@ -150,7 +156,6 @@ if (!file)
 		"__ not set.  Note __" +
 		$1 + "__ not found.\n\n" ];
 }
-$3 = $3.split(",").filter(v => v);
 const content = await app.vault.cachedRead(file);
 if (content === null || content === undefined)
 {
@@ -159,6 +164,11 @@ if (content === null || content === undefined)
 		"__ not set.  Error reading content of note __" +
 		$1 + "__.\n\n" ];
 }
+$3 = $3
+	.replaceAll("\\n", "\n")
+	.replaceAll("\\t", "\t")
+	.split(",")
+	.filter(v => v);
 const fmMatch = content.match(/^(\n*---)(\n[\S\s]*\n)(\n*---\n)/);
 let result;
 if (!fmMatch)
@@ -173,14 +183,17 @@ if (!fmMatch)
 else
 {
 	const varMatch =
-		fmMatch[2].match("(\n\s*" + $2 + ":)[^\n]*\n");
+		fmMatch[2].match("(\n" + $2 + ":)[^\n]*\n");
 	if (varMatch)
 	{
-		let valueEndIndex = varMatch.index + varMatch[0].length;
-		while(fmMatch[2][valueEndIndex] === "-")
+		let valueEndIndex =
+			varMatch.index + varMatch[0].length;
+		while(fmMatch[2][valueEndIndex] === "-" ||
+		      fmMatch[2][valueEndIndex] === " ")
 		{
 			valueEndIndex =
-				fmMatch[2].indexOf("\n", valueEndIndex) + 1;
+				fmMatch[2].indexOf("\n", valueEndIndex)
+				+ 1;
 		}
 		result =
 			fmMatch[1] +
