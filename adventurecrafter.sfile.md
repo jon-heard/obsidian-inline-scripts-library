@@ -236,7 +236,12 @@ if (themeSlots.length >= 5)
 {
 	return "Theme not added.  All five theme slots are already filled.\n\n";
 }
-const themes = _inlineScripts.adventurecrafter.themes;
+const themes =
+	_inlineScripts.adventurecrafter.themes.map((v, i) =>
+	{
+		return v.padEnd(16, " ") +
+			_inlineScripts.adventurecrafter.themeDescriptions[i];
+	});
 let message = "Select the next theme.\n\nCurrent theme slots:\n";
 message +=
 	"<div style='display:inline-block;text-align:left'>" +
@@ -878,6 +883,14 @@ _inlineScripts ||= {};
 _inlineScripts.adventurecrafter ||= {};
 
 _inlineScripts.adventurecrafter.themes = [ "ACTION", "TENSION", "MYSTERY", "SOCIAL", "PERSONAL" ];
+_inlineScripts.adventurecrafter.themeDescriptions =
+[
+	"Direct and physical",
+	"Anxiety provoking (for the characters at least)",
+	"Questions: raising and answering",
+	"Interaction of people and/or factions",
+	"Individual and intimate situations"
+];
 
 _inlineScripts.adventurecrafter.plot_meta = [
 	[ "CHARACTER EXITS THE ADVENTURE", 18, "A Character, who is not a Player Character, is removed from the Characters List completely. Cross out all references to that Character on the Characters List. If there are no non-Player Characters, then re-roll for another Meta Plot Point. This change can be reflected in the activity in this Turning Point or not. For instance, you may explain the Character being removed from the Adventure by having that Character die in the Turning Point. Or, you simply remove them from the Characters List and decide that their involvement in the Adventure is over. If, when rolling on the Characters List to determine who this Character is, you roll a Player Character or \"New Character\", then consider it a result of \"Choose The Most Logical Character\"." ],
