@@ -84,7 +84,7 @@ Allows duplicate items.
 __
 __
 ```js
-async function getListItems(name)
+function getListItems(name)
 {
 	let list = _inlineScripts.state.lists[name];
 	if (!list) { return []; }
@@ -114,9 +114,10 @@ async function getListItems(name)
 	}
 	return result;
 }
-async function getNamesOfPopulatedLists()
+function getNamesOfPopulatedLists()
 {
-	const asyncFilter = async (arr, predicate) => {
+	function asyncFilter(arr, predicate)
+	{
 		const results = await Promise.all(arr.map(predicate));
 		return arr.filter((_v, index) => results[index]);
 	}
@@ -124,7 +125,7 @@ async function getNamesOfPopulatedLists()
 		  Object.keys(_inlineScripts.state.lists)
 		  .sort();
 	result = await asyncFilter(result,
-		async v => (await getListItems(v)).length);
+		function(v){ await getListItems(v).length; });
 	return result;
 }
 ```

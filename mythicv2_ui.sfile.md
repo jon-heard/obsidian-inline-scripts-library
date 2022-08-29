@@ -8,7 +8,7 @@ An extension to __mythicv2__ shortcut-file that provides graphical ui versions o
 __
 __
 ```js
-clearDetailsIfUserTriggered = function()
+function clearDetailsIfUserTriggered()
 {
 	if (expansionInfo.isUserTriggered)
 	{

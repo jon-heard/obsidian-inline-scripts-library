@@ -75,7 +75,7 @@ reset lists - Clear all lists.
 __
 __
 ```js
-async function getListItems(name)
+function getListItems(name)
 {
 	let list = _inlineScripts.state.lists[name];
 	if (!list) { return []; }

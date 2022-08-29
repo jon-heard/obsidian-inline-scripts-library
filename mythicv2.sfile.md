@@ -155,7 +155,7 @@ function getDetails()
 	}
 	return "\n- _" + _inlineScripts.mythicv2.details.join(" ") + "_";
 }
-clearDetailsIfUserTriggered = function()
+function clearDetailsIfUserTriggered()
 {
 	if (expansionInfo.isUserTriggered)
 	{
