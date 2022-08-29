@@ -9,9 +9,11 @@ It uses this to save & load the clips.
 
 
 __
+```
+^sfile setup$
+```
 __
 ```js
-// confirm that an object path is available
 function confirmObjPath(path, leaf)
 {
     path = path.split(".");
@@ -22,17 +24,7 @@ function confirmObjPath(path, leaf)
     }
     parent[path[path.length-1]] ||= (leaf || {});
 }
-```
-__
-Some userful functions
 
-
-__
-```
-^sfile setup$
-```
-__
-```js
 confirmObjPath("_inlineScripts.state.clips");
 confirmObjPath("_inlineScripts.clips.priorExpansion", "");
 confirmObjPath(

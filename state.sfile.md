@@ -14,17 +14,6 @@ Alternately, "state set last" will load the state-string from the last call to t
 __
 __
 ```js
-// confirm that an object path is available
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
 // Call an array or object of functions.
 // Useful for listener collections.
 function callFunctionCollection(colName, collection)
@@ -58,6 +47,18 @@ __
 ```
 __
 ```js
+// confirm that an object path is available
+function confirmObjPath(path, leaf)
+{
+    path = path.split(".");
+    let parent = window;
+    for (let i = 0; i < path.length-1; i++)
+    {
+        parent = (parent[path[i]] ||= {});
+    }
+    parent[path[path.length-1]] ||= (leaf || {});
+}
+
 confirmObjPath("_inlineScripts.state");
 confirmObjPath("_inlineScripts.listeners.state.onReset");
 confirmObjPath("_inlineScripts.listeners.state.onLoad");
