@@ -6,6 +6,76 @@ This shortcut-file includes shortcuts to get and set note-variables.  Note-varia
 
 This shortcut file can be used by other shortcut-files to let them read and manipulate data in notes for many uses, including TTRPG character sheets.
 
+Uses __state.sfile__ shortcut-file (optional).
+It uses this to save & load the refreshMarkdown flag.
+
+
+__
+```
+^sfile setup$
+```
+__
+```js
+function confirmObjPath(path, leaf)
+{
+    path = path.split(".");
+    let parent = window;
+    for (let i = 0; i < path.length-1; i++)
+    {
+        parent = (parent[path[i]] ||= {});
+    }
+    parent[path[path.length-1]] ||= (leaf || {});
+}
+
+confirmObjPath(
+	"_inlineScripts.state.notevars.refreshMarkdown",
+	true);
+
+confirmObjPath(
+	"_inlineScripts.listeners.state.onReset.notevars",
+	function(expand)
+	{
+		confirmObjPath("_inlineScripts.state.notevars");
+		_inlineScripts.state.notevars.refreshMarkdown =
+			true;
+	});
+```
+__
+Disables mythicv2 if mythicgme is already registered.  Sets up a state variable for mythicv2.  Sets up lists for mythicv2.  Sets up a callback for the state "reset" event in order to to reset mythicv2.
+
+
+__
+```
+^sfile shutdown$
+```
+__
+```js
+delete _inlineScripts.listeners?.state?.onReset?.notevars;
+```
+__
+Unregisters event callbacks.
+
+
+__
+```
+^notevars refreshMarkdown ?(|[y|n])$
+```
+__
+```js
+if ($1)
+{
+	_inlineScripts.state.notevars.refreshMarkdown =
+		($1 === "y");
+}
+return "notevars refreshMarkdown is " +
+	(_inlineScripts.state.notevars.refreshMarkdown ?
+	"__enabled__" : "__disabled__") + ".\n\n";
+```
+__
+notevars refreshMarkdown {state: y or n, default: ""} - If {state} is given, assigns it to the notevars "refreshMarkdown" flag.  Otherwise, displays the current "refreshMarkdown" flag.
+If refreshMarkdown flag is set then a note's markdown is refreshed each time one of it's variables is set.
+***
+
 
 __
 ```
@@ -72,6 +142,11 @@ __
 const REFRESH_MARKDOWN_DELAY = 500;
 function refreshPreviewOnNextModify(file)
 {
+	if (!_inlineScripts.state.notevars.refreshMarkdown)
+	{
+		return;
+	}
+
 	// Find the view for the given file
 	let view = null;
 	for (const leaf of app.workspace.getLeavesOfType("markdown"))
