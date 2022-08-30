@@ -486,7 +486,7 @@ ac chars - List all character entries.
 
 __
 ```
-^ac chars? add (.*)$
+^ac chars? add (.+)$
 ```
 __
 ```js
@@ -539,7 +539,7 @@ ac chars dupe - Choose a character from the characters list and add a new entry 
 
 __
 ```
-^ac chars? reduce ?(|[1-9][0-9]*)$
+^ac chars? reduce$
 ```
 __
 ```js
@@ -675,7 +675,7 @@ ac plots - List all plotline entries.
 
 __
 ```
-^ac plots? add (.*)$
+^ac plots? add (.+)$
 ```
 __
 ```js

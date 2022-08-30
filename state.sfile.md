@@ -129,7 +129,7 @@ state restore - Load the session state from the last "state get" shortcut expans
 
 __
 ```
-^state set (.*)$
+^state set (.+)$
 ```
 __
 ```js

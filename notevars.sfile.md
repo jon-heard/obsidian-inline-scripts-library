@@ -72,7 +72,7 @@ return "notevars refreshMarkdown is " +
 	"__enabled__" : "__disabled__") + ".\n\n";
 ```
 __
-notevars refreshMarkdown {state: y or n, default: ""} - If {state} is given, assigns it to the notevars "refreshMarkdown" flag.  Otherwise, displays the current "refreshMarkdown" flag.
+notevars refreshMarkdown {state: y OR n, default: ""} - If {state} is given, assigns it to the notevars "refreshMarkdown" flag.  Otherwise, displays the current "refreshMarkdown" flag.
 If refreshMarkdown flag is set then a note's markdown is refreshed each time one of it's variables is set.
 ***
 

@@ -40,7 +40,7 @@ return expand(
 	expand("une interact " + $2 + " " + $3);
 ```
 __
-une {randomness: 1 to 5 (order to chaos), default: 3 (standard)} {relationship to pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 to 8 (scheming to prejudiced), default: random} - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
+une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship TO pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
 ***
 
 
@@ -53,7 +53,7 @@ __
 return [ "Character:\nidentity: " + expand("une identity")[1] + "\npower: " + expand("une power " + $1)[1] + "\nmotive:\n" + expand("une motive")[1], "\n\n" ];
 ```
 __
-une character {randomness: 1 to 5 (order to chaos), default: 3 (standard)} - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
+une character {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
 
 
 __
@@ -72,7 +72,7 @@ return "Interact:" +
 	"\n\n";
 ```
 __
-une interact {relationship to pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 to 8 (scheming to prejudiced), default: random} - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
+une interact {relationship to pc: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
 ***
 
 
@@ -103,7 +103,7 @@ let table3 =
 return [ "Character power level:\n", aPickWeight(table3, Number($1) || 3)[0], "\n\n" ];
 ```
 __
-une power {randomness: 1 to 5 (order to chaos), default: 3 (standard)} - Generates a character's power level relative to pc's power level, based on {randomness}.
+une power {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} - Generates a character's power level relative to pc's power level, based on {randomness}.
 
 
 __
@@ -164,7 +164,7 @@ let result = aPickWeight(table6, Number($1) || 4)[0];
 return [ "Character mood:\n", result, "\n\n" ];
 ```
 __
-une mood {relationship to pc: 1 to 7 (love to hate), default: 4 (neutral)} - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}.
+une mood {relationship to pc: 1 TO 7 (love to hate), default: 4 (neutral)} - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}.
 
 
 __
@@ -189,7 +189,7 @@ let result = table7a[demeanor-1] + " - " + table7b[demeanor-1][bearing-1];
 return [ "Character bearing:\n", result, "\n\n" ];
 ```
 __
-une bearing {demeanor: 1 to 8 (scheming to prejudiced), default: random} - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
+une bearing {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
     1 - sceming       2 - insane       3 - friendly          4 - hostile
     5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
 

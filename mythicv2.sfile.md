@@ -112,7 +112,7 @@ if ($1)
 return "Mythic details are " + (_inlineScripts.state.mythicv2.showDetails ? "__enabled__" : "__disabled__") + ".\n\n";
 ```
 __
-mythicv2 details {state: y or n, default: ""} - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
+mythicv2 details {state: y OR n, default: ""} - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 ***
 
 __
@@ -202,7 +202,7 @@ let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
 return "Fate check (" + ODDS[$1 + 4] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
 __
-fate {odds: -4 to 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y or n, default: y} - Make a fate check based on {odds}.
+fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y} - Make a fate check based on {odds}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 
 
@@ -232,7 +232,7 @@ const inputOdds = INPUT_ODDS[$1.trim()] || 0;
 return expand("fate " + inputOdds + wanted);
 ```
 __
-fate {odds: text, default: "50/50"} {wanted: y or n, default: y} - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
+fate {odds: text, default: "50/50"} {wanted: y OR n, default: y} - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 
 
@@ -350,7 +350,7 @@ if (chk <= _inlineScripts.state.mythicv2.chaos)
 return result + getDetails() + "\n- setup:\n    - ";
 ```
 __
-scene {chaos adjust: -1 or 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+scene {chaos adjust: -1 OR 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 
 
 __
@@ -411,7 +411,7 @@ _inlineScripts.state.mythicv2.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __
-chaos={value: 3 to 6} - Set the chaos value to {value}, an integer from 3 to 6.
+chaos={value: 3 TO 6} - Set the chaos value to {value}, an integer from 3 to 6.
 ***
 
 
@@ -442,7 +442,7 @@ result = aPickWeight("", outcomes, 1, result)[0] + "\n. BASE = " + base;
 return "Disposition:\n. " + result + getDetails() + "\n\n";
 ```
 __
-disposition {descriptor count: -3 to 3} - Rolls for an NPC's disposition, modified by {descriptor count}, which represents the total of the NPC's activated descriptors.
+disposition {descriptor count: -3 TO 3} - Rolls for an NPC's disposition, modified by {descriptor count}, which represents the total of the NPC's activated descriptors.
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
 
 
@@ -462,7 +462,7 @@ result = aPickWeight("", outcomes, 1, result);
 return "Disposition:\n. " + result[0] + "\n. BASE = " + $2 + getDetails() + "\n\n";
 ```
 __
-disposition {descriptorCount: -3 to 3} {base: 2 to 20} - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  {descriptor count} represents the total of the NPC's activated descriptors.
+disposition {descriptorCount: -3 TO 3} {base: 2 TO 20} - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  {descriptor count} represents the total of the NPC's activated descriptors.
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
 
 
@@ -493,7 +493,7 @@ if (!result[0])
 return "Action:\n" + result[0] + getDetails() + "\n\n";
 ```
 __
-action {dispositionAdjust: -2 or 0 or 2 or 4} - Makes an NPC behavior check, modified by {dispositionAdjust}: the modifier of the NPC's disposition.
+action {dispositionAdjust: -2 OR 0 OR 2 OR 4} - Makes an NPC behavior check, modified by {dispositionAdjust}: the modifier of the NPC's disposition.
 
 
 __

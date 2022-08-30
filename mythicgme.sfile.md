@@ -157,7 +157,7 @@ if (Math.trunc(r/10) == r%10 &&
 return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
 ```
 __
-fate {odds: -4 to 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Make a fate check based on {odds}.
+fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Make a fate check based on {odds}.
 
 
 __
@@ -217,7 +217,7 @@ if (chk <= _inlineScripts.state.mythicgme.chaos)
 return result + "\n- setup:\n    - ";
 ```
 __
-scene {chaosAdjust: -1 or 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+scene {chaosAdjust: -1 OR 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 ***
 
 
@@ -312,7 +312,7 @@ _inlineScripts.state.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __
-chaos={value: 1 to 9} - Set the chaos value to {value}.
+chaos={value: 1 TO 9} - Set the chaos value to {value}.
 
 
 __
