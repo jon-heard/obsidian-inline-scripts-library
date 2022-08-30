@@ -7,7 +7,7 @@ This shortcut-file includes shortcuts to get and set note-variables.  Note-varia
 This shortcut file can be used by other shortcut-files to let them read and manipulate data in notes for many uses, including TTRPG character sheets.
 
 Uses __state.sfile__ shortcut-file (optional).
-It uses this to save & load the refreshMarkdown flag.
+It uses this to save & load the isMarkdownRefreshed flag.
 
 
 __
@@ -28,7 +28,7 @@ function confirmObjPath(path, leaf)
 }
 
 confirmObjPath(
-	"_inlineScripts.state.notevars.refreshMarkdown",
+	"_inlineScripts.state.notevars.isMarkdownRefreshed",
 	true);
 
 confirmObjPath(
@@ -36,7 +36,7 @@ confirmObjPath(
 	function(expand)
 	{
 		confirmObjPath("_inlineScripts.state.notevars");
-		_inlineScripts.state.notevars.refreshMarkdown =
+		_inlineScripts.state.notevars.isMarkdownRefreshed =
 			true;
 	});
 ```
@@ -58,22 +58,22 @@ Unregisters event callbacks.
 
 __
 ```
-^notevars refreshMarkdown ?(|[y|n])$
+^notevars isMarkdownRefreshed ?(|[y|n])$
 ```
 __
 ```js
 if ($1)
 {
-	_inlineScripts.state.notevars.refreshMarkdown =
+	_inlineScripts.state.notevars.isMarkdownRefreshed =
 		($1 === "y");
 }
-return "notevars refreshMarkdown is " +
-	(_inlineScripts.state.notevars.refreshMarkdown ?
+return "notevars isMarkdownRefreshed is " +
+	(_inlineScripts.state.notevars.isMarkdownRefreshed ?
 	"__enabled__" : "__disabled__") + ".\n\n";
 ```
 __
-notevars refreshMarkdown {state: y OR n, default: ""} - If {state} is given, assigns it to the notevars "refreshMarkdown" flag.  Otherwise, displays the current "refreshMarkdown" flag.
-If refreshMarkdown flag is set then a note's markdown is refreshed each time one of it's variables is set.
+notevars isMarkdownRefreshed {state: y OR n, default: ""} - If {state} is given, assigns it to the notevars "isMarkdownRefreshed" flag.  Otherwise, displays the current "isMarkdownRefreshed" flag.
+If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
 ***
 
 
@@ -142,7 +142,7 @@ __
 const REFRESH_MARKDOWN_DELAY = 500;
 function refreshPreviewOnNextModify(file)
 {
-	if (!_inlineScripts.state.notevars.refreshMarkdown)
+	if (!_inlineScripts.state.notevars.isMarkdownRefreshed)
 	{
 		return;
 	}

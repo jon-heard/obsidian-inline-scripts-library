@@ -109,7 +109,7 @@ const choices =
 	"0", "+1", "+2",
 	"+3 (ALL descriptors make the npc MORE ACTIVE)"
 ];
-const pick = popups.pick("Consider the npc's three descriptors in the current situation.\n\nDescriptors that make the npc MORE active are +1.\nDescriptors that make the npc LESS active are -1.\nDescriptors that don't affect npc activity level are 0.\n\nWhat is the total descriptor modifier for the npc?", choices, 3);
+const pick = popups.pick("Enter the total descriptor modifier for the npc.\n\nConsider the npc's three descriptors in the current situation.\n+1 for descriptors that make the npc MORE active.\n-1 for descriptors that make the npc LESS active.\n0 for descriptors that don't affect npc activity.", choices, 3);
 if (pick === null) { return null; }
 
 const choices2 =
@@ -118,7 +118,7 @@ const choices2 =
 	"10","11","12","13","14","15","16","17",
 	"18","19","20"
 ];
-const pick2 = popups.pick("If the npc already has a dispositon for this scene, select the base disposition.\n\nIf the npc does NOT yet have a disposition for this scene, select 'Random' to choose one.", choices2);
+const pick2 = popups.pick("Enter the base disposition for the npc for this scene.\n\nIf the npc has a base dispositon for this scene, select it.\nIf the npc does NOT yet have a base disposition for this scene, select 'Random'.", choices2);
 if (pick2 === null) { return null; }
 
 if (!pick2)

@@ -177,14 +177,14 @@ fate {odds: text, default: "50/50"} - Make a fate check based on {odds}: a speci
 
 __
 ```
-^scene$
+^scene get?$
 ```
 __
 ```js
 return "The current scene is " + _inlineScripts.state.mythicgme.scene + ".\n\n";
 ```
 __
-scene - Show the current scene.
+scene get - Show the current scene.
 
 
 __

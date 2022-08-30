@@ -88,46 +88,41 @@ function getListItems(name)
 {
 	let list = _inlineScripts.state.lists[name];
 	if (!list) { return []; }
-	let result = [];
 	switch (list.type)
 	{
 		case "basic":
 			return list.content;
 			break;
 		case "folder":
-			for (let key in app.fileManager.vault.fileMap)
+			const targetFile =
+				app.fileManager.vault.fileMap[list.content];
+			if (!targetFile || !targetFile.children)
 			{
-				if (!key.startsWith(list.content)) { continue; }
-				key = key.slice(list.content.length);
-				if (key.contains("/")) { continue; }
-				if (!key.endsWith(".md")) { continue; }
-				result.push("[[" + key.slice(0,-3) + "]]");
+				return [];
 			}
-			break;
+			return [... targetFile.children ]
+				.filter(v => !v.children)
+				.filter(v => v.name.endsWith(".md"))
+				.map(v => "[[" + v.basename + "]]");
 		case "combo":
+		{
+			let result = [];
 			for (const sublist of list.content)
 			{
-				result = result.concat(await getListItems(sublist));
+				result =
+					result.concat(getListItems(sublist));
 			}
-			result.sort();
-			break;
+			return result.sort( (a, b) =>
+				a.toLowerCase().localeCompare(b.toLowerCase()) );
+		}
 	}
-	return result;
 }
-function getNamesOfPopulatedLists()
+const getNamesOfPopulatedLists = function()
 {
-	function asyncFilter(arr, predicate)
-	{
-		const results = await Promise.all(arr.map(predicate));
-		return arr.filter((_v, index) => results[index]);
-	}
-	let result =
-		  Object.keys(_inlineScripts.state.lists)
-		  .sort();
-	result = await asyncFilter(result,
-		function(v){ await getListItems(v).length; });
-	return result;
-}
+	return Object.keys(_inlineScripts.state.lists)
+		  .sort()
+		  .filter(v => getListItems(v).length);
+};
 ```
 __
 getListItems - get the items of a given list, regardless of list type.
@@ -269,7 +264,7 @@ listName = listName.replace(" ", "_");
 
 const folders =
 	Object.keys(app.vault.fileMap)
-	.filter(v => v !== "/" && !v.endsWith(".md"));
+	.filter(v => app.vault.fileMap[v].children);
 const pick = popups.pick("Choose the folder to attach <b>" + listName + "</b> to.", folders);
 if (pick === null) { return null; }
 

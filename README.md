@@ -120,28 +120,28 @@ Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" s
 Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __mythicv2.sfile__ in the shortcut-list, then __mythicv2.sfile__ will be disabled.
 
 - __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
-- __mythicv2 details {state: y or n, default: ""}__ - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
-- __fate {odds: -4 to 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y or n, default: y}__ - Make a fate check based on {odds}.
+- __mythicv2 details {state: y OR n, default: ""}__ - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
+- __fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y}__ - Make a fate check based on {odds}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
-- __fate {odds: text, default: "50/50"} {wanted: y or n, default: y}__ - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
+- __fate {odds: text, default: "50/50"} {wanted: y OR n, default: y}__ - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 - __detail__ - Make a detail check.
 - __event__ - Make an event check.
 - __meaning action__ - Roll on the action meaning tables.
 	- Alternative: __meaning__
 - __meaning description__ - Roll on the description meaning tables.
-- __scene__ - Show the current scene.
-- __scene {chaos adjust: -1 or 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+- __scene get__ - Show the current scene.
+- __scene {chaos adjust: -1 OR 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 - __chaos__ - Show the current chaos value.
 - __chaos--__ - Decrease the chaos value by 1 (minimum of 3).
 - __chaos++__ - Increase the chaos value by 1 (maximum of 6).
-- __chaos={value: 3 to 6}__ - Set the chaos value to {value}, an integer from 3 to 6.
+- __chaos={value: 3 TO 6}__ - Set the chaos value to {value}, an integer from 3 to 6.
 - __descriptors__ - Generates a personality and activity descriptor for an NPC.
-- __disposition {descriptor count: -3 to 3}__ - Rolls for an NPC's disposition, modified by {descriptor count}, which represents the total of the NPC's activated descriptors.
+- __disposition {descriptor count: -3 TO 3}__ - Rolls for an NPC's disposition, modified by {descriptor count}, which represents the total of the NPC's activated descriptors.
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
-- __disposition {descriptorCount: -3 to 3} {base: 2 to 20}__ - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  {descriptor count} represents the total of the NPC's activated descriptors.
+- __disposition {descriptorCount: -3 TO 3} {base: 2 TO 20}__ - Displays the NPC disposition determined by the {base} disposition, modified by {descriptorCount}.  {descriptor count} represents the total of the NPC's activated descriptors.
     - Example: 2 positively activated descriptors and 1 negatively activated descriptor would make a {descriptor count} of __1+1+(-1) = 1__.
-- __action {dispositionAdjust: -2 or 0 or 2 or 4}__ - Makes an NPC behavior check, modified by {dispositionAdjust}: the modifier of the NPC's disposition.
+- __action {dispositionAdjust: -2 OR 0 OR 2 OR 4}__ - Makes an NPC behavior check, modified by {dispositionAdjust}: the modifier of the NPC's disposition.
 
 ***
 
@@ -161,16 +161,16 @@ Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emula
 Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __mythicgme.sfile__ in the shortcut-list, then __mythicgme.sfile__ will be disabled.
 
 - __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
-- __fate {odds: -4 to 6 ("impossible" to "has to be"), default: 0 ("50/50")}__ - Make a fate check based on {odds}.
+- __fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")}__ - Make a fate check based on {odds}.
 - __fate {odds: text, default: "50/50"}__ - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
-- __scene__ - Show the current scene.
-- __scene {chaosAdjust: -1 or 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+- __scene get__ - Show the current scene.
+- __scene {chaosAdjust: -1 OR 1}__ - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
 - __event__ - Make an event check.
 - __meaning__ - Roll on the meaning tables.
 - __chaos__ - Show the current chaos value.
 - __chaos--__ - Decrease the chaos value by 1 (minimum of 1).
 - __chaos++__ - Increase the chaos value by 1 (maximum of 9).
-- __chaos={value: 1 to 9}__ - Set the chaos value to {value}.
+- __chaos={value: 1 TO 9}__ - Set the chaos value to {value}.
 
 ***
 
@@ -199,14 +199,14 @@ Display a bearing for the npc.
 Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
-- __une {randomness: 1 to 5 (order to chaos), default: 3 (standard)} {relationship to pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 to 8 (scheming to prejudiced), default: random}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
-- __une character {randomness: 1 to 5 (order to chaos), default: 3 (standard)}__ - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
-- __une interact {relationship to pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 to 8 (scheming to prejudiced), default: random}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
+- __une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship TO pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
+- __une character {randomness: 1 TO 5 (order to chaos), default: 3 (standard)}__ - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
+- __une interact {relationship to pc: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
 - __une identity__ - Generates a 2-word description for a character.
-- __une power {randomness: 1 to 5 (order to chaos), default: 3 (standard)}__ - Generates a character's power level relative to pc's power level, based on {randomness}.
+- __une power {randomness: 1 TO 5 (order to chaos), default: 3 (standard)}__ - Generates a character's power level relative to pc's power level, based on {randomness}.
 - __une motive__ - Generates three 2-word descriptions for a character's motivations.
-- __une mood {relationship to pc: 1 to 7 (love to hate), default: 4 (neutral)}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}.
-- __une bearing {demeanor: 1 to 8 (scheming to prejudiced), default: random}__ - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
+- __une mood {relationship to pc: 1 TO 7 (love to hate), default: 4 (neutral)}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}.
+- __une bearing {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
     1 - sceming       2 - insane       3 - friendly          4 - hostile
     5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
 - __une focus__ - Generate a character's primary interest for this interaction.
@@ -244,13 +244,11 @@ Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create cohere
 ### clips_ui.sfile
 An extension to __clips.sfile__ that provides graphical ui versions of shortcuts.
 
-- __reset clips__ - Remove all clips.
-- __clips__ - Lists all stored clips.
-- __clips set {name: name text} {value: text}__ - Creates / Sets a clip named {name} to the string {value}.
-- __clips get {name: name text}__ - Expands to the value stored in clip {name}.
-	- Alternative: __cg {name: name text}__
-- __clips expansion {name: name text}__ - Creates a clip named {name} that stores the previous expansion.
-- __clips remove {name: name text}__ - Removes the clip named {name}.
+- __clips get__ - Asks user to choose from list of clips.
+Expands to the value of that clip.
+	- Alternative: __cg__
+- __clips remove__ - Asks user to choose from list of clips.
+Removes that clip.
 
 ***
 
@@ -288,6 +286,6 @@ Shortcuts for writing various arrows:
 ### lipsum.sfile
 A decent Lorum Ipsum generator.
 
-- __lipsum {paragraph count: >0, default: 1}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.  If {paragraph count} is omitted, it defaults to 1.
+- __lipsum {paragraph count: >0, default: 1}__ - Generates a lorem ipsum text with {paragraph count} paragraphs.
 
 ***

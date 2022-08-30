@@ -79,31 +79,34 @@ function getListItems(name)
 {
 	let list = _inlineScripts.state.lists[name];
 	if (!list) { return []; }
-	let result = [];
 	switch (list.type)
 	{
 		case "basic":
 			return list.content;
 			break;
 		case "folder":
-			for (let key in app.fileManager.vault.fileMap)
+			const targetFile =
+				app.fileManager.vault.fileMap[list.content];
+			if (!targetFile || !targetFile.children)
 			{
-				if (!key.startsWith(list.content)) { continue; }
-				key = key.slice(list.content.length);
-				if (key.contains("/")) { continue; }
-				if (!key.endsWith(".md")) { continue; }
-				result.push("[[" + key.slice(0,-3) + "]]");
+				return [];
 			}
-			break;
+			return [... targetFile.children ]
+				.filter(v => !v.children)
+				.filter(v => v.name.endsWith(".md"))
+				.map(v => "[[" + v.basename + "]]");
 		case "combo":
+		{
+			let result = [];
 			for (const sublist of list.content)
 			{
-				result = result.concat(await getListItems(sublist));
+				result =
+					result.concat(getListItems(sublist));
 			}
-			result.sort();
-			break;
+			return result.sort( (a, b) =>
+				a.toLowerCase().localeCompare(b.toLowerCase()) );
+		}
 	}
-	return result;
 }
 ```
 __
@@ -120,7 +123,7 @@ let listNames = Object.keys(_inlineScripts.state.lists);
 listNames.sort();
 for (let i = 0; i < listNames.length; i++)
 {
-	const items = await getListItems(listNames[i]);
+	const items = getListItems(listNames[i]);
 	const listType = _inlineScripts.state.lists[listNames[i]].type;
 	if (listType !== "basic")
 	{
@@ -143,7 +146,7 @@ __
 ```
 __
 ```js
-let items = await getListItems($1);
+let items = getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
 const listType = _inlineScripts.state.lists[$1]?.type || "basic";
 let content = "";
@@ -209,7 +212,7 @@ __
 // note: Success returns string array for use as a sub-shortcut.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
-let items = await getListItems($1);
+let items = getListItems($1);
 if (items?.length || $2)
 {
 	let result = Number($2) || roll(items.length);
@@ -243,7 +246,7 @@ if (!_inlineScripts.state.lists[$1])
 const type = _inlineScripts.state.lists[$1].type;
 if (type === "basic")
 {
-	const list = await getListItems($1);
+	const list = getListItems($1);
 	if (!list.contains($2))
 	{
 		return ERROR_PREFIX + "Item not found.\n\n";
@@ -257,7 +260,7 @@ if (type === "basic")
 }
 else if (type === "combo")
 {
-	const list = await getListItems($1);
+	const list = getListItems($1);
 	if (!list.contains($2))
 	{
 		return ERROR_PREFIX + "Item not found.\n\n";
@@ -362,7 +365,6 @@ __
 ```
 __
 ```js
-if (!$2.endsWith("/")) { $2 += "/"; }
 _inlineScripts.state.lists[$1] = { type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
@@ -390,7 +392,7 @@ __
 ```
 __
 ```js
-return await getListItems($1);
+return getListItems($1);
 ```
 __
 hidden - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).

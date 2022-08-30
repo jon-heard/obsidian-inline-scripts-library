@@ -309,14 +309,14 @@ meaning description - Roll on the description meaning tables.
 
 __
 ```
-^scene$
+^scene get$
 ```
 __
 ```js
 return "The current scene is " + _inlineScripts.state.mythicv2.scene + ".\n\n";
 ```
 __
-scene - Show the current scene.
+scene get - Show the current scene.
 
 
 __

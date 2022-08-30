@@ -236,8 +236,9 @@ if (themeSlots.length >= 5)
 {
 	return "Theme not added.  All five theme slots are already filled.\n\n";
 }
-const themes =
-	_inlineScripts.adventurecrafter.themes.map((v, i) =>
+const themes = _inlineScripts.adventurecrafter.themes;
+const themeCaptions =
+	themes.map((v, i) =>
 	{
 		return v.padEnd(16, " ") +
 			_inlineScripts.adventurecrafter.themeDescriptions[i];
@@ -246,9 +247,9 @@ let message = "Select the next theme.\n\nCurrent theme slots:\n";
 message +=
 	"<div style='display:inline-block;text-align:left'>" +
 	expand("themes")[1] + "</div><br/><br/>";
-let pick = popups.pick(message, themes);
+let pick = popups.pick(message, themeCaptions);
 if (pick === null) { return null; }
-themeSlots.push(selection);
+themeSlots.push(pick);
 return "Theme slot __" + themeSlots.length + "__ set to __" + themes[pick] + "__" + "\n\n";
 ```
 __
@@ -387,7 +388,8 @@ ac chars gen - Generate a new character description, as per the Adventure Crafte
 __
 __
 ```js
-function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
+const getFormattedList = function(
+	listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
 {
 	let formattedEntries = {};
 	const rawEntries = expand("lists listraw " + listName);
@@ -423,7 +425,7 @@ function getFormattedList(listName, hideCount, prefixType /* 0-index,1-none,2-bu
 		result.push("NONE");
 	}
 	return result;
-}
+};
 ```
 __
 Used by a lot of "ac chars" and "ac plots" shortcuts.
