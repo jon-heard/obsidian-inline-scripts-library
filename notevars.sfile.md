@@ -34,17 +34,6 @@ confirmObjPath(
 __
 Sets up the notevars sate (just the "isMarkdownRefreshed" flag).
 
-__
-```
-^sfile shutdown$
-```
-__
-```js
-delete _inlineScripts.listeners?.state?.onReset?.notevars;
-```
-__
-Unregisters event callbacks.
-
 
 __
 ```
@@ -126,6 +115,7 @@ return Array.isArray(result) ? result[$3] : ($3 === "0") ? result : null;
 __
 notevars getArray {note name: path text} {array name: name text} {index: >=0} - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
 
+
 __
 __
 ```js
@@ -162,6 +152,7 @@ function refreshPreviewOnNextModify(file)
 ```
 __
 Allow refreshing a  file's markdown
+
 
 __
 ```

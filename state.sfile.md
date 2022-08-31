@@ -60,8 +60,12 @@ function confirmObjPath(path, leaf)
 }
 
 confirmObjPath("_inlineScripts.state");
-confirmObjPath("_inlineScripts.listeners.state.onReset");
-confirmObjPath("_inlineScripts.listeners.state.onLoad");
+confirmObjPath(
+	"_inlineScripts.inlineScripts.listeners." +
+	"state.onReset");
+confirmObjPath(
+	"_inlineScripts.inlineScripts.listeners." +
+	"state.onLoad");
 ```
 __
 Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.
@@ -78,7 +82,8 @@ _inlineScripts.state = {};
 // Notify listeners of state.onReset event
 callFunctionCollection(
 	"state.onReset",
-	_inlineScripts.listeners.state.onReset);
+	_inlineScripts.inlineScripts.listeners.
+	state.onReset);
 
 return "All state cleared.\n\n";
 ```
@@ -146,7 +151,8 @@ catch (e)
 // Notify listeners of state.onLoad event
 callFunctionCollection(
 	"state.onLoad",
-	_inlineScripts.listeners.state.onLoad);
+	_inlineScripts.inlineScripts.listeners.
+	state.onLoad);
 
 return "State loaded.\n\n";
 ```

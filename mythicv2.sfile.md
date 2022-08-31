@@ -56,7 +56,8 @@ confirmObjPath(
 	"_inlineScripts.state.lists.threads", { type: "basic", content: [] });
 confirmObjPath("_inlineScripts.mythicv2.details", []);
 confirmObjPath(
-	"_inlineScripts.listeners.state.onReset.mythicv2",
+	"_inlineScripts.inlineScripts.listeners." +
+	"state.onReset.mythicv2",
 	function(expand)
 	{
 		expand("mythicv2 reset");
@@ -73,7 +74,8 @@ __
 ```
 __
 ```js
-delete _inlineScripts.listeners?.state?.onReset?.mythicv2;
+delete _inlineScripts.inlineScripts?.listeners?.
+	state?.onReset?.mythicv2;
 ```
 __
 Unregisters event callbacks.

@@ -35,7 +35,8 @@ __
 ```js
 confirmObjPath("_inlineScripts.state.lists");
 confirmObjPath(
-	"_inlineScripts.listeners.state.onReset.lists",
+	"_inlineScripts.inlineScripts.listeners." +
+	"state.onReset.lists",
 	function(expand)
 	{
 		expand("lists reset");
@@ -51,7 +52,8 @@ __
 ```
 __
 ```js
-delete _inlineScripts.listeners?.state?.onReset?.lists;
+delete _inlineScripts.inlineScripts?.listeners?.
+	state?.onReset?.lists;
 ```
 __
 Unregisters event callbacks.

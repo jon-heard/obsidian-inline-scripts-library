@@ -822,7 +822,8 @@ __
 ```
 __
 ```js
-delete _inlineScripts.listeners?.state?.onReset?.adventurecrafter;
+delete _inlineScripts.inlineScripts?.listeners?.
+	state?.onReset?.adventurecrafter;
 delete _inlineScripts.adventurecrafter?.themes;
 delete _inlineScripts.adventurecrafter?.plot_meta;
 delete _inlineScripts.adventurecrafter?.plot;
@@ -875,7 +876,8 @@ if (!_inlineScripts.state.lists.characters)
 }
 
 confirmObjPath(
-	"_inlineScripts.listeners.state.onReset.adventurecrafter",
+	"_inlineScripts.inlineScripts.listeners." +
+	"state.onReset.adventurecrafter",
 	function(expand)
 	{
 		expand("adventurecrafter reset");

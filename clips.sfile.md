@@ -28,13 +28,14 @@ function confirmObjPath(path, leaf)
 confirmObjPath("_inlineScripts.state.clips");
 confirmObjPath("_inlineScripts.clips.priorExpansion", "");
 confirmObjPath(
-	"_inlineScripts.listeners.state.onReset.clips",
+	"_inlineScripts.inlineScripts.listeners.state.onReset.clips",
 	function(expand)
 	{
 		expand("clips reset");
 	});
 confirmObjPath(
-	"_inlineScripts.listeners.inlineScripts.onExpansion.clips",
+	"_inlineScripts.inlineScripts.listeners." +
+	"inlineScripts.onExpansion.clips",
 	function(expansionInfo)
 	{
 		_inlineScripts.clips.priorExpansion =
@@ -51,8 +52,10 @@ __
 ```
 __
 ```js
-delete _inlineScripts.listeners?.state?.onReset?.clips;
-delete _inlineScripts.listeners?.inlineScripts?.onExpansion?.clips;
+delete _inlineScripts.inlineScripts?.listeners?.
+	state?.onReset?.clips;
+delete _inlineScripts.inlineScripts?.listeners?.
+	inlineScripts?.onExpansion?.clips;
 ```
 __
 Unregisters event callbacks.
