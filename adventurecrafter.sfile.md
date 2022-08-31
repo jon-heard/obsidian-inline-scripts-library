@@ -51,7 +51,7 @@ Some useful functions
 
 __
 ```
-^reset adventurecrafter$
+^adventurecrafter reset$
 ```
 __
 ```js
@@ -91,7 +91,7 @@ else
 return "Adventure crafter reset.\n\n";
 ```
 __
-reset adventurecrafter - Reset adventurecrafter state to defaults.
+adventurecrafter reset - Reset adventurecrafter state to defaults.
 ***
 
 
@@ -878,7 +878,7 @@ confirmObjPath(
 	"_inlineScripts.listeners.state.onReset.adventurecrafter",
 	function(expand)
 	{
-		expand("reset adventurecrafter");
+		expand("adventurecrafter reset");
 	});
 
 _inlineScripts ||= {};

@@ -69,7 +69,7 @@ Sets up a global variable to hold the state for all shortcut-files.  Also, sets 
 
 __
 ```
-^reset state$
+^state reset$
 ```
 __
 ```js
@@ -83,7 +83,7 @@ callFunctionCollection(
 return "All state cleared.\n\n";
 ```
 __
-reset state - Clear all session state.
+state reset - Clear all session state.
 
 
 __

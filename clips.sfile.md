@@ -31,7 +31,7 @@ confirmObjPath(
 	"_inlineScripts.listeners.state.onReset.clips",
 	function(expand)
 	{
-		expand("reset clips");
+		expand("clips reset");
 	});
 confirmObjPath(
 	"_inlineScripts.listeners.inlineScripts.onExpansion.clips",
@@ -60,7 +60,7 @@ Unregisters event callbacks.
 
 __
 ```
-^reset clips?$
+^clips reset?$
 ```
 __
 ```js
@@ -68,7 +68,7 @@ _inlineScripts.state.clips = {};
 return "All clips cleared.\n\n";
 ```
 __
-reset clips - Remove all clips.
+clips reset - Remove all clips.
 
 
 __

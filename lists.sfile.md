@@ -38,7 +38,7 @@ confirmObjPath(
 	"_inlineScripts.listeners.state.onReset.lists",
 	function(expand)
 	{
-		expand("reset lists");
+		expand("lists reset");
 	});
 ```
 __
@@ -59,7 +59,7 @@ Unregisters event callbacks.
 
 __
 ```
-^reset lists?$
+^lists reset?$
 ```
 __
 ```js
@@ -68,7 +68,7 @@ _inlineScripts.state.lists = {};
 return "All lists cleared.\n\n";
 ```
 __
-reset lists - Clear all lists.
+lists reset - Clear all lists.
 ***
 
 

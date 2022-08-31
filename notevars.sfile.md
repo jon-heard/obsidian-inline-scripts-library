@@ -30,19 +30,9 @@ function confirmObjPath(path, leaf)
 confirmObjPath(
 	"_inlineScripts.state.notevars.isMarkdownRefreshed",
 	true);
-
-confirmObjPath(
-	"_inlineScripts.listeners.state.onReset.notevars",
-	function(expand)
-	{
-		confirmObjPath("_inlineScripts.state.notevars");
-		_inlineScripts.state.notevars.isMarkdownRefreshed =
-			true;
-	});
 ```
 __
-Disables mythicv2 if mythicgme is already registered.  Sets up a state variable for mythicv2.  Sets up lists for mythicv2.  Sets up a callback for the state "reset" event in order to to reset mythicv2.
-
+Sets up the notevars sate (just the "isMarkdownRefreshed" flag).
 
 __
 ```

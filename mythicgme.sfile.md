@@ -58,7 +58,7 @@ confirmObjPath(
 	"_inlineScripts.listeners.state.onReset.mythicgme",
 	function(expand)
 	{
-		expand("reset mythicgme");
+		expand("mythicgme reset");
 	});
 ```
 __
@@ -79,7 +79,7 @@ Unregisters event callbacks.
 
 __
 ```
-^reset mythic(?:gme)?$
+^mythic(?:gme)? reset$
 ```
 __
 ```js
@@ -93,7 +93,7 @@ _inlineScripts.state.lists.threads = { type: "basic", content: [] };
 return "***\n\n\n### SCENE " + _inlineScripts.state.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 __
-reset mythicgme - Reset mythic state to defaults and displays scene heading.
+mythicgme reset - Reset mythic state to defaults and displays scene heading.
 ***
 
 

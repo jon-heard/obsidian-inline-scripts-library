@@ -59,7 +59,7 @@ confirmObjPath(
 	"_inlineScripts.listeners.state.onReset.mythicv2",
 	function(expand)
 	{
-		expand("reset mythicv2");
+		expand("mythicv2 reset");
 	});
 ```
 __
@@ -81,7 +81,7 @@ Unregisters event callbacks.
 
 __
 ```
-^reset mythic(?:v2)?$
+^mythic(?:v2)? reset$
 ```
 __
 ```js
@@ -96,7 +96,7 @@ confirmObjPath("_inlineScripts.mythicv2.details", []);
 return "***\n\n\n### SCENE " + _inlineScripts.state.mythicv2.scene + "\n- Setup:\n    - ";
 ```
 __
-reset mythicv2 - Reset mythic state to defaults and displays scene heading.
+mythicv2 reset - Reset mythic state to defaults and displays scene heading.
 
 
 __

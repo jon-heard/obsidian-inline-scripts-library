@@ -37,7 +37,7 @@ This shortcut-file includes shortcuts to manage a session state.  This allows on
 
 This shortcut file can be used by other shortcut-files to let them create data that can persist across sessions of Obsidian.
 
-- __reset state__ - Clear all session state.
+- __state reset__ - Clear all session state.
 - __state get__ - Expands to a state-string - a string containing all data for the current session state.
 - __state restore__ - Load the session state from the last "state get" shortcut expansion in the current note.
 - __state set {state: text}__ - Loads the session state from {state}, a state-string created with the "state get" shortcut.
@@ -77,7 +77,7 @@ The combo-list is created, attached to the different lists.
 ### lists.sfile
 Shortcuts for working with lists.
 
-- __reset lists__ - Clear all lists.
+- __lists reset__ - Clear all lists.
 - __lists__ - Show all list and all items for each list.
 - __lists list {list name: name text}__ - Show all items in the list {list name}.
 - __lists add {list name: name text} {item: text}__ - Add {item} to the list {list name}.  Allows duplicate items.
@@ -119,7 +119,7 @@ Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" s
 
 Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __mythicv2.sfile__ in the shortcut-list, then __mythicv2.sfile__ will be disabled.
 
-- __reset mythicv2__ - Reset mythic state to defaults and displays scene heading.
+- __mythicv2 reset__ - Reset mythic state to defaults and displays scene heading.
 - __mythicv2 details {state: y OR n, default: ""}__ - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 - __fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y}__ - Make a fate check based on {odds}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
@@ -160,7 +160,7 @@ Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emula
 
 Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __mythicgme.sfile__ in the shortcut-list, then __mythicgme.sfile__ will be disabled.
 
-- __reset mythicgme__ - Reset mythic state to defaults and displays scene heading.
+- __mythicgme reset__ - Reset mythic state to defaults and displays scene heading.
 - __fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")}__ - Make a fate check based on {odds}.
 - __fate {odds: text, default: "50/50"}__ - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
 - __scene get__ - Show the current scene.
@@ -216,7 +216,7 @@ Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character ge
 ### adventurecrafter.sfile
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  It was designed by Tana Pigeon.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
-- __reset adventurecrafter__ - Reset adventurecrafter state to defaults.
+- __adventurecrafter reset__ - Reset adventurecrafter state to defaults.
 - __turning point__ - Get a list of five plot points to represent a major milestone in a plotline.
 - __plot point__ - Get a single plot point, generated from the plot points table.
 - __themes pick__ - Pick a random theme from the chosen themes, as per the Adventure Crafter rules.
@@ -255,7 +255,7 @@ Removes that clip.
 ### clips.sfile
 Shortcuts that let the user manage clips of text.  A "clip" is a bit of named text that can be quickly added to your note.  Similar to a shortcut, but simplistic and tied to the session state.
 
-- __reset clips__ - Remove all clips.
+- __clips reset__ - Remove all clips.
 - __clips__ - Lists all stored clips.
 - __clips set {name: name text} {value: text}__ - Creates / Sets a clip named {name} to the string {value}.
 - __clips get {name: name text}__ - Expands to the value stored in clip {name}.
