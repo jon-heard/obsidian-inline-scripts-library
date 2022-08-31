@@ -17,6 +17,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [state.sfile](#statesfile)
 - [lists_ui.sfile](#lists_uisfile)
 - [lists.sfile](#listssfile)
+- [notevars.sfile](#notevarssfile)
 - [mythicv2_ui.sfile](#mythicv2_uisfile)
 - [mythicv2.sfile](#mythicv2sfile)
 - [mythicgme_ui.sfile](#mythicgme_uisfile)
@@ -89,6 +90,20 @@ Shortcuts for working with lists.
 - __lists removelist {list name: name text}__ - Remove the entire list {list name}.
 - __lists addfolder {list name: name text} {folder: text}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}...__ - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+
+***
+
+### notevars.sfile
+This shortcut-file includes shortcuts to get and set note-variables.  Note-variables are variables set in the YAML frontmatter.  They can be used by many plugins, including DataView and TTRPG StatBlocks.
+
+This shortcut file can be used by other shortcut-files to let them read and manipulate data in notes for many uses, including TTRPG character sheets.
+
+- __notevars isMarkdownRefreshed {state: y OR n, default: ""}__ - If {state} is given, assigns it to the notevars "isMarkdownRefreshed" flag.  Otherwise, displays the current "isMarkdownRefreshed" flag.
+If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
+- __notevars get {note name: path text} {variable name: name text}__ - Expands to the value of variable {variable name} in note {note name}.  If {note name} is "." then it represents the current note.
+- __notevars getArray {note name: path text} {array name: name text} {index: >=0}__ - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
+- __notevars set {note name: path text} {variable name: name text} {value: text}__ - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
+- __notevars setArray {note name: path text} {array name: name text} {value1: text},{value2: text},...__ - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
 
 ***
 
