@@ -40,7 +40,8 @@ __
 ```
 __
 ```js
-if (expand("help").contains("\n    - mythicv2"))
+if (_inlineScripts.inlineScripts.
+	sfileIndices["mythicv2"])
 {
 	print("The mythicgme shortcut-file is disabled as it is incompatible with the mythicv2 shortcut-file.");
 	return true;

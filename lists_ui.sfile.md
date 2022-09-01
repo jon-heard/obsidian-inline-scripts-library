@@ -117,7 +117,7 @@ function getListItems(name)
 		}
 	}
 }
-const getNamesOfPopulatedLists = function()
+function getNamesOfPopulatedLists()
 {
 	return Object.keys(_inlineScripts.state.lists)
 		  .sort()

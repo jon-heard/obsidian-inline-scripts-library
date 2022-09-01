@@ -36,7 +36,7 @@ confirmObjPath(
 confirmObjPath(
 	"_inlineScripts.inlineScripts.listeners." +
 	"inlineScripts.onExpansion.clips",
-	function(expansionInfo)
+	(expansionInfo) =>
 	{
 		_inlineScripts.clips.priorExpansion =
 			expansionInfo.expansionText;

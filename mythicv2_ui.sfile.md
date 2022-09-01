@@ -6,6 +6,22 @@ An extension to __mythicv2__ shortcut-file that provides graphical ui versions o
 
 
 __
+```
+^sfile setup$
+```
+__
+```js
+if (_inlineScripts.inlineScripts.
+	sfileIndices["mythicgme"])
+{
+	return true;
+}
+```
+__
+Disables mythicv2_ui if mythicgme is already registered.
+
+
+__
 __
 ```js
 function clearDetailsIfUserTriggered()

@@ -7,6 +7,22 @@ An extension to __mythicgme.sfile__ that provides graphical ui versions of short
 
 __
 ```
+^sfile setup$
+```
+__
+```js
+if (_inlineScripts.inlineScripts.
+	sfileIndices["mythicv2"])
+{
+	return true;
+}
+```
+__
+Disables mythicgme_ui if mythicv2 is already registered.
+
+
+__
+```
 ^fate$
 ```
 __
