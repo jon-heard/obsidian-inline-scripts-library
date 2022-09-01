@@ -58,7 +58,7 @@ If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time
 
 __
 ```
-^notevars get (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*)
+^notevars get ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*)
 ```
 __
 ```js
@@ -88,7 +88,7 @@ notevars get {note name: path text} {variable name: name text} - Expands to the 
 
 __
 ```
-^notevars getArray (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*) ([0-9]+)$
+^notevars getArray ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) ([0-9]+)$
 ```
 __
 ```js
@@ -156,7 +156,7 @@ Allow refreshing a  file's markdown
 
 __
 ```
-^notevars set (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
+^notevars set ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
 ```
 __
 ```js
@@ -231,7 +231,7 @@ notevars set {note name: path text} {variable name: name text} {value: text} - S
 
 __
 ```
-^notevars setArray (\.|[_a-zA-Z][_a-zA-Z0-9/\.]*) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
+^notevars setArray ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
 ```
 __
 ```js

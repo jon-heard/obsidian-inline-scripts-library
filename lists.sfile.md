@@ -53,7 +53,7 @@ __
 __
 ```js
 delete _inlineScripts.inlineScripts?.listeners?.
-	state?.onReset?.lists;
+	lists;
 ```
 __
 Unregisters event callbacks.
@@ -296,10 +296,12 @@ lists remove {list name: name text} {item: text} - Remove an instance of {item} 
 
 __
 ```
-^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ([^ ]+) (.+)$
+^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ ].*"|[^ ]) (.+)$
 ```
 __
 ```js
+$2 = $2.replaceAll(/^\"|\"$/g, "");
+
 const ERROR_PREFIX =
 	  "Item __" + $2 + "__ not replaced in list __" +
 	  $1 + "__.  ";
@@ -313,7 +315,7 @@ if (type === "basic")
 	const c = _inlineScripts.state.lists[$1].content;
 	for (let i = 0; i < c.length; i++)
 	{
-		if (c[i] == $2.replaceAll("\t", " "))
+		if (c[i] == $2)
 		{
 			c[i] = $3;
 		}
@@ -340,7 +342,7 @@ else
 }
 ```
 __
-lists replace {list name: name text} {item: non-space text} {replacement: text} - Replace all instances of {item} with {replacement}.  Any space characters in {item} should be replaced by a tab character to reserve the space character for the end of {item}.
+lists replace {list name: name text} {item: text} {replacement: text} - Replace all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
 
 
 __
@@ -363,7 +365,7 @@ lists removelist {list name: name text} - Remove the entire list {list name}.
 
 __
 ```
-^lists? addfolder ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
+^lists? addfolder ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+)$
 ```
 __
 ```js
@@ -371,7 +373,7 @@ _inlineScripts.state.lists[$1] = { type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
-lists addfolder {list name: name text} {folder: text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
+lists addfolder {list name: name text} {folder: path text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 
 
 __
