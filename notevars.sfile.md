@@ -123,16 +123,12 @@ function refreshPreviewOnNextModify(file)
 	}
 
 	// Find the view for the given file
-	let view = null;
-	for (const leaf of app.workspace.getLeavesOfType("markdown"))
-	{
-		if (leaf.view.file === file)
-		{
-			view = leaf.view;
-			break;
-		}
-	}
-	if (!view) { return; }
+	const leaf =
+		_inlineScripts.inlineScripts.helperFncs.
+		getLeafForFile(file);
+	if (!leaf) { return; }
+	const view = leaf.view;
+
 	const onChanged = (changedFile) =>
 	{
 		if (changedFile === file)
