@@ -44,7 +44,7 @@ __
 ```js
 clearDetailsIfUserTriggered();
 const stateString =
-	_inlineScripts.state.mythicv2.showDetails
+	_inlineScripts.state.sessionState.mythicv2.showDetails
 	? "enabled" : "disabled";
 const pick = popups.pick(
 	"Set 'details' mode? (currently <b>" +

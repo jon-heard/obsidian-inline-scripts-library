@@ -12,7 +12,7 @@ __
 __
 ```js
 const clipNames =
-	Object.keys(_inlineScripts.state.clips).sort();
+	Object.keys(_inlineScripts.state.sessionState.clips).sort();
 if (!clipNames.length)
 {
 	return "No clips to get.";
@@ -21,7 +21,7 @@ const pick =
 	popups.pick("Choose a clip to get",
 	clipNames);
 if (pick === null) { return null; }
-return _inlineScripts.state.clips[clipNames[pick]];
+return _inlineScripts.state.sessionState.clips[clipNames[pick]];
 ```
 __
 clips get - Asks user to choose from list of clips.
@@ -36,7 +36,7 @@ __
 __
 ```js
 const clipNames =
-	Object.keys(_inlineScripts.state.clips).sort();
+	Object.keys(_inlineScripts.state.sessionState.clips).sort();
 if (!clipNames.length)
 {
 	return "No clips to remove.\n\n";
@@ -46,7 +46,7 @@ const pick =
 	"Choose a clip to remove",
 	clipNames);
 if (pick === null) { return null; }
-delete _inlineScripts.state.clips[clipNames[pick]];
+delete _inlineScripts.state.sessionState.clips[clipNames[pick]];
 return "Clip __" + clipNames[pick] + "__ removed.\n\n";
 ```
 __

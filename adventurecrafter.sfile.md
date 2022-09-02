@@ -33,17 +33,6 @@ function aPickWeight(a, wIndex, theRoll)
 	}
 	return a.last();
 }
-// confirm that an object path is available
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
 ```
 __
 Some useful functions
@@ -55,36 +44,38 @@ __
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state.adventurecrafter");
-_inlineScripts.state.adventurecrafter.themeSlots = [];
-confirmObjPath("_inlineScripts.state.lists");
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState.adventurecrafter");
+_inlineScripts.state.sessionState.adventurecrafter.themeSlots = [];
+confirmObjectPath("_inlineScripts.state.sessionState.lists");
 
-if (!_inlineScripts.state.lists.threads)
+if (!_inlineScripts.state.sessionState.lists.threads)
 {
-	_inlineScripts.state.lists.plotlines =
+	_inlineScripts.state.sessionState.lists.plotlines =
 		{ type: "basic", content: [] };
-	delete _inlineScripts.state.lists.plotline_dupes;
+	delete _inlineScripts.state.sessionState.lists.plotline_dupes;
 }
 else
 {
-	_inlineScripts.state.lists.plotline_dupes =
+	_inlineScripts.state.sessionState.lists.plotline_dupes =
 		{ type: "basic", content: [] };
-	_inlineScripts.state.lists.plotlines =
+	_inlineScripts.state.sessionState.lists.plotlines =
 		{ type: "combo", content: ["threads", "plotline_dupes"] };
 }
 
-if (!_inlineScripts.state.lists.pcs ||
-	!_inlineScripts.state.lists.npcs)
+if (!_inlineScripts.state.sessionState.lists.pcs ||
+	!_inlineScripts.state.sessionState.lists.npcs)
 {
-	_inlineScripts.state.lists.characters =
+	_inlineScripts.state.sessionState.lists.characters =
 		{ type: "basic", content: [] };
-	delete _inlineScripts.state.lists.character_dupes;
+	delete _inlineScripts.state.sessionState.lists.character_dupes;
 }
 else
 {
-	_inlineScripts.state.lists.character_dupes =
+	_inlineScripts.state.sessionState.lists.character_dupes =
 		{ type: "basic", content: [] };
-	_inlineScripts.state.lists.characters =
+	_inlineScripts.state.sessionState.lists.characters =
 		{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 }
 
@@ -180,7 +171,8 @@ __
 ```
 __
 ```js
-if (_inlineScripts.state.adventurecrafter.themeSlots.length < 5)
+if (_inlineScripts.state.sessionState.
+    adventurecrafter.themeSlots.length < 5)
 {
 	return [ "Theme not picked.  Not all theme slots filled.\n\n" ];
 }
@@ -190,10 +182,17 @@ else if (pick <  8) { pick = 1; }
 else if (pick < 10) { pick = 2; }
 else
 {
-	pick = (_inlineScripts.state.priorPickWas3rd ? 4 : 3);
-	_inlineScripts.state.priorPickWas3rd = !_inlineScripts.state.priorPickWas3rd;
+	pick =
+		(_inlineScripts.state.sessionState.
+		 adventurecrafter.priorPickWas3rd ? 4 : 3);
+	_inlineScripts.state.sessionState.
+	adventurecrafter.priorPickWas3rd =
+		!_inlineScripts.state.sessionState.
+		adventurecrafter.priorPickWas3rd;
 }
-pick = _inlineScripts.state.adventurecrafter.themeSlots[pick];
+pick =
+	_inlineScripts.state.sessionState.
+	adventurecrafter.themeSlots[pick];
 return [ "Theme __", _inlineScripts.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
 ```
 __
@@ -210,7 +209,8 @@ let result =
 	[ "Current theme set:\n", "" ];
 const themes = _inlineScripts.adventurecrafter.themes;
 const themeSlots =
-	  _inlineScripts.state.adventurecrafter.themeSlots;
+	  _inlineScripts.state.sessionState.
+	  adventurecrafter.themeSlots;
 for (let i = 0; i < 5; i++)
 {
 	result[1] +=
@@ -231,7 +231,9 @@ __
 ```
 __
 ```js
-let themeSlots = _inlineScripts.state.adventurecrafter.themeSlots;
+let themeSlots =
+	_inlineScripts.state.sessionState.
+	adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
 	return "Theme not added.  All five theme slots are already filled.\n\n";
@@ -263,7 +265,8 @@ __
 __
 ```js
 let themeSlots =
-	_inlineScripts.state.adventurecrafter.themeSlots;
+	_inlineScripts.state.sessionState.
+	adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
 	return [ "Theme not added.  All five theme slots are already filled.", "\n\n" ];
@@ -293,7 +296,8 @@ do
 {
 	result += expand("themes roll")[0] + "\n";
 }
-while (_inlineScripts.state.adventurecrafter.themeSlots.length < 5);
+while (_inlineScripts.state.sessionState.
+       adventurecrafter.themeSlots.length < 5);
 return result + "\n";
 ```
 __
@@ -306,7 +310,8 @@ __
 ```
 __
 ```js
-_inlineScripts.state.adventurecrafter.themeSlots = [];
+_inlineScripts.state.sessionState.
+	adventurecrafter.themeSlots = [];
 return "All theme slots cleared.\n\n";
 ```
 __
@@ -822,8 +827,8 @@ __
 ```
 __
 ```js
-delete _inlineScripts.inlineScripts?.listeners?.
-	state?.onReset?.adventurecrafter;
+delete _inlineScripts.state?.sessionState?.
+	listeners?.onReset?.adventurecrafter;
 delete _inlineScripts.adventurecrafter?.themes;
 delete _inlineScripts.adventurecrafter?.plot_meta;
 delete _inlineScripts.adventurecrafter?.plot;
@@ -838,47 +843,58 @@ __
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state.adventurecrafter.themeSlots", []);
-confirmObjPath("_inlineScripts.state.lists");
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath(
+	"_inlineScripts.state.sessionState." +
+	"adventurecrafter.themeSlots", []);
+confirmObjectPath("_inlineScripts.state.sessionState.lists");
 
-if (!_inlineScripts.state.lists.plotlines)
+if (!_inlineScripts.state.sessionState.lists.plotlines)
 {
-	if (!_inlineScripts.state.lists.threads)
+	if (!_inlineScripts.state.sessionState.lists.threads)
 	{
-		_inlineScripts.state.lists.plotlines ||=
+		_inlineScripts.state.sessionState.lists.plotlines ||=
 			{ type: "basic", content: [] };
-		delete _inlineScripts.state.lists.plotline_dupes;
+		delete _inlineScripts.state.sessionState.
+			lists.plotline_dupes;
 	}
 	else
 	{
-		_inlineScripts.state.lists.plotline_dupes ||=
+		_inlineScripts.state.sessionState.lists.plotline_dupes ||=
 			{ type: "basic", content: [] };
-		_inlineScripts.state.lists.plotlines ||=
+		_inlineScripts.state.sessionState.lists.plotlines ||=
 			{ type: "combo", content: ["threads", "plotline_dupes"] };
 	}
 }
 
-if (!_inlineScripts.state.lists.characters)
+if (!_inlineScripts.state.sessionState.lists.characters)
 {
-	if (!_inlineScripts.state.lists.pcs || !_inlineScripts.state.lists.npcs)
+	if (!_inlineScripts.state.sessionState.lists.pcs ||
+	    !_inlineScripts.state.sessionState.lists.npcs)
 	{
-		_inlineScripts.state.lists.characters ||=
+		_inlineScripts.state.sessionState.
+			lists.characters ||=
 			{ type: "basic", content: [] };
-		delete _inlineScripts.state.lists.character_dupes;
+		delete _inlineScripts.state.sessionState.
+			lists.character_dupes;
 	}
 	else
 	{
-		_inlineScripts.state.lists.character_dupes ||=
+		_inlineScripts.state.sessionState.
+			lists.character_dupes ||=
 			{ type: "basic", content: [] };
-		_inlineScripts.state.lists.characters ||=
-			{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
+		_inlineScripts.state.sessionState.
+			lists.characters ||=
+			{ type: "combo",
+			content: ["pcs", "npcs", "character_dupes"] };
 	}
 }
 
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"state.onReset.adventurecrafter",
-	function(expand)
+confirmObjectPath(
+	"_inlineScripts.state.sessionState." +
+	"listeners.onReset.adventurecrafter",
+	function()
 	{
 		expand("adventurecrafter reset");
 	});

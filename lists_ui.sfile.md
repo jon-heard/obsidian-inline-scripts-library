@@ -12,7 +12,7 @@ __
 __
 ```js
 const listNames =
-	  Object.keys(_inlineScripts.state.lists)
+	  Object.keys(_inlineScripts.state.sessionState.lists)
 	  .sort();
 if (!listNames.length)
 {
@@ -37,7 +37,7 @@ __
 __
 ```js
 let listNames =
-	  Object.keys(_inlineScripts.state.lists)
+	  Object.keys(_inlineScripts.state.sessionState.lists)
 	  .sort();
 let listName = null;
 if (listNames.length)
@@ -86,7 +86,7 @@ __
 ```js
 function getListItems(name)
 {
-	let list = _inlineScripts.state.lists[name];
+	let list = _inlineScripts.state.sessionState.lists[name];
 	if (!list) { return []; }
 	switch (list.type)
 	{
@@ -119,7 +119,7 @@ function getListItems(name)
 }
 function getNamesOfPopulatedLists()
 {
-	return Object.keys(_inlineScripts.state.lists)
+	return Object.keys(_inlineScripts.state.sessionState.lists)
 		  .sort()
 		  .filter(v => getListItems(v).length);
 };
@@ -234,7 +234,7 @@ __
 __
 ```js
 const listNames =
-	  Object.keys(_inlineScripts.state.lists)
+	  Object.keys(_inlineScripts.state.sessionState.lists)
 	  .sort();
 if (!listNames.length)
 {
@@ -286,7 +286,8 @@ let listName = popups.input("Type the name of the new combo-list.");
 if (!listName) { return null; }
 listName = listName.replace(" ", "_");
 
-let choices = Object.keys(_inlineScripts.state.lists);
+let choices =
+	Object.keys(_inlineScripts.state.sessionState.lists);
 let picks = [];
 do
 {

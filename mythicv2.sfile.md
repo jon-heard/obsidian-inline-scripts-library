@@ -16,25 +16,6 @@ If the pc, npc and thread lists have items, then the __event__ and __detail__ sh
 
 
 __
-__
-```js
-// confirm that an object path is available
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
-```
-__
-Some userful functions
-
-
-__
 ```
 ^sfile setup$
 ```
@@ -47,19 +28,24 @@ if (_inlineScripts.inlineScripts.
 	return true;
 }
 
-confirmObjPath("_inlineScripts.state.mythicv2.chaos", 4);
-confirmObjPath("_inlineScripts.state.mythicv2.scene", 1);
-confirmObjPath(
-	"_inlineScripts.state.lists.pcs", { type: "basic", content: [] });
-confirmObjPath(
-	"_inlineScripts.state.lists.npcs", { type: "basic", content: [] });
-confirmObjPath(
-	"_inlineScripts.state.lists.threads", { type: "basic", content: [] });
-confirmObjPath("_inlineScripts.mythicv2.details", []);
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"state.onReset.mythicv2",
-	function(expand)
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.mythicv2.chaos", 4);
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.mythicv2.scene", 1);
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists.pcs",
+	{ type: "basic", content: [] });
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists.npcs",
+	{ type: "basic", content: [] });
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists.threads", { type: "basic", content: [] });
+confirmObjectPath("_inlineScripts.mythicv2.details", []);
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset.mythicv2",
+	function()
 	{
 		expand("mythicv2 reset");
 	});
@@ -75,8 +61,7 @@ __
 ```
 __
 ```js
-delete _inlineScripts.inlineScripts?.listeners?.
-	state?.onReset?.mythicv2;
+delete _inlineScripts.state?.listeners?.onReset?.mythicv2;
 ```
 __
 Unregisters event callbacks.
@@ -88,15 +73,24 @@ __
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state.mythicv2");
-_inlineScripts.state.mythicv2.chaos = 4;
-_inlineScripts.state.mythicv2.scene = 1;
-confirmObjPath("_inlineScripts.state.lists");
-_inlineScripts.state.lists.pcs = { type: "basic", content: [] };
-_inlineScripts.state.lists.npcs = { type: "basic", content: [] };
-_inlineScripts.state.lists.threads = { type: "basic", content: [] };
-confirmObjPath("_inlineScripts.mythicv2.details", []);
-return "***\n\n\n### SCENE " + _inlineScripts.state.mythicv2.scene + "\n- Setup:\n    - ";
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.mythicv2");
+_inlineScripts.state.sessionState.mythicv2.chaos = 4;
+_inlineScripts.state.sessionState.mythicv2.scene = 1;
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists");
+_inlineScripts.state.sessionState.lists.pcs =
+	{ type: "basic", content: [] };
+_inlineScripts.state.sessionState.lists.npcs =
+	{ type: "basic", content: [] };
+_inlineScripts.state.sessionState.lists.threads =
+	{ type: "basic", content: [] };
+confirmObjectPath("_inlineScripts.mythicv2.details", []);
+return "***\n\n\n### SCENE " +
+	_inlineScripts.state.sessionState.mythicv2.scene +
+	"\n- Setup:\n    - ";
 ```
 __
 mythicv2 reset - Reset mythic state to defaults and displays scene heading.
@@ -110,9 +104,13 @@ __
 ```js
 if ($1)
 {
-	_inlineScripts.state.mythicv2.showDetails = ($1 === "y");
+	_inlineScripts.state.sessionState.mythicv2.showDetails =
+	($1 === "y");
 }
-return "Mythic details are " + (_inlineScripts.state.mythicv2.showDetails ? "__enabled__" : "__disabled__") + ".\n\n";
+return "Mythic details are " +
+	(_inlineScripts.state.sessionState.mythicv2.showDetails ?
+	"__enabled__" : "__disabled__") +
+	".\n\n";
 ```
 __
 mythicv2 details {state: y OR n, default: ""} - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
@@ -151,7 +149,7 @@ function addDetails()
 }
 function getDetails()
 {
-	if (!_inlineScripts.state.mythicv2.showDetails ||
+	if (!_inlineScripts.state.sessionState.mythicv2.showDetails ||
 	    !_inlineScripts.mythicv2.details.length)
 	{
 		return "";
@@ -167,7 +165,8 @@ function clearDetailsIfUserTriggered()
 }
 function getChaosAdjust(multiplier)
 {
-	const chaos = Number(_inlineScripts.state.mythicv2.chaos);
+	const chaos =
+		Number(_inlineScripts.state.sessionState.mythicv2.chaos);
 	const result = ( (chaos === 3) ? 2 : (chaos === 6) ? -2 : 0 ) * (multiplier || 1);
 	return addDetails("chaosAdjust", result);
 }
@@ -195,7 +194,9 @@ let result =
 	getChaosAdjust($2==="n" ? -1 : 1);
 result = result > 10 ? "YES" : "NO";
 
-let isChaotic = (chaosRoll <= _inlineScripts.state.mythicv2.chaos);
+let isChaotic =
+	(chaosRoll <=
+	_inlineScripts.state.sessionState.mythicv2.chaos);
 let isExtreme = isChaotic && !!(fateRoll1 % 2) && !!(fateRoll2 % 2);
 let isEvent = isChaotic && !(fateRoll1 % 2) && !(fateRoll2 % 2);
 if (isChaotic && fateRoll1 === fateRoll2) isExtreme = isEvent = true;
@@ -316,7 +317,9 @@ __
 ```
 __
 ```js
-return "The current scene is " + _inlineScripts.state.mythicv2.scene + ".\n\n";
+return "The current scene is " +
+	_inlineScripts.state.sessionState.mythicv2.scene +
+	".\n\n";
 ```
 __
 scene get - Show the current scene.
@@ -334,10 +337,13 @@ let result =
 	($1 === "-1") ? expand("chaos--")[0] :
 	"Chaos is unchanged at " + expand("chaos")[1];
 result += "\n\n\n***\n\n\n";
-_inlineScripts.state.mythicv2.scene++;
-result += "### SCENE " + _inlineScripts.state.mythicv2.scene;
+_inlineScripts.state.sessionState.mythicv2.scene++;
+result +=
+	"### SCENE " +
+	_inlineScripts.state.sessionState.mythicv2.scene;
 let chk = roll("sceneCheck", 10);
-if (chk <= _inlineScripts.state.mythicv2.chaos)
+if (chk <=
+    _inlineScripts.state.sessionState.mythicv2.chaos)
 {
 	if (chk % 2)
 	{
@@ -362,7 +368,10 @@ __
 ```
 __
 ```js
-return [ "Chaos is __", _inlineScripts.state.mythicv2.chaos, "__.\n\n" ];
+return [
+	"Chaos is __",
+	_inlineScripts.state.sessionState.mythicv2.chaos,
+	"__.\n\n" ];
 ```
 __
 chaos - Show the current chaos value.
@@ -374,13 +383,16 @@ __
 ```
 __
 ```js
-_inlineScripts.state.mythicv2.chaos--;
-if (_inlineScripts.state.mythicv2.chaos < 3)
+_inlineScripts.state.sessionState.mythicv2.chaos--;
+if (_inlineScripts.state.sessionState.mythicv2.chaos < 3)
 {
-	_inlineScripts.state.mythicv2.chaos = 3;
+	_inlineScripts.state.sessionState.mythicv2.chaos = 3;
 	return [ "Chaos remains at __3__ (hit minimum).", "\n\n" ];
 }
-return [ "Chaos lowered to __" + _inlineScripts.state.mythicv2.chaos + "__.", "\n\n" ];
+return [
+	"Chaos lowered to __" +
+	_inlineScripts.state.sessionState.mythicv2.chaos +
+	"__.", "\n\n" ];
 ```
 __
 chaos-- - Decrease the chaos value by 1 (minimum of 3).
@@ -392,13 +404,16 @@ __
 ```
 __
 ```js
-_inlineScripts.state.mythicv2.chaos++;
-if (_inlineScripts.state.mythicv2.chaos > 6)
+_inlineScripts.state.sessionState.mythicv2.chaos++;
+if (_inlineScripts.state.sessionState.mythicv2.chaos > 6)
 {
-	_inlineScripts.state.mythicv2.chaos = 6;
+	_inlineScripts.state.sessionState.mythicv2.chaos = 6;
 	return [ "Chaos remains at __6__ (hit maximum).", "\n\n" ];
 }
-return [ "Chaos raised to __" + _inlineScripts.state.mythicv2.chaos + "__.", "\n\n" ];
+return [
+	"Chaos raised to __" +
+	_inlineScripts.state.sessionState.mythicv2.chaos +
+	"__.", "\n\n" ];
 ```
 __
 chaos++ - Increase the chaos value by 1 (maximum of 6).
@@ -410,7 +425,7 @@ __
 ```
 __
 ```js
-_inlineScripts.state.mythicv2.chaos = $1;
+_inlineScripts.state.sessionState.mythicv2.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __

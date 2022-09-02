@@ -9,35 +9,17 @@ It uses this to save & load the lists.
 
 
 __
-__
-```js
-// confirm that an object path is available
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
-```
-__
-Some userful functions
-
-
-__
 ```
 ^sfile setup$
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state.lists");
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"state.onReset.lists",
-	function(expand)
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState.lists");
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset.lists",
+	function()
 	{
 		expand("lists reset");
 	});
@@ -52,8 +34,7 @@ __
 ```
 __
 ```js
-delete _inlineScripts.inlineScripts?.listeners?.
-	lists;
+delete _inlineScripts.state?.listeners?.onReset?.lists;
 ```
 __
 Unregisters event callbacks.
@@ -65,8 +46,10 @@ __
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state");
-_inlineScripts.state.lists = {};
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState");
+_inlineScripts.state.sessionState.lists = {};
 return "All lists cleared.\n\n";
 ```
 __
@@ -79,7 +62,8 @@ __
 ```js
 function getListItems(name)
 {
-	let list = _inlineScripts.state.lists[name];
+	let list =
+		_inlineScripts.state.sessionState.lists[name];
 	if (!list) { return []; }
 	switch (list.type)
 	{
@@ -121,18 +105,21 @@ __
 ```
 __
 ```js
-let listNames = Object.keys(_inlineScripts.state.lists);
+let listNames =
+	Object.keys(_inlineScripts.state.sessionState.lists);
 listNames.sort();
 for (let i = 0; i < listNames.length; i++)
 {
 	const items = getListItems(listNames[i]);
-	const listType = _inlineScripts.state.lists[listNames[i]].type;
+	const listType =
+		_inlineScripts.state.sessionState.
+		lists[listNames[i]].type;
 	if (listType !== "basic")
 	{
 		listNames[i] +=
 			"    _(" + listType + ": " +
-			_inlineScripts.state.lists[listNames[i]].content +
-			")_";
+			_inlineScripts.state.sessionState.
+			lists[listNames[i]].content + ")_";
 	}
 	listNames[i] = listNames[i] + "\n    - " + (items.length ? items.join("\n    - ") : "NONE");
 }
@@ -150,13 +137,15 @@ __
 ```js
 let items = getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
-const listType = _inlineScripts.state.lists[$1]?.type || "basic";
+const listType =
+	_inlineScripts.state.sessionState.lists[$1]?.type || "basic";
 let content = "";
 if (listType !== "basic")
 {
 	content +=
 		"    _(" + listType + ": " +
-		_inlineScripts.state.lists[$1].content + ")_";
+		_inlineScripts.state.sessionState.
+		lists[$1].content + ")_";
 }
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
@@ -170,19 +159,23 @@ __
 ```
 __
 ```js
-_inlineScripts.state.lists[$1] ||= { type: "basic", content: [] };
+_inlineScripts.state.sessionState.lists[$1] ||=
+	{ type: "basic", content: [] };
 const ERROR_PREFIX = "Item __" + $2 + "__ not added to list __" + $1 + "__.  ";
-const type = _inlineScripts.state.lists[$1].type;
+const type =
+	_inlineScripts.state.sessionState.lists[$1].type;
 if (type === "basic")
 {
-	const c = _inlineScripts.state.lists[$1].content;
+	const c =
+		_inlineScripts.state.sessionState.lists[$1].content;
 	c.push($2);
 	c.sort();
 	return "__" + $2 + "__ added to list __" + $1 + "__.\n\n";
 }
 else if (type === "combo")
 {
-	const c = _inlineScripts.state.lists[$1].content;
+	const c =
+		_inlineScripts.state.sessionState.lists[$1].content;
 	// Iterate in reverse order, to add to the LAST sublist
 	for (let i = c.length-1; i >= 0; i--)
 	{
@@ -241,11 +234,12 @@ __
 const ERROR_PREFIX =
 	  "Item __" + $2 + "__ not removed from list __" +
 	  $1 + "__.  ";
-if (!_inlineScripts.state.lists[$1])
+if (!_inlineScripts.state.sessionState.lists[$1])
 {
 	return ERROR_PREFIX + "Item not found.\n\n";
 }
-const type = _inlineScripts.state.lists[$1].type;
+const type =
+	_inlineScripts.state.sessionState.lists[$1].type;
 if (type === "basic")
 {
 	const list = getListItems($1);
@@ -253,7 +247,8 @@ if (type === "basic")
 	{
 		return ERROR_PREFIX + "Item not found.\n\n";
 	}
-	const c = _inlineScripts.state.lists[$1].content;
+	const c =
+		_inlineScripts.state.sessionState.lists[$1].content;
 	let i = c.lastIndexOf($2);
 	c.splice(i, 1);
 	return "__" +
@@ -267,7 +262,8 @@ else if (type === "combo")
 	{
 		return ERROR_PREFIX + "Item not found.\n\n";
 	}
-	const c = _inlineScripts.state.lists[$1].content;
+	const c =
+		_inlineScripts.state.sessionState.lists[$1].content;
 	// Iterate in reverse order, to be sure and remove LAST entry
 	for (let i = c.length-1; i >= 0; i--)
 	{
@@ -305,14 +301,16 @@ $2 = $2.replaceAll(/^\"|\"$/g, "");
 const ERROR_PREFIX =
 	  "Item __" + $2 + "__ not replaced in list __" +
 	  $1 + "__.  ";
-if (!_inlineScripts.state.lists[$1])
+if (!_inlineScripts.state.sessionState.lists[$1])
 {
 	return ERROR_PREFIX + "Item not found.\n\n";
 }
-const type = _inlineScripts.state.lists[$1].type;
+const type =
+	_inlineScripts.state.sessionState.lists[$1].type;
 if (type === "basic")
 {
-	const c = _inlineScripts.state.lists[$1].content;
+	const c =
+		_inlineScripts.state.sessionState.lists[$1].content;
 	for (let i = 0; i < c.length; i++)
 	{
 		if (c[i] == $2)
@@ -326,7 +324,8 @@ if (type === "basic")
 }
 else if (type === "combo")
 {
-	const subLists = _inlineScripts.state.lists[$1].content;
+	const subLists =
+		_inlineScripts.state.sessionState.lists[$1].content;
 	for (const subList of subLists)
 	{
 		expand("lists replace " + subList + " " + $2 + " " + $3);
@@ -351,9 +350,9 @@ __
 ```
 __
 ```js
-if (_inlineScripts.state.lists[$1])
+if (_inlineScripts.state.sessionState.lists[$1])
 {
-	delete _inlineScripts.state.lists[$1];
+	delete _inlineScripts.state.sessionState.lists[$1];
 	return "List __" + $1 + "__ removed.\n\n";
 }
 return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
@@ -369,7 +368,8 @@ __
 ```
 __
 ```js
-_inlineScripts.state.lists[$1] = { type: "folder", content: $2 };
+_inlineScripts.state.sessionState.lists[$1] =
+	{ type: "folder", content: $2 };
 return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
@@ -383,7 +383,8 @@ __
 __
 ```js
 let links = $2.split(" ").filter(v => v);
-_inlineScripts.state.lists[$1] = { type: "combo", content: links };
+_inlineScripts.state.sessionState.lists[$1] =
+	{ type: "combo", content: links };
 return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 __
@@ -408,11 +409,13 @@ __
 ```
 __
 ```js
-if (!_inlineScripts.state.lists.hasOwnProperty($1))
+if (!_inlineScripts.state.sessionState.
+    lists.hasOwnProperty($1))
 {
 	return "none";
 }
-return _inlineScripts.state.lists[$1].type;
+return _inlineScripts.state.sessionState.
+       lists[$1].type;
 ```
 __
 hidden - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).

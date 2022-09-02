@@ -16,19 +16,11 @@ __
 ```
 __
 ```js
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
-
-confirmObjPath(
-	"_inlineScripts.state.notevars.isMarkdownRefreshed",
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath(
+	"_inlineScripts.state.sessionState." +
+	"notevars.isMarkdownRefreshed",
 	true);
 ```
 __
@@ -43,11 +35,13 @@ __
 ```js
 if ($1)
 {
-	_inlineScripts.state.notevars.isMarkdownRefreshed =
+	_inlineScripts.state.sessionState.
+		notevars.isMarkdownRefreshed =
 		($1 === "y");
 }
 return "notevars isMarkdownRefreshed is " +
-	(_inlineScripts.state.notevars.isMarkdownRefreshed ?
+	(_inlineScripts.state.sessionState.
+	 notevars.isMarkdownRefreshed ?
 	"__enabled__" : "__disabled__") + ".\n\n";
 ```
 __
@@ -122,7 +116,8 @@ __
 const REFRESH_MARKDOWN_DELAY = 500;
 function refreshPreviewOnNextModify(file)
 {
-	if (!_inlineScripts.state.notevars.isMarkdownRefreshed)
+	if (!_inlineScripts.state.sessionState.
+	    notevars.isMarkdownRefreshed)
 	{
 		return;
 	}

@@ -16,25 +16,6 @@ If the pc, npc and thread lists have items, then the __event__ and __detail__ sh
 
 
 __
-__
-```js
-// confirm that an object path is available
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
-```
-__
-Some userful functions
-
-
-__
 ```
 ^sfile setup$
 ```
@@ -47,18 +28,22 @@ if (_inlineScripts.inlineScripts.
 	return true;
 }
 
-confirmObjPath("_inlineScripts.state.mythicgme.chaos", 5);
-confirmObjPath("_inlineScripts.state.mythicgme.scene", 1);
-confirmObjPath(
-	"_inlineScripts.state.lists.pcs", { type: "basic", content: [] });
-confirmObjPath(
-	"_inlineScripts.state.lists.npcs", { type: "basic", content: [] });
-confirmObjPath(
-	"_inlineScripts.state.lists.threads", { type: "basic", content: [] });
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"state.onReset.mythicgme",
-	function(expand)
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState.mythicgme.chaos", 5);
+confirmObjectPath("_inlineScripts.state.sessionState.mythicgme.scene", 1);
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists.pcs",
+	{ type: "basic", content: [] });
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists.npcs",
+	{ type: "basic", content: [] });
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.lists.threads",
+	{ type: "basic", content: [] });
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset.mythicgme",
+	function()
 	{
 		expand("mythicgme reset");
 	});
@@ -73,8 +58,7 @@ __
 ```
 __
 ```js
-delete _inlineScripts.inlineScripts?.listeners?.
-	state?.onReset?.mythicgme;
+delete _inlineScripts.state?.listeners?.onReset?.mythicgme;
 ```
 __
 Unregisters event callbacks.
@@ -86,14 +70,21 @@ __
 ```
 __
 ```js
-confirmObjPath("_inlineScripts.state.mythicgme");
-_inlineScripts.state.mythicgme.chaos = 5;
-_inlineScripts.state.mythicgme.scene = 1;
-confirmObjPath("_inlineScripts.state.lists");
-_inlineScripts.state.lists.pcs = { type: "basic", content: [] };
-_inlineScripts.state.lists.npcs = { type: "basic", content: [] };
-_inlineScripts.state.lists.threads = { type: "basic", content: [] };
-return "***\n\n\n### SCENE " + _inlineScripts.state.mythicgme.scene + "\n- Setup:\n    - ";
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState.mythicgme");
+_inlineScripts.state.sessionState.mythicgme.chaos = 5;
+_inlineScripts.state.sessionState.mythicgme.scene = 1;
+confirmObjectPath("_inlineScripts.state.sessionState.lists");
+_inlineScripts.state.sessionState.lists.pcs =
+	{ type: "basic", content: [] };
+_inlineScripts.state.sessionState.lists.npcs =
+	{ type: "basic", content: [] };
+_inlineScripts.state.sessionState.lists.threads =
+	{ type: "basic", content: [] };
+return "***\n\n\n### SCENE " +
+	_inlineScripts.state.sessionState.mythicgme.scene +
+	"\n- Setup:\n    - ";
 ```
 __
 mythicgme reset - Reset mythic state to defaults and displays scene heading.
@@ -144,7 +135,9 @@ const FATE_CHART = [
 [ [ 26,145,  0],[ 26,130,  0],[ 20,100,  0],[ 20,100,  0],[ 19, 95,100],[ 19, 95,100],[ 18, 90, 99],[ 16, 85, 97],[ 16, 80, 97] ] ];
 const r = roll(100);
 $1 = Number($1) | 0;
-const ranges = FATE_CHART[$1+4][9-_inlineScripts.state.mythicgme.chaos];
+const ranges =
+	FATE_CHART[$1+4]
+	[9-_inlineScripts.state.sessionState.mythicgme.chaos];
 let result =
 	(r <= ranges[0]) ? "EXTEREME YES" :
 	(r <= ranges[1]) ? "YES" :
@@ -152,7 +145,7 @@ let result =
 	"EXTREME NO";
 let eventOutput = "";
 if (Math.trunc(r/10) == r%10 &&
-    r%10 < _inlineScripts.state.mythicgme.chaos)
+    r%10 < _inlineScripts.state.sessionState.mythicgme.chaos)
 {
 	eventOutput =
 		"\nevent - " + expand("event")[1];
@@ -184,7 +177,9 @@ __
 ```
 __
 ```js
-return "The current scene is " + _inlineScripts.state.mythicgme.scene + ".\n\n";
+return "The current scene is " +
+	_inlineScripts.state.sessionState.mythicgme.scene +
+	".\n\n";
 ```
 __
 scene get - Show the current scene.
@@ -201,10 +196,12 @@ let result =
 	($1 === "-1") ? expand("chaos--")[0] :
 	"Chaos is unchanged at " + expand("chaos")[1];
 result += "\n\n\n***\n\n\n";
-_inlineScripts.state.mythicgme.scene++;
-result += "### SCENE " + _inlineScripts.state.mythicgme.scene;
+_inlineScripts.state.sessionState.mythicgme.scene++;
+result +=
+	"### SCENE " +
+	_inlineScripts.state.sessionState.mythicgme.scene;
 let chk = roll(10);
-if (chk <= _inlineScripts.state.mythicgme.chaos)
+if (chk <= _inlineScripts.state.sessionState.mythicgme.chaos)
 {
 	if (chk % 2)
 	{
@@ -263,7 +260,10 @@ __
 ```
 __
 ```js
-return [ "Chaos is __", _inlineScripts.state.mythicgme.chaos, "__.\n\n" ];
+return [
+	"Chaos is __",
+	_inlineScripts.state.sessionState.mythicgme.chaos,
+	"__.\n\n" ];
 ```
 __
 chaos - Show the current chaos value.
@@ -275,13 +275,16 @@ __
 ```
 __
 ```js
-_inlineScripts.state.mythicgme.chaos--;
-if (_inlineScripts.state.mythicgme.chaos < 1)
+_inlineScripts.state.sessionState.mythicgme.chaos--;
+if (_inlineScripts.state.sessionState.mythicgme.chaos < 1)
 {
-	_inlineScripts.state.mythicgme.chaos = 1;
+	_inlineScripts.state.sessionState.mythicgme.chaos = 1;
 	return [ "Chaos remains at __1__ (hit minimum).", "\n\n" ];
 }
-return [ "Chaos lowered to __" + _inlineScripts.state.mythicgme.chaos + "__.", "\n\n" ];
+return [
+	"Chaos lowered to __" +
+	_inlineScripts.state.sessionState.mythicgme.chaos +
+	"__.", "\n\n" ];
 ```
 __
 chaos-- - Decrease the chaos value by 1 (minimum of 1).
@@ -293,13 +296,16 @@ __
 ```
 __
 ```js
-_inlineScripts.state.mythicgme.chaos++;
-if (_inlineScripts.state.mythicgme.chaos > 9)
+_inlineScripts.state.sessionState.mythicgme.chaos++;
+if (_inlineScripts.state.sessionState.mythicgme.chaos > 9)
 {
-	_inlineScripts.state.mythicgme.chaos = 9;
+	_inlineScripts.state.sessionState.mythicgme.chaos = 9;
 	return [ "Chaos remains at __9__ (hit maximum).", "\n\n" ];
 }
-return [ "Chaos raised to __" + _inlineScripts.state.mythicgme.chaos + "__.", "\n\n" ];
+return [
+	"Chaos raised to __" +
+	_inlineScripts.state.sessionState.mythicgme.chaos +
+	"__.", "\n\n" ];
 ```
 __
 chaos++ - Increase the chaos value by 1 (maximum of 9).
@@ -311,7 +317,7 @@ __
 ```
 __
 ```js
-_inlineScripts.state.mythicgme.chaos = $1;
+_inlineScripts.state.sessionState.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __

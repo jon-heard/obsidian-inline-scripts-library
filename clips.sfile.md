@@ -14,28 +14,18 @@ __
 ```
 __
 ```js
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
-
-confirmObjPath("_inlineScripts.state.clips");
-confirmObjPath("_inlineScripts.clips.priorExpansion", "");
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners.state.onReset.clips",
-	function(expand)
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState.clips");
+confirmObjectPath("_inlineScripts.clips.priorExpansion", "");
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset.clips",
+	function()
 	{
 		expand("clips reset");
 	});
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"inlineScripts.onExpansion.clips",
+confirmObjectPath(
+	"_inlineScripts.inlineScripts.listeners.onExpansion.clips",
 	(expansionInfo) =>
 	{
 		_inlineScripts.clips.priorExpansion =
@@ -52,10 +42,8 @@ __
 ```
 __
 ```js
-delete _inlineScripts.inlineScripts?.listeners?.
-	state?.onReset?.clips;
-delete _inlineScripts.inlineScripts?.listeners?.
-	inlineScripts?.onExpansion?.clips;
+delete _inlineScripts.state?.listeners?.onReset?.clips;
+delete _inlineScripts.inlineScripts?.listeners?.onExpansion?.clips;
 ```
 __
 Unregisters event callbacks.
@@ -67,7 +55,7 @@ __
 ```
 __
 ```js
-_inlineScripts.state.clips = {};
+_inlineScripts.state.sessionState.clips = {};
 return "All clips cleared.\n\n";
 ```
 __
@@ -80,7 +68,8 @@ __
 ```
 __
 ```js
-let clipNames = Object.keys(_inlineScripts.state.clips);
+let clipNames =
+	Object.keys(_inlineScripts.state.sessionState.clips);
 return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 __
@@ -94,7 +83,7 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-_inlineScripts.state.clips[$1] = $2;
+_inlineScripts.state.sessionState.clips[$1] = $2;
 return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
 ```
 __
@@ -108,7 +97,7 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-let text = _inlineScripts.state.clips[$1];
+let text = _inlineScripts.state.sessionState.clips[$1];
 return text || "";
 ```
 __
@@ -123,7 +112,8 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-_inlineScripts.state.clips[$1] = _inlineScripts.clips.priorExpansion;
+_inlineScripts.state.sessionState.clips[$1] =
+	_inlineScripts.clips.priorExpansion;
 return "Clip __" + $1 + "__ set to:\n***\n" + _inlineScripts.clips.priorExpansion + "\n***\n\n";
 ```
 __
@@ -137,9 +127,9 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-if (_inlineScripts.state.clips[$1])
+if (_inlineScripts.state.sessionState.clips[$1])
 {
-	delete _inlineScripts.state.clips[$1];
+	delete _inlineScripts.state.sessionState.clips[$1];
 	return "Clip __" + $1 + "__ removed.\n\n";
 }
 return "Clip __" + $1 + "__ not removed.  Does not exist.\n\n";

@@ -12,60 +12,20 @@ Alternately, "state set last" will load the state-string from the last call to t
 
 
 __
-__
-```js
-// Call an array or object of functions.
-// Useful for listener collections.
-function callFunctionCollection(colName, collection)
-{
-	if (!Array.isArray(collection))
-	{
-		collection = Object.values(collection);
-	}
-	for (const fnc of collection)
-	{
-		if (typeof fnc === "function")
-		{
-			fnc(expand);
-		}
-		else
-		{
-			console.warn(
-				"Non-function in collection \"" +
-				colName + "\": " + fnc);
-		}
-	}
-}
-```
-__
-Some userful functions
-
-
-__
 ```
 ^sfile setup$
 ```
 __
 ```js
-// confirm that an object path is available
-function confirmObjPath(path, leaf)
-{
-    path = path.split(".");
-    let parent = window;
-    for (let i = 0; i < path.length-1; i++)
-    {
-        parent = (parent[path[i]] ||= {});
-    }
-    parent[path[path.length-1]] ||= (leaf || {});
-}
-
-confirmObjPath("_inlineScripts.state");
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"state.onReset");
-confirmObjPath(
-	"_inlineScripts.inlineScripts.listeners." +
-	"state.onLoad");
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.
+	confirmObjectPath;
+confirmObjectPath(
+	"_inlineScripts.state.sessionState");
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset");
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onLoad");
 ```
 __
 Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.
@@ -77,13 +37,14 @@ __
 ```
 __
 ```js
-_inlineScripts.state = {};
+_inlineScripts.state.sessionState = {};
 
 // Notify listeners of state.onReset event
-callFunctionCollection(
+console.log("onReset calling");
+_inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
 	"state.onReset",
-	_inlineScripts.inlineScripts.listeners.
-	state.onReset);
+	_inlineScripts.state.listeners.onReset);
+console.log("onReset called");
 
 return "All state cleared.\n\n";
 ```
@@ -97,7 +58,9 @@ __
 ```
 __
 ```js
-return "State:\n" + JSON.stringify(_inlineScripts.state) + "\n\n";
+return "State:\n" +
+	JSON.stringify(_inlineScripts.state.sessionState) +
+	"\n\n";
 ```
 __
 state get - Expands to a state-string - a string containing all data for the current session state.
@@ -140,7 +103,7 @@ __
 ```js
 try
 {
-	_inlineScripts.state = JSON.parse($1);
+	_inlineScripts.state.sessionState = JSON.parse($1);
 }
 catch (e)
 {
@@ -149,10 +112,9 @@ catch (e)
 }
 
 // Notify listeners of state.onLoad event
-callFunctionCollection(
+_inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
 	"state.onLoad",
-	_inlineScripts.inlineScripts.listeners.
-	state.onLoad);
+	_inlineScripts.state.listeners.onLoad);
 
 return "State loaded.\n\n";
 ```
