@@ -199,29 +199,26 @@ lists add {list name: name text} {item: text} - Add {item} to the list {list nam
 
 __
 ```
-^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*) ?(|[1-9][0-9]*)$
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
 ```js
 // note: Test string accepts empty {list name} for use as a sub-shortcut.
-// note: Success returns string array for use as a sub-shortcut.
-function roll(max) { return Math.trunc(Math.random() * max + 1); }
-
-let items = getListItems($1);
-if (items?.length || $2)
+function roll(max)
 {
-	let result = Number($2) || roll(items.length);
-	if (result-1 >= items.length)
-	{
-		return [ "Failed to pick from list __" + $1 + "__.  The item index " + result + " is out of range.\n\n" ];
-	}
-	result = items[result - 1];
-	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
+	return Math.trunc(Math.random() * max + 1);
 }
-return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
+let items = getListItems($1);
+if (items?.length)
+{
+	return expand(
+		"lists pick " + $1 + " " + roll(items.length));
+}
+return [ "Failed to pick from list __" +
+	$1 + "__.  List is empty.\n\n" ];
 ```
 __
-lists pick {list name: name text} {item index: >0, default: ""} - Get a random item from the list {list name}.  If {item index} is specified, then the item at that index is picked, instead of random.
+lists pick {list name: name text} - Get a random item from the list {list name}.
 ***
 
 
@@ -389,6 +386,32 @@ return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("
 ```
 __
 lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+
+
+__
+```
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*) ?(|[1-9][0-9]*)$
+```
+__
+```js
+// note: Test string accepts empty {list name} for use as a sub-shortcut.
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+
+let items = getListItems($1);
+if (items?.length || $2)
+{
+	let result = Number($2) || roll(items.length);
+	if (result-1 >= items.length)
+	{
+		return [ "Failed to pick from list __" + $1 + "__.  The item index " + result + " is out of range.\n\n" ];
+	}
+	result = items[result - 1];
+	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
+}
+return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
+```
+__
+hidden - lists pick {list name: name text} {item index: >0, default: ""} - Get a random item from the list {list name}.  If {item index} is specified, then the item at that index is picked, instead of random.
 
 
 __
