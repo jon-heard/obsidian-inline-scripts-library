@@ -621,8 +621,8 @@ const replacement =
 	  popups.input("Enter a new text for the character.", characters[pick]);
 if (!replacement) { return null; }
 expand(
-	"lists replace characters " +
-	characters[pick] + " " + replacement);
+	"lists replace characters \"" +
+	characters[pick] + "\" " + replacement);
 return "Character __" +
 	characters[pick] + "__ renamed to __" +
 	replacement + "__.\n\n";
@@ -811,8 +811,8 @@ const replacement =
 	  popups.input("Enter a new text for the plotline.", plots[pick]);
 if (!replacement) { return null; }
 expand(
-	"lists replace plotlines " +
-	plots[pick] + " " + replacement);
+	"lists replace plotlines \"" +
+	plots[pick] + "\" " + replacement);
 return "Plotline __" +
 	plots[pick] + "__ renamed to __" +
 	replacement + "__.\n\n";
@@ -827,11 +827,9 @@ __
 ```
 __
 ```js
-delete _inlineScripts.state?.sessionState?.
-	listeners?.onReset?.adventurecrafter;
-delete _inlineScripts.adventurecrafter?.themes;
-delete _inlineScripts.adventurecrafter?.plot_meta;
-delete _inlineScripts.adventurecrafter?.plot;
+delete _inlineScripts.adventurecrafter;
+delete _inlineScripts.state.sessionState.adventurecrafter;
+delete _inlineScripts.state.listeners.onReset?.adventurecrafter;
 ```
 __
 Unregisters event callbacks.
@@ -854,17 +852,20 @@ if (!_inlineScripts.state.sessionState.lists.plotlines)
 {
 	if (!_inlineScripts.state.sessionState.lists.threads)
 	{
-		_inlineScripts.state.sessionState.lists.plotlines ||=
-			{ type: "basic", content: [] };
+		confirmObjectPath(
+			"_inlineScripts.state.sessionState.lists.plotlines",
+			{ type: "basic", content: [] });
 		delete _inlineScripts.state.sessionState.
 			lists.plotline_dupes;
 	}
 	else
 	{
-		_inlineScripts.state.sessionState.lists.plotline_dupes ||=
-			{ type: "basic", content: [] };
-		_inlineScripts.state.sessionState.lists.plotlines ||=
-			{ type: "combo", content: ["threads", "plotline_dupes"] };
+		confirmObjectPath(
+			"_inlineScripts.state.sessionState.lists.plotline_dupes",
+			{ type: "basic", content: [] });
+		confirmObjectPath(
+			"_inlineScripts.state.sessionState.lists.plotlines",
+			{ type: "combo", content: ["threads", "plotline_dupes"] });
 	}
 }
 
@@ -873,57 +874,63 @@ if (!_inlineScripts.state.sessionState.lists.characters)
 	if (!_inlineScripts.state.sessionState.lists.pcs ||
 	    !_inlineScripts.state.sessionState.lists.npcs)
 	{
-		_inlineScripts.state.sessionState.
-			lists.characters ||=
-			{ type: "basic", content: [] };
+		confirmObjectPath(
+			"_inlineScripts.state.sessionState.lists.characters",
+			{ type: "basic", content: [] });
 		delete _inlineScripts.state.sessionState.
 			lists.character_dupes;
 	}
 	else
 	{
-		_inlineScripts.state.sessionState.
-			lists.character_dupes ||=
-			{ type: "basic", content: [] };
-		_inlineScripts.state.sessionState.
-			lists.characters ||=
+		confirmObjectPath(
+			"_inlineScripts.state.sessionState.lists.character_dupes",
+			{ type: "basic", content: [] });
+		confirmObjectPath(
+			"_inlineScripts.state.sessionState.lists.characters",
 			{ type: "combo",
-			content: ["pcs", "npcs", "character_dupes"] };
+			content: ["pcs", "npcs", "character_dupes"] });
 	}
 }
 
 confirmObjectPath(
-	"_inlineScripts.state.sessionState." +
-	"listeners.onReset.adventurecrafter",
+	"_inlineScripts.state.listeners" +
+	".onReset.adventurecrafter",
 	function()
 	{
 		expand("adventurecrafter reset");
 	});
 
-_inlineScripts ||= {};
-_inlineScripts.adventurecrafter ||= {};
+confirmObjectPath(
+	"_inlineScripts.adventurecrafter.themes",
+	[
+		"ACTION", "TENSION", "MYSTERY",
+		"SOCIAL", "PERSONAL"
+	]);
 
-_inlineScripts.adventurecrafter.themes = [ "ACTION", "TENSION", "MYSTERY", "SOCIAL", "PERSONAL" ];
-_inlineScripts.adventurecrafter.themeDescriptions =
-[
-	"Direct and physical",
-	"Anxiety provoking (for the characters at least)",
-	"Questions: raising and answering",
-	"Interaction of people and/or factions",
-	"Individual and intimate situations"
-];
+confirmObjectPath(
+	"_inlineScripts.adventurecrafter.themeDescriptions",
+	[
+		"Direct and physical",
+		"Anxiety provoking (for the characters at least)",
+		"Questions: raising and answering",
+		"Interaction of people and/or factions",
+		"Individual and intimate situations"
+	]);
 
-_inlineScripts.adventurecrafter.plot_meta = [
-	[ "CHARACTER EXITS THE ADVENTURE", 18, "A Character, who is not a Player Character, is removed from the Characters List completely. Cross out all references to that Character on the Characters List. If there are no non-Player Characters, then re-roll for another Meta Plot Point. This change can be reflected in the activity in this Turning Point or not. For instance, you may explain the Character being removed from the Adventure by having that Character die in the Turning Point. Or, you simply remove them from the Characters List and decide that their involvement in the Adventure is over. If, when rolling on the Characters List to determine who this Character is, you roll a Player Character or \"New Character\", then consider it a result of \"Choose The Most Logical Character\"." ],
+confirmObjectPath(
+	"_inlineScripts.adventurecrafter.plot_meta",
+	[ [ "CHARACTER EXITS THE ADVENTURE", 18, "A Character, who is not a Player Character, is removed from the Characters List completely. Cross out all references to that Character on the Characters List. If there are no non-Player Characters, then re-roll for another Meta Plot Point. This change can be reflected in the activity in this Turning Point or not. For instance, you may explain the Character being removed from the Adventure by having that Character die in the Turning Point. Or, you simply remove them from the Characters List and decide that their involvement in the Adventure is over. If, when rolling on the Characters List to determine who this Character is, you roll a Player Character or \"New Character\", then consider it a result of \"Choose The Most Logical Character\"." ],
 	[ "CHARACTER RETURNS", 27, "A Character who previously had been removed from the Adventure returns. Write that Character back into the Characters List with a single listing. If there are no Characters to return, then treat this as a \"New Character\" result and use this Plot Point to introduce a new Character into the Turning Point. If there is more than one Character who can return, then choose the most logical Character to return. This change can be reflected in the activity in this Turning Point or not." ],
 	[ "CHARACTER STEPS UP", 36, "A Character becomes more important, gaining another slot on the Characters List even if it pushes them past 3 slots. When you roll on the Characters List to see who the Character is, treat a result of \"New Character\" as \"Choose The Most Logical Character\". This change can be reflected in the activity in this Turning Point or not." ],
 	[ "CHARACTER STEPS DOWN", 55, "A Character becomes less important, remove them from one slot on the Characters List even if it removes them completely from the List. If this would remove a Player Character completely from the List, or if when rolling for the Character you get a result of \"New Character\", then treat this as a result of \"Choose The Most Logical Character\". If there is no possible Character to choose without removing a Player Character completely from the List, then roll again on the Meta Plot Points Table. This change can be reflected in the activity in this Turning Point or not." ],
 	[ "CHARACTER DOWNGRADE", 73, "A Character becomes less important, remove them from two slots on the Characters List even if it removes them completely from the List. If this would remove a Player Character completely from the List, or if when rolling for the Character you get a result of \"New Character\", then treat this as a result of \"Choose The Most Logical Character\". If there is no possible Character to choose without removing a Player Character completely from the List, then roll again on the Meta Plot Points Table. This change can be reflected in the activity in this Turning Point or not." ],
 	[ "CHARACTER UPGRADE", 82, "A Character becomes more important, gaining 2 slots on the Characters List even if it pushes them past 3 slots. When you roll on the Characters List to see who the Character is, treat a result of \"New Character\" as \"Choose The Most Logical Character\". This change can be reflected in the activity in this Turning Point or not." ],
 	[ "PLOTLINE COMBO", 100, "This Turning Point is about more than one Plotline at the same time. Roll again on the Plotlines List and add that Plotline to this Turning Point along with the original Plotline rolled. If when rolling for an additional Plotline you roll the same Plotline already in use for this Turning Point, then treat the result as a \"Choose The Most Logical Plotline\". If there are no other Plotlines to choose from, then create a new Plotline as the additional Plotline. If a Conclusion is rolled as a Plot Point during this Turning Point, apply it to the Plotline that seems most appropriate. If another Conclusion is rolled, continue to apply them to the additional Plotlines in this Turning Point if you can. It is possible with repeated results of \"Plotline Combo\" to have more than two Plotlines combined in this way." ]
-];
+]);
 
-_inlineScripts.adventurecrafter.plot = [
-	[ "CONCLUSION", 8,8,8,8,8, "If this Turning Point is currently a Plotline Development, then it becomes a Plotline Conclusion. Incorporate anything necessary into this Turning Point to end this Plotline and remove it from the Plotlines List. If this Turning Point is a New Plotline or already a Conclusion, then consider this Plot Point a None." ],
+confirmObjectPath(
+	"_inlineScripts.adventurecrafter.plot",
+	[ [ "CONCLUSION", 8,8,8,8,8, "If this Turning Point is currently a Plotline Development, then it becomes a Plotline Conclusion. Incorporate anything necessary into this Turning Point to end this Plotline and remove it from the Plotlines List. If this Turning Point is a New Plotline or already a Conclusion, then consider this Plot Point a None." ],
 	[ "NONE", 24,24,24,24,24, "Leave this Plot Point blank and go on to the next Plot Point, unless it would leave you with fewer than 2 Plot Points in this Turning Point, in which case re-roll.", 1 ],
 	[ "INTO THE UNKNOWN", 0,26,26,0,0, "This Turning Point involves Characters entering a situation with unknown factors. To know the unknown, you have to commit to it. For instance, a magic portal where there is no way of knowing what’s on the other side except by walking through it. Or, you discover a machine that is very powerful but you have no idea what it does, except if you turn it on. The only way to discover the unknown is to engage it, when it will be too late if you regret it." ],
 	[ "A CHARACTER IS ATTACKED IN A NON-LETHAL WAY", 26,0,0,0,0, "A Character is attacked, but the assailant will not attack to kill." ],
@@ -1109,7 +1116,7 @@ _inlineScripts.adventurecrafter.plot = [
 	[ "SERVANT", 0,0,0,95,95, "This Turning Point involves a servant or proxy of another Character. Invoke a Character for the servant to represent." ],
 	[ "AN OPPOSING STORY", 0,0,95,0,0, "A Character learns of an alternate version of something they already know about from this Adventure. For instance, while investigating a starship that had been waylaid by aliens, Characters discover a crewmember who claims the attackers were members of a rival guild and not aliens." ],
 	[ "META", 100,100,100,100,100, "This is a special Plot Point category with Plot Points that change the Characters List or combine Plotlines. Go to the Meta Plot Points Table and roll 1d100 on it for your Plot Point.", 2 ]
-];
+]);
 ```
 __
 Sets up a state variable for adventurecrafter.  Sets up callback for state "reset" event to reset itself.
