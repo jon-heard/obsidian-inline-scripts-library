@@ -18,6 +18,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [lists_ui.sfile](#lists_uisfile)
 - [lists.sfile](#listssfile)
 - [notevars.sfile](#notevarssfile)
+- [notepick.sfile](#notepicksfile)
 - [mythicv2_ui.sfile](#mythicv2_uisfile)
 - [mythicv2.sfile](#mythicv2sfile)
 - [mythicgme_ui.sfile](#mythicgme_uisfile)
@@ -104,6 +105,16 @@ If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time
 - __notevars getArray {note name: path text} {array name: name text} {index: >=0}__ - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
 - __notevars set {note name: path text} {variable name: name text} {value: text}__ - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
 - __notevars setArray {note name: path text} {array name: name text} {value1: text},{value2: text},...__ - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
+
+***
+
+### notepick.sfile
+Shortcuts to pick X random notes from a folder of notes and to get their front matter data.
+
+- __notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""}__ - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
+- __notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""}__ - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.
+- __notepick getPick {pick id: text, default: ""}__ - Get a list of the files last picked for {pick id}.
+- __notepick frontmatter {pick id}__ - Get the frontmatter from the notes that are remembered in {pick id}.
 
 ***
 
