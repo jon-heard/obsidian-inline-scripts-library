@@ -4,6 +4,9 @@ obsidianUIMode: preview
 
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  It was designed by Tana Pigeon.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
 
+This shortcut-file has a tutorial video available:
+- [Using the "adventurecrafter" shortcut-file to play with AdventureCrafter](https://www.youtube.com/watch?v=-z922-50K-o) (runtime 7:29)
+
 Uses __lists.sfile__ shortcut-file (required).
 This requires that __lists.sfile__ comes before __adventurecrafter.sfile__ in the shortcut-list.
 Adds and uses lists for plotlines and characters.

@@ -2,7 +2,7 @@
 obsidianUIMode: preview
 ---
 
-An extension to __mythicv2__ shortcut-file that provides graphical ui versions of shortcuts.
+An extension to __mythicv2.sfile__ that provides graphical ui versions of shortcuts.
 
 
 __

@@ -6,9 +6,10 @@ This shortcut-file includes shortcuts to manage a session state.  This allows on
 
 This shortcut file can be used by other shortcut-files to let them create data that can persist across sessions of Obsidian.
 
-This shortcut-file has 2 tutorial videos available:
-- [State system for users (runtime 2:23)](https://www.youtube.com/watch?v=WHQuQm3RieY)
-- [State system for scripters (runtime 6:12)](https://www.youtube.com/watch?v=K-6Xy3YLuh4)
+This shortcut-file has 2 tutorial videos available.  The first one is right for most users, but if you are making your own shortcut-file, the second one shows you how to connect it to the state system:
+- [Using the "state" shortcut-file to save and load session state](https://www.youtube.com/watch?v=WHQuQm3RieY) (runtime 2:23)
+- [Setup a shortcut-file for saving & loading with the "state" shortcut-file](https://www.youtube.com/watch?v=K-6Xy3YLuh4) (runtime 6:12)
+
 
 To save the session state, use the "state get" shortcut.  This expands into a "state-string"- a string which includes all data in the current session state.  You can save this state-string simply by leaving it as part of the note.  To load the session state, call the "state set" shortcut, passing in a state-string _(created earlier with the "state get" shortcut)_.
 

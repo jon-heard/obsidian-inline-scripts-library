@@ -39,6 +39,10 @@ This shortcut-file includes shortcuts to manage a session state.  This allows on
 
 This shortcut file can be used by other shortcut-files to let them create data that can persist across sessions of Obsidian.
 
+This shortcut-file has 2 tutorial videos available.  The first one is right for most users, but if you are making your own shortcut-file, the second one shows you how to connect it to the state system:
+- [Using the "state" shortcut-file to save and load session state](https://www.youtube.com/watch?v=WHQuQm3RieY) (runtime 2:23)
+- [Setup a shortcut-file for saving & loading with the "state" shortcut-file](https://www.youtube.com/watch?v=K-6Xy3YLuh4) (runtime 6:12)
+
 - __state reset__ - Clear all session state.
 - __state get__ - Expands to a state-string - a string containing all data for the current session state.
 - __state restore__ - Load the session state from the last "state get" shortcut expansion in the current note.
@@ -79,17 +83,20 @@ The combo-list is created, attached to the different lists.
 ### lists.sfile
 Shortcuts for working with lists.
 
+This shortcut-file has a tutorial video available:
+- [Using the "list" shortcut-file to manage lists](https://www.youtube.com/watch?v=xIYpnBKdYRg) (runtime 5:34)
+
 - __lists reset__ - Clear all lists.
 - __lists__ - Show all list and all items for each list.
 - __lists list {list name: name text}__ - Show all items in the list {list name}.
 - __lists add {list name: name text} {item: text}__ - Add {item} to the list {list name}.  Allows duplicate items.
     - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
-- __lists pick {list name: name text} {item index: >0, default: ""}__ - Get a random item from the list {list name}.  If {item index} is specified, then the item at that index is picked, instead of random.
+- __lists pick {list name: name text}__ - Get a random item from the list {list name}.
 - __lists remove {list name: name text} {item: text}__ - Remove an instance of {item} from the list {list name}.
     - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
-- __lists replace {list name: name text} {item: non-space text} {replacement: text}__ - Replace all instances of {item} with {replacement}.  Any space characters in {item} should be replaced by a tab character to reserve the space character for the end of {item}.
+- __lists replace {list name: name text} {item: text} {replacement: text}__ - Replace all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
 - __lists removelist {list name: name text}__ - Remove the entire list {list name}.
-- __lists addfolder {list name: name text} {folder: text}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
+- __lists addfolder {list name: name text} {folder: path text}__ - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}...__ - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
 
 ***
@@ -98,6 +105,9 @@ Shortcuts for working with lists.
 This shortcut-file includes shortcuts to get and set note-variables.  Note-variables are variables set in the YAML frontmatter.  They can be used by many plugins, including DataView and TTRPG StatBlocks.
 
 This shortcut file can be used by other shortcut-files to let them read and manipulate data in notes for many uses, including TTRPG character sheets.
+
+This shortcut-file has a tutorial video available:
+- [Using the "notevars" shortcut-file to work with note variables](https://www.youtube.com/watch?v=EsV4WcMwhbA) (runtime 6:59)
 
 - __notevars isMarkdownRefreshed {state: y OR n, default: ""}__ - If {state} is given, assigns it to the notevars "isMarkdownRefreshed" flag.  Otherwise, displays the current "isMarkdownRefreshed" flag.
 If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
@@ -110,6 +120,9 @@ If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time
 
 ### notepick.sfile
 Shortcuts to pick X random notes from a folder of notes and to get their front matter data.
+
+This shortcut-file has a tutorial video available:
+- [Using the "notepick" shortcut-file to randomly pick notes & get variables](https://www.youtube.com/watch?v=G1mvl-VwbIQ) (runtime 3:22)
 
 - __notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""}__ - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
 - __notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""}__ - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.
@@ -142,6 +155,9 @@ Roll and display an action for the npc to take.
 _(disabled by default, due to incompatibility with mythicgme.sfile)_
 
 Shortcuts for Mythic Variations 2.  Mythic GME, along with it's "Variations 2" supplement, is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic Variations 2 at [wordmill games](http://wordmillgames.com/mythic-variations-2.html).
+
+This shortcut-file has a tutorial video available:
+- [Using the "mythicv2" shortcut-file to play Mythic Variations 2](https://www.youtube.com/watch?v=fvrxAg22lYg) (runtime 7:27)
 
 Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __mythicv2.sfile__ in the shortcut-list, then __mythicv2.sfile__ will be disabled.
 
@@ -184,6 +200,9 @@ Starts a new scene with the chosen chaos value adjustment.
 ### mythicgme.sfile
 Shortcuts for Mythic Game Master Emulator.  Mythic GME is an excellent "GM emulator" system for solo and GM'less gaming.  It was designed by Tana Pigeon.  You can find more info about Mythic GME at [wordmill games](http://wordmillgames.com/mythic-game-master-emulator.html).
 
+This shortcut-file has a tutorial video available:
+- [Using the "mythicgme" shortcut-file to play Mythic GME](https://www.youtube.com/watch?v=NwHwctDp_vM) (runtime 5:00)
+
 Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __mythicgme.sfile__ in the shortcut-list, then __mythicgme.sfile__ will be disabled.
 
 - __mythicgme reset__ - Reset mythic state to defaults and displays scene heading.
@@ -197,7 +216,6 @@ Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __myth
 - __chaos--__ - Decrease the chaos value by 1 (minimum of 1).
 - __chaos++__ - Increase the chaos value by 1 (maximum of 9).
 - __chaos={value: 1 TO 9}__ - Set the chaos value to {value}.
-
 ***
 
 ### une_ui.sfile
@@ -241,6 +259,9 @@ Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character ge
 
 ### adventurecrafter.sfile
 Shortcuts for Adventure Crafter.  Adventure Crafter is a system to create coherent story beats through randomization and tables.  It was designed by Tana Pigeon.  You can find more info about Adventure Crafter at [wordmill games](http://wordmillgames.com/the-adventure-crafter.html).
+
+This shortcut-file has a tutorial video available:
+- [Using the "adventurecrafter" shortcut-file to play with AdventureCrafter](https://www.youtube.com/watch?v=-z922-50K-o) (runtime 7:29)
 
 - __adventurecrafter reset__ - Reset adventurecrafter state to defaults.
 - __turning point__ - Get a list of five plot points to represent a major milestone in a plotline.

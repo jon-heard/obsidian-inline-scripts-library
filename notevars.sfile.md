@@ -6,6 +6,9 @@ This shortcut-file includes shortcuts to get and set note-variables.  Note-varia
 
 This shortcut file can be used by other shortcut-files to let them read and manipulate data in notes for many uses, including TTRPG character sheets.
 
+This shortcut-file has a tutorial video available:
+- [Using the "notevars" shortcut-file to work with note variables](https://www.youtube.com/watch?v=EsV4WcMwhbA) (runtime 6:59)
+
 Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the isMarkdownRefreshed flag.
 

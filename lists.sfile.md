@@ -5,7 +5,7 @@ obsidianUIMode: preview
 Shortcuts for working with lists.
 
 This shortcut-file has a tutorial video available:
-- [Lists system (runtime 5:34)](https://www.youtube.com/watch?v=xIYpnBKdYRg)
+- [Using the "list" shortcut-file to manage lists](https://www.youtube.com/watch?v=xIYpnBKdYRg) (runtime 5:34)
 
 Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the lists.

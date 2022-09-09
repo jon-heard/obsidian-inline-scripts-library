@@ -4,6 +4,10 @@ obsidianUIMode: preview
 
 Shortcuts to pick X random notes from a folder of notes and to get their front matter data.
 
+This shortcut-file has a tutorial video available:
+- [Using the "notepick" shortcut-file to randomly pick notes & get variables](https://www.youtube.com/watch?v=G1mvl-VwbIQ) (runtime 3:22)
+
+
 __
 ```
 ^sfile setup$
@@ -16,6 +20,7 @@ const confirmObjectPath =
 confirmObjectPath("_inlineScripts.notepick");
 ```
 __
+Setup this shortcut-file
 
 
 __
