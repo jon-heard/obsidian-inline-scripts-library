@@ -16,8 +16,7 @@ __
 ```js
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
-
-confirmObjectPath("_inlineScripts.notepick");
+confirmObjectPath("_inlineScripts.state.sessionState.notepick");
 ```
 __
 Setup this shortcut-file
@@ -35,7 +34,7 @@ Some useful functions
 
 __
 ```
-^notepick pickFromFolderAndGetFrontmatter ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?(.*)$
+^notepick pickFromFolderAndGetFrontmatter ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
@@ -64,7 +63,7 @@ notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >
 
 __
 ```
-^notepick pickFromFolder ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?(.*)$
+^notepick pickFromFolder ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
@@ -100,23 +99,23 @@ while (pick.length < $2)
 		pick.push(nextPickItem);
 	}
 }
-_inlineScripts.notepick[$3] = pick;
+_inlineScripts.state.sessionState.notepick[$3] = pick;
 
 return [ "",
 	$2 + " file(s) picked" +
 	($3 ? " for " + $3 : "") + ".\n\n" ];
 ```
 __
-notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.
+notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.
 
 
 __
 ```
-^notepick getPick ?(.*)$
+^notepick getPick ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
-const picks = _inlineScripts.notepick[$1];
+const picks = _inlineScripts.state.sessionState.notepick[$1];
 if (!picks)
 {
 	return [
@@ -131,16 +130,16 @@ return [
 	"\n\n" ];
 ```
 __
-notepick getPick {pick id: text, default: ""} - Get a list of the files last picked for {pick id}.
+notepick getPick {pick id: name text, default: ""} - Get a list of the files last picked for {pick id}.
 
 
 __
 ```
-^notepick frontmatter ?(.*)$
+^notepick frontmatter ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
-const pick = _inlineScripts.notepick[$1];
+const pick = _inlineScripts.state.sessionState.notepick[$1];
 if (!pick)
 {
 	return [
@@ -177,4 +176,4 @@ for (const file of files)
 return [ "", "Frontmatter gathered for " + pick.length + " note(s).\n", result, "\n\n" ];
 ```
 __
-notepick frontmatter {pick id} - Get the frontmatter from the notes that are remembered in {pick id}.
+notepick frontmatter {pick id: name text, default: ""} - Get the frontmatter from the notes that are remembered in {pick id}.
