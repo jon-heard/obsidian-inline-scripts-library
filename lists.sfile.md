@@ -65,8 +65,7 @@ __
 ```js
 function getListItems(name)
 {
-	let list =
-		_inlineScripts.state.sessionState.lists[name];
+	let list = _inlineScripts.state.sessionState.lists[name];
 	if (!list) { return []; }
 	switch (list.type)
 	{
@@ -74,8 +73,7 @@ function getListItems(name)
 			return list.content;
 			break;
 		case "folder":
-			const targetFile =
-				app.fileManager.vault.fileMap[list.content];
+			const targetFile = app.fileManager.vault.fileMap[list.content];
 			if (!targetFile || !targetFile.children)
 			{
 				return [];
@@ -89,11 +87,10 @@ function getListItems(name)
 			let result = [];
 			for (const sublist of list.content)
 			{
-				result =
-					result.concat(getListItems(sublist));
+				result = result.concat(getListItems(sublist));
 			}
-			return result.sort( (a, b) =>
-				a.toLowerCase().localeCompare(b.toLowerCase()) );
+			return result.sort(
+				(a, b) => a.toLowerCase().localeCompare(b.toLowerCase()) );
 		}
 	}
 }
@@ -108,25 +105,24 @@ __
 ```
 __
 ```js
-let listNames =
-	Object.keys(_inlineScripts.state.sessionState.lists);
+let listNames = Object.keys(_inlineScripts.state.sessionState.lists);
 listNames.sort();
 for (let i = 0; i < listNames.length; i++)
 {
 	const items = getListItems(listNames[i]);
-	const listType =
-		_inlineScripts.state.sessionState.
-		lists[listNames[i]].type;
+	const listType = _inlineScripts.state.sessionState.lists[listNames[i]].type;
 	if (listType !== "basic")
 	{
 		listNames[i] +=
-			"    _(" + listType + ": " +
-			_inlineScripts.state.sessionState.
+			"    _(" + listType + ": " + _inlineScripts.state.sessionState.
 			lists[listNames[i]].content + ")_";
 	}
-	listNames[i] = listNames[i] + "\n    - " + (items.length ? items.join("\n    - ") : "NONE");
+	listNames[i] =
+		listNames[i] + "\n    - " +
+		(items.length ? items.join("\n    - ") : "NONE");
 }
-return "Lists:\n- " + (listNames.length ? listNames.join("\n- ") : "NONE") + "\n\n";
+return "Lists:\n- " +
+	(listNames.length ? listNames.join("\n- ") : "NONE") + "\n\n";
 ```
 __
 lists - Show all list and all items for each list.
@@ -140,15 +136,13 @@ __
 ```js
 let items = getListItems($1);
 items = (items?.length ? (". " + items.join("\n. ")) : "NONE");
-const listType =
-	_inlineScripts.state.sessionState.lists[$1]?.type || "basic";
+const listType = _inlineScripts.state.sessionState.lists[$1]?.type || "basic";
 let content = "";
 if (listType !== "basic")
 {
 	content +=
 		"    _(" + listType + ": " +
-		_inlineScripts.state.sessionState.
-		lists[$1].content + ")_";
+		_inlineScripts.state.sessionState.lists[$1].content + ")_";
 }
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
@@ -162,23 +156,19 @@ __
 ```
 __
 ```js
-_inlineScripts.state.sessionState.lists[$1] ||=
-	{ type: "basic", content: [] };
+_inlineScripts.state.sessionState.lists[$1] ||= { type: "basic", content: [] };
 const ERROR_PREFIX = "Item __" + $2 + "__ not added to list __" + $1 + "__.  ";
-const type =
-	_inlineScripts.state.sessionState.lists[$1].type;
+const type = _inlineScripts.state.sessionState.lists[$1].type;
 if (type === "basic")
 {
-	const c =
-		_inlineScripts.state.sessionState.lists[$1].content;
+	const c = _inlineScripts.state.sessionState.lists[$1].content;
 	c.push($2);
 	c.sort();
 	return "__" + $2 + "__ added to list __" + $1 + "__.\n\n";
 }
 else if (type === "combo")
 {
-	const c =
-		_inlineScripts.state.sessionState.lists[$1].content;
+	const c = _inlineScripts.state.sessionState.lists[$1].content;
 	// Iterate in reverse order, to add to the LAST sublist
 	for (let i = c.length-1; i >= 0; i--)
 	{
@@ -214,11 +204,9 @@ function roll(max)
 let items = getListItems($1);
 if (items?.length)
 {
-	return expand(
-		"lists pick " + $1 + " " + roll(items.length));
+	return expand("lists pick " + $1 + " " + roll(items.length));
 }
-return [ "Failed to pick from list __" +
-	$1 + "__.  List is empty.\n\n" ];
+return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
 __
 lists pick {list name: name text} - Get a random item from the list {list name}.
@@ -231,15 +219,12 @@ __
 ```
 __
 ```js
-const ERROR_PREFIX =
-	  "Item __" + $2 + "__ not removed from list __" +
-	  $1 + "__.  ";
+const ERROR_PREFIX = "Item __" + $2 + "__ not removed from list __" + $1 + "__.  ";
 if (!_inlineScripts.state.sessionState.lists[$1])
 {
 	return ERROR_PREFIX + "Item not found.\n\n";
 }
-const type =
-	_inlineScripts.state.sessionState.lists[$1].type;
+const type = _inlineScripts.state.sessionState.lists[$1].type;
 if (type === "basic")
 {
 	const list = getListItems($1);
@@ -247,13 +232,11 @@ if (type === "basic")
 	{
 		return ERROR_PREFIX + "Item not found.\n\n";
 	}
-	const c =
-		_inlineScripts.state.sessionState.lists[$1].content;
+	const c = _inlineScripts.state.sessionState.lists[$1].content;
 	let i = c.lastIndexOf($2);
 	c.splice(i, 1);
 	return "__" +
-		$2 + "__ removed from list __" + $1 +
-		"__.\n\n";
+		$2 + "__ removed from list __" + $1 + "__.\n\n";
 }
 else if (type === "combo")
 {
@@ -262,27 +245,21 @@ else if (type === "combo")
 	{
 		return ERROR_PREFIX + "Item not found.\n\n";
 	}
-	const c =
-		_inlineScripts.state.sessionState.lists[$1].content;
+	const c = _inlineScripts.state.sessionState.lists[$1].content;
 	// Iterate in reverse order, to be sure and remove LAST entry
 	for (let i = c.length-1; i >= 0; i--)
 	{
-		let result = expand(
-			"lists remove " + c[i] + " " + $2);
+		let result = expand("lists remove " + c[i] + " " + $2);
 		if (!result.startsWith("Item"))
 		{
-			return "__" +
-				$2 + "__ removed from list __" + $1 +
-				"__.\n\n";
+			return "__" + $2 + "__ removed from list __" + $1 + "__.\n\n";
 		}
 	}
-	return ERROR_PREFIX +
-		"Failed on sub-list of this combo-list.\n\n";
+	return ERROR_PREFIX + "Failed on sub-list of this combo-list.\n\n";
 }
 else
 {
-	return ERROR_PREFIX +
-		"List type does not support this operation.\n\n";
+	return ERROR_PREFIX + "List type does not support this operation.\n\n";
 }
 ```
 __
@@ -299,18 +276,15 @@ __
 $2 = $2.replaceAll(/^\"|\"$/g, "");
 
 const ERROR_PREFIX =
-	  "Item __" + $2 + "__ not replaced in list __" +
-	  $1 + "__.  ";
+	  "Item __" + $2 + "__ not replaced in list __" + $1 + "__.  ";
 if (!_inlineScripts.state.sessionState.lists[$1])
 {
 	return ERROR_PREFIX + "Item not found.\n\n";
 }
-const type =
-	_inlineScripts.state.sessionState.lists[$1].type;
+const type = _inlineScripts.state.sessionState.lists[$1].type;
 if (type === "basic")
 {
-	const c =
-		_inlineScripts.state.sessionState.lists[$1].content;
+	const c = _inlineScripts.state.sessionState.lists[$1].content;
 	for (let i = 0; i < c.length; i++)
 	{
 		if (c[i] == $2)
@@ -319,25 +293,21 @@ if (type === "basic")
 		}
 	}
 	return "All items of __" +
-		$2 + "__ in list __" + $1 +
-		"__ replaced with __" + $3 + "__.\n\n";
+		$2 + "__ in list __" + $1 + "__ replaced with __" + $3 + "__.\n\n";
 }
 else if (type === "combo")
 {
-	const subLists =
-		_inlineScripts.state.sessionState.lists[$1].content;
+	const subLists = _inlineScripts.state.sessionState.lists[$1].content;
 	for (const subList of subLists)
 	{
 		expand("lists replace " + subList + " " + $2 + " " + $3);
 	}
 	return "All items of __" +
-		$2 + "__ in list __" + $1 +
-		"__ replaced with __" + $3 + "__.\n\n";
+		$2 + "__ in list __" + $1 + "__ replaced with __" + $3 + "__.\n\n";
 }
 else
 {
-	return ERROR_PREFIX +
-		"List type does not support this operation.\n\n";
+	return ERROR_PREFIX + "List type does not support this operation.\n\n";
 }
 ```
 __
@@ -368,9 +338,9 @@ __
 ```
 __
 ```js
-_inlineScripts.state.sessionState.lists[$1] =
-	{ type: "folder", content: $2 };
-return "List __" + $1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
+_inlineScripts.state.sessionState.lists[$1] = { type: "folder", content: $2 };
+return "List __" +
+	$1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
 lists addfolder {list name: name text} {folder: path text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
@@ -383,9 +353,9 @@ __
 __
 ```js
 let links = $2.split(" ").filter(v => v);
-_inlineScripts.state.sessionState.lists[$1] =
-	{ type: "combo", content: links };
-return "List __" + $1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
+_inlineScripts.state.sessionState.lists[$1] = { type: "combo", content: links };
+return "List __" +
+	$1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 __
 lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
@@ -406,7 +376,9 @@ if (items?.length || $2)
 	let result = Number($2) || roll(items.length);
 	if (result-1 >= items.length)
 	{
-		return [ "Failed to pick from list __" + $1 + "__.  The item index " + result + " is out of range.\n\n" ];
+		return [
+			"Failed to pick from list __" + $1 + "__.  The item index " +
+			result + " is out of range.\n\n" ];
 	}
 	result = items[result - 1];
 	return [ "__", result, "__ picked from list __", $1, "__.\n\n" ];
@@ -435,13 +407,11 @@ __
 ```
 __
 ```js
-if (!_inlineScripts.state.sessionState.
-    lists.hasOwnProperty($1))
+if (!_inlineScripts.state.sessionState.lists.hasOwnProperty($1))
 {
 	return "none";
 }
-return _inlineScripts.state.sessionState.
-       lists[$1].type;
+return _inlineScripts.state.sessionState.lists[$1].type;
 ```
 __
 hidden - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).

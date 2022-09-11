@@ -27,16 +27,16 @@ __
 if (_inlineScripts.inlineScripts.
 	sfileIndices["mythicgme"])
 {
-	print("The mythicv2 shortcut-file is disabled as it is incompatible with the mythicgme shortcut-file.");
+	print(
+		"The mythicv2 shortcut-file is disabled as it is incompatible with " +
+		"the mythicgme shortcut-file.");
 	return true;
 }
 
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
-confirmObjectPath(
-	"_inlineScripts.state.sessionState.mythicv2.chaos", 4);
-confirmObjectPath(
-	"_inlineScripts.state.sessionState.mythicv2.scene", 1);
+confirmObjectPath("_inlineScripts.state.sessionState.mythicv2.chaos", 4);
+confirmObjectPath("_inlineScripts.state.sessionState.mythicv2.scene", 1);
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.lists.pcs",
 	{ type: "basic", content: [] });
@@ -44,7 +44,8 @@ confirmObjectPath(
 	"_inlineScripts.state.sessionState.lists.npcs",
 	{ type: "basic", content: [] });
 confirmObjectPath(
-	"_inlineScripts.state.sessionState.lists.threads", { type: "basic", content: [] });
+	"_inlineScripts.state.sessionState.lists.threads",
+	{ type: "basic", content: [] });
 confirmObjectPath("_inlineScripts.mythicv2.details", []);
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.mythicv2",
@@ -92,8 +93,7 @@ _inlineScripts.state.sessionState.lists.threads =
 	{ type: "basic", content: [] };
 confirmObjectPath("_inlineScripts.mythicv2.details", []);
 return "***\n\n\n### SCENE " +
-	_inlineScripts.state.sessionState.mythicv2.scene +
-	"\n- Setup:\n    - ";
+	_inlineScripts.state.sessionState.mythicv2.scene + "\n- Setup:\n    - ";
 ```
 __
 mythicv2 reset - Reset mythic state to defaults and displays scene heading.
@@ -107,13 +107,11 @@ __
 ```js
 if ($1)
 {
-	_inlineScripts.state.sessionState.mythicv2.showDetails =
-	($1 === "y");
+	_inlineScripts.state.sessionState.mythicv2.showDetails = ($1 === "y");
 }
 return "Mythic details are " +
 	(_inlineScripts.state.sessionState.mythicv2.showDetails ?
-	"__enabled__" : "__disabled__") +
-	".\n\n";
+	"__enabled__" : "__disabled__") + ".\n\n";
 ```
 __
 mythicv2 details {state: y OR n, default: ""} - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
@@ -168,9 +166,9 @@ function clearDetailsIfUserTriggered()
 }
 function getChaosAdjust(multiplier)
 {
-	const chaos =
-		Number(_inlineScripts.state.sessionState.mythicv2.chaos);
-	const result = ( (chaos === 3) ? 2 : (chaos === 6) ? -2 : 0 ) * (multiplier || 1);
+	const chaos = Number(_inlineScripts.state.sessionState.mythicv2.chaos);
+	const result =
+		( (chaos === 3) ? 2 : (chaos === 6) ? -2 : 0 ) * (multiplier || 1);
 	return addDetails("chaosAdjust", result);
 }
 ```
@@ -192,14 +190,11 @@ let fateRoll1 = roll("fateRoll1", 10);
 let fateRoll2 = roll("fateRoll2", 10);
 let chaosRoll = roll("chaosRoll", 10);
 let result =
-	fateRoll1 + fateRoll2 +
-	addDetails("oddsAdjust", ($1) * 2) +
+	fateRoll1 + fateRoll2 + addDetails("oddsAdjust", ($1) * 2) +
 	getChaosAdjust($2==="n" ? -1 : 1);
 result = result > 10 ? "YES" : "NO";
 
-let isChaotic =
-	(chaosRoll <=
-	_inlineScripts.state.sessionState.mythicv2.chaos);
+let isChaotic = (chaosRoll <= _inlineScripts.state.sessionState.mythicv2.chaos);
 let isExtreme = isChaotic && !!(fateRoll1 % 2) && !!(fateRoll2 % 2);
 let isEvent = isChaotic && !(fateRoll1 % 2) && !(fateRoll2 % 2);
 if (isChaotic && fateRoll1 === fateRoll2) isExtreme = isEvent = true;
@@ -289,7 +284,8 @@ __
 clearDetailsIfUserTriggered();
 let value1 = ["ATTAINMENT","STARTING","NEGLECT","FIGHT","RECRUIT","TRIUMPH","VIOLATE","OPPOSE","MALICE","COMMUNICATE","PERSECUTE","INCREASE","DECREASE","ABANDON","GRATIFY","INQUIRE","ANTAGONISE","MOVE","WASTE","TRUCE","RELEASE","BEFRIEND","JUDGE","DESERT","DOMINATE","PROCRASTINATE","PRAISE","SEPARATE","TAKE","BREAK","HEAL","DELAY","STOP","LIE","RETURN","IMMITATE","STRUGGLE","INFORM","BESTOW","POSTPONE","EXPOSE","HAGGLE","IMPRISON","RELEASE","CELEBRATE","DEVELOP","TRAVEL","BLOCK","HARM","DEBASE","OVERINDULGE","ADJOURN","ADVERSITY","KILL","DISRUPT","USURP","CREATE","BETRAY","AGREE","ABUSE","OPPRESS","INSPECT","AMBUSH","SPY","ATTACH","CARRY","OPEN","CARELESSNESS","RUIN","EXTRAVAGANCE","TRICK","ARRIVE","PROPOSE","DIVIDE","REFUSE","MISTRUST","DECEIVE","CRUELTY","INTOLERANCE","TRUST","EXCITEMENT","ACTIVITY","ASSIST","CARE","NEGLIGENCE","PASSION","WORK_HARD","CONTROL","ATTRACT","FAILURE","PURSUE","VENGEANCE","PROCEEDINGS","DISPUTE","PUNISH","GUIDE","TRANSFORM","OVERTHROW","OPPRESS","CHANGE"];
 let value2 = ["GOALS","DREAMS","ENVIRONMENT","OUTSIDE","INSIDE","REALITY","ALLIES","ENEMIES","EVIL","GOOD","EMOTIONS","OPPOSITION","WAR","PEACE","THE_INNOCENT","LOVE","THE_SPIRITUAL","THE_INTELLECTUAL","NEW_IDEAS","JOY","MESSAGES","ENERGY","BALANCE","TENSION","FRIENDSHIP","THE_PHYSICAL","A_PROJECT","PLEASURES","PAIN","POSSESSIONS","BENEFITS","PLANS","LIES","EXPECTATIONS","LEGAL_MATTERS","BUREAUCRACY","BUSINESS","A_PATH","NEWS","EXTERIOR_FACTORS","ADVICE","A_PLOT","COMPETITION","PRISON","ILLNESS","FOOD","ATTENTION","SUCCESS","FAILURE","TRAVEL","JEALOUSY","DISPUTE","HOME","INVESTMENT","SUFFERING","WISHES","TACTICS","STALEMATE","RANDOMNESS","MISFORTUNE","DEATH","DISRUPTION","POWER","A_BURDEN","INTRIGUES","FEARS","AMBUSH","RUMOR","WOUNDS","EXTRAVAGANCE","A_REPRESENTATIVE","ADVERSITIES","OPULENCE","LIBERTY","MILITARY","THE_MUNDANE","TRIALS","MASSES","VEHICLE","ART","VICTORY","DISPUTE","RICHES","STATUS_QUO","TECHNOLOGY","HOPE","MAGIC","ILLUSIONS","PORTALS","DANGER","WEAPONS","ANIMALS","WEATHER","ELEMENTS","NATURE","THE_PUBLIC","LEADERSHIP","FAME","ANGER","INFORMATION"];
-let result = aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", value2);
+let result =
+	aPick("actionRoll1", value1) + " _(of)_ " + aPick("actionRoll2", value2);
 return [ "Meaning (action):\n", result, getDetails(), "\n\n" ];
 ```
 __
@@ -306,7 +302,8 @@ __
 clearDetailsIfUserTriggered();
 let value1 = ["ABNORMALLY","ADVENTUROUSLY","AGGRESSIVELY","ANGRILY","ANXIOUSLY","AWKWARDLY","BEAUTIFULLY","BLEAKLY","BOLDLY","BRAVELY","BUSILY","CALMLY","CAREFULLY","CARELESSLY","CAUTIOUSLY","CEASELESSLY","CHEERFULLY","COMBATIVELY","COOLLY","CRAZILY","CURIOUSLY","DAINTILY","DANGEROUSLY","DEFIANTLY","DELIBERATELY","DELIGHTFULLY","DIMLY","EFFICIENTLY","ENERGETICALLY","ENORMOUSLY","ENTHUSIASTICALLY","EXCITEDLY","FEARFULLY","FEROCIOUSLY","FIERCELY","FOOLISHLY","FORTUNATELY","FRANTICALLY","FREELY","FRIGHTENINGLY","FULLY","GENEROUSLY","GENTLY","GLADLY","GRACEFULLY","GRATEFULLY","HAPPILY","HASTILY","HEALTHILY","HELPFULLY","HELPLESSLY","HOPELESSLY","INNOCENTLY","INTENSELY","INTERESTINGLY","IRRITATINGLY","JOVIALLY","JOYFULLY","JUDGEMENTALLY","KINDLY","KOOKILY","LAZILY","LIGHTLY","LOOSELY","LOUDLY","LOVINGLY","LOYALLY","MAJESTICALLY","MEANINGFULLY","MECHANICALLY","MISERABLY","MOCKINGLY","MYSTERIOUSLY","NATURALLY","NEATLY","NICELY","ODDLY","OFFENSIVELY","OFFICIALLY","PARTIALLY","PEACEFULLY","PERFECTLY","PLAYFULLY","POLITELY","POSITIVELY","POWERFULLY","QUAINTLY","QUARRELSOMELY","QUIETLY","ROUGHLY","RUDELY","RUTHLESSLY","SLOWLY","SOFTLY","SWIFTLY","THREATENINGLY","VERY","VIOLENTLY","WILDLY","YIELDINGLY"];
 let value2 = ["ABANDONED","ABNORMAL","AMUSING","ANCIENT","AROMATIC","AVERAGE","BEAUTIFUL","BIZARRE","CLASSY","CLEAN","COLD","COLORFUL","CREEPY","CUTE","DAMAGED","DARK","DEFEATED","DELICATE","DELIGHTFUL","DIRTY","DISAGREEABLE","DISGUSTING","DRAB","DRY","DULL","EMPTY","ENORMOUS","EXOTIC","FADED","FAMILIAR","FANCY","FAT","FEEBLE","FEMININE","FESTIVE","FLAWLESS","FRESH","FULL","GLORIOUS","GOOD","GRACEFUL","HARD","HARSH","HEALTHY","HEAVY","HISTORICAL","HORRIBLE","IMPORTANT","INTERESTING","JUVENILE","LACKING","LAME","LARGE","LAVISH","LEAN","LESS","LETHAL","LONELY","LOVELY","MACABRE","MAGNIFICENT","MASCULINE","MATURE","MESSY","MIGHTY","MILITARY","MODERN","EXTRAVAGANT","MUNDANE","MYSTERIOUS","NATURAL","NONDESCRIPT","ODD","PALE","PETITE","POOR","POWERFUL","QUAINT","RARE","REASSURING","REMARKABLE","ROTTEN","ROUGH","RUINED","RUSTIC","SCARY","SIMPLE","SMALL","SMELLY","SMOOTH","SOFT","STRONG","TRANQUIL","UGLY","VALUABLE","WARLIKE","WARM","WATERY","WEAK","YOUNG"];
-let result = aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", value2);
+let result =
+	aPick("descriptorRoll1", value1) + " " + aPick("descriptorRoll2", value2);
 return [ "Meaning (description):\n", result, getDetails(), "\n\n" ];
 ```
 __
@@ -321,8 +318,7 @@ __
 __
 ```js
 return "The current scene is " +
-	_inlineScripts.state.sessionState.mythicv2.scene +
-	".\n\n";
+	_inlineScripts.state.sessionState.mythicv2.scene + ".\n\n";
 ```
 __
 scene get - Show the current scene.
@@ -341,18 +337,13 @@ let result =
 	"Chaos is unchanged at " + expand("chaos")[1];
 result += "\n\n\n***\n\n\n";
 _inlineScripts.state.sessionState.mythicv2.scene++;
-result +=
-	"### SCENE " +
-	_inlineScripts.state.sessionState.mythicv2.scene;
+result += "### SCENE " + _inlineScripts.state.sessionState.mythicv2.scene;
 let chk = roll("sceneCheck", 10);
-if (chk <=
-    _inlineScripts.state.sessionState.mythicv2.chaos)
+if (chk <= _inlineScripts.state.sessionState.mythicv2.chaos)
 {
 	if (chk % 2)
 	{
-		result +=
-			"\n- Scene replaced:\n" +
-		    "    - event - " + expand("event")[1];
+		result += "\n- Scene replaced:\n" + "    - event - " + expand("event")[1];
 	}
 	else
 	{
@@ -372,9 +363,7 @@ __
 __
 ```js
 return [
-	"Chaos is __",
-	_inlineScripts.state.sessionState.mythicv2.chaos,
-	"__.\n\n" ];
+	"Chaos is __", _inlineScripts.state.sessionState.mythicv2.chaos, "__.\n\n" ];
 ```
 __
 chaos - Show the current chaos value.
@@ -394,8 +383,7 @@ if (_inlineScripts.state.sessionState.mythicv2.chaos < 3)
 }
 return [
 	"Chaos lowered to __" +
-	_inlineScripts.state.sessionState.mythicv2.chaos +
-	"__.", "\n\n" ];
+	_inlineScripts.state.sessionState.mythicv2.chaos + "__.", "\n\n" ];
 ```
 __
 chaos-- - Decrease the chaos value by 1 (minimum of 3).
@@ -415,8 +403,7 @@ if (_inlineScripts.state.sessionState.mythicv2.chaos > 6)
 }
 return [
 	"Chaos raised to __" +
-	_inlineScripts.state.sessionState.mythicv2.chaos +
-	"__.", "\n\n" ];
+	_inlineScripts.state.sessionState.mythicv2.chaos + "__.", "\n\n" ];
 ```
 __
 chaos++ - Increase the chaos value by 1 (maximum of 6).
@@ -443,7 +430,10 @@ __
 __
 ```js
 clearDetailsIfUserTriggered();
-return "Descriptors:\n" + "- personality:\n    - " + expand("meaning description")[1] + "\n- activity:\n    - " + expand("meaning action")[1] + getDetails() + "\n\n";
+return "Descriptors:\n" +
+	"- personality:\n    - " + expand("meaning description")[1] +
+	"\n- activity:\n    - " + expand("meaning action")[1] + getDetails() +
+	"\n\n";
 ```
 __
 descriptors - Generates a personality and activity descriptor for an NPC.
@@ -456,7 +446,9 @@ __
 __
 ```js
 clearDetailsIfUserTriggered();
-let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
+let outcomes =
+	[ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],
+	  ["AGGRESSIVE (+4)",99] ];
 let base = roll("roll1", 10) + roll("roll2", 10);
 let result = base + addDetails("descriptorAdjust", Number($1) * 2);
 result = aPickWeight("", outcomes, 1, result)[0] + "\n. BASE = " + base;
@@ -474,7 +466,9 @@ __
 __
 ```js
 clearDetailsIfUserTriggered();
-let outcomes = [ ["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],["AGGRESSIVE (+4)",99] ];
+let outcomes = [
+	["PASSIVE (-2)",5],["MODERATE (0)",10],["ACTIVE (+2)",15],
+	["AGGRESSIVE (+4)",99] ];
 let result =
 		addDetails("base", Number($2)) +
 		addDetails("descriptorAdjust", Number($1) * 2);

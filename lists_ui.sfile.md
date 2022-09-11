@@ -11,16 +11,13 @@ __
 ```
 __
 ```js
-const listNames =
-	  Object.keys(_inlineScripts.state.sessionState.lists)
-	  .sort();
+const listNames = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 if (!listNames.length)
 {
 	return "No lists available.\n\n";
 }
 
-const pick = popups.pick(
-	"Choose a list to view", listNames);
+const pick = popups.pick("Choose a list to view", listNames);
 if (pick === null) { return null; }
 
 return expand("lists list " + listNames[pick]);
@@ -36,16 +33,12 @@ __
 ```
 __
 ```js
-let listNames =
-	  Object.keys(_inlineScripts.state.sessionState.lists)
-	  .sort();
+let listNames = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 let listName = null;
 if (listNames.length)
 {
-	listNames =
-		[ "!! New list !!" ].concat(listNames);
-	const pick = popups.pick(
-		"Choose a list to add to", listNames);
+	listNames = [ "!! New list !!" ].concat(listNames);
+	const pick = popups.pick("Choose a list to add to", listNames);
 	if (pick === null) { return null; }
 	if (!pick)
 	{
@@ -58,21 +51,18 @@ if (listNames.length)
 }
 if (!listNames.length)
 {
-	listName = popups.input(
-		"Enter a list to add to");
+	listName = popups.input("Enter a list to add to");
 	if (!listName)
 	{
 		return null;
 	}
 }
 
-const item = popups.input(
-	"Type up an item to add to list <b>" +
-	listName + "</b>");
+const item =
+	popups.input("Type up an item to add to list <b>" + listName + "</b>");
 if (!item) { return null; }
 
-return expand(
-	"lists add " + listName + " " + item);
+return expand("lists add " + listName + " " + item);
 ```
 __
 lists add - Asks user to choose from all lists.
@@ -94,8 +84,7 @@ function getListItems(name)
 			return list.content;
 			break;
 		case "folder":
-			const targetFile =
-				app.fileManager.vault.fileMap[list.content];
+			const targetFile = app.fileManager.vault.fileMap[list.content];
 			if (!targetFile || !targetFile.children)
 			{
 				return [];
@@ -109,8 +98,7 @@ function getListItems(name)
 			let result = [];
 			for (const sublist of list.content)
 			{
-				result =
-					result.concat(getListItems(sublist));
+				result = result.concat(getListItems(sublist));
 			}
 			return result.sort( (a, b) =>
 				a.toLowerCase().localeCompare(b.toLowerCase()) );
@@ -135,16 +123,14 @@ __
 ```
 __
 ```js
-const listNames =
-	await getNamesOfPopulatedLists();
+const listNames = await getNamesOfPopulatedLists();
 if (!listNames.length)
 {
 	return "There are no non-empty lists.\n\n";
 }
 
-const pick = popups.pick(
-	"Choose a (non-empty) list to pick randomly from",
-	listNames);
+const pick =
+	popups.pick("Choose a (non-empty) list to pick randomly from", listNames);
 if (pick === null) { return null; }
 
 return expand("lists pick " + listNames[pick]);
@@ -160,26 +146,22 @@ __
 ```
 __
 ```js
-const listNames =
-	await getNamesOfPopulatedLists();
+const listNames = await getNamesOfPopulatedLists();
 if (!listNames.length)
 {
 	return "There are no non-empty lists.\n\n";
 }
 
-const pick = popups.pick(
-	"Choose a list (non-empty) to remove an item from",
-	listNames);
+const pick =
+	popups.pick("Choose a list (non-empty) to remove an item from", listNames);
 if (pick === null) { return null; }
 
 let items = await getListItems(listNames[pick]);
 console.log(items);
-const pick2 = popups.pick(
-	"Choose an item to remove.", items);
+const pick2 = popups.pick("Choose an item to remove.", items);
 if (pick2 === null) { return null; }
 
-return expand(
-	"lists remove " + listNames[pick] + " " + items[pick2]);
+return expand("lists remove " + listNames[pick] + " " + items[pick2]);
 ```
 __
 lists remove - Asks user to choose from all lists.
@@ -194,16 +176,14 @@ __
 ```
 __
 ```js
-const listNames =
-	await getNamesOfPopulatedLists();
+const listNames = await getNamesOfPopulatedLists();
 if (!listNames.length)
 {
 	return "There are no non-empty lists.\n\n";
 }
 
-const pick = popups.pick(
-	"Choose a (non-empty) list to replace an item from",
-	listNames);
+const pick =
+	popups.pick("Choose a (non-empty) list to replace an item from", listNames);
 if (pick === null) { return null; }
 
 let items = await getListItems(listNames[pick]);
@@ -211,14 +191,13 @@ items = [...new Set(items)];
 const pick2 = popups.pick("Choose an item to replace.", items);
 if (pick2 === null) { return null; }
 
-let replacement = popups.input(
-	"Enter a replacement for \"<b>" +
-	items[pick2] + "</b>\".", items[pick2]);
+let replacement =
+	popups.input("Enter a replacement for \"<b>" + items[pick2] + "</b>\".",
+	items[pick2]);
 if (!replacement) { return null; }
 
 let item = items[pick2].replaceAll(" ", "\t");
-return expand(
-	"lists replace " + listNames[pick] + " " + item + " " + replacement);
+return expand("lists replace " + listNames[pick] + " " + item + " " + replacement);
 ```
 __
 lists replace - Asks user to choose from all lists.
@@ -233,19 +212,15 @@ __
 ```
 __
 ```js
-const listNames =
-	  Object.keys(_inlineScripts.state.sessionState.lists)
-	  .sort();
+const listNames = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 if (!listNames.length)
 {
 	return "No lists available.\n\n";
 }
 
-const pick = popups.pick(
-	"Choose a list to remove", listNames);
+const pick = popups.pick("Choose a list to remove", listNames);
 if (pick === null) { return null; }
-return expand(
-	"lists removelist " + listNames[pick]);
+return expand("lists removelist " + listNames[pick]);
 ```
 __
 lists removelist - Asks user to choose from all lists.
@@ -263,9 +238,10 @@ if (!listName) { return null; }
 listName = listName.replace(" ", "_");
 
 const folders =
-	Object.keys(app.vault.fileMap)
-	.filter(v => app.vault.fileMap[v].children);
-const pick = popups.pick("Choose the folder to attach <b>" + listName + "</b> to.", folders);
+	Object.keys(app.vault.fileMap).filter(v => app.vault.fileMap[v].children);
+const pick =
+	popups.pick("Choose the folder to attach <b>" + listName + "</b> to.",
+	folders);
 if (pick === null) { return null; }
 
 return expand("lists addfolder " + listName + " " + folders[pick]);
@@ -286,22 +262,16 @@ let listName = popups.input("Type the name of the new combo-list.");
 if (!listName) { return null; }
 listName = listName.replace(" ", "_");
 
-let choices =
-	Object.keys(_inlineScripts.state.sessionState.lists);
+let choices = Object.keys(_inlineScripts.state.sessionState.lists);
 let picks = [];
 do
 {
 	const listsSoFar =
-		!picks.length ?
-		"" :
-		"<br/><br/>Lists so far:</br>" +
-			picks.join("<br/>") +
-			"<br/><br/>";
+		!picks.length ? "" :
+		"<br/><br/>Lists so far:</br>" + picks.join("<br/>") + "<br/><br/>";
 	let pick =
-		popups.pick("Choose a list to attach " +
-		"to the combo-list <b>" + listName +
-		"</b>" + listsSoFar,
-		choices);
+		popups.pick("Choose a list to attach to the combo-list <b>" + listName +
+		"</b>" + listsSoFar, choices);
 	if (pick === null) { return null; }
 	if (!picks.length)
 	{
@@ -316,9 +286,7 @@ do
 }
 while (true);
 
-return expand(
-	"lists addcombo " + listName +
-	" " + picks.join(" "));
+return expand("lists addcombo " + listName + " " + picks.join(" "));
 ```
 __
 lists addcombo - Ask user to type a name for the new combo-list.

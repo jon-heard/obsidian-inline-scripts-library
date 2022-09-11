@@ -39,17 +39,14 @@ __
 __
 ```js
 // Pick random items
-let result = expand(
-	"notepick pickFromFolder " +
-	$1 + " " + $2 + " " + $3);
+let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3);
 if (result[0])
 {
 	return null;
 }
 
 // Get the front matter for the items
-result =
-	expand("notepick frontmatter " + $3);
+result = expand("notepick frontmatter " + $3);
 if (result[0])
 {
 	return null;
@@ -73,20 +70,16 @@ $2 = Number($2 || 1);
 const folder = app.vault.fileMap[$1];
 if (!folder || !folder.children)
 {
-	return [ "No files picked." +
-		"  The folder __" + $1 +
-		"__ was not found, " +
+	return [
+		"No files picked.  The folder __" + $1 + "__ was not found, " +
 		"or is not a folder.\n\n" ];
 }
 
-const files =
-	folder.children
-	.filter(v => !v.children)
-	.map(v => v.path);
+const files = folder.children.filter(v => !v.children).map(v => v.path);
 if (files.length < $2)
 {
-	return [ "No files picked." +
-		"  The folder __" + $1 +
+	return [
+		"No files picked.  The folder __" + $1 +
 		"__ does not contain enough files.\n\n" ];
 }
 
@@ -101,9 +94,7 @@ while (pick.length < $2)
 }
 _inlineScripts.state.sessionState.notepick[$3] = pick;
 
-return [ "",
-	$2 + " file(s) picked" +
-	($3 ? " for " + $3 : "") + ".\n\n" ];
+return ["", $2 + " file(s) picked" + ($3 ? " for " + $3 : "") + ".\n\n" ];
 ```
 __
 notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.
@@ -118,16 +109,10 @@ __
 const picks = _inlineScripts.state.sessionState.notepick[$1];
 if (!picks)
 {
-	return [
-		"No pick.  " +
-		"Pick id __" + $1 + "__ not found." ];
+	return ["No pick.  Pick id __" + $1 + "__ not found." ];
 }
 return [
-	"Pick" +
-	($1 ? " __" + $1 + "__" : "") +
-	":\n",
-	picks.join("\n"),
-	"\n\n" ];
+	"Pick" + ($1 ? " __" + $1 + "__" : "") + ":\n", picks.join("\n"), "\n\n" ];
 ```
 __
 notepick getPick {pick id: name text, default: ""} - Get a list of the files last picked for {pick id}.
@@ -142,9 +127,7 @@ __
 const pick = _inlineScripts.state.sessionState.notepick[$1];
 if (!pick)
 {
-	return [
-		"No frontmatter gathered.  " +
-		"Pick id __" + $1 + "__ not found." ];
+	return [ "No frontmatter gathered.  Pick id __" + $1 + "__ not found." ];
 }
 const files = pick.map(v => app.vault.fileMap[v]);
 
@@ -159,21 +142,19 @@ for (let i = 0; i < pick.length; i++)
 }
 if (fileNotFound)
 {
-	return [
-		"No frontmatter gathered.  " +
-		"__" + fileNotFound +
-		"__ not found." ];
+	return [ "No frontmatter gathered.  __" + fileNotFound + "__ not found." ];
 }
 
 let result = {};
 for (const file of files)
 {
 	result[file.name.replace(/.md$/, "")] =
-		app.metadataCache.getFileCache(
-			file).frontmatter || {};
+		app.metadataCache.getFileCache(file).frontmatter || {};
 }
 
-return [ "", "Frontmatter gathered for " + pick.length + " note(s).\n", result, "\n\n" ];
+return [
+	"", "Frontmatter gathered for " + pick.length + " note(s).\n", result,
+	"\n\n" ];
 ```
 __
 notepick frontmatter {pick id: name text, default: ""} - Get the frontmatter from the notes that are remembered in {pick id}.

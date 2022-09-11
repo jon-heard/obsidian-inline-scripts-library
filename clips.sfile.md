@@ -68,8 +68,7 @@ __
 ```
 __
 ```js
-let clipNames =
-	Object.keys(_inlineScripts.state.sessionState.clips);
+let clipNames = Object.keys(_inlineScripts.state.sessionState.clips);
 return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
 ```
 __
@@ -112,9 +111,9 @@ __
 __
 ```js
 $1 = $1.toLowerCase();
-_inlineScripts.state.sessionState.clips[$1] =
-	_inlineScripts.clips.priorExpansion;
-return "Clip __" + $1 + "__ set to:\n***\n" + _inlineScripts.clips.priorExpansion + "\n***\n\n";
+_inlineScripts.state.sessionState.clips[$1] = _inlineScripts.clips.priorExpansion;
+return "Clip __" +
+	$1 + "__ set to:\n***\n" + _inlineScripts.clips.priorExpansion + "\n***\n\n";
 ```
 __
 clips expansion {name: name text} - Creates a clip named {name} that stores the previous expansion.

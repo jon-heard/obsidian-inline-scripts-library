@@ -23,14 +23,10 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.
-	confirmObjectPath;
-confirmObjectPath(
-	"_inlineScripts.state.sessionState");
-confirmObjectPath(
-	"_inlineScripts.state.listeners.onReset");
-confirmObjectPath(
-	"_inlineScripts.state.listeners.onLoad");
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState");
+confirmObjectPath("_inlineScripts.state.listeners.onReset");
+confirmObjectPath("_inlineScripts.state.listeners.onLoad");
 ```
 __
 Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.
@@ -47,8 +43,7 @@ _inlineScripts.state.sessionState = {};
 // Notify listeners of state.onReset event
 console.log("onReset calling");
 _inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
-	"state.onReset",
-	_inlineScripts.state.listeners.onReset);
+	"state.onReset", _inlineScripts.state.listeners.onReset);
 console.log("onReset called");
 
 return "All state cleared.\n\n";
@@ -63,9 +58,7 @@ __
 ```
 __
 ```js
-return "State:\n" +
-	JSON.stringify(_inlineScripts.state.sessionState) +
-	"\n\n";
+return "State:\n" + JSON.stringify(_inlineScripts.state.sessionState) + "\n\n";
 ```
 __
 state get - Expands to a state-string - a string containing all data for the current session state.
@@ -78,22 +71,18 @@ __
 __
 ```js
 const GET_PREFIX = "State:\n";
-const content =
-	  await app.vault.cachedRead(
-	  app.workspace.getActiveFile());
+const content = await app.vault.cachedRead( app.workspace.getActiveFile());
 const startIndex = content.lastIndexOf(GET_PREFIX);
 if (startIndex < 0)
 {
 	return "State not loaded.  Last state not found.";
 }
-const endIndex =
-	  content.indexOf("\n", startIndex + GET_PREFIX.length);
+const endIndex = content.indexOf("\n", startIndex + GET_PREFIX.length);
 if (endIndex < 0)
 {
 	return "State not loaded.  Last state has a bad format.";
 }
-const stateString =
-	  content.slice(startIndex + GET_PREFIX.length, endIndex);
+const stateString = content.slice(startIndex + GET_PREFIX.length, endIndex);
 return expand("state set " + stateString);
 ```
 __
@@ -112,14 +101,12 @@ try
 }
 catch (e)
 {
-	return "State loading failed. Invalid state:\n" +
-		$1 + "\n\n";
+	return "State loading failed. Invalid state:\n" + $1 + "\n\n";
 }
 
 // Notify listeners of state.onLoad event
 _inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
-	"state.onLoad",
-	_inlineScripts.state.listeners.onLoad);
+	"state.onLoad", _inlineScripts.state.listeners.onLoad);
 
 return "State loaded.\n\n";
 ```

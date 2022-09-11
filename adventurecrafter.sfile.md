@@ -145,7 +145,9 @@ let result = [ "Plot point:\n" ];
 const plotPoint = aPickWeight(_inlineScripts.adventurecrafter.plot, themePick[3]);
 if (!plotPoint[7])
 {
-	result.push("- " + plotPoint[0] + "    _(" + themePick[1] + ")_\n    - " + plotPoint[6]);
+	result.push(
+		"- " + plotPoint[0] + "    _(" + themePick[1] + ")_\n    - " +
+		plotPoint[6]);
 }
 else
 {
@@ -174,8 +176,7 @@ __
 ```
 __
 ```js
-if (_inlineScripts.state.sessionState.
-    adventurecrafter.themeSlots.length < 5)
+if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
 	return [ "Theme not picked.  Not all theme slots filled.\n\n" ];
 }
@@ -186,17 +187,14 @@ else if (pick < 10) { pick = 2; }
 else
 {
 	pick =
-		(_inlineScripts.state.sessionState.
-		 adventurecrafter.priorPickWas3rd ? 4 : 3);
-	_inlineScripts.state.sessionState.
-	adventurecrafter.priorPickWas3rd =
-		!_inlineScripts.state.sessionState.
-		adventurecrafter.priorPickWas3rd;
+		_inlineScripts.state.sessionState.adventurecrafter.priorPickWas3rd ? 4 : 3;
+	_inlineScripts.state.sessionState.adventurecrafter.priorPickWas3rd =
+		!_inlineScripts.state.sessionState.adventurecrafter.priorPickWas3rd;
 }
-pick =
-	_inlineScripts.state.sessionState.
-	adventurecrafter.themeSlots[pick];
-return [ "Theme __", _inlineScripts.adventurecrafter.themes[pick], "__ picked _(", (pick+1), ")_.\n\n" ];
+pick = _inlineScripts.state.sessionState.adventurecrafter.themeSlots[pick];
+return [
+	"Theme __", _inlineScripts.adventurecrafter.themes[pick], "__ picked _(",
+	(pick+1), ")_.\n\n" ];
 ```
 __
 themes pick - Pick a random theme from the chosen themes, as per the Adventure Crafter rules.
@@ -208,18 +206,12 @@ __
 ```
 __
 ```js
-let result =
-	[ "Current theme set:\n", "" ];
+let result = [ "Current theme set:\n", "" ];
 const themes = _inlineScripts.adventurecrafter.themes;
-const themeSlots =
-	  _inlineScripts.state.sessionState.
-	  adventurecrafter.themeSlots;
+const themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
 for (let i = 0; i < 5; i++)
 {
-	result[1] +=
-		(i+1) + " - " +
-		(themes[ themeSlots[i] ?? 9 ] || "") +
-		"\n";
+	result[1] += (i+1) + " - " + (themes[ themeSlots[i] ?? 9 ] || "") + "\n";
 }
 result.push("\n");
 return result;
@@ -234,9 +226,7 @@ __
 ```
 __
 ```js
-let themeSlots =
-	_inlineScripts.state.sessionState.
-	adventurecrafter.themeSlots;
+let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
 	return "Theme not added.  All five theme slots are already filled.\n\n";
@@ -250,12 +240,13 @@ const themeCaptions =
 	});
 let message = "Select the next theme.\n\nCurrent theme slots:\n";
 message +=
-	"<div style='display:inline-block;text-align:left'>" +
-	expand("themes")[1] + "</div><br/><br/>";
+	"<div style='display:inline-block;text-align:left'>" + expand("themes")[1] +
+	"</div><br/><br/>";
 let pick = popups.pick(message, themeCaptions);
 if (pick === null) { return null; }
 themeSlots.push(pick);
-return "Theme slot __" + themeSlots.length + "__ set to __" + themes[pick] + "__" + "\n\n";
+return "Theme slot __" +
+	themeSlots.length + "__ set to __" + themes[pick] + "__\n\n";
 ```
 __
 themes add - Choose a theme for the next unchosen theme-slot.
@@ -267,12 +258,11 @@ __
 ```
 __
 ```js
-let themeSlots =
-	_inlineScripts.state.sessionState.
-	adventurecrafter.themeSlots;
+let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
-	return [ "Theme not added.  All five theme slots are already filled.", "\n\n" ];
+	return [
+		"Theme not added.  All five theme slots are already filled.", "\n\n" ];
 }
 let r = roll(5);
 // Seek unused theme (if theme slots aren't already filled)
@@ -282,7 +272,9 @@ while (themeSlots.length < 5 && themeSlots.includes(r-1))
 }
 themeSlots.push(r-1);
 const themes = _inlineScripts.adventurecrafter.themes;
-return [ "Theme slot __" + themeSlots.length + "__ set to __" + themes[r-1] + "__", "\n\n" ];
+return [
+	"Theme slot __" + themeSlots.length + "__ set to __" + themes[r-1] + "__",
+	"\n\n" ];
 ```
 __
 themes roll - Pick a random theme for the next unchosen theme-slot.
@@ -299,8 +291,7 @@ do
 {
 	result += expand("themes roll")[0] + "\n";
 }
-while (_inlineScripts.state.sessionState.
-       adventurecrafter.themeSlots.length < 5);
+while (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5);
 return result + "\n";
 ```
 __
@@ -313,8 +304,7 @@ __
 ```
 __
 ```js
-_inlineScripts.state.sessionState.
-	adventurecrafter.themeSlots = [];
+_inlineScripts.state.sessionState.adventurecrafter.themeSlots = [];
 return "All theme slots cleared.\n\n";
 ```
 __
@@ -488,7 +478,8 @@ __
 ```
 __
 ```js
-return "Characters:\n" + (await getFormattedList("characters", false, 2)).join("\n") + "\n\n";
+return "Characters:\n" +
+	(await getFormattedList("characters", false, 2)).join("\n") + "\n\n";
 ```
 __
 ac chars - List all character entries.
@@ -536,9 +527,7 @@ for (let i = 0; i < characters.length; i++)
 	}
 }
 
-const pick = popups.pick(
-	"Choose a character to duplicate",
-	characterDisplays);
+const pick = popups.pick("Choose a character to duplicate", characterDisplays);
 if (pick === null) { return null; }
 expand("lists add characters " + characters[pick]);
 return "Character __" + characters[pick] + "__ duplicated.\n\n";
@@ -575,9 +564,7 @@ for (let i = 0; i < characters.length; i++)
 	characterDisplays[i] += " (x " + count + ")"
 }
 
-const pick = popups.pick(
-	"Choose a character to Reduce",
-	characterDisplays);
+const pick = popups.pick("Choose a character to Reduce", characterDisplays);
 if (pick === null) { return null; }
 expand("lists remove characters " + characters[pick]);
 return "Character __" + characters[pick] + "__ reduced.\n\n";
@@ -617,18 +604,14 @@ for (let i = 0; i < characters.length; i++)
 	}
 }
 
-const pick = popups.pick(
-	"Choose a character to rename", characterDisplays);
+const pick = popups.pick("Choose a character to rename", characterDisplays);
 if (pick == null) { return null; }
 const replacement =
-	  popups.input("Enter a new text for the character.", characters[pick]);
+	popups.input("Enter a new text for the character.", characters[pick]);
 if (!replacement) { return null; }
-expand(
-	"lists replace characters \"" +
-	characters[pick] + "\" " + replacement);
+expand("lists replace characters \"" + characters[pick] + "\" " + replacement);
 return "Character __" +
-	characters[pick] + "__ renamed to __" +
-	replacement + "__.\n\n";
+	characters[pick] + "__ renamed to __" + replacement + "__.\n\n";
 ```
 __
 ac chars rename - Choose a character from the characters list and change it's text to something else.
@@ -677,7 +660,8 @@ __
 ```
 __
 ```js
-return "Plotlines:\n" + (await getFormattedList("plotlines", false, 2)).join("\n") + "\n\n";
+return "Plotlines:\n" +
+	(await getFormattedList("plotlines", false, 2)).join("\n") + "\n\n";
 ```
 __
 ac plots - List all plotline entries.
@@ -704,8 +688,7 @@ __
 const rawPlots = expand("lists listraw plotlines");
 if (!rawPlots.length)
 {
-	return "No plotline duplicated.  " +
-		"There are no plotlines.\n\n";
+	return "No plotline duplicated.  There are no plotlines.\n\n";
 }
 
 const plots = [...new Set(rawPlots)];
@@ -726,9 +709,7 @@ for (let i = 0; i < plots.length; i++)
 	}
 }
 
-const pick = popups.pick(
-	"Choose a plotline to duplicate",
-	plotDisplays);
+const pick = popups.pick("Choose a plotline to duplicate", plotDisplays);
 if (pick === null) { return null; }
 expand("lists add plotlines " + plots[pick]);
 return "Plotline __" + plots[pick] + "__ duplicated.\n\n";
@@ -765,9 +746,7 @@ for (let i = 0; i < plots.length; i++)
 	plotDisplays[i] += " (x " + count + ")"
 }
 
-const pick = popups.pick(
-	"Choose a plotline to Reduce",
-	plotDisplays);
+const pick = popups.pick("Choose a plotline to Reduce", plotDisplays);
 if (pick === null) { return null; }
 expand("lists remove plotlines " + plots[pick]);
 return "Plotline __" + plots[pick] + "__ reduced.\n\n";
@@ -785,8 +764,7 @@ __
 let rawPlots = expand("lists listraw plotlines");
 if (!rawPlots.length)
 {
-	return "No plotlines renamed.  " +
-		"There are no plotlines.\n\n";
+	return "No plotlines renamed.  There are no plotlines.\n\n";
 }
 
 let plots = [...new Set(rawPlots)];
@@ -807,18 +785,13 @@ for (let i = 0; i < plots.length; i++)
 	}
 }
 
-const pick = popups.pick(
-	"Choose a plotline to rename", plotDisplays);
+const pick = popups.pick("Choose a plotline to rename", plotDisplays);
 if (pick == null) { return null; }
 const replacement =
-	  popups.input("Enter a new text for the plotline.", plots[pick]);
+	popups.input("Enter a new text for the plotline.", plots[pick]);
 if (!replacement) { return null; }
-expand(
-	"lists replace plotlines \"" +
-	plots[pick] + "\" " + replacement);
-return "Plotline __" +
-	plots[pick] + "__ renamed to __" +
-	replacement + "__.\n\n";
+expand("lists replace plotlines \"" + plots[pick] + "\" " + replacement);
+return "Plotline __" + plots[pick] + "__ renamed to __" + replacement + "__.\n\n";
 ```
 __
 ac plots rename - Choose a plotline from the plotlines list and change it's text to something else.
@@ -847,8 +820,7 @@ __
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath(
-	"_inlineScripts.state.sessionState." +
-	"adventurecrafter.themeSlots", []);
+	"_inlineScripts.state.sessionState.adventurecrafter.themeSlots", []);
 confirmObjectPath("_inlineScripts.state.sessionState.lists");
 
 if (!_inlineScripts.state.sessionState.lists.plotlines)
@@ -858,8 +830,7 @@ if (!_inlineScripts.state.sessionState.lists.plotlines)
 		confirmObjectPath(
 			"_inlineScripts.state.sessionState.lists.plotlines",
 			{ type: "basic", content: [] });
-		delete _inlineScripts.state.sessionState.
-			lists.plotline_dupes;
+		delete _inlineScripts.state.sessionState.lists.plotline_dupes;
 	}
 	else
 	{
@@ -880,8 +851,7 @@ if (!_inlineScripts.state.sessionState.lists.characters)
 		confirmObjectPath(
 			"_inlineScripts.state.sessionState.lists.characters",
 			{ type: "basic", content: [] });
-		delete _inlineScripts.state.sessionState.
-			lists.character_dupes;
+		delete _inlineScripts.state.sessionState.lists.character_dupes;
 	}
 	else
 	{
@@ -890,14 +860,12 @@ if (!_inlineScripts.state.sessionState.lists.characters)
 			{ type: "basic", content: [] });
 		confirmObjectPath(
 			"_inlineScripts.state.sessionState.lists.characters",
-			{ type: "combo",
-			content: ["pcs", "npcs", "character_dupes"] });
+			{ type: "combo", content: ["pcs", "npcs", "character_dupes"] });
 	}
 }
 
 confirmObjectPath(
-	"_inlineScripts.state.listeners" +
-	".onReset.adventurecrafter",
+	"_inlineScripts.state.listeners.onReset.adventurecrafter",
 	function()
 	{
 		expand("adventurecrafter reset");

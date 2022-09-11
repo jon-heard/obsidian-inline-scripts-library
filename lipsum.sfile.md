@@ -46,7 +46,8 @@ for (let i = 0; i < l.length; i++)
 }
 let first = sentences.shift();
 window._inlineScripts ||= {};
-window._inlineScripts.lipsum = { first: first, pSizes: pSizes, sentences: sentences };
+window._inlineScripts.lipsum =
+	{ first: first, pSizes: pSizes, sentences: sentences };
 ```
 __
 Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and breaks it down into individual sentences and counts of sentences per paragraph.  On user request, builds a Lorem Ipsum text of random sentences from the source, combined into paragraphs of random size based on the source's paragraphs.

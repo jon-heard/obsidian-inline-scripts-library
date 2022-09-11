@@ -24,10 +24,11 @@ __
 ```
 __
 ```js
-if (_inlineScripts.inlineScripts.
-	sfileIndices["mythicv2"])
+if (_inlineScripts.inlineScripts.sfileIndices["mythicv2"])
 {
-	print("The mythicgme shortcut-file is disabled as it is incompatible with the mythicv2 shortcut-file.");
+	print(
+		"The mythicgme shortcut-file is disabled as it is incompatible with " +
+		"the mythicv2 shortcut-file.");
 	return true;
 }
 
@@ -139,8 +140,7 @@ const FATE_CHART = [
 const r = roll(100);
 $1 = Number($1) | 0;
 const ranges =
-	FATE_CHART[$1+4]
-	[9-_inlineScripts.state.sessionState.mythicgme.chaos];
+	FATE_CHART[$1+4][9 - _inlineScripts.state.sessionState.mythicgme.chaos];
 let result =
 	(r <= ranges[0]) ? "EXTEREME YES" :
 	(r <= ranges[1]) ? "YES" :
@@ -150,8 +150,7 @@ let eventOutput = "";
 if (Math.trunc(r/10) == r%10 &&
     r%10 < _inlineScripts.state.sessionState.mythicgme.chaos)
 {
-	eventOutput =
-		"\nevent - " + expand("event")[1];
+	eventOutput = "\nevent - " + expand("event")[1];
 }
 return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
 ```
@@ -181,8 +180,7 @@ __
 __
 ```js
 return "The current scene is " +
-	_inlineScripts.state.sessionState.mythicgme.scene +
-	".\n\n";
+	_inlineScripts.state.sessionState.mythicgme.scene + ".\n\n";
 ```
 __
 scene get - Show the current scene.
@@ -200,17 +198,13 @@ let result =
 	"Chaos is unchanged at " + expand("chaos")[1];
 result += "\n\n\n***\n\n\n";
 _inlineScripts.state.sessionState.mythicgme.scene++;
-result +=
-	"### SCENE " +
-	_inlineScripts.state.sessionState.mythicgme.scene;
+result += "### SCENE " + _inlineScripts.state.sessionState.mythicgme.scene;
 let chk = roll(10);
 if (chk <= _inlineScripts.state.sessionState.mythicgme.chaos)
 {
 	if (chk % 2)
 	{
-		result +=
-			"\n- Scene replaced:\n" +
-			"    - event - " + expand("event")[1];
+		result += "\n- Scene replaced:\n    - event - " + expand("event")[1];
 	}
 	else
 	{
@@ -264,9 +258,7 @@ __
 __
 ```js
 return [
-	"Chaos is __",
-	_inlineScripts.state.sessionState.mythicgme.chaos,
-	"__.\n\n" ];
+	"Chaos is __", _inlineScripts.state.sessionState.mythicgme.chaos, "__.\n\n" ];
 ```
 __
 chaos - Show the current chaos value.
@@ -286,8 +278,7 @@ if (_inlineScripts.state.sessionState.mythicgme.chaos < 1)
 }
 return [
 	"Chaos lowered to __" +
-	_inlineScripts.state.sessionState.mythicgme.chaos +
-	"__.", "\n\n" ];
+	_inlineScripts.state.sessionState.mythicgme.chaos + "__.", "\n\n" ];
 ```
 __
 chaos-- - Decrease the chaos value by 1 (minimum of 1).
@@ -307,8 +298,7 @@ if (_inlineScripts.state.sessionState.mythicgme.chaos > 9)
 }
 return [
 	"Chaos raised to __" +
-	_inlineScripts.state.sessionState.mythicgme.chaos +
-	"__.", "\n\n" ];
+	_inlineScripts.state.sessionState.mythicgme.chaos + "__.", "\n\n" ];
 ```
 __
 chaos++ - Increase the chaos value by 1 (maximum of 9).

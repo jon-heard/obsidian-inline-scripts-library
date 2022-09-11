@@ -11,8 +11,7 @@ __
 ```
 __
 ```js
-if (_inlineScripts.inlineScripts.
-	sfileIndices["mythicgme"])
+if (_inlineScripts.inlineScripts.sfileIndices["mythicgme"])
 {
 	return true;
 }
@@ -44,23 +43,20 @@ __
 ```js
 clearDetailsIfUserTriggered();
 const stateString =
-	_inlineScripts.state.sessionState.mythicv2.showDetails
-	? "enabled" : "disabled";
+	_inlineScripts.state.sessionState.mythicv2.showDetails ?
+	"enabled" : "disabled";
 const pick = popups.pick(
-	"Set 'details' mode? (currently <b>" +
-	stateString + "</b>)",
+	"Set 'details' mode? (currently <b>" + stateString + "</b>)",
 	[ "Disable", "Enable" ]);
 if (pick === null) { return null; }
 
 if (!!pick === (stateString === "enabled"))
 {
 	return "Details mode unchanged.  " +
-	"Details are __" + stateString + "__.\n\n";
+		"Details are __" + stateString + "__.\n\n";
 }
 
-return expand(
-	"mythicv2 details " +
-	(pick ? "y" : "n"));
+return expand("mythicv2 details " + (pick ? "y" : "n"));
 ```
 __
 mythicv2 details - Ask user whether to enable or disable 'details' mode.
@@ -101,7 +97,8 @@ __
 __
 ```js
 clearDetailsIfUserTriggered();
-const pick = popups.pick("How was the previous scene?", [ "More controlled", "More chaotic" ], 1);
+const pick = popups.pick(
+	"How was the previous scene?", [ "More controlled", "More chaotic" ], 1);
 if (pick === null) { return null; }
 
 return expand("scene " + (pick * 2 - 1));

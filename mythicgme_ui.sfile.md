@@ -11,8 +11,7 @@ __
 ```
 __
 ```js
-if (_inlineScripts.inlineScripts.
-	sfileIndices["mythicv2"])
+if (_inlineScripts.inlineScripts.sfileIndices["mythicv2"])
 {
 	return true;
 }
@@ -50,7 +49,9 @@ __
 ```
 __
 ```js
-const pick = popups.pick("How was the previous scene?", [ "More controlled", "More chaotic" ], 1);
+const pick =
+	popups.pick("How was the previous scene?",
+	[ "More controlled", "More chaotic" ], 1);
 if (pick === null) { return null; }
 
 return expand("scene " + (pick * 2 - 1));
