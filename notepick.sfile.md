@@ -74,7 +74,7 @@ $2 = Number($2 || 1);
 const folder = app.vault.fileMap[$1];
 if (!folder || !folder.children)
 {
-	return [ "No notes picked." +
+	return [ "No files picked." +
 		"  The folder __" + $1 +
 		"__ was not found, " +
 		"or is not a folder.\n\n" ];
@@ -82,13 +82,13 @@ if (!folder || !folder.children)
 
 const files =
 	folder.children
-	.filter(v => v.extension == "md")
+	.filter(v => !v.children)
 	.map(v => v.path);
 if (files.length < $2)
 {
-	return [ "No notes picked." +
+	return [ "No files picked." +
 		"  The folder __" + $1 +
-		"__ does not contain enough notes.\n\n" ];
+		"__ does not contain enough files.\n\n" ];
 }
 
 const pick = [];
@@ -103,7 +103,7 @@ while (pick.length < $2)
 _inlineScripts.notepick[$3] = pick;
 
 return [ "",
-	$2 + " note(s) picked" +
+	$2 + " file(s) picked" +
 	($3 ? " for " + $3 : "") + ".\n\n" ];
 ```
 __
@@ -127,8 +127,8 @@ return [
 	"Pick" +
 	($1 ? " __" + $1 + "__" : "") +
 	":\n",
-	picks.map(v => ". " + v + "\n").join(""),
-	"\n" ];
+	picks.join("\n"),
+	"\n\n" ];
 ```
 __
 notepick getPick {pick id: text, default: ""} - Get a list of the files last picked for {pick id}.
@@ -155,23 +155,23 @@ for (let i = 0; i < pick.length; i++)
 	if (!files[i])
 	{
 		fileNotFound = pick[i];
+		break;
 	}
-	break;
 }
 if (fileNotFound)
 {
 	return [
 		"No frontmatter gathered.  " +
-		"Note __" + fileNotFound +
+		"__" + fileNotFound +
 		"__ not found." ];
 }
 
 let result = {};
 for (const file of files)
 {
-	result[file.basename] =
+	result[file.name.replace(/.md$/, "")] =
 		app.metadataCache.getFileCache(
-			file).frontmatter;
+			file).frontmatter || {};
 }
 
 return [ "", "Frontmatter gathered for " + pick.length + " note(s).\n", result, "\n\n" ];
