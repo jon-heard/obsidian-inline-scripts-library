@@ -101,7 +101,7 @@ try
 }
 catch (e)
 {
-	return "State loading failed. Invalid state:\n" + $1 + "\n\n";
+	return "State not loaded. Invalid state:\n" + $1 + "\n\n";
 }
 
 // Notify listeners of state.onLoad event

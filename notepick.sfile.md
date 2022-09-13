@@ -34,12 +34,32 @@ Some useful functions
 
 __
 ```
-^notepick pickFromFolderAndGetFrontmatter ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^notepick pickFromFolderAndGetPick ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(.*)$
 ```
 __
 ```js
 // Pick random items
-let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3);
+let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4);
+if (result[0])
+{
+	return result;
+}
+
+// Get the front matter for the items
+return expand("notepick getPick " + $3);
+```
+__
+notepick pickFromFolderAndGetPick {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames} - Combines the shortcuts "notepick pickFromFolder" and "notepick getPick".
+
+
+__
+```
+^notepick pickFromFolderAndGetFrontmatter ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(.*)$
+```
+__
+```js
+// Pick random items
+let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4);
 if (result[0])
 {
 	return null;
@@ -54,18 +74,19 @@ if (result[0])
 return result[2];
 ```
 __
-notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
+notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames} - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
 ***
 
 
 __
 ```
-^notepick pickFromFolder ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^notepick pickFromFolder ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(.*)$
 ```
 __
 ```js
 $1 = $1.replaceAll(/^\"|\"$/g, "");
 $2 = Number($2 || 1);
+$4 = $4.split("|");
 
 const folder = app.vault.fileMap[$1];
 if (!folder || !folder.children)
@@ -75,7 +96,8 @@ if (!folder || !folder.children)
 		"or is not a folder.\n\n" ];
 }
 
-const files = folder.children.filter(v => !v.children).map(v => v.path);
+let files = folder.children.filter(v => !v.children).map(v => v.path);
+files = files.filter(v => !$4.includes(v));
 if (files.length < $2)
 {
 	return [
@@ -97,7 +119,7 @@ _inlineScripts.state.sessionState.notepick[$3] = pick;
 return ["", $2 + " file(s) picked" + ($3 ? " for " + $3 : "") + ".\n\n" ];
 ```
 __
-notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.
+notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} {to ignore: | separated filenames} - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.  Any files in {to ignore} are never picked.
 
 
 __
