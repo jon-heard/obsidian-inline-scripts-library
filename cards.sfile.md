@@ -33,6 +33,10 @@ _inlineScripts.cards.cardPickerPopup =
 		const onclick = function()
 		{
 			this.classList.toggle("cardSelected");
+			if (data.onclick)
+			{
+				data.onclick(this);
+			}
 		};
 		for (let i = 0; i < cards.length; i++)
 		{
@@ -41,11 +45,13 @@ _inlineScripts.cards.cardPickerPopup =
 			d.append(img);
 			img.classList.add("cardChoice");
 			img.dataset.id = i;
-			img.addEventListener("click", onclick);
+			img.dataset.src =
+				"app://local/" + app.vault.adapter.basePath + "/" + card.path;
+			img.addEventListener("pointerdown", onclick);
 			img.src =
 				card.isFaceDown ?
 				_inlineScripts.cards.backImage :
-				"app://local/" + app.vault.adapter.basePath + "/" + card.path;
+				img.dataset.src;
 			img.style.width = (card.width + 8) + "px";
 			img.style.height = ((card.width + 8) * card.aspect) + "px";
 		}
@@ -220,7 +226,7 @@ cards show {pile id: name text, default: ""} - Displays all cards in pile {pile 
 
 __
 ```
-^cards? setup ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|) ?([1-9][0-9]*|) ?(y|n|) ?(y|n|) ?(y|n|)$
+^cards? properties ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|) ?([1-9][0-9]*|) ?(y|n|) ?(y|n|) ?(y|n|)$
 ```
 __
 ```js
@@ -228,7 +234,8 @@ $3 = Number($3);
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "No cards setup.  The" + pile_toString($1) + " pile was not found.\n\n";
+	return "No cards changed.  " +
+		"The" + pile_toString($1) + " pile was not found.\n\n";
 }
 for (let card of pile.cards)
 {
@@ -262,12 +269,12 @@ if ($4) { changes.push("- allow rotationed - " + ($4 === "y")); }
 if ($5) { changes.push("- allow duplicate - " + ($5 === "y")); }
 if ($6 === "y") { changes.push("- origin - " + $1); }
 changes = changes.length ? changes.join("\n") : "NONE";
-return "Cards in the" +
-	pile_toString($1) + " pile are set up.  Changed parameters:\n" + changes +
+return "All Cards in the" +
+	pile_toString($1) + " pile are changed.  Changed properties:\n" + changes +
 	"\n\n";
 ```
 __
-cards setup {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {reset origin: y OR n, default: n} - Change the settings for each card in pile {pile id}.
+cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {reset origin: y OR n, default: n} - Change properties for all cards in pile {pile id}.
 - facing - Is the card shown face-up (up) or face-down (down)?
 - width - Set the size of the card by it's width.  The height adjusts to match the width.
 - allow rotated - If true, the card has a 50/50 chance of being upside down.
@@ -435,7 +442,7 @@ cards reset {pile id: name text, default: ""} - Moves all cards that have pile {
 
 __
 ```
-^cards flip ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([1-9][0-9]*|all|) ?(y|n|) ?(up|down|)$
+^cards flip ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
 ```
 __
 ```js
@@ -446,14 +453,28 @@ if (!pile)
 		pile_toString($1) + " pile was not found.\n\n";
 }
 $2 = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
-const flipDown = ($4 === "down");
+const flipDown = ($3 === "down");
 let flipCount = 0;
-if ($3 === "y")
+if ($4 === "y")
 {
 	let choice = popups.custom(
 		"Choose which cards to flip.",
 		_inlineScripts.cards.cardPickerPopup,
-		{ pileId: $1 });
+		{
+			pileId: $1,
+			onclick: cardUi =>
+			{
+				if (cardUi.classList.contains("cardSelected") ===
+				    pile.cards[cardUi.dataset.id].isFaceDown)
+				{
+					cardUi.src = cardUi.dataset.src;
+				}
+				else
+				{
+					cardUi.src = _inlineScripts.cards.backImage;
+				}
+			}
+		});
 	if (!choice)
 	{
 		return "No cards flipped.  Canceled by user.";
@@ -486,11 +507,13 @@ else
 		}
 	}
 }
+const flipType = ($4 === "y") ? "" : flipDown ? " face-down" : " face-up";
 return "__" +
-	flipCount + "__ cards flipped face-" + (flipDown ? "down" : "up") + " in the" + pile_toString($1) + " pile.\n\n";
+	flipCount + "__ cards flipped" + flipType + " in the" + pile_toString($1) +
+	" pile.\n\n";
 ```
 __
-cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {pick: y OR n, default: n} {facing: up OR down, default: up} - Flips {count} face-down cards to face-up in the pile {pile id}.  If {pick} is "y", then the cards to flip are picked by the user.  If {facing} is "down", then flipping is from face-up to face-down.
+cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the pile {pile id}.  If {pick} is "y", then the cards to flip are picked by the user.  If {facing} is "down", then flipping is from face-up to face-down.
 
 
 __
