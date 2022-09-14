@@ -41,10 +41,8 @@ __
 _inlineScripts.state.sessionState = {};
 
 // Notify listeners of state.onReset event
-console.log("onReset calling");
 _inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
 	"state.onReset", _inlineScripts.state.listeners.onReset);
-console.log("onReset called");
 
 return "All state cleared.\n\n";
 ```

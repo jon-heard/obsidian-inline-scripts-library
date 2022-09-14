@@ -45,7 +45,7 @@ Unregisters event callbacks.
 
 __
 ```
-^lists reset?$
+^lists? reset$
 ```
 __
 ```js
