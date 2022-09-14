@@ -81,8 +81,6 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			this.zoomSelect.options[this.zoomSelect.options.length] =
 				new Option("100%", undefined, undefined, true);
 			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("150%");
-			this.zoomSelect.options[this.zoomSelect.options.length] =
 				new Option("200%");
 			this.zoomSelect.options[this.zoomSelect.options.length] =
 				new Option("300%");

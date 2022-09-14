@@ -88,6 +88,10 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 				card.isFaceDown ?
 				_inlineScripts.cards.backImage :
 				img.dataset.src;
+			if (card.isRotated && !card.isFaceDown)
+			{
+				img.alt = ", rotated";
+			}
 			img.style.width = (card.width + 8) + "px";
 			img.style.height = ((card.width + 8) * card.aspect) + "px";
 		}
@@ -594,10 +598,13 @@ if ($4 === "y")
 				    pile.cards[cardUi.dataset.id].isFaceDown)
 				{
 					cardUi.src = cardUi.dataset.src;
+					cardUi.alt =
+						pile.cards[cardUi.dataset.id].isRotated ? ", rotated" : "";
 				}
 				else
 				{
 					cardUi.src = _inlineScripts.cards.backImage;
+					cardUi.alt = "";
 				}
 			}
 		});
