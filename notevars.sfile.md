@@ -23,9 +23,44 @@ const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed", true);
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset.notevars",
+	function()
+	{
+		expand("notevars reset");
+	});
 ```
 __
-Sets up the notevars sate (just the "isMarkdownRefreshed" flag).
+Sets up the notevars state (just the "isMarkdownRefreshed" flag).
+
+
+__
+```
+^sfile shutdown$
+```
+__
+```js
+delete _inlineScripts.state.sessionState.notevars;
+delete _inlineScripts.state?.listeners?.onReset?.notevars;
+```
+__
+Shutdown this shortcut-file
+
+
+__
+```
+^notevars reset$
+```
+__
+```js
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState.notevars");
+_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed = true;
+return "All notepicks cleared.\n\n";
+```
+__
+notevars reset - Clear the isMarkdownRefreshed flag.
 
 
 __
