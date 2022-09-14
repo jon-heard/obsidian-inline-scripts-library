@@ -2,6 +2,29 @@ Shortcuts for working with virtual cards.  Almost all of these shortcuts work on
 
 
 __
+__
+```js
+function onPileListChanged()
+{
+	_inlineScripts.inlineScripts.helperFncs.
+		callEventListenerCollection(
+			"cards.onPileListChanged",
+			_inlineScripts.cards.listeners.onPileListChanged);
+}
+function onPileChanged(pileName)
+{
+	_inlineScripts.cards.listeners.changedPile = pileName;
+	_inlineScripts.inlineScripts.helperFncs.
+		callEventListenerCollection(
+			"cards.onPileChanged",
+			_inlineScripts.cards.listeners.onPileChanged);
+}
+```
+__
+Helper functions
+
+
+__
 ```
 ^sfile setup$
 ```
@@ -18,8 +41,18 @@ confirmObjectPath(
 	{
 		expand("cards reset");
 	});
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onLoad.cards",
+	function()
+	{
+		onPileListChanged();
+		onPileChanged(null);
+	});
 
-_inlineScripts.inlineScripts.helperFncs.addCss("cards", "img[alt*=', rotated']{ transform: scaleX(-1) scaleY(-1); } .cardChoice { opacity: .75; cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .cardChoice:hover { opacity: 1; } .cardSelected { opacity: 1; border-color: yellow; }");
+confirmObjectPath("_inlineScripts.cards.listeners.onPileListChanged");
+confirmObjectPath("_inlineScripts.cards.listeners.onPileChanged");
+
+_inlineScripts.inlineScripts.helperFncs.addCss("cards", "img[alt*=', rotated']{ transform: scaleX(-1) scaleY(-1); } .iscript_cardChoice { opacity: .75; cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { opacity: 1; } .iscript_cardSelected { opacity: 1; border-color: yellow; }");
 
 confirmObjectPath("_inlineScripts.cards.backImage",
 `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABkCAYAAAAlg3YKAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAEvElEQVR42u3dP2wTZxjH8e9diD2UYFdWKwuQXGpTEjxYSFkSIcuDJYTqZrmweSrZzixlZ2BPh+J3M52ytMILtVQhPFiQhCUS8uCiCKzUA8hSdaoP6OBE5Dr4znFCYiiY5o+f33TRvXlP/uTx+zqPLL0aPWk2nS9HR7kGZICzwGcMR/4BngIln4+fxsa0v7wbmndhWc4s8DMwxnDnJfB9KKQVu0CW5VwBfgG01dVNlpY2ef58k42N4RAZHYXTp3WmpnTGx3UAB7gSCmlFzX1bPQPG7t9/w8OHb4a6fJLJEdLpEYCXPh8x3V1zxlZXN4ceB+DBgzesrm4CnFhf55oOzAAsLW0i6WR5uWvxnQ58DfDihQB56bGI6cBxgPV1gfHSbncvj+vC0T8CJEACJEACJEACJEACJBEgARIgARIgARIgAZIIkAAJkAAJkAAJkABJBOjAAtnVFEr5USpF1d5lQMNEVe7tO9CxwU11j4qaodb9eQ7TVHuODiQqmIk61eLV3QdEFGaEowR0iZTZ5kI1RZnbGInokXiLHfvkT2iYqDWIWwVqzSnimdukIv3w6lSL51lsAvG7mKlL75zHbpiUSwWaAOE5MoYicqjWIGuCC0YbMzuLtfI7dt/BURJGGzMz937z2HnKKxNMZtuYZptsDFaq9UNUQQChswQAAmcJ8XSw87Se0GwWKC1c3xoXnwGihwioT7UEQ49Ya0HnlX9AghOEw/OkjdwHT7EPu9h51GL/Xay7WV2YZ2XBj2IK06yAnae4cL2znlBA1SB88Q+M4F7bYY70pElZ+d3fcccPaJPQLMtxAG7ckC8p9ubmTZ98kpZ/NQRIgARIgARIgARIIkACNBxAB6QPPVCgRjVFUflRyk+xkqdhf8RkEbXVQXxn6lSLJo1PDHTsY//ipWezZM0KAcC28/zZqhMJRI/MW2wg/aCWXYdAlEAgR8LtWm3rEzNHxnT7xNt6y7h959h79KEhHJ8nncoRaJioUqEzRhXA7SVVi/7OHOyYZ9+AIooseR6Xr2I1H9EMz5M1cgTsPOUSTGbbRHZr89XgTLZNqudewmiTcEG2xYIz6c5Yu5qiXL2MkVCY5g9Uiz8S7GnQL4bc5x+kCgpEcqQiuU7VeC8g+IRmfGZ3HIB+93YmtDU2EIzTXHvGXv3mDHcoF+8AcWJp1a3m/VukG3kqjXp30Wz97V4GJwjX7n7cgt2ttq157FaN8OexbaXY6nlGJFXBMCoYk7D4+N4BqKDIZc5UrqJKjwB3jUhEgRzpjEl5wU9p5xq0W/r1oeOwVvZT6q5BXvVE+SoGCwt+Ft01SCm/e2+Ki1k1EKCD3ZNumKi1mYEstv810pP+P7f5T5YD8AUGqSABEiABEiABEiABEiCJAAmQAAmQAAmQAAmQRIAESIAESIAESIAESCJAAjQAoNcAPp9gePH7u5cvdaAOcPKkFJMXz8JxqOvAbwDT0wLkxbPQNEr6xga3gFfj4zrJ5MjQ4ySTI5w7p0Pn8KNb3vFZs8CvuMdnLS93js8altNafD44dUpnelr3cLaOz/IGWZZj0DmA7cSQF9HbB7B5efXK+WJ9nWuaxreOwze45/4MQV47Dk81jZLPx63eI/z+BcWKtwx4PjyWAAAAAElFTkSuQmCC`);
@@ -35,7 +68,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 			_inlineScripts.state.sessionState.cards.piles[data.pileId].cards;
 		const onclick = function()
 		{
-			this.classList.toggle("cardSelected");
+			this.classList.toggle("iscript_cardSelected");
 			if (data.onclick)
 			{
 				data.onclick(this);
@@ -46,7 +79,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 			const card = cards[i];
 			const img = document.createElement("img");
 			d.append(img);
-			img.classList.add("cardChoice");
+			img.classList.add("iscript_cardChoice");
 			img.dataset.id = i;
 			img.dataset.src =
 				"app://local/" + app.vault.adapter.basePath + "/" + card.path;
@@ -67,7 +100,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 			const children = data.ui.children;
 			for (var i = 0; i < children.length; i++)
 			{
-			  if (children[i].classList.contains("cardSelected"))
+			  if (children[i].classList.contains("iscript_cardSelected"))
 			  {
 				  result.push(children[i].dataset.id)
 			  }
@@ -83,7 +116,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 });
 ```
 __
-Setup this shortcut-file
+Setup shortcut-file
 
 
 __
@@ -98,7 +131,7 @@ delete _inlineScripts.state.sessionState.cards;
 delete _inlineScripts.state?.listeners?.onReset?.cards;
 ```
 __
-Shutdown this shortcut-file
+Shutdown shortcut-file
 
 
 __
@@ -163,7 +196,7 @@ function pile_toString(pileId, useHtml)
 }
 ```
 __
-Useful functions.
+Helper functions
 
 
 __
@@ -223,7 +256,8 @@ for (const child of folder.children)
 }
 
 _inlineScripts.state.sessionState.cards.piles[$1] = { cards };
-expand("cards shuffle " + $1);
+expand("cards shuffle " + $1 + " y");
+onPileListChanged();
 
 return "The" + pile_toString($1) + " card-pile is created.\n\n";
 ```
@@ -244,6 +278,8 @@ if (!srcPile)
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
 $3 = ($3 === "all") ? srcPile.cards.length : (Number($3) || 1);
+
+// Determine which cards to draw
 let drawIndices = [];
 if ($5 === "y")
 {
@@ -255,20 +291,13 @@ if ($5 === "y")
 	{
 		return "No cards drawn.  Canceled by user.";
 	}
-	if (!choice.length)
-	{
-		return "No cards drawn.  No cards chosen.";
-	}
-	for (index of choice)
-	{
-		drawIndices.add(index);
-	}
+	drawIndices = choice;
 }
 else if ($3 >= srcPile.cards.length)
 {
 	for (let i = 0; i < srcPile.cards.length; i++)
 	{
-		drawIndices.add(i);
+		drawIndices.push(i);
 	}
 }
 else
@@ -280,9 +309,23 @@ else
 	}
 	drawIndices = [...picks].sort().reverse();
 }
-const dstPile =
-	_inlineScripts.state.sessionState.cards.piles[$2] ||= { cards: [] };
-for (let i = 0; i < drawIndices.length; i++)
+if (!drawIndices.length)
+{
+	return "No cards drawn.  No cards chosen.";
+}
+drawIndices.sort();
+
+// Get/create destination pile
+let createdDstPile = false;
+if (!_inlineScripts.state.sessionState.cards.piles[$2])
+{
+	_inlineScripts.state.sessionState.cards.piles[$2] = { cards: [] };
+	createdDstPile = true;
+}
+const dstPile = _inlineScripts.state.sessionState.cards.piles[$2];
+
+// Draw all the cards
+for (let i = drawIndices.length-1; i >= 0; i--)
 {
 	let drawing = srcPile.cards[drawIndices[i]];
 	if (!drawing.allowDuplicate)
@@ -294,25 +337,40 @@ for (let i = 0; i < drawIndices.length; i++)
 		drawing = Object.assign({}, drawing);
 		drawing.origin = $2;
 	}
-	dstPile.cards.push(drawing);
-	if ($5)
+if (window.brk) { debugger; }
+	if ($4)
 	{
-		drawing.isFaceDown = ($5 === "down");
+		drawing.isFaceDown = ($4 === "down");
 	}
+	dstPile.cards.push(drawing);
 }
 
 if (!srcPile.cards.length)
 {
 	delete _inlineScripts.state.sessionState.cards.piles[$1];
+	onPileListChanged();
+	if (!createdDstPile)
+	{
+		onPileChanged($2);
+	}
 	return "The" +
 		pile_toString($1) + " card-pile was entirely drawn into the" +
-		pile_toString($3) + " card-pile.  It was then removed as empty.\n\n";
+		pile_toString($2) + " card-pile.  It was then removed as empty.\n\n";
 }
 else
 {
+	if (createdDstPile)
+	{
+		onPileListChanged();
+	}
+	else
+	{
+		onPileChanged($2);
+	}
+	onPileChanged($1);
 	return "__" +
-		drawIndices.length + "__ cards draw from the" + pile_toString($1) +
-		" card-pile to the" + pile_toString($3) + " card-pile.\n\n";
+		drawIndices.length + "__ cards drawn from the" + pile_toString($1) +
+		" card-pile to the" + pile_toString($2) + " card-pile.\n\n";
 }
 ```
 __
@@ -405,24 +463,32 @@ if ($3) { changes.push("- size - " + $3); }
 if ($4) { changes.push("- allow rotationed - " + ($4 === "y")); }
 if ($5) { changes.push("- allow duplicate - " + ($5 === "y")); }
 if ($6 === "y") { changes.push("- origin - " + $1); }
-changes = changes.length ? changes.join("\n") : "NONE";
+if (changes.length)
+{
+	onPileChanged($1);
+	changes = changes.join("\n");
+}
+else
+{
+	changes = "NONE";
+}
 return "All Cards in the" +
 	pile_toString($1) + " card-pile are changed.  Changed properties:\n" +
 	changes + "\n\n";
 ```
 __
-cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {reset origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
+cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
 	- facing - Determines whether the card is shown face-up or face-down.
 	- width - Sets the size of the card by it's width.  The height adjusts to match the width.
 	- allow rotated - If true, the card has a 50/50 chance of being upside down.
 	- allow duplicate - If true, this card is copied when "drawn", rather than moved.
-	- reset origin - If true, the "origin" of each card is set to THIS card-pile.  The origin is used by "cards reset" to determine what cards are moved where.
+	- set origin - If true, the "origin" of each card is set to THIS card-pile.  The origin is used by "cards recall" to determine what cards are moved where.
 ***
 
 
 __
 ```
-^cards shuffle ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards shuffle ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
 ```
 __
 ```js
@@ -442,6 +508,10 @@ for (let card of pile.cards)
 		card.isRotated = (Math.random() > .5);
 	}
 }
+if ($2 !== "y")
+{
+	onPileChanged($1);
+}
 return "The" + pile_toString($1) + " card-pile is shuffled.\n\n";
 ```
 __
@@ -450,7 +520,7 @@ cards shuffle {pile id: name text, default: ""} - Randomizes the card order in t
 
 __
 ```
-^cards reset ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
@@ -483,12 +553,17 @@ for (const key in piles)
 		delete piles[key];
 	}
 }
+onPileListChanged();
+if (moveCount)
+{
+	onPileChanged(null);
+}
 return result +
 	"__" + moveCount + "__ cards were returned to the" + pile_toString($1) +
 	" card-pile.\n\n";
 ```
 __
-cards reset {pile id: name text, default: ""} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
+cards recall {pile id: name text, default: ""} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
 
 
 __
@@ -515,7 +590,7 @@ if ($4 === "y")
 			pileId: $1,
 			onclick: cardUi =>
 			{
-				if (cardUi.classList.contains("cardSelected") ===
+				if (cardUi.classList.contains("iscript_cardSelected") ===
 				    pile.cards[cardUi.dataset.id].isFaceDown)
 				{
 					cardUi.src = cardUi.dataset.src;
@@ -558,6 +633,10 @@ else
 		}
 	}
 }
+if (flipCount)
+{
+	onPileChanged($1);
+}
 const flipType = ($4 === "y") ? "" : flipDown ? " face-down" : " face-up";
 return "__" +
 	flipCount + "__ cards flipped" + flipType + " in the" + pile_toString($1) +
@@ -583,6 +662,7 @@ if (popups.confirm(
 	"Confirm destroying the" + pile_toString($1, true) + " card-pile."))
 {
 	delete _inlineScripts.state.sessionState.cards.piles[$1];
+	onPileListChanged();
 	return "The" + pile_toString($1) + " card-pile is destroyed.\n\n";
 }
 else
@@ -610,6 +690,7 @@ catch (e)
 {
 	return "Card-pile not imported.  Failed to parse data string.\n\n";
 }
+const isNewPile = (!_inlineScripts.state.sessionState.cards.piles[$1]);
 _inlineScripts.state.sessionState.cards.piles[$1] = data;
 for (let card of _inlineScripts.state.sessionState.cards.piles[$1].cards)
 {
@@ -617,6 +698,14 @@ for (let card of _inlineScripts.state.sessionState.cards.piles[$1].cards)
 	card.isRotated ||= false;
 	card.allowRotated ||= false;
 	card.allowDuplicate ||= false;
+}
+if (isNewPile)
+{
+	onPileListChanged();
+}
+else
+{
+	onPileChanged($1);
 }
 return "The" + pile_toString($1) + " card-pile was imported.\n\n";
 ```

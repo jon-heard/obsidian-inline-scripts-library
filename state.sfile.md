@@ -34,6 +34,18 @@ Sets up a global variable to hold the state for all shortcut-files.  Also, sets 
 
 __
 ```
+^sfile shutdown$
+```
+__
+```js
+delete _inlineScripts.state;
+```
+__
+Shutdown this shortcut-file
+
+
+__
+```
 ^state reset$
 ```
 __
