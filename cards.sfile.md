@@ -114,7 +114,7 @@ _inlineScripts.state.sessionState.cards = { piles: {} };
 return "All card-piles cleared.\n\n";
 ```
 __
-cards reset - Clear all card-piles.
+cards reset - Clears all card-piles.
 
 
 __
@@ -139,7 +139,7 @@ else
 return result + "\n\n";
 ```
 __
-cards - List all card-piles.
+cards - Lists all card-piles.
 ***
 
 
@@ -591,7 +591,7 @@ else
 }
 ```
 __
-cards destroy {pile id: name text, default: ""} - Remove the {pile id} card-pile, including all cards within it.
+cards destroy {pile id: name text, default: ""} - Removes the {pile id} card-pile, including all cards within it.
 ***
 
 
@@ -621,7 +621,7 @@ for (let card of _inlineScripts.state.sessionState.cards.piles[$1].cards)
 return "The" + pile_toString($1) + " card-pile was imported.\n\n";
 ```
 __
-cards import {pile id: name text, default: ""} {data: text} - Make a card-pile from the data string {data} and remember it as {pile id}.
+cards import {pile id: name text, default: ""} {data: text} - Makes a card-pile from the data string {data} and remembers it as {pile id}.
 
 
 __
@@ -646,4 +646,4 @@ result = result
 return "Card-pile" + pile_toString($1) + " export:\n" + result + "\n\n";
 ```
 __
-cards export {pile id: name text, default: ""} - Create a data string containing all date for the {pile id} card-pile.
+cards export {pile id: name text, default: ""} - Creates a data string containing all date for the {pile id} card-pile.

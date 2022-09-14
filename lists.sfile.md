@@ -56,7 +56,7 @@ _inlineScripts.state.sessionState.lists = {};
 return "All lists cleared.\n\n";
 ```
 __
-lists reset - Clear all lists.
+lists reset - Clears all lists.
 ***
 
 
@@ -125,7 +125,7 @@ return "Lists:\n- " +
 	(listNames.length ? listNames.join("\n- ") : "NONE") + "\n\n";
 ```
 __
-lists - Show all list and all items for each list.
+lists - Shows all lists and all items for each list.
 
 
 __
@@ -147,7 +147,7 @@ if (listType !== "basic")
 return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
 __
-lists list {list name: name text} - Show all items in the list {list name}.
+lists list {list name: name text} - Shows all items in the list {list name}.
 
 
 __
@@ -186,7 +186,7 @@ else
 }
 ```
 __
-lists add {list name: name text} {item: text} - Add {item} to the list {list name}.  Allows duplicate items.
+lists add {list name: name text} {item: text} - Adds {item} to the list {list name}.  Allows duplicate items.
     - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
 
 
@@ -209,7 +209,7 @@ if (items?.length)
 return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
 __
-lists pick {list name: name text} - Get a random item from the list {list name}.
+lists pick {list name: name text} - Gets a random item from the list {list name}.
 ***
 
 
@@ -263,7 +263,7 @@ else
 }
 ```
 __
-lists remove {list name: name text} {item: text} - Remove an instance of {item} from the list {list name}.
+lists remove {list name: name text} {item: text} - Removes an instance of {item} from the list {list name}.
     - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
 
 
@@ -311,7 +311,7 @@ else
 }
 ```
 __
-lists replace {list name: name text} {item: text} {replacement: text} - Replace all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
+lists replace {list name: name text} {item: text} {replacement: text} - Replaces all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
 
 
 __
@@ -328,7 +328,7 @@ if (_inlineScripts.state.sessionState.lists[$1])
 return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
 ```
 __
-lists removelist {list name: name text} - Remove the entire list {list name}.
+lists removelist {list name: name text} - Removes the entire list {list name}.
 ***
 
 
@@ -343,7 +343,7 @@ return "List __" +
 	$1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
 ```
 __
-lists addfolder {list name: name text} {folder: path text} - Create a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
+lists addfolder {list name: name text} {folder: path text} - Creates a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 
 
 __
@@ -358,7 +358,7 @@ return "List __" +
 	$1 + "__ added as a combo-list linked to:\n. " + links.join("\n. ") + "\n\n";
 ```
 __
-lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}... - Create a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}... - Creates a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
 
 
 __
@@ -386,7 +386,7 @@ if (items?.length || $2)
 return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
 ```
 __
-hidden - lists pick {list name: name text} {item index: >0, default: ""} - Get a random item from the list {list name}.  If {item index} is specified, then the item at that index is picked, instead of random.
+hidden - lists pick {list name: name text} {item index: >0, default: ""} - Gets a random item from the list {list name}.  If {item index} is specified, then the item at that index is picked, instead of random.
 
 
 __
@@ -398,7 +398,7 @@ __
 return getListItems($1);
 ```
 __
-hidden - get the items in a list without any formatting.  Useful internally (as a sub-shortcut).
+hidden - gets the items in a list without any formatting.  Useful internally (as a sub-shortcut).
 
 
 __
@@ -414,4 +414,4 @@ if (!_inlineScripts.state.sessionState.lists.hasOwnProperty($1))
 return _inlineScripts.state.sessionState.lists[$1].type;
 ```
 __
-hidden - get the type of the list named {list name}.  Useful internally (as a sub-shortcut).
+hidden - gets the type of the list named {list name}.  Useful internally (as a sub-shortcut).

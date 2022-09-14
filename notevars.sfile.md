@@ -60,7 +60,7 @@ _inlineScripts.state.sessionState.notevars.isMarkdownRefreshed = true;
 return "All notepicks cleared.\n\n";
 ```
 __
-notevars reset - Clear the isMarkdownRefreshed flag.
+notevars reset - Clears the isMarkdownRefreshed flag.
 
 
 __

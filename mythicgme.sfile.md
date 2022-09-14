@@ -91,7 +91,7 @@ return "***\n\n\n### SCENE " +
 	"\n- Setup:\n    - ";
 ```
 __
-mythicgme reset - Reset mythic state to defaults and displays scene heading.
+mythicgme reset - Resets mythic state to defaults and displays scene heading.
 ***
 
 
@@ -155,7 +155,7 @@ if (Math.trunc(r/10) == r%10 &&
 return "Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput + "\n\n";
 ```
 __
-fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Make a fate check based on {odds}.
+fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Makes a fate check based on {odds}.
 
 
 __
@@ -171,7 +171,7 @@ const INPUT_ODDS =
 return expand("fate " + (INPUT_ODDS[$1.trim().toLowerCase()] ?? 0));
 ```
 __
-fate {odds: text, default: "50/50"} - Make a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
+fate {odds: text, default: "50/50"} - Makes a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
 
 __
 ```
@@ -183,7 +183,7 @@ return "The current scene is " +
 	_inlineScripts.state.sessionState.mythicgme.scene + ".\n\n";
 ```
 __
-scene get - Show the current scene.
+scene get - Shows the current scene.
 
 
 __
@@ -214,7 +214,7 @@ if (chk <= _inlineScripts.state.sessionState.mythicgme.chaos)
 return result + "\n- setup:\n    - ";
 ```
 __
-scene {chaosAdjust: -1 OR 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+scene {chaosAdjust: -1 OR 1} - Shifts the chaos value by {chaosAdjust}, then increments the current scene and runs a scene check.
 ***
 
 
@@ -232,7 +232,7 @@ let meaning = expand("meaning")[1];
 return [ "Event:\n", result[0] + focus + " - " + meaning, "\n\n" ];
 ```
 __
-event - Make an event check.
+event - Makes an event check.
 
 
 __
@@ -247,7 +247,7 @@ let result = aPick(ACTION_TABLE) + " _(of)_ " + aPick(SUBJECT_TABLE);
 return [ "Meaning:\n", result, "\n\n" ];
 ```
 __
-meaning - Roll on the meaning tables.
+meaning - Rolls on the meaning tables.
 ***
 
 
@@ -261,7 +261,7 @@ return [
 	"Chaos is __", _inlineScripts.state.sessionState.mythicgme.chaos, "__.\n\n" ];
 ```
 __
-chaos - Show the current chaos value.
+chaos - Shows the current chaos value.
 
 
 __
@@ -281,7 +281,7 @@ return [
 	_inlineScripts.state.sessionState.mythicgme.chaos + "__.", "\n\n" ];
 ```
 __
-chaos-- - Decrease the chaos value by 1 (minimum of 1).
+chaos-- - Decreases the chaos value by 1 (minimum of 1).
 
 
 __
@@ -301,7 +301,7 @@ return [
 	_inlineScripts.state.sessionState.mythicgme.chaos + "__.", "\n\n" ];
 ```
 __
-chaos++ - Increase the chaos value by 1 (maximum of 9).
+chaos++ - Increases the chaos value by 1 (maximum of 9).
 
 
 __
@@ -314,7 +314,7 @@ _inlineScripts.state.sessionState.mythicgme.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __
-chaos={value: 1 TO 9} - Set the chaos value to {value}.
+chaos={value: 1 TO 9} - Sets the chaos value to {value}.
 
 
 __

@@ -59,7 +59,7 @@ _inlineScripts.state.sessionState.clips = {};
 return "All clips cleared.\n\n";
 ```
 __
-clips reset - Remove all clips.
+clips reset - Removes all clips.
 
 
 __

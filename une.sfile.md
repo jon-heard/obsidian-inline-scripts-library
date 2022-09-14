@@ -188,7 +188,7 @@ let result = table7a[demeanor-1] + " - " + table7b[demeanor-1][bearing-1];
 return [ "Character bearing:\n", result, "\n\n" ];
 ```
 __
-une bearing {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Generate a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
+une bearing {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Generates a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
     1 - sceming       2 - insane       3 - friendly          4 - hostile
     5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
 
@@ -204,4 +204,4 @@ let result = "THE PC'S " + aPickWeight(table8)[0];
 return [ "Character focus:\n", result, "\n\n" ];
 ```
 __
-une focus - Generate a character's primary interest for this interaction.
+une focus - Generates a character's primary interest for this interaction.

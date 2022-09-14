@@ -39,8 +39,8 @@ if (pick === null) { return null; }
 return expand("fate " + (pick - 4));
 ```
 __
-fate - Ask user to choose the odds for this fate check.
-Display the answer to a yes/no question, possibly with a random event attached.
+fate - Asks user to choose the odds for this fate check.
+Displays the answer to a yes/no question, possibly with a random event attached.
 
 
 __
@@ -57,5 +57,5 @@ if (pick === null) { return null; }
 return expand("scene " + (pick * 2 - 1));
 ```
 __
-scene - Ask user to choose whether chaos increased or decreased last scene.
+scene - Asks user to choose whether chaos increased or decreased last scene.
 Starts a new scene with the chosen chaos value adjustment.

@@ -85,7 +85,7 @@ else
 return "Adventure crafter reset.\n\n";
 ```
 __
-adventurecrafter reset - Reset adventurecrafter state to defaults.
+adventurecrafter reset - Resets adventurecrafter state to defaults.
 ***
 
 
@@ -127,7 +127,7 @@ for (const none of nones)
 return result + "\n";
 ```
 __
-turning point - Get a list of five plot points to represent a major milestone in a plotline.
+turning point - Gets a list of five plot points to represent a major milestone in a plotline.
 
 
 __
@@ -166,7 +166,7 @@ result.push("\n\n");
 return result;
 ```
 __
-plot point - Get a single plot point, generated from the plot points table.
+plot point - Gets a single plot point, generated from the plot points table.
 ***
 
 
@@ -197,7 +197,7 @@ return [
 	(pick+1), ")_.\n\n" ];
 ```
 __
-themes pick - Pick a random theme from the chosen themes, as per the Adventure Crafter rules.
+themes pick - Picks a random theme from the chosen themes, as per the Adventure Crafter rules.
 
 
 __
@@ -217,7 +217,7 @@ result.push("\n");
 return result;
 ```
 __
-themes - Show the list of chosen themes.
+themes - Shows the list of chosen themes.
 
 
 __
@@ -249,7 +249,7 @@ return "Theme slot __" +
 	themeSlots.length + "__ set to __" + themes[pick] + "__\n\n";
 ```
 __
-themes add - Choose a theme for the next unchosen theme-slot.
+themes add - Chooses a theme for the next unchosen theme-slot.
 
 
 __
@@ -277,7 +277,7 @@ return [
 	"\n\n" ];
 ```
 __
-themes roll - Pick a random theme for the next unchosen theme-slot.
+themes roll - Picks a random theme for the next unchosen theme-slot.
 
 
 __
@@ -295,7 +295,7 @@ while (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 return result + "\n";
 ```
 __
-themes fill - Pick random themes for the remaining unchosen theme-slots.
+themes fill - Picks random themes for the remaining unchosen theme-slots.
 
 
 __
@@ -308,7 +308,7 @@ _inlineScripts.state.sessionState.adventurecrafter.themeSlots = [];
 return "All theme slots cleared.\n\n";
 ```
 __
-themes clear - Clear all chosen themes.
+themes clear - Clears all chosen themes.
 ***
 
 
@@ -379,7 +379,7 @@ descriptor = "- Descriptor - " + descriptor.join(", ") + "\n";
 return "Character:\n" + special + identity + descriptor + "\n";
 ```
 __
-ac chars gen - Generate a new character description, as per the Adventure Crafter rules.
+ac chars gen - Generates a new character description, as per the Adventure Crafter rules.
 ***
 
 
@@ -469,7 +469,7 @@ result.push("\n\n");
 return result;
 ```
 __
-ac chars pick - Pick a random character, as per the Adventure Crafter rules.
+ac chars pick - Picks a random character, as per the Adventure Crafter rules.
 
 
 __
@@ -482,7 +482,7 @@ return "Characters:\n" +
 	(await getFormattedList("characters", false, 2)).join("\n") + "\n\n";
 ```
 __
-ac chars - List all character entries.
+ac chars - Lists all character entries.
 
 
 __
@@ -494,7 +494,7 @@ __
 return expand("lists add characters " + $1);
 ```
 __
-ac chars add {character: text} - Add {character} to the list of character entries.
+ac chars add {character: text} - Adds {character} to the list of character entries.
 
 
 __
@@ -533,7 +533,7 @@ expand("lists add characters " + characters[pick]);
 return "Character __" + characters[pick] + "__ duplicated.\n\n";
 ```
 __
-ac chars dupe - Choose a character from the characters list and add a new entry for it.
+ac chars dupe - Asks the user for a character from the characters list and adds a new entry for that character.
 
 
 __
@@ -570,7 +570,7 @@ expand("lists remove characters " + characters[pick]);
 return "Character __" + characters[pick] + "__ reduced.\n\n";
 ```
 __
-ac chars reduce - Choose a character from the characters list and remove one entry for it.
+ac chars reduce - Asks the user for a character from the characters list and removes one entry for that character.
 
 
 __
@@ -614,7 +614,7 @@ return "Character __" +
 	characters[pick] + "__ renamed to __" + replacement + "__.\n\n";
 ```
 __
-ac chars rename - Choose a character from the characters list and change it's text to something else.
+ac chars rename - Asks the user for a character from the characters list and what to change it's text to, then changes the character's text.
 ***
 
 
@@ -651,7 +651,7 @@ result.push("\n\n");
 return result;
 ```
 __
-ac plots pick - Pick a random plotline, as per the Adventure Crafter rules.
+ac plots pick - Picks a random plotline, as per the Adventure Crafter rules.
 
 
 __
@@ -664,7 +664,7 @@ return "Plotlines:\n" +
 	(await getFormattedList("plotlines", false, 2)).join("\n") + "\n\n";
 ```
 __
-ac plots - List all plotline entries.
+ac plots - Lists all plotline entries.
 
 
 __
@@ -676,7 +676,7 @@ __
 return expand("lists add plotlines " + $1);
 ```
 __
-ac plots add {plotline: text} - Add {plotline} to the list of plotline entries.
+ac plots add {plotline: text} - Adds {plotline} to the list of plotline entries.
 
 
 __
@@ -715,7 +715,7 @@ expand("lists add plotlines " + plots[pick]);
 return "Plotline __" + plots[pick] + "__ duplicated.\n\n";
 ```
 __
-ac plots dupe - Choose a plotline from the plotlines list and add a new entry for it.
+ac plots dupe - Asks the user for a plotline from the plotlines list and adds a new entry for that plotline.
 
 
 __
@@ -752,7 +752,7 @@ expand("lists remove plotlines " + plots[pick]);
 return "Plotline __" + plots[pick] + "__ reduced.\n\n";
 ```
 __
-ac plots reduce - Choose a plotline from the plotlines list and remove one entry for it.
+ac plots reduce - Asks the user for a plotline from the plotlines list and removes one entry for that plotline.
 
 
 __
@@ -794,7 +794,7 @@ expand("lists replace plotlines \"" + plots[pick] + "\" " + replacement);
 return "Plotline __" + plots[pick] + "__ renamed to __" + replacement + "__.\n\n";
 ```
 __
-ac plots rename - Choose a plotline from the plotlines list and change it's text to something else.
+ac plots rename - Asks the user for a plotline from the plotlines list and what to change it's text to, then changes the plotline's text.
 
 
 __

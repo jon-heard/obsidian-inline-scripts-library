@@ -54,7 +54,7 @@ _inlineScripts.state.sessionState.notepick = {};
 return "All notepicks cleared.\n\n";
 ```
 __
-notepick reset - Clear all picks.
+notepick reset - Clears all picks.
 
 
 __
@@ -154,7 +154,7 @@ _inlineScripts.state.sessionState.notepick[$3] = pick;
 return ["", $2 + " file(s) picked" + ($3 ? " for " + $3 : "") + ".\n\n" ];
 ```
 __
-notepick pickFromFolder {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} {to ignore: | separated filenames} - Pick {pick count} random notes from folder {folder name} and remember them as {pick id}.  Any files in {to ignore} are never picked.
+notepick pickFromFolder {folder name: path text} {count: >0, default: 1} {pick id: name text, default: ""} {to ignore: | separated filenames} - Picks {count} random notes from folder {folder name} and remembers them as {pick id}.  Any files in {to ignore} are never picked.
 
 
 __
@@ -172,7 +172,7 @@ return [
 	"Pick" + ($1 ? " __" + $1 + "__" : "") + ":\n", picks.join("\n"), "\n\n" ];
 ```
 __
-notepick getPick {pick id: name text, default: ""} - Get a list of the files last picked for {pick id}.
+notepick getPick {pick id: name text, default: ""} - Gets a list of the files last picked for {pick id}.
 
 
 __
@@ -214,4 +214,4 @@ return [
 	"\n\n" ];
 ```
 __
-notepick frontmatter {pick id: name text, default: ""} - Get the frontmatter from the notes that are remembered in {pick id}.
+notepick frontmatter {pick id: name text, default: ""} - Gets the frontmatter from the notes that are remembered in {pick id}.

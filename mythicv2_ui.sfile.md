@@ -59,8 +59,8 @@ if (!!pick === (stateString === "enabled"))
 return expand("mythicv2 details " + (pick ? "y" : "n"));
 ```
 __
-mythicv2 details - Ask user whether to enable or disable 'details' mode.
-Display whether 'details' mode is enabled.
+mythicv2 details - Asks user whether to enable or disable 'details' mode.
+Displays whether 'details' mode is enabled.
 
 
 __
@@ -85,9 +85,9 @@ if (pick2 === null) { return null; }
 return expand( "fate " + (pick - 4) + " " + (pick2 ? "n" : "y") );
 ```
 __
-fate - Ask user to choose the odds for this fate check.
-Ask user what answer is best for the pc(s).
-Display the answer to a yes/no question, possibly with a random event attached.
+fate - Asks user to choose the odds for this fate check.
+Asks user what answer is best for the pc(s).
+Displays the answer to a yes/no question, possibly with a random event attached.
 
 
 __
@@ -104,7 +104,7 @@ if (pick === null) { return null; }
 return expand("scene " + (pick * 2 - 1));
 ```
 __
-scene - Ask user to choose whether chaos increased or decreased last scene.
+scene - Asks user to choose whether chaos increased or decreased last scene.
 Starts a new scene with the chosen chaos value adjustment.
 
 
@@ -144,9 +144,9 @@ else
 }
 ```
 __
-disposition - Ask user for the total descriptor modifier for an npc (+1 for descriptors that make the npc more active in the scene, -1 for descriptors that make the npc less active).
+disposition - Asks user for the total descriptor modifier for an npc (+1 for descriptors that make the npc more active in the scene, -1 for descriptors that make the npc less active).
 If the npc already has a disposition for this scene, select it.  If NOT, select "random" to choose one.
-Roll and shows a disposition for the npc for the current scene.
+Rolls and shows a disposition for the npc for the current scene.
 
 
 __
@@ -168,5 +168,5 @@ if (pick === null) { return null; }
 return expand("action " + (pick * 2 - 2));
 ```
 __
-action - Ask user for the npc's disposition modifier.
-Roll and display an action for the npc to take.
+action - Asks user for the npc's disposition modifier.
+Rolls and shows an action for the npc to take.

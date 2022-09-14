@@ -40,4 +40,4 @@ return [ "Twist:\n", aPick(target), " - ", aPick(circumstance), "\n\n" ]
 
 ```
 __
-tbl twist - Random table: a plot twist.  <a href='https://jvhouse.xyz/plot-twist-situations'>Source</a>.
+tbl twist - Rolls a plot twist from random tables.  <a href='https://jvhouse.xyz/plot-twist-situations'>Source</a>.

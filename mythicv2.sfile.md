@@ -96,7 +96,7 @@ return "***\n\n\n### SCENE " +
 	_inlineScripts.state.sessionState.mythicv2.scene + "\n- Setup:\n    - ";
 ```
 __
-mythicv2 reset - Reset mythic state to defaults and displays scene heading.
+mythicv2 reset - Resets mythic state to defaults and displays scene heading.
 
 
 __
@@ -204,7 +204,7 @@ let evtText = isEvent ? ( "\nevent - " + expand("event")[1] ) : "";
 return "Fate check (" + ODDS[$1 + 4] + "):\n" + result + evtText + getDetails() + "\n\n";
 ```
 __
-fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y} - Make a fate check based on {odds}.
+fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y} - Makes a fate check based on {odds}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 
 
@@ -234,7 +234,7 @@ const inputOdds = INPUT_ODDS[$1.trim()] || 0;
 return expand("fate " + inputOdds + wanted);
 ```
 __
-fate {odds: text, default: "50/50"} {wanted: y OR n, default: y} - Make a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
+fate {odds: text, default: "50/50"} {wanted: y OR n, default: y} - Makes a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 
 
@@ -253,7 +253,7 @@ focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 return "Detail:\n" + result[0] + focus + getDetails() + "\n\n";
 ```
 __
-detail - Make a detail check.
+detail - Makes a detail check.
 
 
 __
@@ -271,7 +271,7 @@ let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
 return [ "Event:\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];
 ```
 __
-event - Make an event check.
+event - Makes an event check.
 ***
 
 
@@ -289,7 +289,7 @@ let result =
 return [ "Meaning (action):\n", result, getDetails(), "\n\n" ];
 ```
 __
-meaning action - Roll on the action meaning tables.
+meaning action - Rolls on the action meaning tables.
 	- Alternative: __meaning__
 
 
@@ -307,7 +307,7 @@ let result =
 return [ "Meaning (description):\n", result, getDetails(), "\n\n" ];
 ```
 __
-meaning description - Roll on the description meaning tables.
+meaning description - Rolls on the description meaning tables.
 ***
 
 
@@ -321,7 +321,7 @@ return "The current scene is " +
 	_inlineScripts.state.sessionState.mythicv2.scene + ".\n\n";
 ```
 __
-scene get - Show the current scene.
+scene get - Shows the current scene.
 
 
 __
@@ -353,7 +353,7 @@ if (chk <= _inlineScripts.state.sessionState.mythicv2.chaos)
 return result + getDetails() + "\n- setup:\n    - ";
 ```
 __
-scene {chaos adjust: -1 OR 1} - Shift the chaos value by {chaosAdjust}, then increment the current scene and run a scene check.
+scene {chaos adjust: -1 OR 1} - Shifts the chaos value by {chaosAdjust}, then increments the current scene and run a scene check.
 
 
 __
@@ -366,7 +366,7 @@ return [
 	"Chaos is __", _inlineScripts.state.sessionState.mythicv2.chaos, "__.\n\n" ];
 ```
 __
-chaos - Show the current chaos value.
+chaos - Shows the current chaos value.
 
 
 __
@@ -386,7 +386,7 @@ return [
 	_inlineScripts.state.sessionState.mythicv2.chaos + "__.", "\n\n" ];
 ```
 __
-chaos-- - Decrease the chaos value by 1 (minimum of 3).
+chaos-- - Decreases the chaos value by 1 (minimum of 3).
 
 
 __
@@ -406,7 +406,7 @@ return [
 	_inlineScripts.state.sessionState.mythicv2.chaos + "__.", "\n\n" ];
 ```
 __
-chaos++ - Increase the chaos value by 1 (maximum of 6).
+chaos++ - Increases the chaos value by 1 (maximum of 6).
 
 
 __
@@ -419,7 +419,7 @@ _inlineScripts.state.sessionState.mythicv2.chaos = $1;
 return "Chaos set to __" + $1 + "__.\n\n";
 ```
 __
-chaos={value: 3 TO 6} - Set the chaos value to {value}, an integer from 3 to 6.
+chaos={value: 3 TO 6} - Sets the chaos value to {value}, an integer from 3 to 6.
 ***
 
 

@@ -249,7 +249,7 @@ return expand("lists addfolder " + listName + " " + folders[pick]);
 __
 lists addfolder - Asks user to type a name for the new folder-list.
 Asks user to choose a folder.
-The folder-list is created, attached to the folder.
+Creates the folder-list, attached to the folder.
 
 
 __
@@ -289,6 +289,6 @@ while (true);
 return expand("lists addcombo " + listName + " " + picks.join(" "));
 ```
 __
-lists addcombo - Ask user to type a name for the new combo-list.
+lists addcombo - Asks user to type a name for the new combo-list.
 Asks user to choose different lists.
-The combo-list is created, attached to the different lists.
+Creates the combo-list, attached to the different lists.

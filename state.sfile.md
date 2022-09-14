@@ -47,7 +47,7 @@ _inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
 return "All state cleared.\n\n";
 ```
 __
-state reset - Clear all session state.
+state reset - Clears all session state.
 
 
 __
@@ -84,7 +84,7 @@ const stateString = content.slice(startIndex + GET_PREFIX.length, endIndex);
 return expand("state set " + stateString);
 ```
 __
-state restore - Load the session state from the last "state get" shortcut expansion in the current note.
+state restore - Loads the session state from the last "state get" shortcut expansion in the current note.
 
 
 __
