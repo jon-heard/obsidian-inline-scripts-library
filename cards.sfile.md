@@ -93,8 +93,8 @@ __
 __
 ```js
 _inlineScripts.inlineScripts.helperFncs.removeCss("cards");
-delete _inlineScripts.state.sessionState.cards;
 delete _inlineScripts.cards;
+delete _inlineScripts.state.sessionState.cards;
 delete _inlineScripts.state?.listeners?.onReset?.cards;
 ```
 __

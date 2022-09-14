@@ -17,9 +17,45 @@ __
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.notepick");
+
+confirmObjectPath(
+	"_inlineScripts.state.listeners.onReset.notepick",
+	function()
+	{
+		expand("notepick reset");
+	});
 ```
 __
 Setup this shortcut-file
+
+
+__
+```
+^sfile shutdown$
+```
+__
+```js
+delete _inlineScripts.state.sessionState.notepick;
+delete _inlineScripts.state?.listeners?.onReset?.notepick;
+```
+__
+Shutdown this shortcut-file
+
+
+__
+```
+^notepick reset$
+```
+__
+```js
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.sessionState");
+_inlineScripts.state.sessionState.notepick = {};
+return "All notepicks cleared.\n\n";
+```
+__
+lists reset - Clear all lists.
 
 
 __
