@@ -93,6 +93,8 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			this.cardDisplay = document.createElement("div");
 			this.cardDisplay.classList.add("iscript_pileViewer_content");
 			root.appendChild(this.cardDisplay);
+
+			this.refreshPileList();
 		}
 
 		refreshPileList()
