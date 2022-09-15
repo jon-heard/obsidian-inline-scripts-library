@@ -40,7 +40,7 @@ __
 ```
 __
 ```js
-delete _inlineScripts.state.sessionState.notevars;
+delete _inlineScripts.state?.sessionState?.notevars;
 delete _inlineScripts.state?.listeners?.onReset?.notevars;
 ```
 __

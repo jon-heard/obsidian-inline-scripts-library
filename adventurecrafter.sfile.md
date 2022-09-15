@@ -804,8 +804,8 @@ __
 __
 ```js
 delete _inlineScripts.adventurecrafter;
-delete _inlineScripts.state.sessionState.adventurecrafter;
-delete _inlineScripts.state.listeners.onReset?.adventurecrafter;
+delete _inlineScripts.state?.sessionState?.adventurecrafter;
+delete _inlineScripts.state?.listeners?.onReset?.adventurecrafter;
 ```
 __
 Unregisters event callbacks.

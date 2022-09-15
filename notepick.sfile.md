@@ -34,7 +34,7 @@ __
 ```
 __
 ```js
-delete _inlineScripts.state.sessionState.notepick;
+delete _inlineScripts.state?.sessionState?.notepick;
 delete _inlineScripts.state?.listeners?.onReset?.notepick;
 ```
 __
