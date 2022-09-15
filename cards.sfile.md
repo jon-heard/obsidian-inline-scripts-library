@@ -131,7 +131,7 @@ __
 ```js
 _inlineScripts.inlineScripts.helperFncs.removeCss("cards");
 delete _inlineScripts.cards;
-delete _inlineScripts.state.sessionState.cards;
+delete _inlineScripts.state?.sessionState?.cards;
 delete _inlineScripts.state?.listeners?.onReset?.cards;
 ```
 __
@@ -278,7 +278,7 @@ __
 const srcPile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!srcPile)
 {
-	return "No cards drawn.  The" +
+	return "Cards not drawn.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
 $3 = ($3 === "all") ? srcPile.cards.length : (Number($3) || 1);
@@ -293,7 +293,7 @@ if ($5 === "y")
 		{ pileId: $1 });
 	if (!choice)
 	{
-		return "No cards drawn.  Canceled by user.";
+		return "Cards not drawn.  Canceled by user.";
 	}
 	drawIndices = choice;
 }
@@ -315,7 +315,7 @@ else
 }
 if (!drawIndices.length)
 {
-	return "No cards drawn.  No cards chosen.";
+	return "Cards not drawn.  No cards chosen.";
 }
 drawIndices.sort();
 
@@ -391,7 +391,7 @@ __
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "No cards shown.  The" +
+	return "Cards not shown.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
 let result = "Card-pile" + pile_toString($1) + ":\n";
@@ -433,7 +433,7 @@ $3 = Number($3);
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "No cards changed.  " +
+	return "Cards not changed.  " +
 		"The" + pile_toString($1) + " card-pile was not found.\n\n";
 }
 for (let card of pile.cards)
@@ -519,7 +519,7 @@ if ($2 !== "y")
 return "The" + pile_toString($1) + " card-pile is shuffled.\n\n";
 ```
 __
-cards shuffle {pile id: name text, default: ""} - Randomizes the card order in the {pile id} card-pile.
+cards shuffle {pile id: name text, default: ""} - Randomizes the card order and rotation for the {pile id} card-pile.
 
 
 __
@@ -579,7 +579,7 @@ __
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "No cards flipped.  The" +
+	return "Cards not flipped.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
 $2 = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
@@ -610,11 +610,11 @@ if ($4 === "y")
 		});
 	if (!choice)
 	{
-		return "No cards flipped.  Canceled by user.";
+		return "Cards not flipped.  Canceled by user.";
 	}
 	if (!choice.length)
 	{
-		return "No cards flipped.  No cards chosen.";
+		return "Cards not flipped.  No cards chosen.";
 	}
 	flipCount = choice.length;
 	for (index of choice)
@@ -655,7 +655,7 @@ cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {f
 
 __
 ```
-^cards destroy ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards destroy ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
 ```
 __
 ```js
@@ -665,7 +665,7 @@ if (!pile)
 	return "Pile not destroyed.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
-if (popups.confirm(
+if ($2 === "y" || popups.confirm(
 	"Confirm destroying the" + pile_toString($1, true) + " card-pile."))
 {
 	delete _inlineScripts.state.sessionState.cards.piles[$1];
@@ -742,4 +742,4 @@ result = result
 return "Card-pile" + pile_toString($1) + " export:\n" + result + "\n\n";
 ```
 __
-cards export {pile id: name text, default: ""} - Creates a data string containing all date for the {pile id} card-pile.
+cards export {pile id: name text, default: ""} - Expands to a data string containing all date for the {pile id} card-pile.
