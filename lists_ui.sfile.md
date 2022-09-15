@@ -23,7 +23,7 @@ if (pick === null) { return null; }
 return expand("lists list " + listNames[pick]);
 ```
 __
-lists list - Asks user to choose from all lists.
+lists list - Asks the user to choose from all lists.
 Show all items in that list.
 
 
@@ -65,7 +65,7 @@ if (!item) { return null; }
 return expand("lists add " + listName + " " + item);
 ```
 __
-lists add - Asks user to choose from all lists.
+lists add - Asks the user to choose from all lists.
 Asks the user to enter an item to add to that list.
 Allows duplicate items.
     - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
@@ -136,7 +136,7 @@ if (pick === null) { return null; }
 return expand("lists pick " + listNames[pick]);
 ```
 __
-lists pick - Asks user to choose from all lists.
+lists pick - Asks the user to choose from all lists.
 Gets a random item from that list.
 
 
@@ -164,7 +164,7 @@ if (pick2 === null) { return null; }
 return expand("lists remove " + listNames[pick] + " " + items[pick2]);
 ```
 __
-lists remove - Asks user to choose from all lists.
+lists remove - Asks the user to choose from all lists.
 Asks the user to choose an item from that list.
 Removes the last instance of that item from that list.
     - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
@@ -200,9 +200,9 @@ let item = items[pick2].replaceAll(" ", "\t");
 return expand("lists replace " + listNames[pick] + " " + item + " " + replacement);
 ```
 __
-lists replace - Asks user to choose from all lists.
+lists replace - Asks the user to choose from all lists.
 Asks the user to choose an item from that list.
-Asks user to enter a new value for that item.
+Asks the user to enter a new value for that item.
 Replaces all instances of the item within the list with the replacement.
 
 
@@ -223,7 +223,7 @@ if (pick === null) { return null; }
 return expand("lists removelist " + listNames[pick]);
 ```
 __
-lists removelist - Asks user to choose from all lists.
+lists removelist - Asks the user to choose from all lists.
 Removes that list.
 
 
@@ -247,8 +247,8 @@ if (pick === null) { return null; }
 return expand("lists addfolder " + listName + " " + folders[pick]);
 ```
 __
-lists addfolder - Asks user to type a name for the new folder-list.
-Asks user to choose a folder.
+lists addfolder - Asks the user to type a name for the new folder-list.
+Asks the user to choose a folder.
 Creates the folder-list, attached to the folder.
 
 
@@ -289,6 +289,6 @@ while (true);
 return expand("lists addcombo " + listName + " " + picks.join(" "));
 ```
 __
-lists addcombo - Asks user to type a name for the new combo-list.
-Asks user to choose different lists.
+lists addcombo - Asks the user to type a name for the new combo-list.
+Asks the user to choose different lists.
 Creates the combo-list, attached to the different lists.

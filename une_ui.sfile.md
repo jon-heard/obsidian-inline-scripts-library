@@ -47,9 +47,9 @@ else
 }
 ```
 __
-une - Asks user to choose the scene's randomness (for picking the npc's power).
-Asks user to choose the npc's felings towards the pc(s) (for the npc's mood).
-Asks user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
+une - Asks the user to choose the scene's randomness (for picking the npc's power).
+Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
+Asks the user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
 Displays the npc's character (identity, power, motive) and the npc's interaction for this scene (mood, bearing, focus).
 
 
@@ -70,7 +70,7 @@ if (pick === null) { return null; }
 return expand("une character " + (pick+1));
 ```
 __
-une character - Asks user to choose the scene's randomness (for picking the npc's power).
+une character - Asks the user to choose the scene's randomness (for picking the npc's power).
 Displays the npc's character (identity, power, motive).
 
 
@@ -108,8 +108,8 @@ else
 }
 ```
 __
-une interact - Asks user to choose the npc's felings towards the pc(s) (for the npc's mood).
-Asks user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
+une interact - Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
+Asks the user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
 Displays the npc's interaction for this scene (mood, bearing, focus).
 
 
@@ -130,7 +130,7 @@ if (pick === null) { return null; }
 return expand("une power " + (pick+1));
 ```
 __
-une power - Asks user to choose the scene's randomness.
+une power - Asks the user to choose the scene's randomness.
 Displays the npc's power relative to the pc(s) power.
 
 
@@ -152,7 +152,7 @@ if (pick === null) { return null; }
 return expand("une mood " + (pick+1));
 ```
 __
-une mood - Asks user to choose the npc's felings towards the pc(s).
+une mood - Asks the user to choose the npc's felings towards the pc(s).
 Displays the npc's mood for this scene.
 
 
@@ -181,5 +181,5 @@ else
 }
 ```
 __
-une bearing - Asks user to choose the npc's demeanor, or pick it randomly.
+une bearing - Asks the user to choose the npc's demeanor, or pick it randomly.
 Displays a the npc's bearing.

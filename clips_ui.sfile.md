@@ -21,7 +21,7 @@ if (pick === null) { return null; }
 return _inlineScripts.state.sessionState.clips[clipNames[pick]];
 ```
 __
-clips get - Asks user to choose from list of clips.
+clips get - Asks the user to choose from list of clips.
 Expands to the value of that clip.
 	- Alternative: __cg__
 
@@ -43,5 +43,5 @@ delete _inlineScripts.state.sessionState.clips[clipNames[pick]];
 return "Clip __" + clipNames[pick] + "__ removed.\n\n";
 ```
 __
-clips remove - Asks user to choose from list of clips.
+clips remove - Asks the user to choose from list of clips.
 Removes that clip.
