@@ -110,7 +110,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			for (const name of names)
 			{
 				this.pileSelect.options[this.pileSelect.options.length] =
-					new Option(name);
+					new Option(name || "<untitled>");
 			}
 			this.pileSelect.value = oldValue;
 			if (this.pileSelect.value !== oldValue)
@@ -129,9 +129,12 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			}
 			this.cardDisplay.innerText = "";
 			if (!this.pileSelect.value) { return; }
+			const pileName =
+				this.pileSelect.value === "<untitled>" ?
+				"" : this.pileSelect.value;
 			const cards =
 				_inlineScripts.state.sessionState.cards.piles
-				[this.pileSelect.value].cards;
+				[pileName].cards;
 			let display = "";
 			for (const card of cards)
 			{
