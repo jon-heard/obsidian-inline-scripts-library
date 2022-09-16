@@ -6,9 +6,7 @@ __
 ```js
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
-//confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
-confirmObjectPath("_inlineScripts.cards_ui");
-_inlineScripts.cards_ui.cardPropertiesPopup =
+confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
 {
 	onOpen: async (data, parent, firstButton, SettingType) =>
 	{
@@ -80,8 +78,7 @@ _inlineScripts.cards_ui.cardPropertiesPopup =
 				data.setOrigin.getValue() ? "y" : "n"
 		});
 	}
-}
-//);
+});
 ```
 __
 
@@ -103,7 +100,8 @@ __
 userChooseExistingPileId = function(requestMessage, failMessage)
 {
 	const pileNames =
-		Object.keys(_inlineScripts.state.sessionState.cards.piles);
+		Object.keys(_inlineScripts.state.sessionState.cards.piles)
+		.map(v => v || "<untitled>");
 	if (!pileNames.length)
 	{
 		return [null, failMessage + "  No card-piles to choose from.\n\n"];
@@ -114,7 +112,9 @@ userChooseExistingPileId = function(requestMessage, failMessage)
 	{
 		return [null, failMessage + "  User canceled.\n\n"];
 	}
-	return [pileNames[pileIndex], null];
+	let pile = pileNames[pileIndex];
+	if (pile === "<untitled>") { pile = ""; }
+	return [pile, null];
 }
 
 userChooseNewOrExistingPileId = function(requestMessage)
@@ -127,7 +127,9 @@ userChooseNewOrExistingPileId = function(requestMessage)
 		"<br/>- Contain only letters, underscores & numbers";
 	const regex_confirm = /^[_a-zA-Z][_a-zA-Z0-9]*$/;
 	const redoMessage = "Invalid entry #%1.  Try again.<br/><br/>";
-	const options = Object.keys(_inlineScripts.state.sessionState.cards.piles);
+	const options =
+		Object.keys(_inlineScripts.state.sessionState.cards.piles)
+		.map(v => v || "<untitled>");
 	let result = popups.input(message, "", options);
 	let redoCount = 0;
 	while (result && !result.match(regex_confirm))
@@ -135,6 +137,10 @@ userChooseNewOrExistingPileId = function(requestMessage)
 		redoCount++;
 		result = popups.input(
 			redoMessage.replace("%1", redoCount) + message, result, options);
+		if (result === "<untitled>")
+		{
+			result = "";
+		}
 	}
 	return result;
 };
@@ -202,7 +208,7 @@ __
 // Source pile option
 let srcPile =
 	await userChooseExistingPileId("to draw from", "Cards not drawn.");
-if (!srcPile[0])
+if (srcPile[0] == null)
 {
 	return srcPile[1];
 }
@@ -280,7 +286,7 @@ __
 ```js
 const pile =
 	await userChooseExistingPileId("to show", "Cards not shown.");
-if (!pile[0])
+if (pile[0] == null)
 {
 	return pile[1];
 }
@@ -299,7 +305,7 @@ __
 ```js
 let pile =
 	await userChooseExistingPileId("to set properties for", "Cards not set.");
-if (!pile[0])
+if (pile[0] == null)
 {
 	return pile[1];
 }
@@ -331,7 +337,7 @@ __
 ```js
 const pile =
 	await userChooseExistingPileId("to shuffle", "Cards not shuffled.");
-if (!pile[0])
+if (pile[0] == null)
 {
 	return pile[1];
 }
@@ -370,7 +376,7 @@ __
 // Pile option
 let pile =
 	await userChooseExistingPileId("to flip", "Cards not flipped.");
-if (!pile[0])
+if (pile[0] == null)
 {
 	return pile[1];
 }
@@ -444,7 +450,7 @@ __
 ```js
 const pile =
 	await userChooseExistingPileId("to destroy", "Cards not destroyed.");
-if (!pile[0])
+if (pile[0] == null)
 {
 	return pile[1];
 }
@@ -491,7 +497,7 @@ __
 ```js
 const pile =
 	await userChooseExistingPileId("to export", "Cards not exported.");
-if (!pile[0])
+if (pile[0] == null)
 {
 	return pile[1];
 }
