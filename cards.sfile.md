@@ -213,6 +213,8 @@ if (!folder?.children)
 let cards = [];
 for (const child of folder.children)
 {
+	if (child.children) { continue; }
+
 	// Get image size
 	let size = null;
 	try
@@ -229,6 +231,10 @@ for (const child of folder.children)
 			i.onload = () =>
 			{
 				onDone({ w: i.naturalWidth, h: i.naturalHeight });
+			}
+			i.onerror = () =>
+			{
+				onDone(null);
 			}
 		});
 	}
@@ -254,11 +260,29 @@ for (const child of folder.children)
 	cards.push(card);
 }
 
-_inlineScripts.state.sessionState.cards.piles[$1] = { cards };
+let pileModified = false;
+if (!_inlineScripts.state.sessionState.cards.piles[$1])
+{
+	_inlineScripts.state.sessionState.cards.piles[$1] = { cards: [] };
+}
+else
+{
+	pileModified = true;
+}
+_inlineScripts.state.sessionState.cards.piles[$1].cards.push(...cards);
 expand("cards shuffle " + $1 + " y");
-onPileListChanged();
 
-return "The" + pile_toString($1) + " cards is created.\n\n";
+if (pileModified)
+{
+	onPileChanged($1);
+}
+else
+{
+	onPileListChanged();
+}
+
+return "__" +
+	cards.length + "__ cards added to the" + pile_toString($1) + " card-pile.\n\n";
 ```
 __
 cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up} - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
