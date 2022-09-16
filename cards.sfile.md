@@ -261,7 +261,7 @@ onPileListChanged();
 return "The" + pile_toString($1) + " cards is created.\n\n";
 ```
 __
-cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up} - Creates a card-pile based on images in {folder} and remembers it as {pile id}.
+cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up} - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
 
 
 __

@@ -97,7 +97,6 @@ delete _inlineScripts.cards_ui;
 __
 
 
-
 __
 __
 ```js
@@ -176,7 +175,17 @@ if (pileId === null)
 	return "Card-pile not created.  User canceled.\n\n";
 }
 
-return expand("cards fromfolder " + pileId + " " + folder);
+// Facing option
+facing = popups.confirm(
+	"Which way do you want to face cards?",
+	[ "Face-down", "Face-up" ]);
+if (facing === null)
+{
+	return "Cards not created.  User canceled.\n\n";
+}
+facing = facing ? "down" : "up";
+
+return expand("cards fromfolder " + pileId + " " + folder + " " + facing);
 ```
 __
 ui cards fromfolder - Asks the user to choose one of the non-empty folders.
