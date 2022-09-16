@@ -96,26 +96,20 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 			img.style.height = ((card.width + 8) * card.aspect) + "px";
 		}
 	},
-	onClose: async (data, resolveFnc, buttonText) =>
+	onClose: async (data, resolveFnc, buttonId) =>
 	{
-		if (buttonText === "Ok")
+		if (buttonId !== "Ok") { return; }
+
+		let result = [];
+		const children = data.ui.children;
+		for (var i = 0; i < children.length; i++)
 		{
-			let result = [];
-			const children = data.ui.children;
-			for (var i = 0; i < children.length; i++)
-			{
-			  if (children[i].classList.contains("iscript_cardSelected"))
-			  {
-				  result.push(children[i].dataset.id)
-			  }
-			}
-			resolveFnc(result);
+		  if (children[i].classList.contains("iscript_cardSelected"))
+		  {
+			  result.push(children[i].dataset.id)
+		  }
 		}
-		else
-		{
-			resolveFnc(null);
-		}
-		resolveFnc((buttonText === "Ok") ? [ 1, 3, 5 ] : null);
+		resolveFnc(result);
 	}
 });
 ```
@@ -148,6 +142,7 @@ const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState");
 _inlineScripts.state.sessionState.cards = { piles: {} };
+onPileListChanged();
 return "All card-piles cleared.\n\n";
 ```
 __
@@ -212,7 +207,7 @@ __
 const folder = app.vault.fileMap[$2];
 if (!folder?.children)
 {
-	return "Card-pile not created.  Folder __" + $2 + "__ is not valid.\n\n";
+	return "Cards not created.  Folder __" + $2 + "__ is not valid.\n\n";
 }
 
 let cards = [];
@@ -241,7 +236,7 @@ for (const child of folder.children)
 
 	if (size == null)
 	{
-		return "Card-pile not created.  Failed on file __" +
+		return "Cards not created.  Failed on file __" +
 			child.name + "__.\n\n";
 	}
 
@@ -263,7 +258,7 @@ _inlineScripts.state.sessionState.cards.piles[$1] = { cards };
 expand("cards shuffle " + $1 + " y");
 onPileListChanged();
 
-return "The" + pile_toString($1) + " card-pile is created.\n\n";
+return "The" + pile_toString($1) + " cards is created.\n\n";
 ```
 __
 cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up} - Creates a card-pile based on images in {folder} and remembers it as {pile id}.
@@ -482,11 +477,11 @@ return "All Cards in the" +
 ```
 __
 cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
-	- facing - Determines whether the card is shown face-up or face-down.
-	- width - Sets the size of the card by it's width.  The height adjusts to match the width.
-	- allow rotated - If true, the card has a 50/50 chance of being upside down.
-	- allow duplicate - If true, this card is copied when "drawn", rather than moved.
-	- set origin - If true, the "origin" of each card is set to THIS card-pile.  The origin is used by "cards recall" to determine what cards are moved where.
+	- facing - Set all cards to be face-up or face-down.
+	- width - Set the size of all cards, by their width.
+	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
+	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
+	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
 ***
 
 
@@ -499,7 +494,7 @@ __
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "No cards shown.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not shown.  The" + pile_toString($1) + " card-pile was not found.\n\n";
 }
 for (let i = pile.cards.length - 1; i > 0; i--) {
 	const j = Math.floor(Math.random() * (i + 1));
@@ -662,7 +657,7 @@ __
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Pile not destroyed.  The" +
+	return "Cards not destroyed.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
 if ($2 === "y" || popups.confirm(
@@ -674,7 +669,7 @@ if ($2 === "y" || popups.confirm(
 }
 else
 {
-	return "Card-pile not destroyed.  User canceled.\n\n";
+	return "Cards not destroyed.  User canceled.\n\n";
 }
 ```
 __
@@ -695,7 +690,7 @@ try
 }
 catch (e)
 {
-	return "Card-pile not imported.  Failed to parse data string.\n\n";
+	return "Cards not imported.  Failed to parse data string.\n\n";
 }
 const isNewPile = (!_inlineScripts.state.sessionState.cards.piles[$1]);
 _inlineScripts.state.sessionState.cards.piles[$1] = data;
@@ -729,7 +724,7 @@ __
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Card-pile not exported.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not exported.  The" + pile_toString($1) + " card-pile was not found.\n\n";
 }
 let result = JSON.stringify(pile);
 
