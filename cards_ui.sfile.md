@@ -81,6 +81,7 @@ confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
 });
 ```
 __
+Sets up this shortcut-file
 
 
 __
@@ -92,6 +93,7 @@ __
 delete _inlineScripts.cards_ui;
 ```
 __
+Shuts down this shortcut-file
 
 
 __

@@ -38,7 +38,7 @@ function aPickWeight(a, wIndex, theRoll)
 }
 ```
 __
-Some useful functions
+Helper scripts
 
 
 __
@@ -426,7 +426,7 @@ const getFormattedList = function(
 };
 ```
 __
-Used by a lot of "ac chars" and "ac plots" shortcuts.
+Helper scripts
 
 
 __
@@ -808,7 +808,7 @@ delete _inlineScripts.state?.sessionState?.adventurecrafter;
 delete _inlineScripts.state?.listeners?.onReset?.adventurecrafter;
 ```
 __
-Unregisters event callbacks.
+Shuts down this shortcut-file
 
 
 __
@@ -1090,4 +1090,4 @@ confirmObjectPath(
 ]);
 ```
 __
-Sets up a state variable for adventurecrafter.  Sets up callback for state "reset" event to reset itself.
+Sets up this shortcut-file

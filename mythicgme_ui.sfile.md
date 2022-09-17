@@ -17,7 +17,7 @@ if (_inlineScripts.inlineScripts.sfileIndices["mythicv2"])
 }
 ```
 __
-Disables mythicgme_ui if mythicv2 is already registered.
+Sets up this shortcut-file
 
 
 __

@@ -29,7 +29,7 @@ confirmObjectPath("_inlineScripts.state.listeners.onReset");
 confirmObjectPath("_inlineScripts.state.listeners.onLoad");
 ```
 __
-Sets up a global variable to hold the state for all shortcut-files.  Also, sets up an object that other shortcut-files can add callbacks to that get called when state is loaded or reset.
+Sets up this shortcut-file
 
 
 __
@@ -41,7 +41,7 @@ __
 delete _inlineScripts.state;
 ```
 __
-Shutdown this shortcut-file
+Shuts down this shortcut-file
 
 
 __

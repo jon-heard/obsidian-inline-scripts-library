@@ -55,8 +55,7 @@ confirmObjectPath(
 	});
 ```
 __
-Disables mythicv2 if mythicgme is already registered.  Sets up a state variable for mythicv2.  Sets up lists for mythicv2.  Sets up a callback for the state "reset" event in order to to reset mythicv2.
-
+Sets up this shortcut-file
 
 
 __
@@ -68,7 +67,7 @@ __
 delete _inlineScripts.state?.listeners?.onReset?.mythicv2;
 ```
 __
-Unregisters event callbacks.
+Shuts down this shortcut-file
 
 
 __
@@ -173,7 +172,7 @@ function getChaosAdjust(multiplier)
 }
 ```
 __
-Some useful functions.  Suped up versions to incorporate  details mode.
+Helper scripts
 
 
 __

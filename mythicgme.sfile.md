@@ -53,7 +53,7 @@ confirmObjectPath(
 	});
 ```
 __
-Disables mythicgme if mythicv2 is already registered.  Sets up a state variable for mythicgme.  Sets up lists for mythicgme.  Sets up a callback for the state "reset" event in order to to reset mythicgme.
+Sets up this shortcut-file
 
 
 __
@@ -65,7 +65,7 @@ __
 delete _inlineScripts.state?.listeners?.onReset?.mythicgme;
 ```
 __
-Unregisters event callbacks.
+Shuts down this shortcut-file
 
 
 __
@@ -115,7 +115,7 @@ function aPickWeight(a, wIndex, theRoll)
 }
 ```
 __
-Some useful functions
+Helper scripts
 
 
 __

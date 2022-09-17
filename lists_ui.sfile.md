@@ -74,6 +74,7 @@ Allows duplicate items.
 __
 __
 ```js
+// get the items of a given list, regardless of list type.
 function getListItems(name)
 {
 	let list = _inlineScripts.state.sessionState.lists[name];
@@ -105,6 +106,7 @@ function getListItems(name)
 		}
 	}
 }
+// returns the names of lists that have items.
 function getNamesOfPopulatedLists()
 {
 	return Object.keys(_inlineScripts.state.sessionState.lists)
@@ -113,8 +115,7 @@ function getNamesOfPopulatedLists()
 };
 ```
 __
-getListItems - get the items of a given list, regardless of list type.
-getNamesOfPopulatedLists - returns the names of lists that have items.
+Helper scripts
 
 
 __

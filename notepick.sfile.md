@@ -25,7 +25,7 @@ confirmObjectPath(
 	});
 ```
 __
-Setup this shortcut-file
+Sets up this shortcut-file
 
 
 __
@@ -38,7 +38,7 @@ delete _inlineScripts.state?.sessionState?.notepick;
 delete _inlineScripts.state?.listeners?.onReset?.notepick;
 ```
 __
-Shutdown this shortcut-file
+Shuts down this shortcut-file
 
 
 __
@@ -64,7 +64,7 @@ function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
 ```
 __
-Some useful functions
+Helper scripts
 
 
 __

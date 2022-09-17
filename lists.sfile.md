@@ -28,7 +28,7 @@ confirmObjectPath(
 	});
 ```
 __
-Sets up a state variable for the lists.  Sets up callback for state "reset" event to reset itself.
+Sets up this shortcut-file
 
 
 __
@@ -40,7 +40,7 @@ __
 delete _inlineScripts.state?.listeners?.onReset?.lists;
 ```
 __
-Unregisters event callbacks.
+Shuts down this shortcut-file
 
 
 __
@@ -63,6 +63,7 @@ lists reset - Clears all lists.
 __
 __
 ```js
+// a function to get the items of a given list, regardless of list type.
 function getListItems(name)
 {
 	let list = _inlineScripts.state.sessionState.lists[name];
@@ -96,7 +97,7 @@ function getListItems(name)
 }
 ```
 __
-getListItems - a function to get the items of a given list, regardless of list type.
+Helper scripts
 
 
 __

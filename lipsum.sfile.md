@@ -60,7 +60,7 @@ function roll(max) { return Math.trunc(Math.random() * max + 1); }
 function aPick(a) { return a[roll(a.length)-1]; }
 ```
 __
-Helper script - some useful functions
+Helper scripts
 
 
 __

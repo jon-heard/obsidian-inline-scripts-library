@@ -31,7 +31,7 @@ confirmObjectPath(
 	});
 ```
 __
-Sets up the notevars state (just the "isMarkdownRefreshed" flag).
+Sets up this shortcut-file
 
 
 __
@@ -44,7 +44,7 @@ delete _inlineScripts.state?.sessionState?.notevars;
 delete _inlineScripts.state?.listeners?.onReset?.notevars;
 ```
 __
-Shutdown this shortcut-file
+Shuts down this shortcut-file
 
 
 __
@@ -149,6 +149,8 @@ __
 __
 ```js
 const REFRESH_MARKDOWN_DELAY = 500;
+
+// Allow refreshing a  file's markdown
 function refreshPreviewOnNextModify(file)
 {
 	if (!_inlineScripts.state.sessionState.
@@ -174,7 +176,7 @@ function refreshPreviewOnNextModify(file)
 }
 ```
 __
-Allow refreshing a  file's markdown
+Helper scripts
 
 
 __

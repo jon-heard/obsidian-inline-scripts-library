@@ -25,7 +25,7 @@ function aPickWeight(a, wIndex, theRoll)
 }
 ```
 __
-Some useful functions
+Helper scripts
 
 
 __

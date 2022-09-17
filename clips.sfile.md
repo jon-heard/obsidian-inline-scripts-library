@@ -33,7 +33,7 @@ confirmObjectPath(
 	});
 ```
 __
-Sets up a state variable for the clips.  Sets up callback for state "reset" event to reset itself.
+Sets up this shortcut-file
 
 
 __
@@ -46,7 +46,7 @@ delete _inlineScripts.state?.listeners?.onReset?.clips;
 delete _inlineScripts.inlineScripts?.listeners?.onExpansion?.clips;
 ```
 __
-Unregisters event callbacks.
+Shuts down this shortcut-file
 
 
 __

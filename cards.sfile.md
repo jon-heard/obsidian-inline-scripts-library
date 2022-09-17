@@ -21,7 +21,7 @@ function onPileChanged(pileName)
 }
 ```
 __
-Helper functions
+Helper scripts
 
 
 __
@@ -114,7 +114,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 });
 ```
 __
-Setup shortcut-file
+Sets up this shortcut-file
 
 
 __
@@ -129,7 +129,7 @@ delete _inlineScripts.state?.sessionState?.cards;
 delete _inlineScripts.state?.listeners?.onReset?.cards;
 ```
 __
-Shutdown shortcut-file
+Shuts down this shortcut-file
 
 
 __
@@ -195,7 +195,7 @@ function pile_toString(pileId, useHtml)
 }
 ```
 __
-Helper functions
+Helper scripts
 
 
 __

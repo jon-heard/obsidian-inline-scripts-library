@@ -17,7 +17,7 @@ if (_inlineScripts.inlineScripts.sfileIndices["mythicgme"])
 }
 ```
 __
-Disables mythicv2_ui if mythicgme is already registered.
+Sets up this shortcut-file
 
 
 __
@@ -32,7 +32,7 @@ function clearDetailsIfUserTriggered()
 }
 ```
 __
-Some useful functions.
+Helper scripts
 
 
 __

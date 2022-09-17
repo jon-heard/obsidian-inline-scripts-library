@@ -6,6 +6,7 @@ __
 const CARDPILE_VIEW_TYPE = "inline-scripts-cardpile-view";
 ```
 __
+Helper scripts - global constant
 
 
 __
@@ -195,7 +196,7 @@ plugin.getObsidianInterface().addIcon(CARDPILE_VIEW_TYPE, `
 </svg>`);
 ```
 __
-Setup this plugin.
+Sets up this shortcut-file
 
 
 __
@@ -210,7 +211,7 @@ _inlineScripts.inlineScripts.helperFncs.removeCss("cards_pileViewer");
 app.workspace.detachLeavesOfType(CARDPILE_VIEW_TYPE);
 ```
 __
-Shutdown this plugin.
+Shuts down this shortcut-file
 
 
 __
