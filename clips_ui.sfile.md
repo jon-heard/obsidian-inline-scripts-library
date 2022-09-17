@@ -7,7 +7,7 @@ An extension to __clips.sfile__ that provides graphical ui versions of shortcuts
 
 __
 ```
-^(?:clips? get|cg)$
+^ui (?:clips? get|cg)$
 ```
 __
 ```js
@@ -21,14 +21,14 @@ if (pick === null) { return null; }
 return _inlineScripts.state.sessionState.clips[clipNames[pick]];
 ```
 __
-clips get - Asks the user to choose from list of clips.
+ui clips get - Asks the user to choose from list of clips.
 Expands to the value of that clip.
 	- Alternative: __cg__
 
 
 __
 ```
-^clips? remove$
+^ui clips? remove$
 ```
 __
 ```js
@@ -43,5 +43,5 @@ delete _inlineScripts.state.sessionState.clips[clipNames[pick]];
 return "Clip __" + clipNames[pick] + "__ removed.\n\n";
 ```
 __
-clips remove - Asks the user to choose from list of clips.
+ui clips remove - Asks the user to choose from list of clips.
 Removes that clip.

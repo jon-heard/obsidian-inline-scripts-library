@@ -37,7 +37,7 @@ Helper scripts
 
 __
 ```
-^mythicv2 details$
+^ui mythicv2 details$
 ```
 __
 ```js
@@ -59,13 +59,13 @@ if (!!pick === (stateString === "enabled"))
 return expand("mythicv2 details " + (pick ? "y" : "n"));
 ```
 __
-mythicv2 details - Asks the user whether to enable or disable 'details' mode.
+ui mythicv2 details - Asks the user whether to enable or disable 'details' mode.
 Displays whether 'details' mode is enabled.
 
 
 __
 ```
-^fate$
+^ui fate$
 ```
 __
 ```js
@@ -85,14 +85,14 @@ if (pick2 === null) { return null; }
 return expand( "fate " + (pick - 4) + " " + (pick2 ? "n" : "y") );
 ```
 __
-fate - Asks the user to choose the odds for this fate check.
+ui fate - Asks the user to choose the odds for this fate check.
 Asks the user what answer is best for the pc(s).
 Displays the answer to a yes/no question, possibly with a random event attached.
 
 
 __
 ```
-^scene$
+^ui scene$
 ```
 __
 ```js
@@ -104,13 +104,13 @@ if (pick === null) { return null; }
 return expand("scene " + (pick * 2 - 1));
 ```
 __
-scene - Asks the user to choose whether chaos increased or decreased last scene.
+ui scene - Asks the user to choose whether chaos increased or decreased last scene.
 Starts a new scene with the chosen chaos value adjustment.
 
 
 __
 ```
-^disposition$
+^ui disposition$
 ```
 __
 ```js
@@ -144,14 +144,14 @@ else
 }
 ```
 __
-disposition - Asks the user for the total descriptor modifier for an npc (+1 for descriptors that make the npc more active in the scene, -1 for descriptors that make the npc less active).
+ui disposition - Asks the user for the total descriptor modifier for an npc (+1 for descriptors that make the npc more active in the scene, -1 for descriptors that make the npc less active).
 If the npc already has a disposition for this scene, select it.  If NOT, select "random" to choose one.
 Rolls and shows a disposition for the npc for the current scene.
 
 
 __
 ```
-^action$
+^ui action$
 ```
 __
 ```js
@@ -168,5 +168,5 @@ if (pick === null) { return null; }
 return expand("action " + (pick * 2 - 2));
 ```
 __
-action - Asks the user for the npc's disposition modifier.
+ui action - Asks the user for the npc's disposition modifier.
 Rolls and shows an action for the npc to take.

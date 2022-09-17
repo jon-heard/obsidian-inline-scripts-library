@@ -7,7 +7,7 @@ An extension to __une.sfile__ that provides graphical ui versions of shortcuts.
 
 __
 ```
-^une$
+^ui une$
 ```
 __
 ```js
@@ -47,7 +47,7 @@ else
 }
 ```
 __
-une - Asks the user to choose the scene's randomness (for picking the npc's power).
+ui une - Asks the user to choose the scene's randomness (for picking the npc's power).
 Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
 Asks the user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
 Displays the npc's character (identity, power, motive) and the npc's interaction for this scene (mood, bearing, focus).
@@ -55,7 +55,7 @@ Displays the npc's character (identity, power, motive) and the npc's interaction
 
 __
 ```
-^une character$
+^ui une character$
 ```
 __
 ```js
@@ -70,13 +70,13 @@ if (pick === null) { return null; }
 return expand("une character " + (pick+1));
 ```
 __
-une character - Asks the user to choose the scene's randomness (for picking the npc's power).
+ui une character - Asks the user to choose the scene's randomness (for picking the npc's power).
 Displays the npc's character (identity, power, motive).
 
 
 __
 ```
-^une interact$
+^ui une interact$
 ```
 __
 ```js
@@ -108,14 +108,14 @@ else
 }
 ```
 __
-une interact - Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
+ui une interact - Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
 Asks the user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
 Displays the npc's interaction for this scene (mood, bearing, focus).
 
 
 __
 ```
-^une power$
+^ui une power$
 ```
 __
 ```js
@@ -130,13 +130,13 @@ if (pick === null) { return null; }
 return expand("une power " + (pick+1));
 ```
 __
-une power - Asks the user to choose the scene's randomness.
+ui une power - Asks the user to choose the scene's randomness.
 Displays the npc's power relative to the pc(s) power.
 
 
 __
 ```
-^une mood$
+^ui une mood$
 ```
 __
 ```js
@@ -152,13 +152,13 @@ if (pick === null) { return null; }
 return expand("une mood " + (pick+1));
 ```
 __
-une mood - Asks the user to choose the npc's felings towards the pc(s).
+ui une mood - Asks the user to choose the npc's felings towards the pc(s).
 Displays the npc's mood for this scene.
 
 
 __
 ```
-^une bearing$
+^ui une bearing$
 ```
 __
 ```js
@@ -181,5 +181,5 @@ else
 }
 ```
 __
-une bearing - Asks the user to choose the npc's demeanor, or pick it randomly.
+ui une bearing - Asks the user to choose the npc's demeanor, or pick it randomly.
 Displays a the npc's bearing.

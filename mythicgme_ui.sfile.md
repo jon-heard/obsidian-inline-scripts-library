@@ -22,7 +22,7 @@ Sets up this shortcut-file
 
 __
 ```
-^fate$
+^ui fate$
 ```
 __
 ```js
@@ -39,13 +39,13 @@ if (pick === null) { return null; }
 return expand("fate " + (pick - 4));
 ```
 __
-fate - Asks the user to choose the odds for this fate check.
+ui fate - Asks the user to choose the odds for this fate check.
 Displays the answer to a yes/no question, possibly with a random event attached.
 
 
 __
 ```
-^scene$
+^ui scene$
 ```
 __
 ```js
@@ -57,5 +57,5 @@ if (pick === null) { return null; }
 return expand("scene " + (pick * 2 - 1));
 ```
 __
-scene - Asks the user to choose whether chaos increased or decreased last scene.
+ui scene - Asks the user to choose whether chaos increased or decreased last scene.
 Starts a new scene with the chosen chaos value adjustment.
