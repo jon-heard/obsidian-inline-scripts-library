@@ -44,7 +44,7 @@ const plugin = _inlineScripts.inlineScripts.plugin;
 if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 {
 	_inlineScripts.inlineScripts.hasRegisteredCardPileView = true;
-	class CardPileView extends plugin.getObsidianInterface().ItemView
+	class CardPileView extends plugin.getObsidianInterfaces().ItemView
 	{
 		pileSelect;
 		zoomSelect;
@@ -141,10 +141,8 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			for (const card of cards)
 			{
 				const src =
-					card.isFaceDown ?
-					_inlineScripts.cards.backImage :
-					"app://local/" + app.vault.adapter.basePath + "/" +
-					card.path;
+					card.isFaceDown ? _inlineScripts.cards.backImage :
+					app.vault.getResourcePath(app.vault.fileMap[card.path]);
 				const cls =
 					(card.isRotated && !card.isFaceDown) ?
 					"rotated" : "";
@@ -178,7 +176,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 }
 _inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .rotated { transform: scaleX(-1) scaleY(-1); } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); }");
 
-plugin.getObsidianInterface().addIcon(CARDPILE_VIEW_TYPE, `
+plugin.getObsidianInterfaces().addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
  <g class="layer">
   <title>Layer 1</title>

@@ -82,7 +82,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 			img.classList.add("iscript_cardChoice");
 			img.dataset.id = i;
 			img.dataset.src =
-				"app://local/" + app.vault.adapter.basePath + "/" + card.path;
+				app.vault.getResourcePath(app.vault.fileMap[card.path]);
 			img.addEventListener("pointerdown", onclick);
 			img.src =
 				card.isFaceDown ?
@@ -312,7 +312,7 @@ if ($5 === "y")
 		{ pileId: $1 });
 	if (!choice)
 	{
-		return "Cards not drawn.  Canceled by user.";
+		return "Cards not drawn.  Canceled by user.\n\n";
 	}
 	drawIndices = choice;
 }
@@ -334,7 +334,7 @@ else
 }
 if (!drawIndices.length)
 {
-	return "Cards not drawn.  No cards chosen.";
+	return "Cards not drawn.  No cards chosen.\n\n";
 }
 drawIndices.sort();
 
@@ -629,11 +629,11 @@ if ($4 === "y")
 		});
 	if (!choice)
 	{
-		return "Cards not flipped.  Canceled by user.";
+		return "Cards not flipped.  Canceled by user.\n\n";
 	}
 	if (!choice.length)
 	{
-		return "Cards not flipped.  No cards chosen.";
+		return "Cards not flipped.  No cards chosen.\n\n";
 	}
 	flipCount = choice.length;
 	for (index of choice)
