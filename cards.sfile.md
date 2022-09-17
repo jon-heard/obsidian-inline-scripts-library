@@ -483,7 +483,7 @@ for (let card of pile.cards)
 let changes = [];
 if ($2) { changes.push("- facing - " + $2); }
 if ($3) { changes.push("- size - " + $3); }
-if ($4) { changes.push("- allow rotationed - " + ($4 === "y")); }
+if ($4) { changes.push("- allow rotated - " + ($4 === "y")); }
 if ($5) { changes.push("- allow duplicate - " + ($5 === "y")); }
 if ($6 === "y") { changes.push("- origin - " + $1); }
 if (changes.length)
