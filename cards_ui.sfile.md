@@ -321,7 +321,7 @@ const result = popups.custom(
 	_inlineScripts.cards_ui.cardPropertiesPopup);
 if (!result)
 {
-	return "Cards not set.  User canceled.";
+	return "Cards not set.  User canceled.\n\n";
 }
 
 return expand(
