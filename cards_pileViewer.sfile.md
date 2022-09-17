@@ -1,4 +1,5 @@
-Adds a type of Obsidian plan that lets you view card-piles.
+Adds an Obsidian panel type that lets you view card-piles.
+
 
 __
 __

@@ -1,3 +1,6 @@
+An extension to __cards.sfile__ that provides graphical ui versions of shortcuts.
+
+
 __
 ```
 ^sfile setup$

@@ -1,4 +1,4 @@
-A single shortcut to run commands through the Dice Roller plugin.
+A shortcut to run commands through the Dice Roller plugin.
 
 __
 ```
@@ -15,4 +15,4 @@ const diceRoller = await diceRollerPlugin.getRoller($1);
 return await diceRoller.roll();
 ```
 __
-diceroller {command: text} - Runs {command} through the Dice Roller plugin.
+diceroller {command: text} - Runs {command} through the Dice Roller plugin and expands to the result.

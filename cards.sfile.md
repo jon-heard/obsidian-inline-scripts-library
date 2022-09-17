@@ -1,4 +1,4 @@
-Shortcuts for working with virtual cards.  Almost all of these shortcuts work on piles of cards, rather than invidiual cards.
+Shortcuts for working with virtual cards.  Almost all of these shortcuts work on piles of cards, rather than individual cards.
 
 
 __

@@ -61,6 +61,7 @@ return "All notepicks cleared.\n\n";
 ```
 __
 notevars reset - Clears the isMarkdownRefreshed flag.
+***
 
 
 __

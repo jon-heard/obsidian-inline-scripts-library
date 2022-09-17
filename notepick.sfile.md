@@ -55,6 +55,7 @@ return "All notepicks cleared.\n\n";
 ```
 __
 notepick reset - Clears all picks.
+***
 
 
 __
