@@ -241,6 +241,9 @@ This shortcut-file has a tutorial video available:
 ### cards.sfile
 Shortcuts for working with virtual cards.  Almost all of these shortcuts work on piles of cards, rather than individual cards.
 
+This shortcut-file has a tutorial video available:
+[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
+
 - __cards reset__ - Clears all card-piles.
 - __cards__ - Lists all card-piles.
 ***
@@ -393,7 +396,10 @@ Displays a the npc's bearing.
 ***
 
 ### cards_pileviewer.sfile
-Adds an Obsidian panel type that lets you view card-piles.
+An extension to __cards.sfile__ that adds an Obsidian panel type that lets you view card-piles.
+
+This shortcut-file has a tutorial video available:
+[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
 - __cards open viewer__ - Open a panel for viewing card-piles.
 
@@ -401,6 +407,9 @@ Adds an Obsidian panel type that lets you view card-piles.
 
 ### cards_ui.sfile
 An extension to __cards.sfile__ that provides graphical ui versions of shortcuts.
+
+This shortcut-file has a tutorial video available:
+[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
 - __ui cards fromfolder__ - Asks the user to choose one of the non-empty folders.
 Asks the user to enter a name to give the new card-pile.

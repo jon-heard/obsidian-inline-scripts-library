@@ -1,5 +1,8 @@
 Shortcuts for working with virtual cards.  Almost all of these shortcuts work on piles of cards, rather than individual cards.
 
+This shortcut-file has a tutorial video available:
+[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
+
 
 __
 __
