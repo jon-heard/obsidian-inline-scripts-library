@@ -257,8 +257,8 @@ Shortcuts for working with virtual cards.  Almost all of these shortcuts work on
 	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
 ***
 - __cards shuffle {pile id: name text, default: ""}__ - Randomizes the card order and rotation for the {pile id} card-pile.
-- __cards recall {pile id: name text, default: ""}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
 - __cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n}__ - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
+- __cards recall {pile id: name text, default: ""}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
 - __cards destroy {pile id: name text, default: ""}__ - Removes the {pile id} card-pile, including all cards within it.
 ***
 - __cards import {pile id: name text, default: ""} {data: text}__ - Makes a card-pile from the data string {data} and remembers it as {pile id}.
@@ -413,20 +413,23 @@ Asks the user how many cards to draw.
 Draws the cards.
 - __ui cards show__ - Asks the user to choose a card-pile.
 Adds images of the cards in the chosen card-pile to the note.
+***
 - __ui cards properties__ - Asks the user which card-pile to set properties for.
 Shows a popup with all properties, each defaulting to "unchanged".  User can change the wanted properties.
 When the user is finished, all chosen properties are changed on all cards in the card-pile.
+***
 - __ui cards shuffle__ - Asks the user to choose a card-pile.
 Randomizes the card-pile's card order and rotation.
-- __ui cards recall__ - Asks the user to enter a card-pile.
-Moves all cards that have the chosen card-pile as their origin, from their current card-pile back into the chosen card-pile.
 - __ui cards flip__ - Asks the user to choose a card-pile.
 Asks the user if they want to pick the cards to flip.  If they want to, lets them pick.  Otherwise...
-Asks the user which wy they want to flip.
+Asks the user which way they want to flip.
 Asks the user how many cards to flip.
 Flips the cards.
+- __ui cards recall__ - Asks the user to enter a card-pile.
+Moves all cards that have the chosen card-pile as their origin, from their current card-pile back into the chosen card-pile.
 - __ui cards destroy__ - Asks the user to choose a card-pile.
 Destroys the chosen card-pile and all cards within it.
+***
 - __ui cards import__ - Asks the user to enter a card-pile.
 Asks the user to enter the data string to import.
 Imports the data string and assigns the new card-pile  to the entered one.

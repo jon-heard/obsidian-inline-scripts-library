@@ -543,54 +543,6 @@ cards shuffle {pile id: name text, default: ""} - Randomizes the card order and 
 
 __
 ```
-^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|)$
-```
-__
-```js
-let result = "";
-let moveCount = 0;
-let piles = _inlineScripts.state.sessionState.cards.piles;
-let pile = piles[$1];
-for (const key in piles)
-{
-	if (piles[key] === pile) { continue; }
-	for (let k = piles[key].cards.length - 1; k >= 0; k--)
-	{
-		if (piles[key].cards[k].origin === $1)
-		{
-			if (!pile)
-			{
-				pile = piles[$1] = { cards: [] };
-			}
-			const card = piles[key].cards[k];
-			piles[key].cards.splice(k, 1);
-			pile.cards.push(card);
-			moveCount++;
-		}
-	}
-	if (!piles[key].cards.length)
-	{
-		result += "The" + pile_toString(key) +
-		" card-pile was entirely drawn into the" + pile_toString($1) +
-		" card-pile, then removed as empty.\n";
-		delete piles[key];
-	}
-}
-onPileListChanged();
-if (moveCount)
-{
-	onPileChanged(null);
-}
-return result +
-	"__" + moveCount + "__ cards were returned to the" + pile_toString($1) +
-	" card-pile.\n\n";
-```
-__
-cards recall {pile id: name text, default: ""} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
-
-
-__
-```
 ^cards flip ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
 ```
 __
@@ -670,6 +622,54 @@ return "__" +
 ```
 __
 cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
+
+
+__
+```
+^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+```
+__
+```js
+let result = "";
+let moveCount = 0;
+let piles = _inlineScripts.state.sessionState.cards.piles;
+let pile = piles[$1];
+for (const key in piles)
+{
+	if (piles[key] === pile) { continue; }
+	for (let k = piles[key].cards.length - 1; k >= 0; k--)
+	{
+		if (piles[key].cards[k].origin === $1)
+		{
+			if (!pile)
+			{
+				pile = piles[$1] = { cards: [] };
+			}
+			const card = piles[key].cards[k];
+			piles[key].cards.splice(k, 1);
+			pile.cards.push(card);
+			moveCount++;
+		}
+	}
+	if (!piles[key].cards.length)
+	{
+		result += "The" + pile_toString(key) +
+		" card-pile was entirely drawn into the" + pile_toString($1) +
+		" card-pile, then removed as empty.\n";
+		delete piles[key];
+	}
+}
+onPileListChanged();
+if (moveCount)
+{
+	onPileChanged(null);
+}
+return result +
+	"__" + moveCount + "__ cards were returned to the" + pile_toString($1) +
+	" card-pile.\n\n";
+```
+__
+cards recall {pile id: name text, default: ""} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
 
 
 __

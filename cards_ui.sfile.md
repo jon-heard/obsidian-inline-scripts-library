@@ -300,6 +300,7 @@ return expand("cards show " + pile[0]);
 __
 ui cards show - Asks the user to choose a card-pile.
 Adds images of the cards in the chosen card-pile to the note.
+***
 
 
 __
@@ -332,6 +333,7 @@ __
 ui cards properties - Asks the user which card-pile to set properties for.
 Shows a popup with all properties, each defaulting to "unchanged".  User can change the wanted properties.
 When the user is finished, all chosen properties are changed on all cards in the card-pile.
+***
 
 
 __
@@ -351,25 +353,6 @@ return expand("cards shuffle " + pile[0]);
 __
 ui cards shuffle - Asks the user to choose a card-pile.
 Randomizes the card-pile's card order and rotation.
-
-
-__
-```
-^ui cards? recall$
-```
-__
-```js
-const pileId = await userChooseNewOrExistingPileId("to recall");
-if (pileId === null)
-{
-	return "Cards not recalled.  User canceled.\n\n";
-}
-
-return expand("cards recall " + pileId);
-```
-__
-ui cards recall - Asks the user to enter a card-pile.
-Moves all cards that have the chosen card-pile as their origin, from their current card-pile back into the chosen card-pile.
 
 
 __
@@ -442,9 +425,28 @@ return expand(
 __
 ui cards flip - Asks the user to choose a card-pile.
 Asks the user if they want to pick the cards to flip.  If they want to, lets them pick.  Otherwise...
-Asks the user which wy they want to flip.
+Asks the user which way they want to flip.
 Asks the user how many cards to flip.
 Flips the cards.
+
+
+__
+```
+^ui cards? recall$
+```
+__
+```js
+const pileId = await userChooseNewOrExistingPileId("to recall");
+if (pileId === null)
+{
+	return "Cards not recalled.  User canceled.\n\n";
+}
+
+return expand("cards recall " + pileId);
+```
+__
+ui cards recall - Asks the user to enter a card-pile.
+Moves all cards that have the chosen card-pile as their origin, from their current card-pile back into the chosen card-pile.
 
 
 __
@@ -464,6 +466,7 @@ return expand("cards destroy " + pile[0]);
 __
 ui cards destroy - Asks the user to choose a card-pile.
 Destroys the chosen card-pile and all cards within it.
+***
 
 
 __
