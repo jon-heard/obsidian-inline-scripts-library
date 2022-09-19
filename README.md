@@ -76,6 +76,8 @@ This shortcut-file has a tutorial video available:
 ***
 - __lists addfolder {list name: name text} {folder: path text}__ - Creates a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}...__ - Creates a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+***
+- __lists fromfile lines {list name: name text} {file: path text}__ - Takes the file {file} and breaks it up into individual lines.  Adds each of those lines to list {list name} as an item.
 
 ***
 
@@ -245,6 +247,7 @@ This shortcut-file has a tutorial video available:
 [Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
 - __cards reset__ - Clears all card-piles.
+- __cards backimage {file name: path text}__ - Sets the image to use for the back of cards to {file name}.
 - __cards__ - Lists all card-piles.
 ***
 - __cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up}__ - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
@@ -261,7 +264,7 @@ This shortcut-file has a tutorial video available:
 ***
 - __cards shuffle {pile id: name text, default: ""}__ - Randomizes the card order and rotation for the {pile id} card-pile.
 - __cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n}__ - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
-- __cards recall {pile id: name text, default: ""}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
+- __cards recall {pile id: name text, default: ""} {facing: up OR down, default: current}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
 - __cards destroy {pile id: name text, default: ""}__ - Removes the {pile id} card-pile, including all cards within it.
 ***
 - __cards import {pile id: name text, default: ""} {data: text}__ - Makes a card-pile from the data string {data} and remembers it as {pile id}.

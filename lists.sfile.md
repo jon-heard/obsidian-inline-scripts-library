@@ -363,6 +363,35 @@ return "List __" +
 ```
 __
 lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}... - Creates a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+***
+
+
+__
+```
+^lists? fromfile lines ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+)$
+```
+__
+```js
+let file = app.vault.fileMap[$1];
+if ((!file || file.children) && !$1.endsWith(".md"))
+{
+	file = app.vault.fileMap[$2 + ".md"];
+}
+if (!file)
+{
+    return "Lines not added.  File __" + $1 + "__ not found.\n\n";
+}
+const content = await app.vault.cachedRead(file);
+const lines = content.split("\n").filter(v => v);
+for (const line of lines)
+{
+	expand("lists add " + $1 + " " + line);
+}
+const pick = lines[Math.trunc(Math.random()*lines.length)];
+return "__" + lines.length + "__ items added to the __" + $1 + "__ list.\n\n";
+```
+__
+lists fromfile lines {list name: name text} {file: path text} - Takes the file {file} and breaks it up into individual lines.  Adds each of those lines to list {list name} as an item.
 
 
 __
