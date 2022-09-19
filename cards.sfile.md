@@ -33,6 +33,38 @@ function onPileChanged(pileName)
 			"cards.onPileChanged",
 			_inlineScripts.cards.listeners.onPileChanged);
 }
+function getAbsolutePath(path)
+{
+	if (path.startsWith("data:image/png;base64")) { return path; }
+	path = app.vault.fileMap[path];
+	if (!path) { return ""; }
+	return app.vault.getResourcePath(path);
+}
+function createCardUi(card, id, scale, includeDataSrc)
+{
+	scale ||= 1.0;
+	const front = getAbsolutePath(card.path);
+	const back =
+		getAbsolutePath(_inlineScripts.state.sessionState.cards.backImage);
+
+	const result = document.createElement("img");
+	result.src = card.isFaceDown ? back : front;
+	result.style.width = (card.width * scale) + "px";
+	result.style.height = (card.width * card.aspect * scale) + "px";
+	if (id != undefined)
+	{
+		result.dataset.id = id;
+	}
+	if (includeDataSrc)
+	{
+		result.dataset.src = front;
+	}
+	if (card.isRotated && !card.isFaceDown)
+	{
+		result.classList.add("rotated");
+	}
+	return result;
+}
 ```
 __
 Helper scripts
@@ -66,10 +98,12 @@ confirmObjectPath(
 confirmObjectPath("_inlineScripts.cards.listeners.onPileListChanged");
 confirmObjectPath("_inlineScripts.cards.listeners.onPileChanged");
 
-_inlineScripts.inlineScripts.helperFncs.addCss("cards", "img[alt*=', rotated']{ transform: scaleX(-1) scaleY(-1); } .iscript_cardChoice { opacity: .75; cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { opacity: 1; } .iscript_cardSelected { opacity: 1; border-color: yellow; }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards", ".rotated { transform: scaleX(-1) scaleY(-1); } .iscript_cardChoice { opacity: .75; cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { opacity: 1; } .iscript_cardSelected { opacity: 1; border-color: yellow; }");
 
-confirmObjectPath("_inlineScripts.cards.backImage",
+confirmObjectPath("_inlineScripts.cards.defaultBackImage",
 `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABkCAYAAAAlg3YKAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAEvElEQVR42u3dP2wTZxjH8e9diD2UYFdWKwuQXGpTEjxYSFkSIcuDJYTqZrmweSrZzixlZ2BPh+J3M52ytMILtVQhPFiQhCUS8uCiCKzUA8hSdaoP6OBE5Dr4znFCYiiY5o+f33TRvXlP/uTx+zqPLL0aPWk2nS9HR7kGZICzwGcMR/4BngIln4+fxsa0v7wbmndhWc4s8DMwxnDnJfB9KKQVu0CW5VwBfgG01dVNlpY2ef58k42N4RAZHYXTp3WmpnTGx3UAB7gSCmlFzX1bPQPG7t9/w8OHb4a6fJLJEdLpEYCXPh8x3V1zxlZXN4ceB+DBgzesrm4CnFhf55oOzAAsLW0i6WR5uWvxnQ58DfDihQB56bGI6cBxgPV1gfHSbncvj+vC0T8CJEACJEACJEACJEACJBEgARIgARIgARIgAZIIkAAJkAAJkAAJkABJBOjAAtnVFEr5USpF1d5lQMNEVe7tO9CxwU11j4qaodb9eQ7TVHuODiQqmIk61eLV3QdEFGaEowR0iZTZ5kI1RZnbGInokXiLHfvkT2iYqDWIWwVqzSnimdukIv3w6lSL51lsAvG7mKlL75zHbpiUSwWaAOE5MoYicqjWIGuCC0YbMzuLtfI7dt/BURJGGzMz937z2HnKKxNMZtuYZptsDFaq9UNUQQChswQAAmcJ8XSw87Se0GwWKC1c3xoXnwGihwioT7UEQ49Ya0HnlX9AghOEw/OkjdwHT7EPu9h51GL/Xay7WV2YZ2XBj2IK06yAnae4cL2znlBA1SB88Q+M4F7bYY70pElZ+d3fcccPaJPQLMtxAG7ckC8p9ubmTZ98kpZ/NQRIgARIgARIgARIIkACNBxAB6QPPVCgRjVFUflRyk+xkqdhf8RkEbXVQXxn6lSLJo1PDHTsY//ipWezZM0KAcC28/zZqhMJRI/MW2wg/aCWXYdAlEAgR8LtWm3rEzNHxnT7xNt6y7h959h79KEhHJ8nncoRaJioUqEzRhXA7SVVi/7OHOyYZ9+AIooseR6Xr2I1H9EMz5M1cgTsPOUSTGbbRHZr89XgTLZNqudewmiTcEG2xYIz6c5Yu5qiXL2MkVCY5g9Uiz8S7GnQL4bc5x+kCgpEcqQiuU7VeC8g+IRmfGZ3HIB+93YmtDU2EIzTXHvGXv3mDHcoF+8AcWJp1a3m/VukG3kqjXp30Wz97V4GJwjX7n7cgt2ttq157FaN8OexbaXY6nlGJFXBMCoYk7D4+N4BqKDIZc5UrqJKjwB3jUhEgRzpjEl5wU9p5xq0W/r1oeOwVvZT6q5BXvVE+SoGCwt+Ft01SCm/e2+Ki1k1EKCD3ZNumKi1mYEstv810pP+P7f5T5YD8AUGqSABEiABEiABEiABEiCJAAmQAAmQAAmQAAmQRIAESIAESIAESIAESCJAAjQAoNcAPp9gePH7u5cvdaAOcPKkFJMXz8JxqOvAbwDT0wLkxbPQNEr6xga3gFfj4zrJ5MjQ4ySTI5w7p0Pn8KNb3vFZs8CvuMdnLS93js8altNafD44dUpnelr3cLaOz/IGWZZj0DmA7cSQF9HbB7B5efXK+WJ9nWuaxreOwze45/4MQV47Dk81jZLPx63eI/z+BcWKtwx4PjyWAAAAAElFTkSuQmCC`);
+confirmObjectPath("_inlineScripts.state.sessionState.cards.backImage",
+	_inlineScripts.cards.defaultBackImage);
 
 confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 {
@@ -90,24 +124,10 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 		};
 		for (let i = 0; i < cards.length; i++)
 		{
-			const card = cards[i];
-			const img = document.createElement("img");
+			const img = createCardUi(cards[i], i, 1.0, true)
 			d.append(img);
 			img.classList.add("iscript_cardChoice");
-			img.dataset.id = i;
-			img.dataset.src =
-				app.vault.getResourcePath(app.vault.fileMap[card.path]);
 			img.addEventListener("pointerdown", onclick);
-			img.src =
-				card.isFaceDown ?
-				_inlineScripts.cards.backImage :
-				img.dataset.src;
-			if (card.isRotated && !card.isFaceDown)
-			{
-				img.alt = ", rotated";
-			}
-			img.style.width = (card.width + 8) + "px";
-			img.style.height = ((card.width + 8) * card.aspect) + "px";
 		}
 	},
 	onClose: async (data, resolveFnc, buttonId) =>
@@ -157,10 +177,30 @@ const confirmObjectPath =
 confirmObjectPath("_inlineScripts.state.sessionState");
 _inlineScripts.state.sessionState.cards = { piles: {} };
 onPileListChanged();
+_inlineScripts.state.sessionState.cards.backImage =
+	_inlineScripts.cards.defaultBackImage;
 return "All card-piles cleared.\n\n";
 ```
 __
 cards reset - Clears all card-piles.
+
+
+__
+```
+^cards? backimage ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+)$
+```
+__
+```js
+const file = app.vault.fileMap[$1];
+if (!file || file.children)
+{
+	return "Back image not set.  File __" + $1 + "__ not found.";
+}
+_inlineScripts.state.sessionState.cards.backImage = $1;
+return "Back image set.\n\n";
+```
+__
+cards backimage {file name: path text} - Sets the image to use for the back of cards to {file name}.
 
 
 __
@@ -430,24 +470,7 @@ if (!pile)
 let result = "Card-pile" + pile_toString($1) + ":\n";
 for (const card of pile.cards)
 {
-	if (!card.isFaceDown)
-	{
-		result += "![[" + card.path + "|";
-		result +=
-			card.path.slice(
-			card.path.lastIndexOf("/")+1, card.path.lastIndexOf("."));
-		if (card.isRotated)
-		{
-			result += ", rotated";
-		}
-		result += "|" + card.width + "]] ";
-	}
-	else
-	{
-		result +=
-			"<img src='" + _inlineScripts.cards.backImage + "' style='width:" +
-			card.width + ";height:" + (card.width * card.aspect) + ";'/> ";
-	}
+	result += createCardUi(card).outerHTML + " ";
 }
 return result + "\n\n";
 ```
@@ -583,13 +606,16 @@ if ($4 === "y")
 				    pile.cards[cardUi.dataset.id].isFaceDown)
 				{
 					cardUi.src = cardUi.dataset.src;
-					cardUi.alt =
-						pile.cards[cardUi.dataset.id].isRotated ? ", rotated" : "";
+					if (pile.cards[cardUi.dataset.id].isRotated)
+					{
+						cardUi.classList.add("rotated");
+					}
 				}
 				else
 				{
-					cardUi.src = _inlineScripts.cards.backImage;
-					cardUi.alt = "";
+					cardUi.src = getAbsolutePath(
+						_inlineScripts.state.sessionState.cards.backImage);
+					cardUi.classList.remove("rotated");
 				}
 			}
 		});

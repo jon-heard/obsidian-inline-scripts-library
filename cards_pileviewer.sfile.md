@@ -8,9 +8,41 @@ __
 __
 ```js
 const CARDPILE_VIEW_TYPE = "inline-scripts-cardpile-view";
+function getAbsolutePath(path)
+{
+	if (path.startsWith("data:image/png;base64")) { return path; }
+	path = app.vault.fileMap[path];
+	if (!path) { return ""; }
+	return app.vault.getResourcePath(path);
+}
+function createCardUi(card, id, scale, includeDataSrc)
+{
+	scale ||= 1.0;
+	const front = getAbsolutePath(card.path);
+	const back =
+		getAbsolutePath(_inlineScripts.state.sessionState.cards.backImage);
+
+	const result = document.createElement("img");
+	result.src = card.isFaceDown ? back : front;
+	result.style.width = (card.width * scale) + "px";
+	result.style.height = (card.width * card.aspect * scale) + "px";
+	if (id != undefined)
+	{
+		result.dataset.id = id;
+	}
+	if (includeDataSrc)
+	{
+		result.dataset.src = front;
+	}
+	if (card.isRotated && !card.isFaceDown)
+	{
+		result.classList.add("rotated");
+	}
+	return result;
+}
 ```
 __
-Helper scripts - global constant
+Helper scripts
 
 
 __
@@ -140,24 +172,12 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			const cards =
 				_inlineScripts.state.sessionState.cards.piles
 				[pileName].cards;
-			let display = "";
+			const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
 			for (const card of cards)
 			{
-				const src =
-					card.isFaceDown ? _inlineScripts.cards.backImage :
-					app.vault.getResourcePath(app.vault.fileMap[card.path]);
-				const cls =
-					(card.isRotated && !card.isFaceDown) ?
-					"rotated" : "";
-				const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
-				const style =
-					"width:" + (card.width * zoom) + "px;height:" +
-					(card.width * card.aspect * zoom) + "px";
-				display +=
-					"<img src='" + src + "' class='" + cls +
-					"' style='" + style + "'/> ";
+				this.cardDisplay.append(createCardUi(card, undefined, zoom));
+				this.cardDisplay.append(" ");
 			}
-			this.cardDisplay.innerHTML = display;
 		}
 	
 		getViewType()
