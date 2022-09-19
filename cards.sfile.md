@@ -236,9 +236,10 @@ function pile_toString(pileId, useHtml)
 {
 	if (!pileId)
 	{
-		return "";
+		pileId = "{table}";
 	}
-	else if (!useHtml)
+
+	if (!useHtml)
 	{
 		return " __" + pileId + "__";
 	}

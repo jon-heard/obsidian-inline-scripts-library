@@ -109,7 +109,7 @@ userChooseExistingPileId = function(requestMessage, failMessage)
 {
 	const pileNames =
 		Object.keys(_inlineScripts.state.sessionState.cards.piles)
-		.map(v => v || "<untitled>");
+		.map(v => v || "{table}");
 	if (!pileNames.length)
 	{
 		return [null, failMessage + "  No card-piles to choose from.\n\n"];
@@ -121,7 +121,7 @@ userChooseExistingPileId = function(requestMessage, failMessage)
 		return [null, failMessage + "  User canceled.\n\n"];
 	}
 	let pile = pileNames[pileIndex];
-	if (pile === "<untitled>") { pile = ""; }
+	if (pile === "{table}") { pile = ""; }
 	return [pile, null];
 }
 
@@ -137,7 +137,7 @@ userChooseNewOrExistingPileId = function(requestMessage)
 	const redoMessage = "Invalid entry #%1.  Try again.<br/><br/>";
 	const options =
 		Object.keys(_inlineScripts.state.sessionState.cards.piles)
-		.map(v => v || "<untitled>");
+		.map(v => v || "{table}");
 	let result = popups.input(message, "", options);
 	let redoCount = 0;
 	while (result && !result.match(regex_confirm))
@@ -145,7 +145,7 @@ userChooseNewOrExistingPileId = function(requestMessage)
 		redoCount++;
 		result = popups.input(
 			redoMessage.replace("%1", redoCount) + message, result, options);
-		if (result === "<untitled>")
+		if (result === "{table}")
 		{
 			result = "";
 		}
