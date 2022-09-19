@@ -402,6 +402,7 @@ if (!_inlineScripts.state.sessionState.cards.piles[$2])
 const dstPile = _inlineScripts.state.sessionState.cards.piles[$2];
 
 // Draw all the cards
+let cardOutput = "";
 for (let i = drawIndices.length-1; i >= 0; i--)
 {
 	let drawing = srcPile.cards[drawIndices[i]];
@@ -420,6 +421,7 @@ if (window.brk) { debugger; }
 		drawing.isFaceDown = ($4 === "down");
 	}
 	dstPile.cards.push(drawing);
+	cardOutput += createCardUi(drawing).outerHTML + " ";
 }
 
 if (!srcPile.cards.length)
@@ -432,7 +434,8 @@ if (!srcPile.cards.length)
 	}
 	return "The" +
 		pile_toString($1) + " card-pile was entirely drawn into the" +
-		pile_toString($2) + " card-pile.  It was then removed as empty.\n\n";
+		pile_toString($2) + " card-pile.  It was then removed as empty.\n" +
+		cardOutput + "\n\n";
 }
 else
 {
@@ -447,7 +450,8 @@ else
 	onPileChanged($1);
 	return "__" +
 		drawIndices.length + "__ cards drawn from the" + pile_toString($1) +
-		" card-pile to the" + pile_toString($2) + " card-pile.\n\n";
+		" card-pile to the" + pile_toString($2) + " card-pile.\n" + cardOutput +
+		"\n\n";
 }
 ```
 __
@@ -590,8 +594,9 @@ if (!pile)
 	return "Cards not flipped.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
-$2 = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
+const count = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
 const flipDown = ($3 === "down");
+let cardDisplay = "";
 let flipCount = 0;
 if ($4 === "y")
 {
@@ -631,6 +636,7 @@ if ($4 === "y")
 	for (index of choice)
 	{
 		pile.cards[index].isFaceDown = !pile.cards[index].isFaceDown;
+		cardDisplay += createCardUi(pile.cards[index]).outerHTML + " ";
 	}
 }
 else
@@ -644,7 +650,11 @@ else
 		{
 			card.isFaceDown = flipDown;
 			flipCount++;
-			if (flipCount >= $2)
+			if ($2 !== "all")
+			{
+				cardDisplay += createCardUi(card).outerHTML + " ";
+			}
+			if (flipCount >= count)
 			{
 				break;
 			}
@@ -656,9 +666,10 @@ if (flipCount)
 	onPileChanged($1);
 }
 const flipType = ($4 === "y") ? "" : flipDown ? " face-down" : " face-up";
+cardDisplay = cardDisplay ? "\n" + cardDisplay : "";
 return "__" +
 	flipCount + "__ cards flipped" + flipType + " in the" + pile_toString($1) +
-	" card-pile.\n\n";
+	" card-pile." + cardDisplay + "\n\n";
 ```
 __
 cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
@@ -666,7 +677,7 @@ cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {f
 
 __
 ```
-^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|)$
 ```
 __
 ```js
@@ -681,6 +692,8 @@ for (const key in piles)
 	{
 		if (piles[key].cards[k].origin === $1)
 		{
+			// We conditionally create the pile HERE because if we did it
+			// above, we might create it, then never add a card to it.
 			if (!pile)
 			{
 				pile = piles[$1] = { cards: [] };
@@ -699,8 +712,20 @@ for (const key in piles)
 		delete piles[key];
 	}
 }
+let cardsWereFlipped = false;
+if ($2 && pile)
+{
+	for (let card of pile.cards)
+	{
+		if (card.isFaceDown !== ($2 === "down"))
+		{
+			cardsWereFlipped = true;
+			card.isFaceDown = ($2 === "down");
+		}
+	}
+}
 onPileListChanged();
-if (moveCount)
+if (moveCount || cardsWereFlipped)
 {
 	onPileChanged(null);
 }
@@ -709,7 +734,7 @@ return result +
 	" card-pile.\n\n";
 ```
 __
-cards recall {pile id: name text, default: ""} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.
+cards recall {pile id: name text, default: ""} {facing: up OR down, default: current} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
 
 
 __
