@@ -3,6 +3,14 @@ Shortcuts for working with virtual cards.  Almost all of these shortcuts work on
 This shortcut-file has a tutorial video available:
 [Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
+Here are some good card images you can download to try this out:
+[Playing cards](https://opengameart.org/sites/default/files/Playing%20Cards.zip) - Standard playing cards.  Nice quality, though rather large file-size.
+[Tarot cards](https://luciellaes.itch.io/rider-waite-smith-tarot-cards-cc0) - Good quality tarot cards under public domain.  I used these in the video tutorial.
+
+This shortcut-file has supplementary shortcut files:
+__cards_pileviewer.sfile__ - Adds an Obsidian panel to view card-decks.
+__cards_ui.sfile__ - Graphical UI versions of all of these shortcuts.
+
 
 __
 __

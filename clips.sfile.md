@@ -7,6 +7,9 @@ Shortcuts that let the user manage clips of text.  A "clip" is a bit of named te
 Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the clips.
 
+This shortcut-file has supplementary shortcut files:
+__clips_ui.sfile__ - Graphical UI versions of some of these shortcuts.
+
 
 __
 ```

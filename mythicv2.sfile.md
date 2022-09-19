@@ -17,6 +17,9 @@ Adds and uses lists for pcs, npcs and threads.
 This requires that __lists.sfile__ comes before __mythicv2.sfile__ in the shortcut-list.
 If the pc, npc and thread lists have items, then the __event__ and __detail__ shortcuts will incorporate them into their results.
 
+This shortcut-file has supplementary shortcut files:
+__mythicv2_ui.sfile__ - Graphical UI versions of some of these shortcuts.
+
 
 __
 ```

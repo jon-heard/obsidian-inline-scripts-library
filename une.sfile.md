@@ -5,6 +5,9 @@ obsidianUIMode: preview
 Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
+This shortcut-file has supplementary shortcut files:
+__une_ui.sfile__ - Graphical UI versions of some of these shortcuts.
+
 
 __
 __

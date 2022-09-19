@@ -10,6 +10,9 @@ This shortcut-file has a tutorial video available:
 Uses __state.sfile__ shortcut-file (optional).
 It uses this to save & load the lists.
 
+This shortcut-file has supplementary shortcut files:
+__lists_ui.sfile__ - Graphical UI versions of some of these shortcuts.
+
 
 __
 ```
