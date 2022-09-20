@@ -24,8 +24,9 @@ function createCardUi(card, id, scale, includeDataSrc)
 
 	const result = document.createElement("img");
 	result.src = card.isFaceDown ? back : front;
-	result.style.width = (card.width * scale) + "px";
-	result.style.height = (card.width * card.aspect * scale) + "px";
+	const size = _inlineScripts.state.sessionState.cards.size;
+	result.style.width = (size * scale) + "px";
+	result.style.height = (size * card.aspect * scale) + "px";
 	if (id != undefined)
 	{
 		result.dataset.id = id;

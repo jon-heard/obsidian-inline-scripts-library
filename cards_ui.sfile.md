@@ -26,15 +26,6 @@ confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
 				return dropdown;
 			});
 		new SettingType(parent)
-			.setName("Width")
-			.setDesc("Set the size of all cards, by their width.")
-			.addText((text) =>
-			{
-				text.inputEl.setAttr("placeholder", "Leave blank to not change.");
-				data.width = text;
-				return text;
-			});
-		new SettingType(parent)
 			.setName("Allow rotated")
 			.setDesc(
 				"If allowed, each card has a 50/50 chance of being upside-down.")
@@ -73,7 +64,6 @@ confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
 			facing:
 				data.facing.getValue() === "1" ? "down" :
 				data.facing.getValue() === "2" ? "up" : "",
-			width: Number(data.width.getValue()) || "",
 			allowRotated:
 				data.allowRotated.getValue() === "1" ? "y" :
 				data.allowRotated.getValue() === "2" ? "n" : "",
@@ -155,6 +145,32 @@ userChooseNewOrExistingPileId = function(requestMessage)
 ```
 __
 Helper scripts
+
+
+__
+```
+^ui cards? backimage$
+```
+__
+```js
+// TODO
+```
+__
+hidden - Asks the user to choose what image to display on the back-side of all cards.
+
+
+__
+```
+^ui cards? size$
+```
+__
+```js
+// TODO
+```
+__
+hidden - Lets you pick the card size.
+***
+
 
 __
 ```
@@ -329,8 +345,8 @@ if (!result)
 }
 
 return expand(
-	"cards properties " + pile + " " + result.facing + " " + result.width + " " +
-	result.allowRotated + " " + result.allowDuplicated + " " + result.setOrigin);
+	"cards properties " + pile + " " + result.facing + " " + result.allowRotated +
+	" " + result.allowDuplicated + " " + result.setOrigin);
 ```
 __
 ui cards properties - Asks the user which card-pile to set properties for.

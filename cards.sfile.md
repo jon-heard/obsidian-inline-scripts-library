@@ -18,6 +18,7 @@ __cards_ui.sfile__ - Graphical UI versions of all of these shortcuts.
 __
 __
 ```js
+const isTable = /^{?table}?$/i;
 function onPileListChanged()
 {
 	_inlineScripts.inlineScripts.helperFncs.
@@ -49,8 +50,9 @@ function createCardUi(card, id, scale, includeDataSrc)
 
 	const result = document.createElement("img");
 	result.src = card.isFaceDown ? back : front;
-	result.style.width = (card.width * scale) + "px";
-	result.style.height = (card.width * card.aspect * scale) + "px";
+	const size = _inlineScripts.state.sessionState.cards.size;
+	result.style.width = (size * scale) + "px";
+	result.style.height = (size * card.aspect * scale) + "px";
 	if (id != undefined)
 	{
 		result.dataset.id = id;
@@ -80,6 +82,7 @@ const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 
 confirmObjectPath("_inlineScripts.state.sessionState.cards.piles");
+confirmObjectPath("_inlineScripts.state.sessionState.cards.size", 150);
 
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.cards",
@@ -176,6 +179,7 @@ const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState");
 _inlineScripts.state.sessionState.cards = { piles: {} };
+_inlineScripts.state.sessionState.cards.size = 150;
 onPileListChanged();
 _inlineScripts.state.sessionState.cards.backImage =
 	_inlineScripts.cards.defaultBackImage;
@@ -201,7 +205,21 @@ onPileChanged();
 return "Back image set.\n\n";
 ```
 __
-cards backimage {file name: path text} - Sets the image to use for the back of cards to {file name}.
+cards backimage {file name: path text} - Sets the image to use for the back-side of all cards to {file name}.
+
+
+__
+```
+^cards? size ([1-9][0-9]*)$
+```
+__
+```js
+_inlineScripts.state.sessionState.cards.size = $1;
+onPileChanged();
+return "Cards size set.\n\n";
+```
+__
+cards size {card size: >0} - Sets the width for all cards in pixels.  Card height follows.
 
 
 __
@@ -216,7 +234,7 @@ const names = Object.keys(piles);
 if (names.length)
 {
 	result +=
-		". " + names.map(v => v + " _(" + piles[v].cards.length +
+		". " + names.map(v => (v || "{table}") + " _(" + piles[v].cards.length +
 		" cards)_").join("\n. ");
 }
 else
@@ -260,6 +278,7 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 const folder = app.vault.fileMap[$2];
 if (!folder?.children)
 {
@@ -306,7 +325,6 @@ for (const child of folder.children)
 	{
 		path: child.path,
 		origin: $1,
-		width: size.w,
 		aspect: size.h / size.w,
 		isFaceDown: ($3 === "down"),
 		isRotated: false,
@@ -350,13 +368,15 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
+if ($2.match(isTable)) { $2 = ""; }
 const srcPile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!srcPile)
 {
 	return "Cards not drawn.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
-$3 = ($3 === "all") ? srcPile.cards.length : (Number($3) || 1);
+const count = ($3 === "all") ? srcPile.cards.length : (Number($3) || 1);
 
 // Determine which cards to draw
 let drawIndices = [];
@@ -370,9 +390,10 @@ if ($5 === "y")
 	{
 		return "Cards not drawn.  Canceled by user.\n\n";
 	}
+console.log(choice);
 	drawIndices = choice;
 }
-else if ($3 >= srcPile.cards.length)
+else if (count >= srcPile.cards.length)
 {
 	for (let i = 0; i < srcPile.cards.length; i++)
 	{
@@ -382,7 +403,7 @@ else if ($3 >= srcPile.cards.length)
 else
 {
 	let picks = new Set();
-	while (picks.size < $3)
+	while (picks.size < count)
 	{
 		picks.add(Math.trunc(Math.random() * srcPile.cards.length));
 	}
@@ -392,7 +413,8 @@ if (!drawIndices.length)
 {
 	return "Cards not drawn.  No cards chosen.\n\n";
 }
-drawIndices.sort();
+// Sort numbers
+drawIndices.sort((a, b) => a - b);
 
 // Get/create destination pile
 let createdDstPile = false;
@@ -404,27 +426,30 @@ if (!_inlineScripts.state.sessionState.cards.piles[$2])
 const dstPile = _inlineScripts.state.sessionState.cards.piles[$2];
 
 // Draw all the cards
-let cardOutput = "";
+let cardDisplay = "";
 for (let i = drawIndices.length-1; i >= 0; i--)
 {
-	let drawing = srcPile.cards[drawIndices[i]];
-	if (!drawing.allowDuplicate)
+	let drawnCard = srcPile.cards[drawIndices[i]];
+	if (!drawnCard.allowDuplicate)
 	{
 		srcPile.cards.splice(drawIndices[i], 1);
 	}
 	else
 	{
-		drawing = Object.assign({}, drawing);
-		drawing.origin = $2;
+		drawnCard = Object.assign({}, drawnCard);
+		drawnCard.origin = $2;
 	}
-if (window.brk) { debugger; }
 	if ($4)
 	{
-		drawing.isFaceDown = ($4 === "down");
+		drawnCard.isFaceDown = ($4 === "down");
 	}
-	dstPile.cards.push(drawing);
-	cardOutput += createCardUi(drawing).outerHTML + " ";
+	dstPile.cards.unshift(drawnCard);
+	cardDisplay =
+		createCardUi(drawnCard).outerHTML + " " + cardDisplay;
 }
+
+if ($2 || $3 === "all") { cardDisplay = ""; }
+if (cardDisplay) { cardDisplay = "\n" + cardDisplay; }
 
 if (!srcPile.cards.length)
 {
@@ -436,8 +461,8 @@ if (!srcPile.cards.length)
 	}
 	return "The" +
 		pile_toString($1) + " card-pile was entirely drawn into the" +
-		pile_toString($2) + " card-pile.  It was then removed as empty.\n" +
-		cardOutput + "\n\n";
+		pile_toString($2) + " card-pile.  It was then removed as empty." +
+		cardDisplay + "\n\n";
 }
 else
 {
@@ -452,7 +477,7 @@ else
 	onPileChanged($1);
 	return "__" +
 		drawIndices.length + "__ cards drawn from the" + pile_toString($1) +
-		" card-pile to the" + pile_toString($2) + " card-pile.\n" + cardOutput +
+		" card-pile to the" + pile_toString($2) + " card-pile." + cardDisplay +
 		"\n\n";
 }
 ```
@@ -467,6 +492,7 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
@@ -487,11 +513,11 @@ cards show {pile id: name text, default: ""} - Displays all cards in the {pile i
 
 __
 ```
-^cards? properties ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|) ?([1-9][0-9]*|) ?(y|n|) ?(y|n|) ?(y|n|)$
+^cards? properties ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|) ?(y|n|) ?(y|n|) ?(y|n|)$
 ```
 __
 ```js
-$3 = Number($3);
+if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
@@ -501,10 +527,9 @@ if (!pile)
 for (let card of pile.cards)
 {
 	if ($2) { card.isFaceDown = ($2 === "down"); }
-	if ($3) { card.width = $3; }
-	if ($4)
+	if ($3)
 	{
-		if (card.allowRotated !== ($4 === "y"))
+		if (card.allowRotated !== ($3 === "y"))
 		{
 			card.allowRotated = !card.allowRotated;
 			if (card.allowRotated)
@@ -517,18 +542,17 @@ for (let card of pile.cards)
 			}
 		}
 	}
-	if ($5) { card.allowDuplicate = ($5 === "y"); }
-	if ($6 === "y")
+	if ($4) { card.allowDuplicate = ($4 === "y"); }
+	if ($5 === "y")
 	{
 		card.origin = $1;
 	}
 }
 let changes = [];
 if ($2) { changes.push("- facing - " + $2); }
-if ($3) { changes.push("- size - " + $3); }
-if ($4) { changes.push("- allow rotated - " + ($4 === "y")); }
-if ($5) { changes.push("- allow duplicate - " + ($5 === "y")); }
-if ($6 === "y") { changes.push("- origin - " + $1); }
+if ($3) { changes.push("- allow rotated - " + ($3 === "y")); }
+if ($4) { changes.push("- allow duplicate - " + ($4 === "y")); }
+if ($5 === "y") { changes.push("- origin - " + $1); }
 if (changes.length)
 {
 	onPileChanged($1);
@@ -543,9 +567,8 @@ return "All Cards in the" +
 	changes + "\n\n";
 ```
 __
-cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
+cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
 	- facing - Set all cards to be face-up or face-down.
-	- width - Set the size of all cards, by their width.
 	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
 	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
 	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
@@ -558,12 +581,14 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
 	return "Cards not shown.  The" + pile_toString($1) + " card-pile was not found.\n\n";
 }
-for (let i = pile.cards.length - 1; i > 0; i--) {
+for (let i = pile.cards.length - 1; i > 0; i--)
+{
 	const j = Math.floor(Math.random() * (i + 1));
 	[pile.cards[i], pile.cards[j]] = [pile.cards[j], pile.cards[i]];
 }
@@ -590,15 +615,15 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
 	return "Cards not flipped.  The" +
 		pile_toString($1) + " card-pile was not found.\n\n";
 }
-const count = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
+$2 = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
 const flipDown = ($3 === "down");
-let cardDisplay = "";
 let flipCount = 0;
 if ($4 === "y")
 {
@@ -638,7 +663,6 @@ if ($4 === "y")
 	for (index of choice)
 	{
 		pile.cards[index].isFaceDown = !pile.cards[index].isFaceDown;
-		cardDisplay += createCardUi(pile.cards[index]).outerHTML + " ";
 	}
 }
 else
@@ -652,11 +676,7 @@ else
 		{
 			card.isFaceDown = flipDown;
 			flipCount++;
-			if ($2 !== "all")
-			{
-				cardDisplay += createCardUi(card).outerHTML + " ";
-			}
-			if (flipCount >= count)
+			if (flipCount >= $2)
 			{
 				break;
 			}
@@ -667,11 +687,11 @@ if (flipCount)
 {
 	onPileChanged($1);
 }
+
 const flipType = ($4 === "y") ? "" : flipDown ? " face-down" : " face-up";
-cardDisplay = cardDisplay ? "\n" + cardDisplay : "";
 return "__" +
 	flipCount + "__ cards flipped" + flipType + " in the" + pile_toString($1) +
-	" card-pile." + cardDisplay + "\n\n";
+	" card-pile.\n\n";
 ```
 __
 cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
@@ -683,6 +703,7 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 let result = "";
 let moveCount = 0;
 let piles = _inlineScripts.state.sessionState.cards.piles;
@@ -745,6 +766,7 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
@@ -774,6 +796,7 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 let data = null;
 try
 {
@@ -812,6 +835,7 @@ __
 ```
 __
 ```js
+if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {

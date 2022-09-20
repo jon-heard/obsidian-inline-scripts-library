@@ -247,7 +247,8 @@ This shortcut-file has a tutorial video available:
 [Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
 - __cards reset__ - Clears all card-piles.
-- __cards backimage {file name: path text}__ - Sets the image to use for the back of cards to {file name}.
+- __cards backimage {file name: path text}__ - Sets the image to use for the back-side of all cards to {file name}.
+- __cards size {card size: >0}__ - Sets the width for all cards in pixels.  Card height follows.
 - __cards__ - Lists all card-piles.
 ***
 - __cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up}__ - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
@@ -255,9 +256,8 @@ This shortcut-file has a tutorial video available:
 	- If a card has "allowDuplicate" turned on, then it is not moved, but copied.  The newly created card has its origin set to {destination pile id}.
 - __cards show {pile id: name text, default: ""}__ - Displays all cards in the {pile id} card-pile.
 ***
-- __cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {width: >0, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n}__ - Changes the entered properties for all cards in the {pile id} card-pile.
+- __cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n}__ - Changes the entered properties for all cards in the {pile id} card-pile.
 	- facing - Set all cards to be face-up or face-down.
-	- width - Set the size of all cards, by their width.
 	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
 	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
 	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
