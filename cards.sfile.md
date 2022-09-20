@@ -274,7 +274,7 @@ Helper scripts
 
 __
 ```
-^cards? fromfolder ?([_a-zA-Z][_a-zA-Z0-9]*|) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?(up|down|)$
+^cards? fromfolder ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?(up|down|)$
 ```
 __
 ```js
@@ -364,7 +364,7 @@ cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: 
 
 __
 ```
-^cards? draw ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
+^cards? draw ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
 ```
 __
 ```js
@@ -488,7 +488,7 @@ cards draw {source pile id: name text, default: ""} {destination pile id: name t
 
 __
 ```
-^cards show ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards show ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
 ```
 __
 ```js
@@ -513,7 +513,7 @@ cards show {pile id: name text, default: ""} - Displays all cards in the {pile i
 
 __
 ```
-^cards? properties ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|) ?(y|n|) ?(y|n|) ?(y|n|)$
+^cards? properties ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(up|down|) ?(y|n|) ?(y|n|) ?(y|n|)$
 ```
 __
 ```js
@@ -577,7 +577,7 @@ cards properties {pile id: name text, default: ""} {facing: up OR down, default:
 
 __
 ```
-^cards shuffle ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
+^cards shuffle ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(y|n|)$
 ```
 __
 ```js
@@ -611,7 +611,7 @@ cards shuffle {pile id: name text, default: ""} - Randomizes the card order and 
 
 __
 ```
-^cards flip ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
+^cards flip ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
 ```
 __
 ```js
@@ -699,7 +699,7 @@ cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {f
 
 __
 ```
-^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(up|down|)$
+^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(up|down|)$
 ```
 __
 ```js
@@ -762,7 +762,7 @@ cards recall {pile id: name text, default: ""} {facing: up OR down, default: cur
 
 __
 ```
-^cards destroy ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
+^cards destroy ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(y|n|)$
 ```
 __
 ```js
@@ -792,7 +792,7 @@ cards destroy {pile id: name text, default: ""} - Removes the {pile id} card-pil
 
 __
 ```
-^cards import ?([_a-zA-Z][_a-zA-Z0-9]*|) (.+)$
+^cards import ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) (.+)$
 ```
 __
 ```js
@@ -831,7 +831,7 @@ cards import {pile id: name text, default: ""} {data: text} - Makes a card-pile 
 
 __
 ```
-^cards export ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards export ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
 ```
 __
 ```js
