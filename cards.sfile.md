@@ -197,6 +197,7 @@ if (!file || file.children)
 	return "Back image not set.  File __" + $1 + "__ not found.";
 }
 _inlineScripts.state.sessionState.cards.backImage = $1;
+onPileChanged();
 return "Back image set.\n\n";
 ```
 __
