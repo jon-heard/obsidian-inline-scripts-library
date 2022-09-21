@@ -251,24 +251,25 @@ This shortcut-file has a tutorial video available:
 - __cards size {card size: >0}__ - Sets the width for all cards in pixels.  Card height follows.
 - __cards__ - Lists all card-piles.
 ***
-- __cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up}__ - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
-- __cards draw {source pile id: name text, default: ""} {destination pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
+- __cards pile {pile id: name text}__ - Creates an empty pile {pile id}.
+- __cards fromfolder {pile id: name text, default: table} {folder: path text} {facing: up OR down, default: up}__ - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
+- __cards draw {source pile id: name text, default: table} {destination pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
 	- If a card has "allowDuplicate" turned on, then it is not moved, but copied.  The newly created card has its origin set to {destination pile id}.
-- __cards show {pile id: name text, default: ""}__ - Displays all cards in the {pile id} card-pile.
+- __cards show {pile id: name text, default: table}__ - Displays all cards in the {pile id} card-pile.
 ***
-- __cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n}__ - Changes the entered properties for all cards in the {pile id} card-pile.
+- __cards properties {pile id: name text, default: table} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n}__ - Changes the entered properties for all cards in the {pile id} card-pile.
 	- facing - Set all cards to be face-up or face-down.
 	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
 	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
 	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
 ***
-- __cards shuffle {pile id: name text, default: ""}__ - Randomizes the card order and rotation for the {pile id} card-pile.
-- __cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n}__ - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
-- __cards recall {pile id: name text, default: ""} {facing: up OR down, default: current}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
-- __cards destroy {pile id: name text, default: ""}__ - Removes the {pile id} card-pile, including all cards within it.
+- __cards shuffle {pile id: name text, default: table}__ - Randomizes the card order and rotation for the {pile id} card-pile.
+- __cards flip {pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n}__ - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
+- __cards recall {pile id: name text, default: table} {facing: up OR down, default: current}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
+- __cards destroy {pile id: name text, default: table}__ - Removes the {pile id} card-pile, including all cards within it.
 ***
-- __cards import {pile id: name text, default: ""} {data: text}__ - Makes a card-pile from the data string {data} and remembers it as {pile id}.
-- __cards export {pile id: name text, default: ""}__ - Expands to a data string containing all date for the {pile id} card-pile.
+- __cards import {pile id: name text, default: table} {data: text}__ - Makes a card-pile from the data string {data} and remembers it as {pile id}.
+- __cards export {pile id: name text, default: table}__ - Expands to a data string containing all date for the {pile id} card-pile.
 
 ***
 
@@ -414,6 +415,8 @@ An extension to __cards.sfile__ that provides graphical ui versions of shortcuts
 This shortcut-file has a tutorial video available:
 [Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
+- __ui cards size__ - Lets you pick the card size.
+***
 - __ui cards fromfolder__ - Asks the user to choose one of the non-empty folders.
 Asks the user to enter a name to give the new card-pile.
 Creates a card-pile based on images in the given folder and remembers it with the given name.

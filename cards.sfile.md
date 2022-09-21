@@ -274,6 +274,29 @@ Helper scripts
 
 __
 ```
+^cards pile ([_a-zA-Z][_a-zA-Z0-9]*)$
+```
+__
+```js
+if ($1.match(isTable))
+{
+	return "Card-Pile not defined.  " +
+		"Card-pile __table__, and it's variants, are reserved.\n\n";
+}
+if (_inlineScripts.state.sessionState.cards.piles[$1])
+{
+	return "Card-Pile not defined.  " +
+		"Card-pile __" + $1 + "__ already exists.\n\n";
+}
+_inlineScripts.state.sessionState.cards.piles[$1] = { cards: [] };
+onPileListChanged();
+return "Card-pile __" + $1 + "__ is defined.\n\n";
+```
+__
+cards pile {pile id: name text} - Creates an empty pile {pile id}.
+
+__
+```
 ^cards? fromfolder ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?(up|down|)$
 ```
 __
@@ -359,7 +382,7 @@ return "__" +
 	cards.length + "__ cards added to the" + pile_toString($1) + " card-pile.\n\n";
 ```
 __
-cards fromfolder {pile id: name text, default: ""} {folder: path text} {facing: up OR down, default: up} - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
+cards fromfolder {pile id: name text, default: table} {folder: path text} {facing: up OR down, default: up} - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
 
 
 __
@@ -390,7 +413,6 @@ if ($5 === "y")
 	{
 		return "Cards not drawn.  Canceled by user.\n\n";
 	}
-console.log(choice);
 	drawIndices = choice;
 }
 else if (count >= srcPile.cards.length)
@@ -425,7 +447,7 @@ if (!_inlineScripts.state.sessionState.cards.piles[$2])
 }
 const dstPile = _inlineScripts.state.sessionState.cards.piles[$2];
 
-// Draw all the cards
+// Draw all selected cards
 let cardDisplay = "";
 for (let i = drawIndices.length-1; i >= 0; i--)
 {
@@ -451,38 +473,22 @@ for (let i = drawIndices.length-1; i >= 0; i--)
 if ($2 || $3 === "all") { cardDisplay = ""; }
 if (cardDisplay) { cardDisplay = "\n" + cardDisplay; }
 
-if (!srcPile.cards.length)
+if (createdDstPile)
 {
-	delete _inlineScripts.state.sessionState.cards.piles[$1];
 	onPileListChanged();
-	if (!createdDstPile)
-	{
-		onPileChanged($2);
-	}
-	return "The" +
-		pile_toString($1) + " card-pile was entirely drawn into the" +
-		pile_toString($2) + " card-pile.  It was then removed as empty." +
-		cardDisplay + "\n\n";
 }
 else
 {
-	if (createdDstPile)
-	{
-		onPileListChanged();
-	}
-	else
-	{
-		onPileChanged($2);
-	}
-	onPileChanged($1);
-	return "__" +
-		drawIndices.length + "__ cards drawn from the" + pile_toString($1) +
-		" card-pile to the" + pile_toString($2) + " card-pile." + cardDisplay +
-		"\n\n";
+	onPileChanged($2);
 }
+onPileChanged($1);
+return "__" +
+	drawIndices.length + "__ cards drawn from the" + pile_toString($1) +
+	" card-pile to the" + pile_toString($2) + " card-pile." + cardDisplay +
+	"\n\n";
 ```
 __
-cards draw {source pile id: name text, default: ""} {destination pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
+cards draw {source pile id: name text, default: table} {destination pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
 	- If a card has "allowDuplicate" turned on, then it is not moved, but copied.  The newly created card has its origin set to {destination pile id}.
 
 
@@ -507,7 +513,7 @@ for (const card of pile.cards)
 return result + "\n\n";
 ```
 __
-cards show {pile id: name text, default: ""} - Displays all cards in the {pile id} card-pile.
+cards show {pile id: name text, default: table} - Displays all cards in the {pile id} card-pile.
 ***
 
 
@@ -562,12 +568,12 @@ else
 {
 	changes = "NONE";
 }
-return "All Cards in the" +
+return "All __" + pile.cards.length + "__ cards in the" +
 	pile_toString($1) + " card-pile are changed.  Changed properties:\n" +
 	changes + "\n\n";
 ```
 __
-cards properties {pile id: name text, default: ""} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
+cards properties {pile id: name text, default: table} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
 	- facing - Set all cards to be face-up or face-down.
 	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
 	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
@@ -606,7 +612,7 @@ if ($2 !== "y")
 return "The" + pile_toString($1) + " card-pile is shuffled.\n\n";
 ```
 __
-cards shuffle {pile id: name text, default: ""} - Randomizes the card order and rotation for the {pile id} card-pile.
+cards shuffle {pile id: name text, default: table} - Randomizes the card order and rotation for the {pile id} card-pile.
 
 
 __
@@ -694,7 +700,7 @@ return "__" +
 	" card-pile.\n\n";
 ```
 __
-cards flip {pile id: name text, default: ""} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
+cards flip {pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
 
 
 __
@@ -716,7 +722,7 @@ for (const key in piles)
 		if (piles[key].cards[k].origin === $1)
 		{
 			// We conditionally create the pile HERE because if we did it
-			// above, we might create it, then never add a card to it.
+			// above, we might create it without ever add a card to it.
 			if (!pile)
 			{
 				pile = piles[$1] = { cards: [] };
@@ -726,13 +732,6 @@ for (const key in piles)
 			pile.cards.push(card);
 			moveCount++;
 		}
-	}
-	if (!piles[key].cards.length)
-	{
-		result += "The" + pile_toString(key) +
-		" card-pile was entirely drawn into the" + pile_toString($1) +
-		" card-pile, then removed as empty.\n";
-		delete piles[key];
 	}
 }
 let cardsWereFlipped = false;
@@ -757,7 +756,7 @@ return result +
 	" card-pile.\n\n";
 ```
 __
-cards recall {pile id: name text, default: ""} {facing: up OR down, default: current} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
+cards recall {pile id: name text, default: table} {facing: up OR down, default: current} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
 
 
 __
@@ -786,7 +785,7 @@ else
 }
 ```
 __
-cards destroy {pile id: name text, default: ""} - Removes the {pile id} card-pile, including all cards within it.
+cards destroy {pile id: name text, default: table} - Removes the {pile id} card-pile, including all cards within it.
 ***
 
 
@@ -826,7 +825,7 @@ else
 return "The" + pile_toString($1) + " card-pile was imported.\n\n";
 ```
 __
-cards import {pile id: name text, default: ""} {data: text} - Makes a card-pile from the data string {data} and remembers it as {pile id}.
+cards import {pile id: name text, default: table} {data: text} - Makes a card-pile from the data string {data} and remembers it as {pile id}.
 
 
 __
@@ -852,4 +851,4 @@ result = result
 return "Card-pile" + pile_toString($1) + " export:\n" + result + "\n\n";
 ```
 __
-cards export {pile id: name text, default: ""} - Expands to a data string containing all date for the {pile id} card-pile.
+cards export {pile id: name text, default: table} - Expands to a data string containing all date for the {pile id} card-pile.

@@ -136,18 +136,6 @@ Sets up this shortcut-file
 
 
 __
-```
-^sfile shutdown$
-```
-__
-```js
-delete _inlineScripts.cards_ui;
-```
-__
-Shuts down this shortcut-file
-
-
-__
 __
 ```js
 userChooseExistingPileId = function(requestMessage, failMessage)

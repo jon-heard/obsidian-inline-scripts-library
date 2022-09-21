@@ -173,11 +173,21 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			const cards =
 				_inlineScripts.state.sessionState.cards.piles
 				[pileName].cards;
-			const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
-			for (const card of cards)
+			if (cards.length)
 			{
-				this.cardDisplay.append(createCardUi(card, undefined, zoom));
-				this.cardDisplay.append(" ");
+				const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
+				for (const card of cards)
+				{
+					this.cardDisplay.append(createCardUi(card, undefined, zoom));
+					this.cardDisplay.append(" ");
+				}
+			}
+			else
+			{
+				let emptyMsg = document.createElement("div");
+				emptyMsg.innerText = "-- Empty card-pile --";
+				emptyMsg.classList.add("emptyMsg");
+				this.cardDisplay.append(emptyMsg);
 			}
 		}
 	
@@ -198,7 +208,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 	}
 	plugin.registerView(CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 }
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .rotated { transform: scaleX(-1) scaleY(-1); } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .rotated { transform: scaleX(-1) scaleY(-1); } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey }");
 
 plugin.getObsidianInterfaces().addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
