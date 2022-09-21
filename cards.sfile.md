@@ -216,7 +216,7 @@ __
 ```js
 _inlineScripts.state.sessionState.cards.size = $1;
 onPileChanged();
-return "Cards size set.\n\n";
+return "Cards size set to __" + $1 + "__ (pixels).\n\n";
 ```
 __
 cards size {card size: >0} - Sets the width for all cards in pixels.  Card height follows.

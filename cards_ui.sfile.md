@@ -12,6 +12,61 @@ __
 ```js
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+
+function getAbsolutePath(path)
+{
+	if (path.startsWith("data:image/png;base64")) { return path; }
+	path = app.vault.fileMap[path];
+	if (!path) { return ""; }
+	return app.vault.getResourcePath(path);
+}
+
+confirmObjectPath("_inlineScripts.cards_ui.cardSizePopup",
+{
+	onOpen: async (data, parent, firstButton, SettingType) =>
+	{
+		const currentSize = _inlineScripts.state.sessionState.cards.size;
+		const sampleCard =
+			Object.values(_inlineScripts.state.sessionState.cards.piles)
+			[0]?.cards[0];
+		let samplePath = getAbsolutePath(
+			sampleCard ? sampleCard.path :
+			_inlineScripts.state.sessionState.cards.backImage);
+
+		let sampleContainerUi = document.createElement("div");
+		sampleContainerUi.style["text-align"] = "center";
+		parent.append(sampleContainerUi);
+
+		data.sampleUi = document.createElement("img");
+		data.sampleUi.src = samplePath;
+		data.sampleUi.style.width = currentSize + "px";
+		sampleContainerUi.append(data.sampleUi);
+
+		let sizerUi = new SettingType(parent)
+			.setName("Size (" + currentSize + ")")
+			.setDesc("Pick the size for all cards (in pixels).")
+			.addSlider((slider) =>
+			{
+				slider
+					.setLimits(10, 500, 10)
+					.setValue(currentSize)
+					.onChange(value =>
+					{
+						data.sampleUi.style.width = value + "px";
+						data.titleUi.innerText = "Size (" + value + ")";
+					});
+				data.sliderUi = slider;
+				return slider;
+			});
+		data.titleUi = sizerUi.nameEl;
+	},
+	onClose: async (data, resolveFnc, buttonId) =>
+	{
+		if (buttonId !== "Ok") { return; }
+		resolveFnc(data.sliderUi.getValue());
+	}
+});
+
 confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
 {
 	onOpen: async (data, parent, firstButton, SettingType) =>
@@ -165,10 +220,16 @@ __
 ```
 __
 ```js
-// TODO
+const newValue = popups.custom("Choose size for all cards.",
+	_inlineScripts.cards_ui.cardSizePopup);
+if (!newValue)
+{
+	return "Cards size not set.  User canceled.\n\n";
+}
+return expand("cards size " + newValue);
 ```
 __
-hidden - Lets you pick the card size.
+ui cards size - Lets you pick the card size.
 ***
 
 
