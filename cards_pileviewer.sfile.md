@@ -35,9 +35,9 @@ function createCardUi(card, id, scale, includeDataSrc)
 	{
 		result.dataset.src = front;
 	}
-	if (card.isRotated && !card.isFaceDown)
+	if (card.rotation && !card.isFaceDown)
 	{
-		result.classList.add("rotated");
+		result.classList.add("rotated" + card.rotation);
 	}
 	return result;
 }
@@ -208,7 +208,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 	}
 	plugin.registerView(CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 }
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .rotated { transform: scaleX(-1) scaleY(-1); } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .rotated1 { transform: rotate(90deg); } .rotated2 { transform: rotate(180deg); } .rotated3 { transform: rotate(270deg); } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey }");
 
 plugin.getObsidianInterfaces().addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">

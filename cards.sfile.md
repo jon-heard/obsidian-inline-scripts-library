@@ -61,9 +61,14 @@ function createCardUi(card, id, scale, includeDataSrc)
 	{
 		result.dataset.src = front;
 	}
-	if (card.isRotated && !card.isFaceDown)
+	if (!card.isFaceDown)
 	{
-		result.classList.add("rotated");
+		switch (card.rotation)
+		{
+			case 1: result.classList.add("rotated1");
+			case 2: result.classList.add("rotated2");
+			case 3: result.classList.add("rotated3");
+		}
 	}
 	return result;
 }
@@ -78,7 +83,8 @@ function createCardUi_inNote(card)
 	{
 		return createCardUi(card).outerHTML;
 	}
-	const alt = (card.isRotated && !card.isFaceDown) ? "rotated" : "";
+	const alt =
+		(!card.rotation || card.isFaceDown) ? "" : "rotated" + card.rotation;
 	const width = _inlineScripts.state.sessionState.cards.size;
 	const height = Math.trunc(width * card.aspect);
 	return "![[" + path + "|" + alt + "|" + width + "x" + height + "]]";
@@ -110,6 +116,19 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onLoad.cards",
 	function()
 	{
+		for (const pileName in _inlineScripts.state.sessionState.cards.piles)
+		{
+			const cards =
+				_inlineScripts.state.sessionState.cards.piles[pileName].cards;
+			for (const card of cards)
+			{
+				if (card.hasOwnProperty("isRotated"))
+				{
+					card.rotation = card.isRotated ? 2 : 0;
+				}
+				delete card.isRotated;
+			}
+		}
 		onPileListChanged();
 		onPileChanged(null);
 	});
@@ -117,7 +136,7 @@ confirmObjectPath(
 confirmObjectPath("_inlineScripts.cards.listeners.onPileListChanged");
 confirmObjectPath("_inlineScripts.cards.listeners.onPileChanged");
 
-_inlineScripts.inlineScripts.helperFncs.addCss("cards", ".rotated, img[alt*='rotated'] { transform: scaleX(-1) scaleY(-1); } .iscript_cardChoice { opacity: .75; cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { opacity: 1; } .iscript_cardSelected { opacity: 1; border-color: yellow; }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards", ".rotated1, img[alt*='rotated1'] { transform: rotate(90deg); } .rotated2, img[alt*='rotated2'] { transform: rotate(180deg); } .rotated3, img[alt*='rotated3'] { transform: rotate(270deg); } .iscript_cardChoice { opacity: .75; cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { opacity: 1; } .iscript_cardSelected { opacity: 1; border-color: yellow; }");
 
 confirmObjectPath("_inlineScripts.cards.defaultBackImage",
 `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABkCAYAAAAlg3YKAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAEvElEQVR42u3dP2wTZxjH8e9diD2UYFdWKwuQXGpTEjxYSFkSIcuDJYTqZrmweSrZzixlZ2BPh+J3M52ytMILtVQhPFiQhCUS8uCiCKzUA8hSdaoP6OBE5Dr4znFCYiiY5o+f33TRvXlP/uTx+zqPLL0aPWk2nS9HR7kGZICzwGcMR/4BngIln4+fxsa0v7wbmndhWc4s8DMwxnDnJfB9KKQVu0CW5VwBfgG01dVNlpY2ef58k42N4RAZHYXTp3WmpnTGx3UAB7gSCmlFzX1bPQPG7t9/w8OHb4a6fJLJEdLpEYCXPh8x3V1zxlZXN4ceB+DBgzesrm4CnFhf55oOzAAsLW0i6WR5uWvxnQ58DfDihQB56bGI6cBxgPV1gfHSbncvj+vC0T8CJEACJEACJEACJEACJBEgARIgARIgARIgAZIIkAAJkAAJkAAJkABJBOjAAtnVFEr5USpF1d5lQMNEVe7tO9CxwU11j4qaodb9eQ7TVHuODiQqmIk61eLV3QdEFGaEowR0iZTZ5kI1RZnbGInokXiLHfvkT2iYqDWIWwVqzSnimdukIv3w6lSL51lsAvG7mKlL75zHbpiUSwWaAOE5MoYicqjWIGuCC0YbMzuLtfI7dt/BURJGGzMz937z2HnKKxNMZtuYZptsDFaq9UNUQQChswQAAmcJ8XSw87Se0GwWKC1c3xoXnwGihwioT7UEQ49Ya0HnlX9AghOEw/OkjdwHT7EPu9h51GL/Xay7WV2YZ2XBj2IK06yAnae4cL2znlBA1SB88Q+M4F7bYY70pElZ+d3fcccPaJPQLMtxAG7ckC8p9ubmTZ98kpZ/NQRIgARIgARIgARIIkACNBxAB6QPPVCgRjVFUflRyk+xkqdhf8RkEbXVQXxn6lSLJo1PDHTsY//ipWezZM0KAcC28/zZqhMJRI/MW2wg/aCWXYdAlEAgR8LtWm3rEzNHxnT7xNt6y7h959h79KEhHJ8nncoRaJioUqEzRhXA7SVVi/7OHOyYZ9+AIooseR6Xr2I1H9EMz5M1cgTsPOUSTGbbRHZr89XgTLZNqudewmiTcEG2xYIz6c5Yu5qiXL2MkVCY5g9Uiz8S7GnQL4bc5x+kCgpEcqQiuU7VeC8g+IRmfGZ3HIB+93YmtDU2EIzTXHvGXv3mDHcoF+8AcWJp1a3m/VukG3kqjXp30Wz97V4GJwjX7n7cgt2ttq157FaN8OexbaXY6nlGJFXBMCoYk7D4+N4BqKDIZc5UrqJKjwB3jUhEgRzpjEl5wU9p5xq0W/r1oeOwVvZT6q5BXvVE+SoGCwt+Ft01SCm/e2+Ki1k1EKCD3ZNumKi1mYEstv810pP+P7f5T5YD8AUGqSABEiABEiABEiABEiCJAAmQAAmQAAmQAAmQRIAESIAESIAESIAESCJAAjQAoNcAPp9gePH7u5cvdaAOcPKkFJMXz8JxqOvAbwDT0wLkxbPQNEr6xga3gFfj4zrJ5MjQ4ySTI5w7p0Pn8KNb3vFZs8CvuMdnLS93js8altNafD44dUpnelr3cLaOz/IGWZZj0DmA7cSQF9HbB7B5efXK+WJ9nWuaxreOwze45/4MQV47Dk81jZLPx63eI/z+BcWKtwx4PjyWAAAAAElFTkSuQmCC`);
@@ -180,6 +199,7 @@ _inlineScripts.inlineScripts.helperFncs.removeCss("cards");
 delete _inlineScripts.cards;
 delete _inlineScripts.state?.sessionState?.cards;
 delete _inlineScripts.state?.listeners?.onReset?.cards;
+delete _inlineScripts.state?.listeners?.onLoad?.cards;
 ```
 __
 Shuts down this shortcut-file
@@ -366,7 +386,7 @@ for (const child of folder.children)
 		origin: $1,
 		aspect: size.h / size.w,
 		isFaceDown: ($3 === "down"),
-		isRotated: false,
+		rotation: 0,
 		allowRotated: false,
 		allowDuplicate: false
 	};
@@ -556,11 +576,14 @@ for (let card of pile.cards)
 			card.allowRotated = !card.allowRotated;
 			if (card.allowRotated)
 			{
-				card.isRotated = (Math.random() > .5);
+				card.rotation =
+					(card.aspect == 1) ?
+					Math.trunc(Math.random() * 4) :
+					Math.trunc(Math.random() * 2) * 2;
 			}
 			else
 			{
-				card.isRotated = false;
+				card.rotation = 0;
 			}
 		}
 	}
@@ -618,7 +641,10 @@ for (let card of pile.cards)
 {
 	if (card.allowRotated)
 	{
-		card.isRotated = (Math.random() > .5);
+		card.rotation =
+			(card.aspect == 1) ?
+			Math.trunc(Math.random() * 4) :
+			Math.trunc(Math.random() * 2) * 2;
 	}
 }
 if ($2 !== "y")
@@ -660,9 +686,10 @@ if ($4 === "y")
 				    pile.cards[cardUi.dataset.id].isFaceDown)
 				{
 					cardUi.src = cardUi.dataset.src;
-					if (pile.cards[cardUi.dataset.id].isRotated)
+					if (pile.cards[cardUi.dataset.id].rotation)
 					{
-						cardUi.classList.add("rotated");
+						cardUi.classList.add(
+							"rotated" + pile.cards[cardUi.dataset.id].rotation);
 					}
 				}
 				else
@@ -826,9 +853,14 @@ _inlineScripts.state.sessionState.cards.piles[$1] = data;
 for (let card of _inlineScripts.state.sessionState.cards.piles[$1].cards)
 {
 	card.isFaceDown ||= false;
-	card.isRotated ||= false;
 	card.allowRotated ||= false;
 	card.allowDuplicate ||= false;
+	card.rotation ||= 0;
+	if (card.hasOwnProperty("isRotated"))
+	{
+		card.rotation = card.isRotated ? 2 : 0;
+	}
+	delete card.isRotated;
 }
 if (isNewPile)
 {
@@ -861,7 +893,7 @@ let result = JSON.stringify(pile);
 // minify
 result = result
 	.replaceAll(",\"isFaceDown\":false", "")
-	.replaceAll(",\"isRotated\":false", "")
+	.replaceAll(",\"rotation\":0", "")
 	.replaceAll(",\"allowRotated\":false", "")
 	.replaceAll(",\"allowDuplicate\":false", "")
 return "Card-pile" + pile_toString($1) + " export:\n" + result + "\n\n";
