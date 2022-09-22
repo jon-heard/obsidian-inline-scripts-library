@@ -176,10 +176,25 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			if (cards.length)
 			{
 				const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
-				for (const card of cards)
+				for (let i = 0; i < cards.length; i++)
 				{
-					this.cardDisplay.append(createCardUi(card, undefined, zoom));
+					let cardUi = createCardUi(cards[i], i, zoom);
+					this.cardDisplay.append(cardUi);
 					this.cardDisplay.append(" ");
+					cardUi.addEventListener("dblclick", () =>
+					{
+						cardUi.classList.remove("rotated" + cards[i].rotation);
+						cards[i].rotation++;
+						if (cards[i].aspect !== 1)
+						{
+							cards[i].rotation++;
+						}
+						if (cards[i].rotation > 3)
+						{
+							cards[i].rotation = 0;
+						}
+						cardUi.classList.add("rotated" + cards[i].rotation);
+					});
 				}
 			}
 			else
