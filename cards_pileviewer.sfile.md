@@ -23,6 +23,7 @@ function createCardUi(card, id, scale, includeDataSrc)
 		getAbsolutePath(_inlineScripts.state.sessionState.cards.backImage);
 
 	const result = document.createElement("img");
+	result.classList.add("cardUi");
 	result.src = card.isFaceDown ? back : front;
 	const size = _inlineScripts.state.sessionState.cards.size;
 	result.style.width = (size * scale) + "px";
@@ -35,9 +36,14 @@ function createCardUi(card, id, scale, includeDataSrc)
 	{
 		result.dataset.src = front;
 	}
-	if (card.rotation && !card.isFaceDown)
+	if (!card.isFaceDown)
 	{
-		result.classList.add("rotated" + card.rotation);
+		switch (card.rotation)
+		{
+			case 1: result.classList.add("rotated1"); break;
+			case 2: result.classList.add("rotated2"); break;
+			case 3: result.classList.add("rotated3"); break;
+		}
 	}
 	return result;
 }
@@ -85,6 +91,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 		pileSelect;
 		zoomSelect;
 		cardDisplay;
+		draggedCard;
 
 		constructor(leaf)
 		{
@@ -173,36 +180,85 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			const cards =
 				_inlineScripts.state.sessionState.cards.piles
 				[pileName].cards;
-			if (cards.length)
-			{
-				const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
-				for (let i = 0; i < cards.length; i++)
-				{
-					let cardUi = createCardUi(cards[i], i, zoom);
-					this.cardDisplay.append(cardUi);
-					this.cardDisplay.append(" ");
-					cardUi.addEventListener("dblclick", () =>
-					{
-						cardUi.classList.remove("rotated" + cards[i].rotation);
-						cards[i].rotation++;
-						if (cards[i].aspect !== 1)
-						{
-							cards[i].rotation++;
-						}
-						if (cards[i].rotation > 3)
-						{
-							cards[i].rotation = 0;
-						}
-						cardUi.classList.add("rotated" + cards[i].rotation);
-					});
-				}
-			}
-			else
+			if (!cards.length)
 			{
 				let emptyMsg = document.createElement("div");
 				emptyMsg.innerText = "-- Empty card-pile --";
 				emptyMsg.classList.add("emptyMsg");
 				this.cardDisplay.append(emptyMsg);
+				return;
+			}
+			const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
+			for (let i = 0; i < cards.length; i++)
+			{
+				let cardUi = createCardUi(cards[i], i, zoom);
+				this.cardDisplay.append(cardUi);
+				cardUi.classList.add("iscript_viewerCardUi");
+				cardUi.addEventListener("dblclick", () =>
+				{
+					cardUi.classList.remove("rotated" + cards[i].rotation);
+					cards[i].rotation++;
+					if (cards[i].aspect !== 1)
+					{
+						cards[i].rotation++;
+					}
+					if (cards[i].rotation > 3)
+					{
+						cards[i].rotation = 0;
+					}
+					cardUi.classList.add("rotated" + cards[i].rotation);
+				});
+
+				cardUi.setAttr("draggable", true);
+				cardUi.style.cursor = "grab";
+				cardUi.ondragstart = (evt) =>
+				{
+					this.draggedCard = cardUi;
+					for (const child of cardUi.parentNode.childNodes)
+					{
+						if (child === cardUi) { continue; }
+						child.classList.add("iscript_notDragged");
+					}
+				};
+				cardUi.ondragend = (evt) =>
+				{
+					this.draggedCard = null;
+					let newCards = [];
+					for (const child of cardUi.parentNode.childNodes)
+					{
+						child.classList.remove("iscript_notDragged");
+						newCards.push(cards[child.dataset.id]);
+					}
+					_inlineScripts.state.sessionState.cards.piles[pileName].cards =
+						newCards;
+				};
+				cardUi.ondragenter = (evt) =>
+				{
+					const dragged = this.draggedCard;
+					const target = cardUi;
+					if (!dragged || dragged === target)
+					{
+						return;
+					}
+					for (const child of target.parentNode.childNodes)
+					{
+						if (child === dragged)
+						{
+							dragged.parentNode.insertBefore(dragged, target);
+							dragged.parentNode.insertBefore(target, dragged);
+							break;
+						}
+						else if (child === target)
+						{
+							dragged.parentNode.insertBefore(dragged, target);
+							break;
+						}
+					}
+				};
+				cardUi.ondragover = (evt) =>
+				{
+					evt.preventDefault();
+				};
 			}
 		}
 	
@@ -223,7 +279,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 	}
 	plugin.registerView(CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 }
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .rotated1 { transform: rotate(90deg); } .rotated2 { transform: rotate(180deg); } .rotated3 { transform: rotate(270deg); } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; }");
 
 plugin.getObsidianInterfaces().addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
