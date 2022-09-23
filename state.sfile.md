@@ -24,9 +24,25 @@ __
 ```js
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
-confirmObjectPath("_inlineScripts.state.sessionState");
 confirmObjectPath("_inlineScripts.state.listeners.onReset");
 confirmObjectPath("_inlineScripts.state.listeners.onLoad");
+
+// Restore state (if-block makes sure it's only once)
+if (!_inlineScripts.state.sessionState)
+{
+	_inlineScripts.state.sessionState = {};
+	setTimeout(async () =>
+	{
+		const dataFile =
+			".obsidian/plugins/obsidian-text-expander-js/state.data.txt";
+		try
+		{
+			const data = await app.vault.adapter.read(dataFile);
+			expand("state set " + data);
+		}
+		catch(e) {}
+	}, 0);
+}
 ```
 __
 Sets up this shortcut-file
@@ -38,6 +54,12 @@ __
 ```
 __
 ```js
+// Save state
+const dataFile = ".obsidian/plugins/obsidian-text-expander-js/state.data.txt";
+const data = JSON.stringify(_inlineScripts.state.sessionState);
+await app.vault.adapter.write(dataFile, data);
+
+// Cleanup vars
 delete _inlineScripts.state;
 ```
 __
