@@ -86,16 +86,18 @@ const plugin = _inlineScripts.inlineScripts.plugin;
 if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 {
 	_inlineScripts.inlineScripts.hasRegisteredCardPileView = true;
-	class CardPileView extends plugin.getObsidianInterfaces().ItemView
+	class CardPileView extends _inlineScripts.inlineScripts.helperFncs.ItemView
 	{
 		pileSelect;
 		zoomSelect;
 		cardDisplay;
-		draggedCard;
+		dragReorder;
+		_onDragOver;
 
 		constructor(leaf)
 		{
 			super(leaf);
+			this._onDragOver = this.onDragOver.bind(this);
 		}
 	
 		load()
@@ -208,58 +210,27 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 					}
 					cardUi.classList.add("rotated" + cards[i].rotation);
 				});
-
-				cardUi.setAttr("draggable", true);
-				cardUi.style.cursor = "grab";
-				cardUi.ondragstart = (evt) =>
-				{
-					this.draggedCard = cardUi;
-					for (const child of cardUi.parentNode.childNodes)
-					{
-						if (child === cardUi) { continue; }
-						child.classList.add("iscript_notDragged");
-					}
-				};
-				cardUi.ondragend = (evt) =>
-				{
-					this.draggedCard = null;
-					let newCards = [];
-					for (const child of cardUi.parentNode.childNodes)
-					{
-						child.classList.remove("iscript_notDragged");
-						newCards.push(cards[child.dataset.id]);
-					}
-					_inlineScripts.state.sessionState.cards.piles[pileName].cards =
-						newCards;
-				};
-				cardUi.ondragenter = (evt) =>
-				{
-					const dragged = this.draggedCard;
-					const target = cardUi;
-					if (!dragged || dragged === target)
-					{
-						return;
-					}
-					for (const child of target.parentNode.childNodes)
-					{
-						if (child === dragged)
-						{
-							dragged.parentNode.insertBefore(dragged, target);
-							dragged.parentNode.insertBefore(target, dragged);
-							break;
-						}
-						else if (child === target)
-						{
-							dragged.parentNode.insertBefore(dragged, target);
-							break;
-						}
-					}
-				};
-				cardUi.ondragover = (evt) =>
-				{
-					evt.preventDefault();
-				};
 			}
+			this.dragReorder =
+				new _inlineScripts.inlineScripts.helperFncs.DragReorder(
+					this.cardDisplay, this._onDragOver);
+		}
+
+		onDragOver()
+		{
+			const pileName =
+				this.pileSelect.value === "{table}" ?
+				"" : this.pileSelect.value;
+			const cards =
+				_inlineScripts.state.sessionState.cards.piles
+				[pileName].cards;
+			let newCards = [];
+			for (const child of this.cardDisplay.childNodes)
+			{
+				newCards.push(cards[child.dataset.id]);
+			}
+			_inlineScripts.state.sessionState.cards.piles[pileName].cards =
+				newCards;
 		}
 	
 		getViewType()
@@ -279,9 +250,9 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 	}
 	plugin.registerView(CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 }
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
 
-plugin.getObsidianInterfaces().addIcon(CARDPILE_VIEW_TYPE, `
+_inlineScripts.inlineScripts.helperFncs.addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
  <g class="layer">
   <title>Layer 1</title>
