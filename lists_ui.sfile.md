@@ -158,7 +158,6 @@ const pick =
 if (pick === null) { return null; }
 
 let items = await getListItems(listNames[pick]);
-console.log(items);
 const pick2 = popups.pick("Choose an item to remove.", items);
 if (pick2 === null) { return null; }
 

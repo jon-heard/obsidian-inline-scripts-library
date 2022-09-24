@@ -474,7 +474,6 @@ let outcomes = [
 let result =
 		addDetails("base", Number($2)) +
 		addDetails("descriptorAdjust", Number($1) * 2);
-console.log(result + " = " + $2 + " + " + $1);
 result = aPickWeight("", outcomes, 1, result);
 return "Disposition:\n. " + result[0] + "\n. BASE = " + $2 + getDetails() + "\n\n";
 ```
