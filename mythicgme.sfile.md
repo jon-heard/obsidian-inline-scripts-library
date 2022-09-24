@@ -123,7 +123,7 @@ Helper scripts
 
 __
 ```
-^f(?:ate)?\s?(|-4|-3|-2|-1|0|1|2|3|4|5|6)$
+^fate ?(|-4|-3|-2|-1|0|1|2|3|4|5|6)$
 ```
 __
 ```js
@@ -163,7 +163,7 @@ fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Makes
 
 __
 ```
-^f(?:ate)?\s?(.*)$
+^fate ?\s?(.*)$
 ```
 __
 ```js

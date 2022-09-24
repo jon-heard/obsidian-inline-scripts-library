@@ -180,7 +180,7 @@ Helper scripts
 
 __
 ```
-^f(?:ate)?\s?(|-4|-3|-2|-1|0|1|2|3|4)\s?(|y|n)$
+^fate ?(|-4|-3|-2|-1|0|1|2|3|4)\s?(|y|n)$
 ```
 __
 ```js
@@ -212,7 +212,7 @@ This fate check is also based on {wanted}: the desired outcome.  Used for the di
 
 __
 ```
-^f(?:ate)?\s?(.*)$
+^fate ?(.*)$
 ```
 __
 ```js
