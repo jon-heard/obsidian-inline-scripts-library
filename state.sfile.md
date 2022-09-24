@@ -31,17 +31,20 @@ confirmObjectPath("_inlineScripts.state.listeners.onLoad");
 if (!_inlineScripts.state.sessionState)
 {
 	_inlineScripts.state.sessionState = {};
-	setTimeout(async () =>
-	{
-		const dataFile =
-			".obsidian/plugins/obsidian-text-expander-js/state.data.txt";
-		try
+	confirmObjectPath(
+		"_inlineScripts.inlineScripts.listeners.onShortcutsLoaded.state",
+		async () =>
 		{
-			const data = await app.vault.adapter.read(dataFile);
-			expand("state set " + data);
-		}
-		catch(e) {}
-	}, 0);
+			delete _inlineScripts.inlineScripts.listeners.onShortcutsLoaded.state;
+			const dataFile =
+				".obsidian/plugins/obsidian-text-expander-js/state.data.txt";
+			try
+			{
+				const data = await app.vault.adapter.read(dataFile);
+				expand("state set " + data);
+			}
+			catch(e) {}
+		});
 }
 ```
 __
@@ -135,7 +138,6 @@ catch (e)
 {
 	return "State not loaded. Invalid state:\n" + $1 + "\n\n";
 }
-
 // Notify listeners of state.onLoad event
 _inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
 	"state.onLoad", _inlineScripts.state.listeners.onLoad);
