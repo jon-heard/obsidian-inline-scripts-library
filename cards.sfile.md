@@ -630,7 +630,7 @@ if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Cards not shown.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not shuffled.  The" + pile_toString($1) + " card-pile was not found.\n\n";
 }
 for (let i = pile.cards.length - 1; i > 0; i--)
 {
@@ -655,6 +655,26 @@ return "The" + pile_toString($1) + " card-pile is shuffled.\n\n";
 ```
 __
 cards shuffle {pile id: name text, default: table} - Randomizes the card order and rotation for the {pile id} card-pile.
+
+
+__
+```
+^cards reverse ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
+```
+__
+```js
+if ($1.match(isTable)) { $1 = ""; }
+const pile = _inlineScripts.state.sessionState.cards.piles[$1];
+if (!pile)
+{
+	return "Cards not reversed.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+}
+pile.cards.reverse();
+onPileChanged($1);
+return "Cards in the" + pile_toString($1) + " card-pile are reversed.\n\n";
+```
+__
+cards reverse {pile id: name text, default: table} - Reverses the order of the cards in card-pile {pile id}.
 
 
 __
