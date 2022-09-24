@@ -344,21 +344,79 @@ if (!folder?.children)
 	return "Cards not created.  Folder __" + $2 + "__ is not valid.\n\n";
 }
 
-let cards = [];
-for (const child of folder.children)
+async function getImageSize_fast(file)
 {
-	if (child.children) { continue; }
+	//file = app.vault.fileMap[file]; // Testing line
 
-	// Get image size
-	let size = null;
+	function bytesToInt(v1, v2, v3, v4)
+	{
+		return (v1 << 24) + (v2 << 16) + (v3 << 8) + v4;
+	}
+
+	let result = null;
+	const buf = await app.vault.readBinary(file);
+	const b = new Uint8Array(buf);
+	// PNG file
+	if (b[1] === 80 && b[2] === 78 && b[3] === 71)
+	{
+		result = [ bytesToInt(b[16], b[17], b[18], b[19]),
+		           bytesToInt(b[20], b[21], b[22], b[23]) ];
+	}
+	// GIF file
+	else if (b[0] === 71 && b[1] === 73 && b[2] === 70)
+	{
+		result = [ bytesToInt(0, 0, b[7], b[6]),
+		           bytesToInt(0, 0, b[9], b[8]) ];
+	}
+	// BMP file
+	else if (b[0] === 66 && b[1] === 77)
+	{
+		result = [ bytesToInt(b[21], b[20], b[19], b[18]),
+		           bytesToInt(b[25], b[24], b[23], b[22]) ];
+	}
+	// JPG file (JFIF) - https://stackoverflow.com/a/48488655 & further answers
+	else if (b[0] === 255 && b[1] === 216 && b[2] === 255 && b[3] === 224 &&
+	         b[6] === 74 && b[7] === 70 && b[8] === 73 && b[9] === 70 && b[10]===0)
+	{
+		let i = 0;
+		while (i < b.length)
+		{
+			if (b[i] !== 255) { break; }
+			while (b[i] === 255) { i++; }
+			const mrk = b[i];
+			i++;
+
+	        if(mrk === 1) { continue; }   // TEM
+	        if(208 <= mrk && mrk <= 215) continue;
+	        if(mrk === 216) { continue; } // SOI
+	        if(mrk === 217) { break; }    // EOI
+
+	        const len = bytesToInt(0, 0, b[i], b[i+1]);
+	        if (192 <= mrk && mrk <= 207) // C0 to CF
+	        {
+		        i += 3;
+				result = [ bytesToInt(0, 0, b[i+2], b[i+3]),
+				           bytesToInt(0, 0, b[i+0], b[i+1]) ];
+				break;
+	        }
+	        i += len;
+		}
+	}
+	return result;
+}
+
+async function getImageSize_reliable(file)
+{
+console.log("Image parsing: slow and reliable - \"" + file.name + "\".");
+	let result = null;
 	try
 	{
-		const buf = await app.vault.readBinary(child);
+		const buf = await app.vault.readBinary(file);
 		let binary = '';
 		const bytes = new Uint8Array(buf);
 		bytes.forEach(b => binary += String.fromCharCode(b));
 		const base64Data = window.btoa(binary);
-		size = await new Promise((onDone) =>
+		result = await new Promise((onDone) =>
 		{
 			const i = new Image(1,1);
 			i.src = `data:${i.type};base64,${base64Data}`;
@@ -373,7 +431,20 @@ for (const child of folder.children)
 		});
 	}
 	catch(e) {}
+	return result;
+}
 
+let cards = [];
+for (const child of folder.children)
+{
+	if (child.children) { continue; }
+
+	// Get image size
+	let size = await getImageSize_fast(child);
+	if (!size)
+	{
+		size = await getImageSize_reliable(child);
+	}
 	if (size == null)
 	{
 		return "Cards not created.  Failed on file __" +
