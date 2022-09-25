@@ -152,6 +152,7 @@ return [ "List __" + $1 + "__" + content + ":\n", items, "\n\n" ];
 ```
 __
 lists list {list name: name text} - Shows all items in the list {list name}.
+***
 
 
 __
@@ -196,25 +197,67 @@ lists add {list name: name text} {item: text} - Adds {item} to the list {list na
 
 __
 ```
-^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*)$
+^lists? rename ([_a-zA-Z][_a-zA-Z0-9]*) ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
 ```js
-// note: Test string accepts empty {list name} for use as a sub-shortcut.
-function roll(max)
+if (!_inlineScripts.state.sessionState.lists[$1])
 {
-	return Math.trunc(Math.random() * max + 1);
+	return "List not renamed.  List __" + $1 + "__ not found.\n\n";
 }
-let items = getListItems($1);
-if (items?.length)
-{
-	return expand("lists pick " + $1 + " " + roll(items.length));
-}
-return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
+_inlineScripts.state.sessionState.lists[$2] = _inlineScripts.state.sessionState.lists[$1];
+delete _inlineScripts.state.sessionState.lists[$1];
+return "List __" + $1 + "__ renamed to __" + $2 + "__.\n\n";
 ```
 __
-lists pick {list name: name text} - Gets a random item from the list {list name}.
-***
+lists rename {original list name: name text} {new list name: name text} - Changes the name of list {original list name} to {new list name}.
+
+
+__
+```
+^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ ].*"|[^ ]) (.+)$
+```
+__
+```js
+$2 = $2.replaceAll(/^\"|\"$/g, "");
+
+const ERROR_PREFIX =
+	  "Item __" + $2 + "__ not replaced in list __" + $1 + "__.  ";
+if (!_inlineScripts.state.sessionState.lists[$1])
+{
+	return ERROR_PREFIX + "Item not found.\n\n";
+}
+const type = _inlineScripts.state.sessionState.lists[$1].type;
+if (type === "basic")
+{
+	const c = _inlineScripts.state.sessionState.lists[$1].content;
+	for (let i = 0; i < c.length; i++)
+	{
+		if (c[i] == $2)
+		{
+			c[i] = $3;
+		}
+	}
+	return "All items of __" +
+		$2 + "__ in list __" + $1 + "__ replaced with __" + $3 + "__.\n\n";
+}
+else if (type === "combo")
+{
+	const subLists = _inlineScripts.state.sessionState.lists[$1].content;
+	for (const subList of subLists)
+	{
+		expand("lists replace " + subList + " " + $2 + " " + $3);
+	}
+	return "All items of __" +
+		$2 + "__ in list __" + $1 + "__ replaced with __" + $3 + "__.\n\n";
+}
+else
+{
+	return ERROR_PREFIX + "List type does not support this operation.\n\n";
+}
+```
+__
+lists replace {list name: name text} {item: text} {replacement: text} - Replaces all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
 
 
 __
@@ -273,53 +316,6 @@ lists remove {list name: name text} {item: text} - Removes an instance of {item}
 
 __
 ```
-^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ ].*"|[^ ]) (.+)$
-```
-__
-```js
-$2 = $2.replaceAll(/^\"|\"$/g, "");
-
-const ERROR_PREFIX =
-	  "Item __" + $2 + "__ not replaced in list __" + $1 + "__.  ";
-if (!_inlineScripts.state.sessionState.lists[$1])
-{
-	return ERROR_PREFIX + "Item not found.\n\n";
-}
-const type = _inlineScripts.state.sessionState.lists[$1].type;
-if (type === "basic")
-{
-	const c = _inlineScripts.state.sessionState.lists[$1].content;
-	for (let i = 0; i < c.length; i++)
-	{
-		if (c[i] == $2)
-		{
-			c[i] = $3;
-		}
-	}
-	return "All items of __" +
-		$2 + "__ in list __" + $1 + "__ replaced with __" + $3 + "__.\n\n";
-}
-else if (type === "combo")
-{
-	const subLists = _inlineScripts.state.sessionState.lists[$1].content;
-	for (const subList of subLists)
-	{
-		expand("lists replace " + subList + " " + $2 + " " + $3);
-	}
-	return "All items of __" +
-		$2 + "__ in list __" + $1 + "__ replaced with __" + $3 + "__.\n\n";
-}
-else
-{
-	return ERROR_PREFIX + "List type does not support this operation.\n\n";
-}
-```
-__
-lists replace {list name: name text} {item: text} {replacement: text} - Replaces all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
-
-
-__
-```
 ^lists? removelist ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
@@ -333,6 +329,50 @@ return "Failed to remove list __" + $1 + "__.  List does not exist.\n\n";
 ```
 __
 lists removelist {list name: name text} - Removes the entire list {list name}.
+***
+
+
+__
+```
+^lists? pick (|[_a-zA-Z][_a-zA-Z0-9]*)$
+```
+__
+```js
+// note: Test string accepts empty {list name} for use as a sub-shortcut.
+function roll(max)
+{
+	return Math.trunc(Math.random() * max + 1);
+}
+let items = getListItems($1);
+if (items?.length)
+{
+	return expand("lists pick " + $1 + " " + roll(items.length));
+}
+return [ "Failed to pick from list __" + $1 + "__.  List is empty.\n\n" ];
+```
+__
+lists pick {list name: name text} - Gets a random item from the list {list name}.
+
+
+__
+```
+^lists? shortcutbatch (|[_a-zA-Z][_a-zA-Z0-9]*) -- (.*)$
+```
+__
+```js
+if (!_inlineScripts.state.sessionState.lists[$1])
+{
+	return "Shortcut batch not run.  List __" + $1 + "__ not found.\n\n";
+}
+let result = "Shortcut batch begun for list __" + $1 + "__...\n\n";
+for (const item of getListItems($1))
+{
+	result += expand($2.replaceAll("%1", item));
+}
+return result + "... shortcut batch finished.\n\n";
+```
+__
+lists shortcutbatch {list name: name text} -- {shortcut: text} - Runs shortcut {shortcut} once for each item in list {list name}, replacing "%1" in {shortcut} with the item.
 ***
 
 

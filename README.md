@@ -25,6 +25,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [cards.sfile](#cardssfile)
 - [rpgtools.sfile](#rpgtoolssfile)
 - [plugin_diceroller.sfile](#plugin_dicerollersfile)
+- [files.sfile](#filessfile)
 - [clips.sfile](#clipssfile)
 - [arrows.sfile](#arrowssfile)
 - [lipsum.sfile](#lipsumsfile)
@@ -65,14 +66,17 @@ This shortcut-file has a tutorial video available:
 ***
 - __lists__ - Shows all lists and all items for each list.
 - __lists list {list name: name text}__ - Shows all items in the list {list name}.
+***
 - __lists add {list name: name text} {item: text}__ - Adds {item} to the list {list name}.  Allows duplicate items.
     - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
-- __lists pick {list name: name text}__ - Gets a random item from the list {list name}.
-***
+- __lists rename {original list name: name text} {new list name: name text}__ - Changes the name of list {original list name} to {new list name}.
+- __lists replace {list name: name text} {item: text} {replacement: text}__ - Replaces all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
 - __lists remove {list name: name text} {item: text}__ - Removes an instance of {item} from the list {list name}.
     - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
-- __lists replace {list name: name text} {item: text} {replacement: text}__ - Replaces all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
 - __lists removelist {list name: name text}__ - Removes the entire list {list name}.
+***
+- __lists pick {list name: name text}__ - Gets a random item from the list {list name}.
+- __lists shortcutbatch {list name: name text} -- {shortcut: text}__ - Runs shortcut {shortcut} once for each item in list {list name}, replacing "%1" in {shortcut} with the item.
 ***
 - __lists addfolder {list name: name text} {folder: path text}__ - Creates a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
 - __lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}...__ - Creates a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
@@ -286,6 +290,14 @@ Shortcuts to help in playing tabletop rpgs, either group or solo.
 A shortcut to run commands through the Dice Roller plugin.
 
 - __diceroller {command: text}__ - Runs {command} through the Dice Roller plugin and expands to the result.
+
+***
+
+### files.sfile
+Shortcuts for working with files in the vault.
+
+- __files extensionchange {file name: path text} {extension: nospace text, default: md}__ - Changes the extension of file {file name} to {extension}.
+- __files shortcutbatch {folder name: path text} -- {shortcut: text}__ - Runs shortcut {shortcut} once for each file in folder {folder name}, replacing "%1" in {shortcut} with the file's name.
 
 ***
 
