@@ -256,6 +256,7 @@ This shortcut-file has a tutorial video available:
 - __cards draw {source pile id: name text, default: table} {destination pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
 	- If a card has "allowDuplicate" turned on, then it is not moved, but copied.  The newly created card has its origin set to {destination pile id}.
 - __cards show {pile id: name text, default: table}__ - Displays all cards in the {pile id} card-pile.
+- __cards showreverse {pile id: name text, default: table}__ - Displays all cards in the {pile id} card-pile, but in reverse order.
 ***
 - __cards properties {pile id: name text, default: table} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n}__ - Changes the entered properties for all cards in the {pile id} card-pile.
 	- facing - Set all cards to be face-up or face-down.
@@ -264,6 +265,7 @@ This shortcut-file has a tutorial video available:
 	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
 ***
 - __cards shuffle {pile id: name text, default: table}__ - Randomizes the card order and rotation for the {pile id} card-pile.
+- __cards reverse {pile id: name text, default: table}__ - Reverses the order of the cards in card-pile {pile id}.
 - __cards flip {pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n}__ - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
 - __cards recall {pile id: name text, default: table} {facing: up OR down, default: current}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
 - __cards destroy {pile id: name text, default: table}__ - Removes the {pile id} card-pile, including all cards within it.

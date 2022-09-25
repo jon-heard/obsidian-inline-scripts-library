@@ -402,7 +402,7 @@ async function getImageSize_fast(file)
 	        i += len;
 		}
 	}
-	return result;
+	return { w: result[0], h: result[1] };
 }
 
 async function getImageSize_reliable(file)
@@ -621,6 +621,21 @@ return result + "\n\n";
 ```
 __
 cards show {pile id: name text, default: table} - Displays all cards in the {pile id} card-pile.
+
+
+__
+```
+^cards showreverse ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
+```
+__
+```js
+expand("cards reverse " + $1);
+const result = expand("cards show " + $1);
+expand("cards reverse " + $1);
+return result;
+```
+__
+cards showreverse {pile id: name text, default: table} - Displays all cards in the {pile id} card-pile, but in reverse order.
 ***
 
 
