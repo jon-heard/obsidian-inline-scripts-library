@@ -216,46 +216,76 @@ __
 ```
 __
 ```js
-let result = "";
-if ($1)
+// Heading
+let result = "The card system's settings are updated:\n";
+
+// Size
+let sizeChanged = false;
+if ($1 && $1 != _inlineScripts.state.sessionState.cards.size)
 {
 	_inlineScripts.state.sessionState.cards.size = $1;
-	result += "Cards size set to __" + $1 + "__ (pixels).\n";
+	result += ". __Card size__ is changed to __" + $1 + "__ _(pixels)_.\n";
+	sizeChanged = true;
 }
+else
+{
+	$1 = _inlineScripts.state.sessionState.cards.size;
+	result += ". __Card size__ remains __" + $1 + "__ _(pixels)_.\n";
+}
+
+// Back image
+let backImageFailedToChange = false;
+let backImageChanged = false;
 if ($2)
 {
 	if ($2.toLowerCase() === "default")
 	{
-		_inlineScripts.state.sessionState.cards.backImage = null;
-		result += "Back-image reset to default.\n\n";
+		if (_inlineScripts.state.sessionState.cards.backImage)
+		{
+			_inlineScripts.state.sessionState.cards.backImage = null;
+			result += ". __Back-image__ reset to default.\n";
+			backImageChanged = true;
+		}
 	}
-	else
+	else if ($1 !== _inlineScripts.state.sessionState.cards.backImage)
 	{
 		const file = app.vault.fileMap[$2];
 		if (!file)
 		{
-			result += "Back image not set.  File __" + $2 + "__ was not found.\n";
+			result +=
+				". __Back-image__ not changed.  File __" + $2 +
+				"__ was not found.\n";
+			backImageFailedToChange = true;
 		}
-		if (file.children)
+		else if (file.children)
 		{
-			result += "Back image not set.  __" + $2 + "__ is not a file.\n";
+			result +=
+				". __Back-image__ not changed.  __" + $2 + "__ is not a file.\n";
+			backImageFailedToChange = true;
 		}
 		else
 		{
 			_inlineScripts.state.sessionState.cards.backImage = $2;
-			result += "Back image set to __" + $2 + "__.\n";
+			result += ". __Back-image__ changed to __" + $2 + "__.\n";
+			backImageChanged = true;
 		}
 	}
 }
-if (result)
+if (!backImageChanged && !backImageFailedToChange)
 {
-	onPileChanged();
-	return result + "\n";
+	$2 = _inlineScripts.state.sessionState.cards.backImage;
+	$2 = $2 ? ("__" + $2 + "__") : "at default";
+	result += ". __Back-image__ remains " + $2 + ".\n";
 }
-return "";
+
+// React to changes
+if (sizeChanged || backImageChanged) { onPileChanged(); }
+
+// Return
+return result + "\n";
 ```
 __
-card settings {size: >0, default: ""} {back-image: path text, default: ""} - Updates the settings for the cards system.
+cards settings {size: >0, default: ""} {back-image: path text, default: ""} - Updates the settings for the cards system.
     - __{size}__ - The width for all cards, in pixels.  Card height scales to match.
     - __{back-image}__ - The path to an image file to represent face-down cards, or "default" to reset to the default back-image.
 ***
@@ -263,7 +293,7 @@ card settings {size: >0, default: ""} {back-image: path text, default: ""} - Upd
 
 __
 ```
-^cards? pile new ([_a-zA-Z][_a-zA-Z0-9]*) ?(up|down|) ?(y|n|)$
+^cards? pile ([_a-zA-Z][_a-zA-Z0-9]*) ?(up|down|) ?(y|n|)$
 ```
 __
 ```js
@@ -283,12 +313,12 @@ onPileListChanged();
 return "The __" + $1 + "__ card-pile is created.\n\n";
 ```
 __
-cards pile new {pile id: name text} {facing: up OR down, default: down} {show moved: y OR n, default: prior} - Creates an empty card-pile {pile id} with all cards facing {facing} (face-up or face-down).  If {show moved}, cards that are drawn or picked into the {pile id} card-pile are also printed to the note.
+cards pile {pile id: name text} {facing: up OR down, default: down} {show moved: y OR n, default: prior} - Creates an empty card-pile {pile id} with all cards facing {facing} (face-up or face-down).  If {show moved}, cards that are drawn or picked into the {pile id} card-pile are also printed to the note.
 
 
 __
 ```
-^cards? pile remove ([_a-zA-Z][_a-zA-Z0-9]*) ?(y|n|)$
+^cards? remove ([_a-zA-Z][_a-zA-Z0-9]*) ?(y|n|)$
 ```
 __
 ```js
@@ -309,16 +339,17 @@ let result = "";
 // Recall cards (if user said to)
 if ($2 === "y")
 {
+debugger;
 	const cardCount = pile.cards.length;
 	let recallCount = 0;
-	for (let i = 0; i < pile.cards.length; i++)
+	for (let i = pile.cards.length - 1; i >= 0; i--)
 	{
-		const card = pile.cards.[i];
+		const card = pile.cards[i];
 		if (card.origin === $1) { continue; }
 		const originPile =
 			_inlineScripts.state.sessionState.cards.piles[card.origin];
 		if (!originPile) { continue; }
-		originPile.unshift(card);
+		originPile.cards.push(card);
 		pile.cards.splice(i, 1);
 		recallCount++;
 	}
@@ -327,8 +358,12 @@ if ($2 === "y")
 		"__ card-pile are recalled to other card-piles.\n";
 }
 //Remove the pile
+const cardRemoveCount =
+	_inlineScripts.state.sessionState.cards.piles[$1].cards.length;
 delete _inlineScripts.state.sessionState.cards.piles[$1];
-result += "The __" + $1 + "__ card-pile _(" +  + ")_ is removed.\n";
+result += "The __" +
+	$1 + "__ card-pile is removed along with __" + cardRemoveCount +
+	"__ images.\n";
 // Re-origin orphaned cards
 let reoriginCount = 0;
 for (const key in _inlineScripts.state.sessionState.cards.piles)
@@ -352,12 +387,12 @@ onPileListChanged();
 return result + "\n";
 ```
 __
-cards pile remove {pile id: name text} {recall: y OR n, default: n} - Removes the {pile id} card-pile, including all cards within it.  If {recall}, all cards in {pile id} are recalled before the {pile id} card-pile is removed.  If the {pile id} card-pile is the origin for any cards, then they are orphaned, and immediately re-origined to their current card-pile.
+cards remove {pile id: name text} {recall: y OR n, default: n} - Removes the {pile id} card-pile, including all cards within it.  If {recall}, all cards in {pile id} are recalled before the {pile id} card-pile is removed.  If the {pile id} card-pile is the origin for any cards, then they are orphaned, and immediately re-origined to their current card-pile.
 
 
 __
 ```
-^cards? pile settings ([_a-zA-Z][_a-zA-Z0-9]*) ?(up|down|) ?(y|n|)$
+^cards? pilesettings ([_a-zA-Z][_a-zA-Z0-9]*) ?(up|down|) ?(y|n|)$
 ```
 __
 ```js
@@ -399,7 +434,7 @@ else
 return result + "\n";
 ```
 __
-cards pile settings {pile id: name text} {facing: up OR down, default: current} {show moved: y OR n, default: current} - Updates the settings for the {pile id} card-pile.
+cards pilesettings {pile id: name text} {facing: up OR down, default: current} {show moved: y OR n, default: current} - Updates the settings for the {pile id} card-pile.
     - __{facing}__ - Are the {pile id} card-pile's cards shown face-up or face-down?
     - __{show moved}__ - Are cards that are drawn or picked into the {pile id} card-pile also printed to the note?
 ***
@@ -556,7 +591,7 @@ cards fromfolder {pile id: name text} {folder: path text} - Creates cards based 
 
 __
 ```
-^cards? pile list?$
+^cards? list?$
 ```
 __
 ```js
@@ -576,7 +611,7 @@ else
 return result + "\n\n";
 ```
 __
-cards pile list - Lists all card-piles.
+cards list - Lists all card-piles.
 
 
 __
@@ -770,8 +805,8 @@ onPileChanged($1);
 return "The __" + $1 + "__ card-pile is shuffled.\n\n";
 ```
 __
-cards shuffle {pile id: name text} {rotate: y OR n, default: N} - Randomizes the card order for the {pile id}.  If {rotate}, then card rotations are also randomized.
-Rotation typically means 0 or 180 degrees (right-side-up or up-side-down), but can also mean 90 or 270 degrees if the card is square.
+cards shuffle {pile id: name text} {rotate: y OR n, default: n} - Randomizes the card order for the {pile id}.  If {rotate}, then card rotations are also randomized.
+	- Rotation typically means 0 or 180 degrees (right-side-up or up-side-down), but can also mean 90 or 270 degrees if the card is square.
 
 
 __

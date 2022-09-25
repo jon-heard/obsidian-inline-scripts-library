@@ -199,17 +199,17 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 				cardUi.classList.add("iscript_viewerCardUi");
 				cardUi.addEventListener("dblclick", () =>
 				{
-					cardUi.classList.remove("rotated" + cards[i].rotation);
-					cards[i].rotation++;
-					if (cards[i].aspect !== 1)
+					cardUi.classList.remove("rotated" + pile.cards[i].rotation);
+					pile.cards[i].rotation++;
+					if (pile.cards[i].aspect !== 1)
 					{
-						cards[i].rotation++;
+						pile.cards[i].rotation++;
 					}
-					if (cards[i].rotation > 3)
+					if (pile.cards[i].rotation > 3)
 					{
-						cards[i].rotation = 0;
+						pile.cards[i].rotation = 0;
 					}
-					cardUi.classList.add("rotated" + cards[i].rotation);
+					cardUi.classList.add("rotated" + pile.cards[i].rotation);
 				});
 			}
 			this.dragReorder =
@@ -221,13 +221,13 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 		{
 			const pileName = this.pileSelect.value;
 			const cards =
-				_inlineScripts.state.sessionState.cards.piles
-				[pileName].cards;
+				_inlineScripts.state.sessionState.cards.piles[pileName].cards;
 			let newCards = [];
-			for (const child of this.cardDisplay.childNodes)
+//debugger;
+			for (let i = this.cardDisplay.childNodes.length - 1; i >= 0; i--)
 			{
-				newCards.push(cards[child.dataset.id]);
-				child.dataset.id = newCards.length - 1;
+				newCards.push(cards[this.cardDisplay.childNodes[i].dataset.id]);
+				this.cardDisplay.childNodes[i].dataset.id = newCards.length-1;
 			}
 			_inlineScripts.state.sessionState.cards.piles[pileName].cards =
 				newCards;
