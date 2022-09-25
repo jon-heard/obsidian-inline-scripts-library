@@ -228,6 +228,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			for (const child of this.cardDisplay.childNodes)
 			{
 				newCards.push(cards[child.dataset.id]);
+				child.dataset.id = newCards.length - 1;
 			}
 			_inlineScripts.state.sessionState.cards.piles[pileName].cards =
 				newCards;
