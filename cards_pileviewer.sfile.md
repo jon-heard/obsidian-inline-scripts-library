@@ -8,23 +8,28 @@ __
 __
 ```js
 const CARDPILE_VIEW_TYPE = "inline-scripts-cardpile-view";
+function getBackImage()
+{
+	return _inlineScripts.state.sessionState.cards.backImage ||
+	       _inlineScripts.cards.defaultBackImage;
+}
 function getAbsolutePath(path)
 {
-	if (path.startsWith("data:image/png;base64")) { return path; }
+	if (path.startsWith("data:image")) { return path; }
 	path = app.vault.fileMap[path];
 	if (!path) { return ""; }
 	return app.vault.getResourcePath(path);
 }
-function createCardUi(card, id, scale, includeDataSrc)
+function createCardUi(isFaceUp, card, id, scale, includeDataSrc)
 {
 	scale ||= 1.0;
 	const front = getAbsolutePath(card.path);
 	const back =
-		getAbsolutePath(_inlineScripts.state.sessionState.cards.backImage);
+		getAbsolutePath(getBackImage());
 
 	const result = document.createElement("img");
 	result.classList.add("cardUi");
-	result.src = card.isFaceDown ? back : front;
+	result.src = isFaceUp ? front : back;
 	const size = _inlineScripts.state.sessionState.cards.size;
 	result.style.width = (size * scale) + "px";
 	result.style.height = (size * card.aspect * scale) + "px";
@@ -36,7 +41,7 @@ function createCardUi(card, id, scale, includeDataSrc)
 	{
 		result.dataset.src = front;
 	}
-	if (!card.isFaceDown)
+	if (isFaceUp)
 	{
 		switch (card.rotation)
 		{
@@ -92,12 +97,12 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 		zoomSelect;
 		cardDisplay;
 		dragReorder;
-		_onDragOver;
+		_onDragReordered;
 
 		constructor(leaf)
 		{
 			super(leaf);
-			this._onDragOver = this.onDragOver.bind(this);
+			this._onDragReordered = this.onDragReordered.bind(this);
 		}
 	
 		load()
@@ -157,7 +162,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			for (const name of names)
 			{
 				this.pileSelect.options[this.pileSelect.options.length] =
-					new Option(name || "{table}");
+					new Option(name);
 			}
 			this.pileSelect.value = oldValue;
 			if (this.pileSelect.value !== oldValue)
@@ -176,24 +181,20 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			}
 			this.cardDisplay.innerText = "";
 			if (!this.pileSelect.value) { return; }
-			const pileName =
-				this.pileSelect.value === "{table}" ?
-				"" : this.pileSelect.value;
-			const cards =
-				_inlineScripts.state.sessionState.cards.piles
-				[pileName].cards;
-			if (!cards.length)
+			const pileName = this.pileSelect.value;
+			const pile = _inlineScripts.state.sessionState.cards.piles[pileName];
+			if (!pile.cards.length)
 			{
 				let emptyMsg = document.createElement("div");
 				emptyMsg.innerText = "-- Empty card-pile --";
-				emptyMsg.classList.add("emptyMsg");
+				emptyMsg.classList.add("iscript_emptyMsg");
 				this.cardDisplay.append(emptyMsg);
 				return;
 			}
 			const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
-			for (let i = 0; i < cards.length; i++)
+			for (let i = pile.cards.length-1; i >= 0; i--)
 			{
-				let cardUi = createCardUi(cards[i], i, zoom);
+				let cardUi = createCardUi(pile.isFaceUp, pile.cards[i], i, zoom);
 				this.cardDisplay.append(cardUi);
 				cardUi.classList.add("iscript_viewerCardUi");
 				cardUi.addEventListener("dblclick", () =>
@@ -213,14 +214,12 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			}
 			this.dragReorder =
 				new _inlineScripts.inlineScripts.helperFncs.DragReorder(
-					this.cardDisplay, this._onDragOver);
+					this.cardDisplay, this._onDragReordered);
 		}
 
-		onDragOver()
+		onDragReordered()
 		{
-			const pileName =
-				this.pileSelect.value === "{table}" ?
-				"" : this.pileSelect.value;
+			const pileName = this.pileSelect.value;
 			const cards =
 				_inlineScripts.state.sessionState.cards.piles
 				[pileName].cards;
@@ -251,7 +250,7 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 	}
 	plugin.registerView(CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 }
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileViewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileviewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .iscript_emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
 
 _inlineScripts.inlineScripts.helperFncs.addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
@@ -283,7 +282,7 @@ __
 ```js
 delete _inlineScripts.cards?.listeners?.onPileListChanged?.cards_pileViewer;
 delete _inlineScripts.cards?.listeners?.onPileChanged?.cards_pileViewer;
-_inlineScripts.inlineScripts.helperFncs.removeCss("cards_pileViewer");
+_inlineScripts.inlineScripts.helperFncs.removeCss("cards_pileviewer");
 app.workspace.detachLeavesOfType(CARDPILE_VIEW_TYPE);
 ```
 __
@@ -297,7 +296,8 @@ __
 __
 ```js
 const plugin = _inlineScripts.inlineScripts.plugin;
-await plugin.app.workspace.getRightLeaf(false).setViewState({ type: CARDPILE_VIEW_TYPE });
+await plugin.app.workspace.getRightLeaf(false).setViewState(
+	{ type: CARDPILE_VIEW_TYPE });
 ```
 __
 cards open viewer - Open a panel for viewing card-piles.

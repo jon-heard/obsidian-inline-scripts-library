@@ -17,7 +17,6 @@ __cards_ui.sfile__ - Graphical UI versions of all of these shortcuts.
 __
 __
 ```js
-const isTable = /^{?table}?$/i;
 function onPileListChanged()
 {
 	_inlineScripts.inlineScripts.helperFncs.
@@ -33,6 +32,11 @@ function onPileChanged(pileName)
 			"cards.onPileChanged",
 			_inlineScripts.cards.listeners.onPileChanged);
 }
+function getBackImage()
+{
+	return _inlineScripts.state.sessionState.cards.backImage ||
+	       _inlineScripts.cards.defaultBackImage;
+}
 function getAbsolutePath(path)
 {
 	if (path.startsWith("data:image")) { return path; }
@@ -45,7 +49,7 @@ function createCardUi(card, id, scale, includeDataSrc)
 	scale ||= 1.0;
 	const front = getAbsolutePath(card.path);
 	const back =
-		getAbsolutePath(_inlineScripts.state.sessionState.cards.backImage);
+		getAbsolutePath(getBackImage());
 
 	const result = document.createElement("img");
 	result.classList.add("cardUi");
@@ -77,7 +81,7 @@ function createCardUi_inNote(card)
 	let path = card.path;
 	if (card.isFaceDown)
 	{
-		path = _inlineScripts.state.sessionState.cards.backImage;
+		path = getBackImage();
 	}
 	if (path.startsWith("data:image"))
 	{
@@ -103,8 +107,9 @@ __
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 
-confirmObjectPath("_inlineScripts.state.sessionState.cards.piles");
-confirmObjectPath("_inlineScripts.state.sessionState.cards.size", 150);
+confirmObjectPath(
+	"_inlineScripts.state.sessionState.cards",
+	{ piles: {}, size: 150, priorShowMoved: true });
 
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.cards",
@@ -116,19 +121,6 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onLoad.cards",
 	function()
 	{
-		for (const pileName in _inlineScripts.state.sessionState.cards.piles)
-		{
-			const cards =
-				_inlineScripts.state.sessionState.cards.piles[pileName].cards;
-			for (const card of cards)
-			{
-				if (card.hasOwnProperty("isRotated"))
-				{
-					card.rotation = card.isRotated ? 2 : 0;
-				}
-				delete card.isRotated;
-			}
-		}
 		onPileListChanged();
 		onPileChanged(null);
 	});
@@ -140,8 +132,7 @@ _inlineScripts.inlineScripts.helperFncs.addCss("cards", ".rotated1, img[alt*='ro
 
 confirmObjectPath("_inlineScripts.cards.defaultBackImage",
 `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABkCAYAAAAlg3YKAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAEvElEQVR42u3dP2wTZxjH8e9diD2UYFdWKwuQXGpTEjxYSFkSIcuDJYTqZrmweSrZzixlZ2BPh+J3M52ytMILtVQhPFiQhCUS8uCiCKzUA8hSdaoP6OBE5Dr4znFCYiiY5o+f33TRvXlP/uTx+zqPLL0aPWk2nS9HR7kGZICzwGcMR/4BngIln4+fxsa0v7wbmndhWc4s8DMwxnDnJfB9KKQVu0CW5VwBfgG01dVNlpY2ef58k42N4RAZHYXTp3WmpnTGx3UAB7gSCmlFzX1bPQPG7t9/w8OHb4a6fJLJEdLpEYCXPh8x3V1zxlZXN4ceB+DBgzesrm4CnFhf55oOzAAsLW0i6WR5uWvxnQ58DfDihQB56bGI6cBxgPV1gfHSbncvj+vC0T8CJEACJEACJEACJEACJBEgARIgARIgARIgAZIIkAAJkAAJkAAJkABJBOjAAtnVFEr5USpF1d5lQMNEVe7tO9CxwU11j4qaodb9eQ7TVHuODiQqmIk61eLV3QdEFGaEowR0iZTZ5kI1RZnbGInokXiLHfvkT2iYqDWIWwVqzSnimdukIv3w6lSL51lsAvG7mKlL75zHbpiUSwWaAOE5MoYicqjWIGuCC0YbMzuLtfI7dt/BURJGGzMz937z2HnKKxNMZtuYZptsDFaq9UNUQQChswQAAmcJ8XSw87Se0GwWKC1c3xoXnwGihwioT7UEQ49Ya0HnlX9AghOEw/OkjdwHT7EPu9h51GL/Xay7WV2YZ2XBj2IK06yAnae4cL2znlBA1SB88Q+M4F7bYY70pElZ+d3fcccPaJPQLMtxAG7ckC8p9ubmTZ98kpZ/NQRIgARIgARIgARIIkACNBxAB6QPPVCgRjVFUflRyk+xkqdhf8RkEbXVQXxn6lSLJo1PDHTsY//ipWezZM0KAcC28/zZqhMJRI/MW2wg/aCWXYdAlEAgR8LtWm3rEzNHxnT7xNt6y7h959h79KEhHJ8nncoRaJioUqEzRhXA7SVVi/7OHOyYZ9+AIooseR6Xr2I1H9EMz5M1cgTsPOUSTGbbRHZr89XgTLZNqudewmiTcEG2xYIz6c5Yu5qiXL2MkVCY5g9Uiz8S7GnQL4bc5x+kCgpEcqQiuU7VeC8g+IRmfGZ3HIB+93YmtDU2EIzTXHvGXv3mDHcoF+8AcWJp1a3m/VukG3kqjXp30Wz97V4GJwjX7n7cgt2ttq157FaN8OexbaXY6nlGJFXBMCoYk7D4+N4BqKDIZc5UrqJKjwB3jUhEgRzpjEl5wU9p5xq0W/r1oeOwVvZT6q5BXvVE+SoGCwt+Ft01SCm/e2+Ki1k1EKCD3ZNumKi1mYEstv810pP+P7f5T5YD8AUGqSABEiABEiABEiABEiCJAAmQAAmQAAmQAAmQRIAESIAESIAESIAESCJAAjQAoNcAPp9gePH7u5cvdaAOcPKkFJMXz8JxqOvAbwDT0wLkxbPQNEr6xga3gFfj4zrJ5MjQ4ySTI5w7p0Pn8KNb3vFZs8CvuMdnLS93js8altNafD44dUpnelr3cLaOz/IGWZZj0DmA7cSQF9HbB7B5efXK+WJ9nWuaxreOwze45/4MQV47Dk81jZLPx63eI/z+BcWKtwx4PjyWAAAAAElFTkSuQmCC`);
-confirmObjectPath("_inlineScripts.state.sessionState.cards.backImage",
-	_inlineScripts.cards.defaultBackImage);
+confirmObjectPath("_inlineScripts.state.sessionState.cards.backImage", null);
 
 confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 {
@@ -150,22 +141,18 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 		const d = document.createElement("div");
 		parent.append(d);
 		data.ui = d;
-		const cards =
-			_inlineScripts.state.sessionState.cards.piles[data.pileId].cards;
-		const onclick = function()
+		const onSelected = function()
 		{
 			this.classList.toggle("iscript_cardSelected");
-			if (data.onclick)
-			{
-				data.onclick(this);
-			}
 		};
-		for (let i = 0; i < cards.length; i++)
+		const cards =
+			_inlineScripts.state.sessionState.cards.piles[data.pileId].cards;
+		for (let i = cards.length - 1; i >= 0; i--)
 		{
 			const img = createCardUi(cards[i], i, 1.0, true)
 			d.append(img);
 			img.classList.add("iscript_cardChoice");
-			img.addEventListener("pointerdown", onclick);
+			img.addEventListener("pointerdown", onSelected);
 		}
 	},
 	onClose: async (data, resolveFnc, buttonId) =>
@@ -214,11 +201,9 @@ __
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState");
-_inlineScripts.state.sessionState.cards = { piles: {} };
-_inlineScripts.state.sessionState.cards.size = 150;
+_inlineScripts.state.sessionState.cards =
+	{ piles: {}, size: 150, backImage: null, priorShowMoved: true };
 onPileListChanged();
-_inlineScripts.state.sessionState.cards.backImage =
-	_inlineScripts.cards.defaultBackImage;
 return "All card-piles cleared.\n\n";
 ```
 __
@@ -227,121 +212,218 @@ cards reset - Clears all card-piles.
 
 __
 ```
-^cards? backimage ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+)$
+^cards? settings ?([1-9][0-9]*|) ?("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+|default|)$
 ```
 __
 ```js
-const file = app.vault.fileMap[$1];
-if (!file || file.children)
+let result = "";
+if ($1)
 {
-	return "Back image not set.  File __" + $1 + "__ not found.";
+	_inlineScripts.state.sessionState.cards.size = $1;
+	result += "Cards size set to __" + $1 + "__ (pixels).\n";
 }
-_inlineScripts.state.sessionState.cards.backImage = $1;
-onPileChanged();
-return "Back image set.\n\n";
-```
-__
-cards backimage {file name: path text} - Sets the image to use for the back-side of all cards to {file name}.
-
-
-__
-```
-^cards? size ([1-9][0-9]*)$
-```
-__
-```js
-_inlineScripts.state.sessionState.cards.size = $1;
-onPileChanged();
-return "Cards size set to __" + $1 + "__ (pixels).\n\n";
-```
-__
-cards size {card size: >0} - Sets the width for all cards in pixels.  Card height follows.
-
-
-__
-```
-^cards?$
-```
-__
-```js
-let result = "Card-piles:\n";
-const piles = _inlineScripts.state.sessionState.cards.piles;
-const names = Object.keys(piles);
-if (names.length)
+if ($2)
 {
-	result +=
-		". " + names.map(v => (v || "{table}") + " _(" + piles[v].cards.length +
-		" cards)_").join("\n. ");
+	if ($2.toLowerCase() === "default")
+	{
+		_inlineScripts.state.sessionState.cards.backImage = null;
+		result += "Back-image reset to default.\n\n";
+	}
+	else
+	{
+		const file = app.vault.fileMap[$2];
+		if (!file)
+		{
+			result += "Back image not set.  File __" + $2 + "__ was not found.\n";
+		}
+		if (file.children)
+		{
+			result += "Back image not set.  __" + $2 + "__ is not a file.\n";
+		}
+		else
+		{
+			_inlineScripts.state.sessionState.cards.backImage = $2;
+			result += "Back image set to __" + $2 + "__.\n";
+		}
+	}
 }
-else
+if (result)
 {
-	result += "NONE";
+	onPileChanged();
+	return result + "\n";
 }
-return result + "\n\n";
+return "";
 ```
 __
-cards - Lists all card-piles.
+card settings {size: >0, default: ""} {back-image: path text, default: ""} - Updates the settings for the cards system.
+    - __{size}__ - The width for all cards, in pixels.  Card height scales to match.
+    - __{back-image}__ - The path to an image file to represent face-down cards, or "default" to reset to the default back-image.
 ***
 
 
 __
-__
-```js
-function pile_toString(pileId, useHtml)
-{
-	if (!pileId)
-	{
-		pileId = "{table}";
-	}
-
-	if (!useHtml)
-	{
-		return " __" + pileId + "__";
-	}
-	else
-	{
-		return " <b>" + pileId + "</b>";
-	}
-}
 ```
-__
-Helper scripts
-
-
-__
-```
-^cards pile ([_a-zA-Z][_a-zA-Z0-9]*)$
+^cards? pile new ([_a-zA-Z][_a-zA-Z0-9]*) ?(up|down|) ?(y|n|)$
 ```
 __
 ```js
-if ($1.match(isTable))
-{
-	return "Card-Pile not defined.  " +
-		"Card-pile __table__, and it's variants, are reserved.\n\n";
-}
 if (_inlineScripts.state.sessionState.cards.piles[$1])
 {
-	return "Card-Pile not defined.  " +
-		"Card-pile __" + $1 + "__ already exists.\n\n";
+	return "Card-Pile not created.  " +
+		"The __" + $1 + "__ card-pile already exists.\n\n";
 }
-_inlineScripts.state.sessionState.cards.piles[$1] = { cards: [] };
+if ($3)
+{
+	_inlineScripts.state.sessionState.cards.priorShowMoved = ($3 === "y");
+}
+const showMoved = _inlineScripts.state.sessionState.cards.priorShowMoved;
+_inlineScripts.state.sessionState.cards.piles[$1] =
+	{ cards: [], isFaceUp: ($2 === "up"), showMoved };
 onPileListChanged();
-return "Card-pile __" + $1 + "__ is defined.\n\n";
+return "The __" + $1 + "__ card-pile is created.\n\n";
 ```
 __
-cards pile {pile id: name text} - Creates an empty pile {pile id}.
+cards pile new {pile id: name text} {facing: up OR down, default: down} {show moved: y OR n, default: prior} - Creates an empty card-pile {pile id} with all cards facing {facing} (face-up or face-down).  If {show moved}, cards that are drawn or picked into the {pile id} card-pile are also printed to the note.
+
 
 __
 ```
-^cards? fromfolder ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?(up|down|)$
+^cards? pile remove ([_a-zA-Z][_a-zA-Z0-9]*) ?(y|n|)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
-const folder = app.vault.fileMap[$2];
-if (!folder?.children)
+// Get pile to remove
+const pile = _inlineScripts.state.sessionState.cards.piles[$1];
+if (!pile)
 {
-	return "Cards not created.  Folder __" + $2 + "__ is not valid.\n\n";
+	return "Card-pile not removed.  The __" +
+		$1 + "__ card-pile was not found.\n\n";
+}
+// Confirm with user
+if (!popups.confirm(
+	"Confirm destroying the <b>" + $1 + "</b> card-pile."))
+{
+	return "Card-pile not removed.  User canceled.\n\n";
+}
+let result = "";
+// Recall cards (if user said to)
+if ($2 === "y")
+{
+	const cardCount = pile.cards.length;
+	let recallCount = 0;
+	for (let i = 0; i < pile.cards.length; i++)
+	{
+		const card = pile.cards.[i];
+		if (card.origin === $1) { continue; }
+		const originPile =
+			_inlineScripts.state.sessionState.cards.piles[card.origin];
+		if (!originPile) { continue; }
+		originPile.unshift(card);
+		pile.cards.splice(i, 1);
+		recallCount++;
+	}
+	result +=
+		"__" + recallCount + " / " + cardCount + "__ cards in the __" + $1 +
+		"__ card-pile are recalled to other card-piles.\n";
+}
+//Remove the pile
+delete _inlineScripts.state.sessionState.cards.piles[$1];
+result += "The __" + $1 + "__ card-pile _(" +  + ")_ is removed.\n";
+// Re-origin orphaned cards
+let reoriginCount = 0;
+for (const key in _inlineScripts.state.sessionState.cards.piles)
+{
+	const chkPile = _inlineScripts.state.sessionState.cards.piles[key];
+	for (const card of chkPile.cards)
+	{
+		if (card.origin === $1)
+		{
+			card.origin = key;
+			reoriginCount++;
+		}
+	}
+}
+if (reoriginCount)
+{
+	result += "__" + reoriginCount + "__ orphaned cards were re-origined.\n";
+}
+// Wrapup
+onPileListChanged();
+return result + "\n";
+```
+__
+cards pile remove {pile id: name text} {recall: y OR n, default: n} - Removes the {pile id} card-pile, including all cards within it.  If {recall}, all cards in {pile id} are recalled before the {pile id} card-pile is removed.  If the {pile id} card-pile is the origin for any cards, then they are orphaned, and immediately re-origined to their current card-pile.
+
+
+__
+```
+^cards? pile settings ([_a-zA-Z][_a-zA-Z0-9]*) ?(up|down|) ?(y|n|)$
+```
+__
+```js
+// Get pile
+const pile = _inlineScripts.state.sessionState.cards.piles[$1];
+if (!pile)
+{
+	return "Card-Pile not changed.  " +
+		"The __" + $1 + "__ card-pile was not found.\n\n";
+}
+
+// Heading
+let result = "The __" + $1 + "__ card-pile's settings are updated:\n";
+
+// Facing
+if ($2 && pile.isFaceUp !== ($2 === "up"))
+{
+	pile.isFaceUp = !pile.isFaceUp;
+	result += ". __Facing__ is changed to __" + $2 + "__.\n";
+	onPileChanged();
+}
+else
+{
+	result += ". __Facing__ remains __" + (pile.isFaceUp ? "up": "down") + "__.\n";
+}
+
+// Show moved
+if ($3 && pile.showMoved !== ($3 === "y"))
+{
+	pile.showMoved = !pile.showMoved;
+	result += ". __ShowMoved__ is set to __" + pile.showMoved + "__.\n"; 
+}
+else
+{
+	result += ". __ShowMoved__ remains __" + pile.showMoved + "__.\n";
+}
+
+// Return
+return result + "\n";
+```
+__
+cards pile settings {pile id: name text} {facing: up OR down, default: current} {show moved: y OR n, default: current} - Updates the settings for the {pile id} card-pile.
+    - __{facing}__ - Are the {pile id} card-pile's cards shown face-up or face-down?
+    - __{show moved}__ - Are cards that are drawn or picked into the {pile id} card-pile also printed to the note?
+***
+
+
+__
+```
+^cards? fromfolder ?([_a-zA-Z][_a-zA-Z0-9]*) ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+)$
+```
+__
+```js
+const pile = _inlineScripts.state.sessionState.cards.piles[$1];
+if (!pile)
+{
+	return "Cards not created.  The __" + $1 + "__ card-pile was not found.\n\n";
+}
+const folder = app.vault.fileMap[$2];
+if (!folder)
+{
+	return "Cards not created.  Folder __" + $2 + "__ was not found.\n\n";
+}
+if (!folder.children)
+{
+	return "Cards not created.  __" + $2 + "__ is not a folder.\n\n";
 }
 
 async function getImageSize_fast(file)
@@ -407,7 +489,7 @@ async function getImageSize_fast(file)
 
 async function getImageSize_reliable(file)
 {
-console.log("Image parsing: slow and reliable - \"" + file.name + "\".");
+	console.log("Image parsing: slow and reliable - \"" + file.name + "\".");
 	let result = null;
 	try
 	{
@@ -434,9 +516,11 @@ console.log("Image parsing: slow and reliable - \"" + file.name + "\".");
 	return result;
 }
 
-let cards = [];
-for (const child of folder.children)
+if (window.brk) { debugger; }
+let createCount = 0;
+for (let i = folder.children.length - 1; i >= 0; i--)
 {
+	const child = folder.children[i];
 	if (child.children) { continue; }
 
 	// Get image size
@@ -454,278 +538,227 @@ for (const child of folder.children)
 	const card =
 	{
 		path: child.path,
-		origin: $1,
-		aspect: size.h / size.w,
-		isFaceDown: ($3 === "down"),
 		rotation: 0,
-		allowRotated: false,
-		allowDuplicate: false
+		aspect: size.h / size.w,
+		origin: $1
 	};
-	cards.push(card);
-}
-
-let pileModified = false;
-if (!_inlineScripts.state.sessionState.cards.piles[$1])
-{
-	_inlineScripts.state.sessionState.cards.piles[$1] = { cards: [] };
-}
-else
-{
-	pileModified = true;
-}
-_inlineScripts.state.sessionState.cards.piles[$1].cards.push(...cards);
-expand("cards shuffle " + $1 + " y");
-
-if (pileModified)
-{
-	onPileChanged($1);
-}
-else
-{
-	onPileListChanged();
-}
-
-return "__" +
-	cards.length + "__ cards added to the" + pile_toString($1) + " card-pile.\n\n";
-```
-__
-cards fromfolder {pile id: name text, default: table} {folder: path text} {facing: up OR down, default: up} - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
-
-
-__
-```
-^cards? draw ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
-```
-__
-```js
-if ($1.match(isTable)) { $1 = ""; }
-if ($2.match(isTable)) { $2 = ""; }
-const srcPile = _inlineScripts.state.sessionState.cards.piles[$1];
-if (!srcPile)
-{
-	return "Cards not drawn.  The" +
-		pile_toString($1) + " card-pile was not found.\n\n";
-}
-const count = ($3 === "all") ? srcPile.cards.length : (Number($3) || 1);
-
-// Determine which cards to draw
-let drawIndices = [];
-if ($5 === "y")
-{
-	let choice = popups.custom(
-		"Choose which cards to draw.",
-		_inlineScripts.cards.cardPickerPopup,
-		{ pileId: $1 });
-	if (!choice)
-	{
-		return "Cards not drawn.  Canceled by user.\n\n";
-	}
-	drawIndices = choice;
-}
-else if (count >= srcPile.cards.length)
-{
-	for (let i = 0; i < srcPile.cards.length; i++)
-	{
-		drawIndices.push(i);
-	}
-}
-else
-{
-	let picks = new Set();
-	while (picks.size < count)
-	{
-		picks.add(Math.trunc(Math.random() * srcPile.cards.length));
-	}
-	drawIndices = [...picks].sort().reverse();
-}
-if (!drawIndices.length)
-{
-	return "Cards not drawn.  No cards chosen.\n\n";
-}
-// Sort numbers
-drawIndices.sort((a, b) => a - b);
-
-// Get/create destination pile
-let createdDstPile = false;
-if (!_inlineScripts.state.sessionState.cards.piles[$2])
-{
-	_inlineScripts.state.sessionState.cards.piles[$2] = { cards: [] };
-	createdDstPile = true;
-}
-const dstPile = _inlineScripts.state.sessionState.cards.piles[$2];
-
-// Draw all selected cards
-let cardDisplay = "";
-for (let i = drawIndices.length-1; i >= 0; i--)
-{
-	let drawnCard = srcPile.cards[drawIndices[i]];
-	if (!drawnCard.allowDuplicate)
-	{
-		srcPile.cards.splice(drawIndices[i], 1);
-	}
-	else
-	{
-		drawnCard = Object.assign({}, drawnCard);
-		drawnCard.origin = $2;
-	}
-	if ($4)
-	{
-		drawnCard.isFaceDown = ($4 === "down");
-	}
-	dstPile.cards.unshift(drawnCard);
-	cardDisplay =
-		createCardUi_inNote(drawnCard) + " " + cardDisplay;
-}
-
-if ($2 || $3 === "all") { cardDisplay = ""; }
-if (cardDisplay) { cardDisplay = "\n" + cardDisplay; }
-
-if (createdDstPile)
-{
-	onPileListChanged();
-}
-else
-{
-	onPileChanged($2);
+	pile.cards.push(card);
+	createCount++;
 }
 onPileChanged($1);
 return "__" +
-	drawIndices.length + "__ cards drawn from the" + pile_toString($1) +
-	" card-pile to the" + pile_toString($2) + " card-pile." + cardDisplay +
-	"\n\n";
+	createCount + "__ cards added to the __" + $1 + "__ card-pile.\n\n";
 ```
 __
-cards draw {source pile id: name text, default: table} {destination pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
-	- If a card has "allowDuplicate" turned on, then it is not moved, but copied.  The newly created card has its origin set to {destination pile id}.
+cards fromfolder {pile id: name text} {folder: path text} - Creates cards based on images in {folder} and puts them into the {pile id} card-pile.
+***
 
 
 __
 ```
-^cards show ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
+^cards? pile list?$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
-const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-if (!pile)
+let result = "Card-piles:\n";
+const piles = _inlineScripts.state.sessionState.cards.piles;
+const names = Object.keys(piles);
+if (names.length)
 {
-	return "Cards not shown.  The" +
-		pile_toString($1) + " card-pile was not found.\n\n";
+	result +=
+		". " + names.map(v => v + " _(" + piles[v].cards.length + " cards)_")
+		.join("\n. ");
 }
-let result = "Card-pile" + pile_toString($1) + ":\n";
-for (const card of pile.cards)
+else
 {
-	result += createCardUi_inNote(card) + " ";
+	result += "NONE";
 }
 return result + "\n\n";
 ```
 __
-cards show {pile id: name text, default: table} - Displays all cards in the {pile id} card-pile.
+cards pile list - Lists all card-piles.
 
 
 __
 ```
-^cards showreverse ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
+^cards? peek ?([1-9][0-9]*|all|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
 ```
 __
 ```js
-expand("cards reverse " + $1);
-const result = expand("cards show " + $1);
-expand("cards reverse " + $1);
-return result;
+if (!$2 && !_inlineScripts.state.sessionState.cards.priorPeekPile)
+{
+	return "Cards not peeked.  The card-pile to peek into is not defined.\n\n";
+}
+debugger;
+if (!$3 && !_inlineScripts.state.sessionState.cards.priorPeekIsBottom)
+{
+	$3 = "n";
+}
+if (!$2) { $2 = _inlineScripts.state.sessionState.cards.priorPeekPile; }
+if (!$3) { $3 = _inlineScripts.state.sessionState.cards.priorPeekIsBottom; }
+const pile = _inlineScripts.state.sessionState.cards.piles[$2];
+if (!pile)
+{
+	return "Cards not peeked.  The card-pile __" +
+		$1 + "__ was not found.\n\n";
+}
+_inlineScripts.state.sessionState.cards.priorPeekPile = $2;
+_inlineScripts.state.sessionState.cards.priorPeekIsBottom = $3;
+$3 = ($3 === "y");
+const count = ($1.toLowerCase() === "all") ? pile.cards.length : (Number($1) || 1);
+
+let cardView = "\n";
+for (let i = 0; i < count; i++)
+{
+	const index = ($3 ? i : (pile.cards.length - i - 1));
+	cardView += createCardUi_inNote(pile.cards[index]);
+}
+return "Cards peeked from the " +
+	($3 ? "bottom" : "top") + " of the __" + $2 + "__ card-pile:" + cardView +
+	"\n\n";
 ```
 __
-cards showreverse {pile id: name text, default: table} - Displays all cards in the {pile id} card-pile, but in reverse order.
+cards peek {count: >0 OR "all", default: 1} {pile id: name text, default: prior} {from the bottom: y OR n, default: prior OR n} - Displays the first {count} cards in the {pile id} card-pile, or ALL cards if {count} is "all".  If {from the bottom}, displays the LAST {count} cards instead.
 ***
 
 
 __
 ```
-^cards? properties ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(up|down|) ?(y|n|) ?(y|n|) ?(y|n|)$
+^cards? draw ?([1-9][0-9]*|all|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
-const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-if (!pile)
+if (!$2 && !_inlineScripts.state.sessionState.cards.priorDrawDst)
 {
-	return "Cards not changed.  " +
-		"The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not drawn.  The destination card-pile is not defined.\n\n";
 }
-for (let card of pile.cards)
+if (!$3 && !_inlineScripts.state.sessionState.cards.priorDrawSrc)
 {
-	if ($2) { card.isFaceDown = ($2 === "down"); }
-	if ($3)
-	{
-		if (card.allowRotated !== ($3 === "y"))
-		{
-			card.allowRotated = !card.allowRotated;
-			if (card.allowRotated)
-			{
-				card.rotation =
-					(card.aspect == 1) ?
-					Math.trunc(Math.random() * 4) :
-					Math.trunc(Math.random() * 2) * 2;
-			}
-			else
-			{
-				card.rotation = 0;
-			}
-		}
-	}
-	if ($4) { card.allowDuplicate = ($4 === "y"); }
-	if ($5 === "y")
-	{
-		card.origin = $1;
-	}
+	return "Cards not drawn.  The source card-pile is not defined.\n\n";
 }
-let changes = [];
-if ($2) { changes.push("- facing - " + $2); }
-if ($3) { changes.push("- allow rotated - " + ($3 === "y")); }
-if ($4) { changes.push("- allow duplicate - " + ($4 === "y")); }
-if ($5 === "y") { changes.push("- origin - " + $1); }
-if (changes.length)
+if (!$2) { $2 = _inlineScripts.state.sessionState.cards.priorDrawDst; }
+if (!$3) { $3 = _inlineScripts.state.sessionState.cards.priorDrawSrc; }
+const dstPile = _inlineScripts.state.sessionState.cards.piles[$2];
+if (!dstPile)
 {
-	onPileChanged($1);
-	changes = changes.join("\n");
+	return "Cards not drawn.  The destination card-pile __" +
+		$2 + "__ was not found.\n\n";
 }
-else
+const srcPile = _inlineScripts.state.sessionState.cards.piles[$3];
+if (!srcPile)
 {
-	changes = "NONE";
+	return "Cards not drawn.  The source card-pile __" +
+		$3 + "__ was not found.\n\n";
 }
-return "All __" + pile.cards.length + "__ cards in the" +
-	pile_toString($1) + " card-pile are changed.  Changed properties:\n" +
-	changes + "\n\n";
+_inlineScripts.state.sessionState.cards.priorDrawDst = $2;
+_inlineScripts.state.sessionState.cards.priorDrawSrc = $3;
+const count =
+	($1.toLowerCase() === "all") ? srcPile.cards.length : (Number($1) || 1);
+
+let drawnCount = 0;
+let cardView = "\n";
+let transfer = [];
+for (let i = 0; i < count; i++)
+{
+	if (!srcPile.cards.length) { break; }
+	const drawnCard = srcPile.cards.pop();
+	transfer.push(drawnCard);
+	drawnCount++;
+	cardView += createCardUi_inNote(drawnCard);
+}
+transfer.reverse();
+dstPile.cards.push(...transfer);
+cardView = dstPile.showMoved ? cardView : "";
+onPileChanged($2);
+onPileChanged($3);
+return "__" +
+	drawnCount + "__ cards drawn from the __" + $3 + "__ card-pile to the __" +
+	$2 + "__ card-pile." + cardView + "\n\n";
 ```
 __
-cards properties {pile id: name text, default: table} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n} - Changes the entered properties for all cards in the {pile id} card-pile.
-	- facing - Set all cards to be face-up or face-down.
-	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
-	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
-	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
+cards draw {count: >0 OR "all", default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
+
+
+__
+```
+^cards? pick ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+```
+__
+```js
+if (!$1 && !_inlineScripts.state.sessionState.cards.priorPickDst)
+{
+	return "Cards not picked.  The destination card-pile is not defined.\n\n";
+}
+if (!$2 && !_inlineScripts.state.sessionState.cards.priorPickSrc)
+{
+	return "Cards not picked.  The source card-pile is not defined.\n\n";
+}
+if (!$1) { $1 = _inlineScripts.state.sessionState.cards.priorPickDst; }
+if (!$2) { $2 = _inlineScripts.state.sessionState.cards.priorPickSrc; }
+const dstPile = _inlineScripts.state.sessionState.cards.piles[$1];
+if (!dstPile)
+{
+	return "Cards not picked.  The destination card-pile __" +
+		$1 + "__ was not found.\n\n";
+}
+const srcPile = _inlineScripts.state.sessionState.cards.piles[$2];
+if (!srcPile)
+{
+	return "Cards not picked.  The source card-pile __" +
+		$2 + "__ was not found.\n\n";
+}
+_inlineScripts.state.sessionState.cards.priorPickDst = $1;
+_inlineScripts.state.sessionState.cards.priorPickSrc = $2;
+
+let picks = popups.custom(
+	"Pick cards from the <b>" + $2 + "</b> card-pile.",
+	_inlineScripts.cards.cardPickerPopup, { pileId: $2 });
+if (!picks)
+{
+	return "Cards not picked.  Canceled by user.\n\n";
+}
+let cardView = "\n";
+let transfer = [];
+for (let i = 0; i < picks.length; i++)
+{
+	if (!srcPile.cards.length) { break; }
+	const drawnCard = srcPile.cards.splice(picks[i], 1)[0];
+	transfer.push(drawnCard);
+	cardView += createCardUi_inNote(drawnCard);
+}
+transfer.reverse();
+dstPile.cards.push(...transfer);
+cardView = dstPile.showMoved ? cardView : "";
+onPileChanged($1);
+onPileChanged($2);
+return "__" +
+	picks.length + "__ cards picked from the __" + $2 + "__ card-pile to the __" +
+	$1 + "__ card-pile." + cardView + "\n\n";
+```
+__
+cards pick {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Has the user choose cards from the {source pile id} card-pile.  Moves the chosen cards into the {destination pile id} card-pile.
 ***
 
 
 __
 ```
-^cards shuffle ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(y|n|)$
+^cards? shuffle ?([_a-zA-Z][_a-zA-Z0-9]*) ?(y|n|)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Cards not shuffled.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not shuffled.  The __" + $1 + "__ card-pile was not found.\n\n";
 }
 for (let i = pile.cards.length - 1; i > 0; i--)
 {
 	const j = Math.floor(Math.random() * (i + 1));
 	[pile.cards[i], pile.cards[j]] = [pile.cards[j], pile.cards[i]];
 }
-for (let card of pile.cards)
+if ($2 === "y")
 {
-	if (card.allowRotated)
+	for (let card of pile.cards)
 	{
 		card.rotation =
 			(card.aspect == 1) ?
@@ -733,136 +766,71 @@ for (let card of pile.cards)
 			Math.trunc(Math.random() * 2) * 2;
 	}
 }
-if ($2 !== "y")
-{
-	onPileChanged($1);
-}
-return "The" + pile_toString($1) + " card-pile is shuffled.\n\n";
+onPileChanged($1);
+return "The __" + $1 + "__ card-pile is shuffled.\n\n";
 ```
 __
-cards shuffle {pile id: name text, default: table} - Randomizes the card order and rotation for the {pile id} card-pile.
+cards shuffle {pile id: name text} {rotate: y OR n, default: N} - Randomizes the card order for the {pile id}.  If {rotate}, then card rotations are also randomized.
+Rotation typically means 0 or 180 degrees (right-side-up or up-side-down), but can also mean 90 or 270 degrees if the card is square.
 
 
 __
 ```
-^cards reverse ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
+^cards? unrotate ?([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Cards not reversed.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not unrotated.  The __" + $1 + "__ card-pile was not found.\n\n";
+}
+for (let card of pile.cards)
+{
+	card.rotation = 0;
+}
+onPileChanged($1);
+return "The __" +
+	$1 + "__ card-pile's cards are all rotated to 0 degrees (right-side-up).\n\n";
+```
+__
+cards unrotate {pile id: name text} - Sets the rotation for all cards in the {pile id} card-pile to 0 (right-side-up).
+
+
+__
+```
+^cards? reverse ?([_a-zA-Z][_a-zA-Z0-9]*)$
+```
+__
+```js
+const pile = _inlineScripts.state.sessionState.cards.piles[$1];
+if (!pile)
+{
+	return "Cards not reversed.  The __" + $1 + "__ card-pile was not found.\n\n";
 }
 pile.cards.reverse();
 onPileChanged($1);
-return "Cards in the" + pile_toString($1) + " card-pile are reversed.\n\n";
+return "Cards in the __" + $1 + "__ card-pile have been reversed.\n\n";
 ```
 __
-cards reverse {pile id: name text, default: table} - Reverses the order of the cards in card-pile {pile id}.
+cards reverse {pile id: name text} - Reverses the order of the cards in the {pile id} card-pile.
 
 
 __
 ```
-^cards flip ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?([1-9][0-9]*|all|) ?(up|down|) ?(y|n|)$
+^cards? recall ?([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
-const pile = _inlineScripts.state.sessionState.cards.piles[$1];
+const piles = _inlineScripts.state.sessionState.cards.piles;
+const pile = piles[$1];
 if (!pile)
 {
-	return "Cards not flipped.  The" +
-		pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not recalled.  The __" + $1 + "__ card-pile was not found.\n\n";
 }
-$2 = ($2 === "all") ? pile.cards.length : (Number($2) || 1);
-const flipDown = ($3 === "down");
-let flipCount = 0;
-if ($4 === "y")
-{
-	let choice = popups.custom(
-		"Choose which cards to flip.",
-		_inlineScripts.cards.cardPickerPopup,
-		{
-			pileId: $1,
-			onclick: cardUi =>
-			{
-				if (cardUi.classList.contains("iscript_cardSelected") ===
-				    pile.cards[cardUi.dataset.id].isFaceDown)
-				{
-					cardUi.src = cardUi.dataset.src;
-					if (pile.cards[cardUi.dataset.id].rotation)
-					{
-						cardUi.classList.add(
-							"rotated" + pile.cards[cardUi.dataset.id].rotation);
-					}
-				}
-				else
-				{
-					cardUi.src = getAbsolutePath(
-						_inlineScripts.state.sessionState.cards.backImage);
-					cardUi.classList.remove("rotated");
-				}
-			}
-		});
-	if (!choice)
-	{
-		return "Cards not flipped.  Canceled by user.\n\n";
-	}
-	if (!choice.length)
-	{
-		return "Cards not flipped.  No cards chosen.\n\n";
-	}
-	flipCount = choice.length;
-	for (index of choice)
-	{
-		pile.cards[index].isFaceDown = !pile.cards[index].isFaceDown;
-	}
-}
-else
-{
-	for (let i = (flipDown ? pile.cards.length-1 : 0);
-	     (flipDown ? i >= 0 : i < pile.cards.length);
-	     (flipDown ? i-- : i++))
-	{
-		const card = pile.cards[i];
-		if (card.isFaceDown !== flipDown)
-		{
-			card.isFaceDown = flipDown;
-			flipCount++;
-			if (flipCount >= $2)
-			{
-				break;
-			}
-		}
-	}
-}
-if (flipCount)
-{
-	onPileChanged($1);
-}
-
-const flipType = ($4 === "y") ? "" : flipDown ? " face-down" : " face-up";
-return "__" +
-	flipCount + "__ cards flipped" + flipType + " in the" + pile_toString($1) +
-	" card-pile.\n\n";
-```
-__
-cards flip {pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n} - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
-
-
-__
-```
-^cards recall ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(up|down|)$
-```
-__
-```js
-if ($1.match(isTable)) { $1 = ""; }
 let result = "";
 let moveCount = 0;
-let piles = _inlineScripts.state.sessionState.cards.piles;
-let pile = piles[$1];
+let transfer = [];
 for (const key in piles)
 {
 	if (piles[key] === pile) { continue; }
@@ -870,81 +838,60 @@ for (const key in piles)
 	{
 		if (piles[key].cards[k].origin === $1)
 		{
-			// We conditionally create the pile HERE because if we did it
-			// above, we might create it without ever add a card to it.
-			if (!pile)
-			{
-				pile = piles[$1] = { cards: [] };
-			}
-			const card = piles[key].cards[k];
-			piles[key].cards.splice(k, 1);
-			pile.cards.push(card);
+			const recalledCard = piles[key].cards.splice(k, 1)[0];
+			transfer.push(recalledCard);
 			moveCount++;
 		}
 	}
 }
-let cardsWereFlipped = false;
-if ($2 && pile)
-{
-	for (let card of pile.cards)
-	{
-		if (card.isFaceDown !== ($2 === "down"))
-		{
-			cardsWereFlipped = true;
-			card.isFaceDown = ($2 === "down");
-		}
-	}
-}
-onPileListChanged();
-if (moveCount || cardsWereFlipped)
+transfer.reverse();
+pile.cards.push(...transfer);
+if (moveCount)
 {
 	onPileChanged(null);
 }
 return result +
-	"__" + moveCount + "__ cards were returned to the" + pile_toString($1) +
-	" card-pile.\n\n";
+	"__" + moveCount + "__ cards were returned to the __" + $1 +
+	"__ card-pile.\n\n";
 ```
 __
-cards recall {pile id: name text, default: table} {facing: up OR down, default: current} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
+cards recall {pile id: name text} - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
 
 
 __
 ```
-^cards destroy ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) ?(y|n|)$
+^cards? reorigin ?([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Cards not destroyed.  The" +
-		pile_toString($1) + " card-pile was not found.\n\n";
+	return "Cards not re-origined.  The __" +
+		$1 + "__ card-pile was not found.\n\n";
 }
-if ($2 === "y" || popups.confirm(
-	"Confirm destroying the" + pile_toString($1, true) + " card-pile."))
+for (let card of pile.cards)
 {
-	delete _inlineScripts.state.sessionState.cards.piles[$1];
-	onPileListChanged();
-	return "The" + pile_toString($1) + " card-pile is destroyed.\n\n";
+	card.origin = $1;
 }
-else
-{
-	return "Cards not destroyed.  User canceled.\n\n";
-}
+return "Cards in the __" + $1 + "__ card-pile have been re-origined.\n\n";
 ```
 __
-cards destroy {pile id: name text, default: table} - Removes the {pile id} card-pile, including all cards within it.
+cards reorigin {pile id: name text} - Sets the origin of all cards in the {pile id} card-pile to {pile id}.
 ***
 
 
 __
 ```
-^cards import ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|) (.+)$
+^cards? import ([_a-zA-Z][_a-zA-Z0-9]*) (.+)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
+if (!_inlineScripts.state.sessionState.cards.piles[$1])
+{
+	return "Card-pile not imported.  The __" +
+		$1 + "__ card-pile was not found.\n\n";
+}
 let data = null;
 try
 {
@@ -952,57 +899,30 @@ try
 }
 catch (e)
 {
-	return "Cards not imported.  Failed to parse data string.\n\n";
+	return "Card-pile not imported.  Failed to parse data string.\n\n";
 }
-const isNewPile = (!_inlineScripts.state.sessionState.cards.piles[$1]);
 _inlineScripts.state.sessionState.cards.piles[$1] = data;
-for (let card of _inlineScripts.state.sessionState.cards.piles[$1].cards)
-{
-	card.isFaceDown ||= false;
-	card.allowRotated ||= false;
-	card.allowDuplicate ||= false;
-	card.rotation ||= 0;
-	if (card.hasOwnProperty("isRotated"))
-	{
-		card.rotation = card.isRotated ? 2 : 0;
-	}
-	delete card.isRotated;
-}
-if (isNewPile)
-{
-	onPileListChanged();
-}
-else
-{
-	onPileChanged($1);
-}
-return "The" + pile_toString($1) + " card-pile was imported.\n\n";
+onPileChanged($1);
+return "The __" + $1 + "__ card-pile was imported.\n\n";
 ```
 __
-cards import {pile id: name text, default: table} {data: text} - Makes a card-pile from the data string {data} and remembers it as {pile id}.
+cards import {pile id: name text, default: table} {data: text} - Imports the {data} into the {pile id} card pile.
 
 
 __
 ```
-^cards export ?([_a-zA-Z][_a-zA-Z0-9]*|{table}|)$
+^cards? export ([_a-zA-Z][_a-zA-Z0-9]*)$
 ```
 __
 ```js
-if ($1.match(isTable)) { $1 = ""; }
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
-	return "Cards not exported.  The" + pile_toString($1) + " card-pile was not found.\n\n";
+	return "Card-pile not exported.  The __" +
+		$1 + "__ card-pile was not found.\n\n";
 }
 let result = JSON.stringify(pile);
-
-// minify
-result = result
-	.replaceAll(",\"isFaceDown\":false", "")
-	.replaceAll(",\"rotation\":0", "")
-	.replaceAll(",\"allowRotated\":false", "")
-	.replaceAll(",\"allowDuplicate\":false", "")
-return "Card-pile" + pile_toString($1) + " export:\n" + result + "\n\n";
+return "Card-pile __" + $1 + "__ export:\n" + result + "\n\n";
 ```
 __
-cards export {pile id: name text, default: table} - Expands to a data string containing all date for the {pile id} card-pile.
+cards export {pile id: name text} - Expands to a data string containing all date for the {pile id} card-pile.
