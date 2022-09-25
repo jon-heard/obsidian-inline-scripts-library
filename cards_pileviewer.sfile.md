@@ -223,7 +223,6 @@ if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
 			const cards =
 				_inlineScripts.state.sessionState.cards.piles[pileName].cards;
 			let newCards = [];
-//debugger;
 			for (let i = this.cardDisplay.childNodes.length - 1; i >= 0; i--)
 			{
 				newCards.push(cards[this.cardDisplay.childNodes[i].dataset.id]);

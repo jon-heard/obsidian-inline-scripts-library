@@ -44,7 +44,7 @@ function getAbsolutePath(path)
 	if (!path) { return ""; }
 	return app.vault.getResourcePath(path);
 }
-function createCardUi(card, id, scale, includeDataSrc)
+function createCardUi(isFaceUp, card, id, scale, includeDataSrc)
 {
 	scale ||= 1.0;
 	const front = getAbsolutePath(card.path);
@@ -53,7 +53,7 @@ function createCardUi(card, id, scale, includeDataSrc)
 
 	const result = document.createElement("img");
 	result.classList.add("cardUi");
-	result.src = card.isFaceDown ? back : front;
+	result.src = isFaceUp ? front : back;
 	const size = _inlineScripts.state.sessionState.cards.size;
 	result.style.width = (size * scale) + "px";
 	result.style.height = (size * card.aspect * scale) + "px";
@@ -65,7 +65,7 @@ function createCardUi(card, id, scale, includeDataSrc)
 	{
 		result.dataset.src = front;
 	}
-	if (!card.isFaceDown)
+	if (isFaceUp)
 	{
 		switch (card.rotation)
 		{
@@ -76,19 +76,19 @@ function createCardUi(card, id, scale, includeDataSrc)
 	}
 	return result;
 }
-function createCardUi_inNote(card)
+function createCardUi_inNote(isFaceUp, card)
 {
 	let path = card.path;
-	if (card.isFaceDown)
+	if (!isFaceUp)
 	{
 		path = getBackImage();
 	}
 	if (path.startsWith("data:image"))
 	{
-		return createCardUi(card).outerHTML;
+		return createCardUi(isFaceUp, card).outerHTML;
 	}
 	const alt =
-		(!card.rotation || card.isFaceDown) ? "" : "rotated" + card.rotation;
+		(!card.rotation || !isFaceUp) ? "" : "rotated" + card.rotation;
 	const width = _inlineScripts.state.sessionState.cards.size;
 	const height = Math.trunc(width * card.aspect);
 	return "![[" + path + "|" + alt + "|" + width + "x" + height + "]]";
@@ -134,23 +134,25 @@ confirmObjectPath("_inlineScripts.cards.defaultBackImage",
 `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABkCAYAAAAlg3YKAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAEvElEQVR42u3dP2wTZxjH8e9diD2UYFdWKwuQXGpTEjxYSFkSIcuDJYTqZrmweSrZzixlZ2BPh+J3M52ytMILtVQhPFiQhCUS8uCiCKzUA8hSdaoP6OBE5Dr4znFCYiiY5o+f33TRvXlP/uTx+zqPLL0aPWk2nS9HR7kGZICzwGcMR/4BngIln4+fxsa0v7wbmndhWc4s8DMwxnDnJfB9KKQVu0CW5VwBfgG01dVNlpY2ef58k42N4RAZHYXTp3WmpnTGx3UAB7gSCmlFzX1bPQPG7t9/w8OHb4a6fJLJEdLpEYCXPh8x3V1zxlZXN4ceB+DBgzesrm4CnFhf55oOzAAsLW0i6WR5uWvxnQ58DfDihQB56bGI6cBxgPV1gfHSbncvj+vC0T8CJEACJEACJEACJEACJBEgARIgARIgARIgAZIIkAAJkAAJkAAJkABJBOjAAtnVFEr5USpF1d5lQMNEVe7tO9CxwU11j4qaodb9eQ7TVHuODiQqmIk61eLV3QdEFGaEowR0iZTZ5kI1RZnbGInokXiLHfvkT2iYqDWIWwVqzSnimdukIv3w6lSL51lsAvG7mKlL75zHbpiUSwWaAOE5MoYicqjWIGuCC0YbMzuLtfI7dt/BURJGGzMz937z2HnKKxNMZtuYZptsDFaq9UNUQQChswQAAmcJ8XSw87Se0GwWKC1c3xoXnwGihwioT7UEQ49Ya0HnlX9AghOEw/OkjdwHT7EPu9h51GL/Xay7WV2YZ2XBj2IK06yAnae4cL2znlBA1SB88Q+M4F7bYY70pElZ+d3fcccPaJPQLMtxAG7ckC8p9ubmTZ98kpZ/NQRIgARIgARIgARIIkACNBxAB6QPPVCgRjVFUflRyk+xkqdhf8RkEbXVQXxn6lSLJo1PDHTsY//ipWezZM0KAcC28/zZqhMJRI/MW2wg/aCWXYdAlEAgR8LtWm3rEzNHxnT7xNt6y7h959h79KEhHJ8nncoRaJioUqEzRhXA7SVVi/7OHOyYZ9+AIooseR6Xr2I1H9EMz5M1cgTsPOUSTGbbRHZr89XgTLZNqudewmiTcEG2xYIz6c5Yu5qiXL2MkVCY5g9Uiz8S7GnQL4bc5x+kCgpEcqQiuU7VeC8g+IRmfGZ3HIB+93YmtDU2EIzTXHvGXv3mDHcoF+8AcWJp1a3m/VukG3kqjXp30Wz97V4GJwjX7n7cgt2ttq157FaN8OexbaXY6nlGJFXBMCoYk7D4+N4BqKDIZc5UrqJKjwB3jUhEgRzpjEl5wU9p5xq0W/r1oeOwVvZT6q5BXvVE+SoGCwt+Ft01SCm/e2+Ki1k1EKCD3ZNumKi1mYEstv810pP+P7f5T5YD8AUGqSABEiABEiABEiABEiCJAAmQAAmQAAmQAAmQRIAESIAESIAESIAESCJAAjQAoNcAPp9gePH7u5cvdaAOcPKkFJMXz8JxqOvAbwDT0wLkxbPQNEr6xga3gFfj4zrJ5MjQ4ySTI5w7p0Pn8KNb3vFZs8CvuMdnLS93js8altNafD44dUpnelr3cLaOz/IGWZZj0DmA7cSQF9HbB7B5efXK+WJ9nWuaxreOwze45/4MQV47Dk81jZLPx63eI/z+BcWKtwx4PjyWAAAAAElFTkSuQmCC`);
 confirmObjectPath("_inlineScripts.state.sessionState.cards.backImage", null);
 
-confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
+//confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
+_inlineScripts.cards.cardPickerPopup =
 {
 	onOpen: async (data, parent, firstButton, SettingType) =>
 	{
-		const d = document.createElement("div");
-		parent.append(d);
-		data.ui = d;
+		data.ui = parent;
+		parent.style["overflow-y"] = "scroll";
+		parent.parentNode.style.display = "flex";
+		parent.parentNode.style["flex-direction"] = "column";
+		parent.nextElementSibling.style["margin-top"] = ".5em"
 		const onSelected = function()
 		{
 			this.classList.toggle("iscript_cardSelected");
 		};
-		const cards =
-			_inlineScripts.state.sessionState.cards.piles[data.pileId].cards;
-		for (let i = cards.length - 1; i >= 0; i--)
+		const pile = _inlineScripts.state.sessionState.cards.piles[data.pileId];
+		for (let i = pile.cards.length - 1; i >= 0; i--)
 		{
-			const img = createCardUi(cards[i], i, 1.0, true)
-			d.append(img);
+			const img = createCardUi(pile.isFaceUp, pile.cards[i], i, 1.0, true)
+			parent.append(img);
 			img.classList.add("iscript_cardChoice");
 			img.addEventListener("pointerdown", onSelected);
 		}
@@ -170,7 +172,7 @@ confirmObjectPath("_inlineScripts.cards.cardPickerPopup",
 		}
 		resolveFnc(result);
 	}
-});
+}//);
 ```
 __
 Sets up this shortcut-file
@@ -339,7 +341,6 @@ let result = "";
 // Recall cards (if user said to)
 if ($2 === "y")
 {
-debugger;
 	const cardCount = pile.cards.length;
 	let recallCount = 0;
 	for (let i = pile.cards.length - 1; i >= 0; i--)
@@ -524,7 +525,6 @@ async function getImageSize_fast(file)
 
 async function getImageSize_reliable(file)
 {
-	console.log("Image parsing: slow and reliable - \"" + file.name + "\".");
 	let result = null;
 	try
 	{
@@ -551,7 +551,6 @@ async function getImageSize_reliable(file)
 	return result;
 }
 
-if (window.brk) { debugger; }
 let createCount = 0;
 for (let i = folder.children.length - 1; i >= 0; i--)
 {
@@ -586,6 +585,7 @@ return "__" +
 ```
 __
 cards fromfolder {pile id: name text} {folder: path text} - Creates cards based on images in {folder} and puts them into the {pile id} card-pile.
+	- Note that this does not randomize the new cards.  Call the "cards shuffle" shortcut to do that.
 ***
 
 
@@ -624,7 +624,6 @@ if (!$2 && !_inlineScripts.state.sessionState.cards.priorPeekPile)
 {
 	return "Cards not peeked.  The card-pile to peek into is not defined.\n\n";
 }
-debugger;
 if (!$3 && !_inlineScripts.state.sessionState.cards.priorPeekIsBottom)
 {
 	$3 = "n";
@@ -646,7 +645,7 @@ let cardView = "\n";
 for (let i = 0; i < count; i++)
 {
 	const index = ($3 ? i : (pile.cards.length - i - 1));
-	cardView += createCardUi_inNote(pile.cards[index]);
+	cardView += createCardUi_inNote(true, pile.cards[index]);
 }
 return "Cards peeked from the " +
 	($3 ? "bottom" : "top") + " of the __" + $2 + "__ card-pile:" + cardView +
@@ -699,16 +698,17 @@ for (let i = 0; i < count; i++)
 	const drawnCard = srcPile.cards.pop();
 	transfer.push(drawnCard);
 	drawnCount++;
-	cardView += createCardUi_inNote(drawnCard);
+	cardView += createCardUi_inNote(dstPile.isFaceUp, drawnCard);
 }
 transfer.reverse();
 dstPile.cards.push(...transfer);
-cardView = dstPile.showMoved ? cardView : "";
+cardView = (dstPile.showMoved && dstPile.isFaceUp) ? cardView : "";
+const faceDownMsg = dstPile.isFaceUp ? "" : " _(face-down)_"
 onPileChanged($2);
 onPileChanged($3);
 return "__" +
-	drawnCount + "__ cards drawn from the __" + $3 + "__ card-pile to the __" +
-	$2 + "__ card-pile." + cardView + "\n\n";
+	drawnCount + "__ card(s) drawn from the __" + $3 + "__ card-pile to the __" +
+	$2 + "__ card-pile" + faceDownMsg + "." + cardView + "\n\n";
 ```
 __
 cards draw {count: >0 OR "all", default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
@@ -759,16 +759,17 @@ for (let i = 0; i < picks.length; i++)
 	if (!srcPile.cards.length) { break; }
 	const drawnCard = srcPile.cards.splice(picks[i], 1)[0];
 	transfer.push(drawnCard);
-	cardView += createCardUi_inNote(drawnCard);
+	cardView += createCardUi_inNote(dstPile.isFaceUp, drawnCard);
 }
 transfer.reverse();
 dstPile.cards.push(...transfer);
-cardView = dstPile.showMoved ? cardView : "";
+cardView = (dstPile.showMoved && dstPile.isFaceUp) ? cardView : "";
+const faceDownMsg = dstPile.isFaceUp ? "" : " _(face-down)_"
 onPileChanged($1);
 onPileChanged($2);
 return "__" +
-	picks.length + "__ cards picked from the __" + $2 + "__ card-pile to the __" +
-	$1 + "__ card-pile." + cardView + "\n\n";
+	picks.length + "__ card(s) picked from the __" + $2 + "__ card-pile to the __" +
+	$1 + "__ card-pile" + faceDownMsg + "." + cardView + "\n\n";
 ```
 __
 cards pick {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Has the user choose cards from the {source pile id} card-pile.  Moves the chosen cards into the {destination pile id} card-pile.
