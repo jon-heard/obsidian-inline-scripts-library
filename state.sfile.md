@@ -22,122 +22,137 @@ __
 ```
 __
 ```js
-const AUTOSAVE_INTERVAL_SECS = 10;
+const STATE_FILE_NAME = "Ξ_state.data.md";
+
+async function saveState()
+{
+	const stateString = JSON.stringify(_inlineScripts.state.sessionState);
+	if (stateString === _inlineScripts.state.stateFile.priorString) { return; }
+	await app.vault.adapter.write(
+		_inlineScripts.state.stateFile.path, stateString);
+	_inlineScripts.state.stateFile.priorString = stateString;
+}
+
+async function removeFile(filename)
+{
+	if (await app.vault.adapter.exists(filename))
+	{
+		await app.vault.adapter.remove(filename);
+	}
+}
 
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.listeners.onReset");
 confirmObjectPath("_inlineScripts.state.listeners.onLoad");
 
-// Restore state (if-block makes sure this only happens once)
-if (!_inlineScripts.state.sessionState)
+if (_inlineScripts.state.inSetup) { return; }
+_inlineScripts.state.inSetup = true;
+
+// Determine root folder for state file (every time, in case sfiles are moved)
+confirmObjectPath("_inlineScripts.state.stateFile");
+for (const sfile of _inlineScripts.inlineScripts.plugin.settings.shortcutFiles)
 {
-	_inlineScripts.state.sessionState = {};
-	confirmObjectPath(
-		"_inlineScripts.inlineScripts.listeners.onShortcutsLoaded.state",
-		async () =>
+	if (sfile.address.endsWith("state.sfile.md"))
+	{
+		const path = sfile.address.slice(0, -14) + STATE_FILE_NAME;
+		if (_inlineScripts.state.stateFile.path != path)
 		{
-			// Remove this event listener (to only trigger once)
-			delete _inlineScripts.inlineScripts.listeners.onShortcutsLoaded.state;
-
-			// Figure out which state file to use (if either)
-			const stateDataFile_onQuit =
-				".obsidian/plugins/obsidian-text-expander-js/" +
-				"state_onquit.data.txt";
-			const stateDataFile_auto =
-				".obsidian/plugins/obsidian-text-expander-js/" +
-				"state_auto.data.txt";
-			const stateDataFile_onQuit_exists =
-				await app.vault.adapter.exists(stateDataFile_onQuit);
-			const stateDataFile_auto_exists =
-				await app.vault.adapter.exists(stateDataFile_auto);
-			let stateDataFile = null;
-			let otherStateDataFile = null;
-			if (!stateDataFile_onQuit_exists && stateDataFile_auto_exists)
-			{
-				stateDataFile = stateDataFile_auto;
-			}
-			else if (stateDataFile_onQuit_exists && !stateDataFile_auto_exists)
-			{
-				stateDataFile = stateDataFile_onQuit;
-			}
-			else if (stateDataFile_onQuit_exists && stateDataFile_auto_exists)
-			{
-				const stateDataFile_onQuit_mtime =
-					(await app.vault.adapter.stat(stateDataFile_onQuit)).mtime;
-				const stateDataFile_auto_mtime =
-					(await app.vault.adapter.stat(stateDataFile_auto)).mtime;
-				if (stateDataFile_onQuit_mtime > stateDataFile_auto_mtime)
-				{
-					stateDataFile = stateDataFile_onQuit;
-					otherStateDataFile = stateDataFile_auto;
-				}
-				else
-				{
-					stateDataFile = stateDataFile_auto;
-					otherStateDataFile = stateDataFile_onQuit;
-				}
-			}
-
-			// Load the appropriate state file
-			if (stateDataFile)
-			{
-				try
-				{
-					let fileName = stateDataFile.match(/([^/]+)$/)[1];
-					console.log(
-						"Inline Scripts - state.sfile\n\tLoading state \"" +
-						fileName + "\"");
-					let data = await app.vault.adapter.read(stateDataFile);
-					if (!data && otherStateDataFile)
-					{
-						fileName = otherStateDataFile.match(/([^/]+)$/)[1];
-						console.log(
-							"Inline Scripts - state.sfile\n\tLoaded state " +
-							"invalid.\n\tLoading state \"" + fileName + "\"");
-						data = await app.vault.adapter.read(otherStateDataFile);
-					}
-					if (data)
-					{
-						expand("state set " + data);
-					}
-					else
-					{
-						throw null;
-					}
-				}
-				catch(e)
-				{
-					console.log(
-						"Inline Scripts - state.sfile\n\tLoaded state invalid.\n" +
-						"\tUnable to load a valid state.");
-				}
-			}
-		});
+			_inlineScripts.state.stateFile.path = path;
+			delete _inlineScripts.state.sessionState;
+		}
+		break;
+	}
 }
 
-confirmObjectPath(
-	"_inlineScripts.state.autosave.intervalFnc",
-	setInterval(async () =>
+// Handle old state file locations (if state isn't already setup)
+if (!_inlineScripts.state.sessionState)
+{
+	const oldStateFilePossibilities =
+	[
+		".obsidian/plugins/obsidian-text-expander-js/state.data.txt",
+		".obsidian/plugins/obsidian-text-expander-js/state_onquit.data.txt",
+		".obsidian/plugins/obsidian-text-expander-js/state_auto.data.txt"
+	];
+	let oldStateFiles = [];
+	for (let i = oldStateFilePossibilities.length - 1; i >= 0; i--)
 	{
-		const stateData = JSON.stringify(_inlineScripts.state.sessionState);
-		if (stateData === _inlineScripts.state.autosave.priorStateData)
+		if (await app.vault.adapter.exists(oldStateFilePossibilities[i]))
 		{
-			return;
+			oldStateFiles.push(oldStateFilePossibilities[i]);
 		}
-		const stateDataFile =
-			".obsidian/plugins/obsidian-text-expander-js/state_auto.data.txt";
-		try
+	}
+	if (oldStateFiles.length > 1)
+	{
+		let times = [];
+		for (let i = 0; i < oldStateFiles.length; i++)
 		{
-			await app.vault.adapter.write(stateDataFile, stateData);
-			_inlineScripts.state.autosave.priorStateData = stateData;
+			times.push((await app.vault.adapter.stat(oldStateFiles[i])).mtime);
 		}
-		catch(e)
+		let latest = 0;
+		let latestTime = times[0];
+		for (let i = 1; i < oldStateFiles.length; i++)
 		{
-			console.error("Auto-save failed", e);
+			if (times[i] > latestTime)
+			{
+				latest = i;
+				latestTime = times[i];
+			}
 		}
-	}, 1000/*ms-sec*/ * AUTOSAVE_INTERVAL_SECS));
+		oldStateFiles = [ oldStateFiles[latest] ];
+	}
+	if (oldStateFiles.length == 1)
+	{
+		// Remove current state file (if it exists)
+		await removeFile(_inlineScripts.state.stateFile.path);
+		// Copy the latest old state file into the current state file
+		await app.vault.adapter.copy(
+			oldStateFiles[0],
+			_inlineScripts.state.stateFile.path);
+		// Delete oldStateFilePossibilities
+		for (const oldStateFilePossibility of oldStateFilePossibilities)
+		{
+			await removeFile(oldStateFilePossibility);
+		}
+	}
+}
 
+// Load the state file if state is not defined (initial load, or sfile moved)
+if (!_inlineScripts.state.sessionState)
+{
+	try
+	{
+		const stateString =
+			await app.vault.adapter.read(_inlineScripts.state.stateFile.path);
+		const state = JSON.parse(stateString);
+		_inlineScripts.state.sessionState = state;
+		_inlineScripts.state.stateFile.priorString = stateString;
+	}
+	catch (e)
+	{
+		if (e.code !== "ENOENT")
+		{
+			console.error(
+				"state.sfile\n\tUnable to load from state file:\n\t" +
+				_inlineScripts.state.stateFile.path + "\n\t", e);
+		}
+		_inlineScripts.state.sessionState = {};
+		await saveState();
+	}
+}
+
+// React to every user-triggered shortcut expansion by re-saving the state
+confirmObjectPath(
+	"_inlineScripts.inlineScripts.listeners.onExpansion.state",
+	async (expansionInfo) =>
+	{
+		if (expansionInfo.isUserTriggered)
+		{
+			await saveState();
+		}
+	});
+
+_inlineScripts.state.inSetup = false;
 ```
 __
 Sets up this shortcut-file
@@ -149,14 +164,7 @@ __
 ```
 __
 ```js
-// Save state
-const stateDataFile =
-	".obsidian/plugins/obsidian-text-expander-js/state_onquit.data.txt";
-const stateData = JSON.stringify(_inlineScripts.state.sessionState);
-await app.vault.adapter.write(stateDataFile, stateData);
-
 // Cleanup vars
-clearInterval(_inlineScripts.state.autosave.intervalFnc);
 delete _inlineScripts.state;
 ```
 __
@@ -232,11 +240,12 @@ catch (e)
 {
 	return "State not loaded. Invalid state:\n" + $1 + "\n\n";
 }
+
 // Notify listeners of state.onLoad event
 _inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
 	"state.onLoad", _inlineScripts.state.listeners.onLoad);
 
-return "State loaded.\n\n";
+return "State set.\n\n";
 ```
 __
 state set {state: text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.
