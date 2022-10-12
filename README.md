@@ -23,6 +23,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [une.sfile](#unesfile)
 - [adventurecrafter.sfile](#adventurecraftersfile)
 - [cards.sfile](#cardssfile)
+- [tablefiles.sfile](#tablefilessfile)
 - [rpgtools.sfile](#rpgtoolssfile)
 - [plugin_diceroller.sfile](#plugin_dicerollersfile)
 - [files.sfile](#filessfile)
@@ -276,6 +277,16 @@ This shortcut-file has a tutorial video available:
 ***
 - __cards import {pile id: name text, default: table} {data: text}__ - Makes a card-pile from the data string {data} and remembers it as {pile id}.
 - __cards export {pile id: name text, default: table}__ - Expands to a data string containing all date for the {pile id} card-pile.
+
+***
+
+### tablefiles.sfile
+Shortcut file to load tables from files and roll them.
+
+- __tbl reset__ - Clears registered table paths and table path settings.
+- __tbl add {path: path string}__ - Adds {path} to the list of registered table paths.  {path} is either an individual file, or a folder filled with table files.
+- __tbl list__ - Get a list of the registered table paths.
+- __tbl roll__ - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.
 
 ***
 

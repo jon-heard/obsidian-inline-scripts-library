@@ -40,7 +40,8 @@ __
 ```
 __
 ```js
-delete _inlineScripts.state?.listeners?.onReset?.lists;
+delete _inlineScripts?.state?.sessionState?.lists;
+delete _inlineScripts?.state?.listeners?.onReset?.lists;
 ```
 __
 Shuts down this shortcut-file
