@@ -18,7 +18,7 @@ confirmObjectPath(
 		expand("tbl reset");
 	});
 confirmObjectPath("_inlineScripts.tablefiles.priorRoll");
-_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 45em; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% }");
+_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { min-width: 45em; width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% }");
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -397,25 +397,10 @@ _inlineScripts.tablefiles.rollPopup =
 			});
 			parent.nextSibling.prepend(cfgBtn);
 
-		////////////////////////
-		// Row 4 of ui (path) //
-		////////////////////////
-		uiRow = [ 0, 1 ];		
-		uiRow[0] = document.createElement("div");
-			uiRow[0].innerText = "Path";
-			uiRow[0].classList.add("iscript_popupLabel");
-		uiRow[1] = document.createElement("input");
-			data.configUi.path = uiRow[1];
-			uiRow[1].type = "text";
-			uiRow[1].setAttr("readonly", true);
-			uiRow[1].style["background-color"] = "var(--background-secondary)";
-		tbl = makeUiRow(uiRow);
-			configUi.append(tbl);
-
 		//////////////////////////////////////
 		// Row 5 of ui (title, description) //
 		//////////////////////////////////////
-		uiRow = [ 0, 1, 2, 3 ];
+		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Title";
 			uiRow[0].classList.add("iscript_popupLabel");
@@ -453,6 +438,16 @@ _inlineScripts.tablefiles.rollPopup =
 				data.current.configuration.description = e.target.value;
 				refreshSelectUi(data);
 			});
+		uiRow[4] = document.createElement("div");
+			uiRow[4].innerText = "Path";
+			uiRow[4].classList.add("iscript_popupLabel");
+			uiRow[4].classList.add("iscript_nextPopupLabel");
+		uiRow[5] = document.createElement("input");
+			data.configUi.path = uiRow[5];
+			uiRow[5].type = "text";
+			uiRow[5].setAttr("readonly", true);
+			uiRow[5].style.width = "12em";
+			uiRow[5].style["background-color"] = "var(--background-secondary)";
 		tbl = makeUiRow(uiRow);
 			tbl.childNodes[0].childNodes[3].style.width = "100%";
 			configUi.append(tbl);
@@ -468,7 +463,6 @@ _inlineScripts.tablefiles.rollPopup =
 			data.configUi.tags = uiRow[1];
 			uiRow[1].type = "text";
 			uiRow[1].setAttr("placeholder", "Space-separated");
-			uiRow[1].style.width = "15em";
 			uiRow[1].addEventListener("change", e =>
 			{
 				if (!data.current.configuration)
@@ -571,7 +565,7 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].type = "text";
 			uiRow[1].setAttr("placeholder", "(.*)");
 			uiRow[1].setAttr("list", "itemFormatOptions");
-			uiRow[1].style.width = "11.5em";
+			uiRow[1].style["min-width"] = "11.5em";
 			uiRow[1].addEventListener("input", e =>
 			{
 				if (e.target.value[0] === " ")
