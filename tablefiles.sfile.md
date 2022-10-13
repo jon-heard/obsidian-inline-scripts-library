@@ -38,28 +38,9 @@ function aPickWeight(a, wIndex, theRoll)
 	}
 	return a.last();
 }
-function getTablePaths()
+function removeHeader(path)
 {
-	let result = [];
-	const paths = _inlineScripts.state.sessionState.tablefiles.paths;
-	for (const path in paths)
-	{
-		const file = app.vault.fileMap[path];
-		if (!file) { continue; }
-		if (!file.children)
-		{
-			result.push(file.path);
-		}
-		else
-		{
-			for (const child of file.children)
-			{
-				if (child.children) { continue; }
-				result.push(child.path);
-			}
-		}
-	}
-	return result;
+	return path.match("^(?:~.*~)?(.*)")[1];
 }
 function makeUiRow(contents)
 {
@@ -81,14 +62,27 @@ function makeUiRow(contents)
 }
 async function getCurrentTableItems(data, offset)
 {
-	offset ||= data.current.configuration?.offset || 0;
-	const file = app.vault.fileMap[data.current.path];
-	if (!file) { return []; }
-	const content = await app.vault.cachedRead(file);
-	return content.split("\n").slice(offset).filter(v => v);
+	if (!data.current.path.startsWith("~files~"))
+	{
+		offset ||= data.current.configuration?.offset || 0;
+		const file = app.vault.fileMap[data.current.path];
+		if (!file) { return []; }
+		const content = await app.vault.cachedRead(file);
+		return content.split("\n").slice(offset).filter(v => v);
+	}
+	else
+	{
+		const file = app.vault.fileMap[removeHeader(data.current.path)];
+		if (!file || !file.children)
+		{
+			return [];
+		}
+		return file.children.map(v => v.path);
+	}
 }
 async function updateTableConfig(data)
 {
+	const isFileTable = data.selectUi.value.startsWith("~files~");
 	data.current = {};
 	data.current.path = data.selectUi.value;
 	data.current.configuration =
@@ -100,13 +94,14 @@ async function updateTableConfig(data)
 		data.current.configuration?.description || "";
 	data.configUi.tags.value = data.current.configuration?.tags || "";
 	const tblLines = await getCurrentTableItems(data);
-	data.configUi.startLine.value = tblLines[0];
+	data.configUi.startLine.value = tblLines[0] || "";
 	data.configUi.startLineUp.toggleClass(
-		"iscript_smallButtonDisabled", !(data.current?.configuration?.offset));
+		"iscript_smallButtonDisabled",
+		!(data.current?.configuration?.offset) || isFileTable);
 	data.configUi.startLineDown.toggleClass(
-		"iscript_smallButtonDisabled", tblLines.length <= 1);
+		"iscript_smallButtonDisabled",
+		tblLines.length <= 1 || isFileTable);
 	data.configUi.itemFormat.value = data.current.configuration?.itemFormat || "";
-
 	refreshItemFormatSample(data);
 }
 function refreshSelectUi(data)
@@ -135,15 +130,28 @@ function refreshSelectUi(data)
 		}
 		if (!optionDatum.title)
 		{
-			const p = optionDatum.path;
-			optionDatum.title = p.slice(p.lastIndexOf("/")+1, p.lastIndexOf("."));
+			const p = removeHeader(optionDatum.path);
+			const startIndex = p.lastIndexOf("/")+1;
+			let endIndex = p.lastIndexOf(".");
+			if (endIndex === -1) { endIndex = undefined; }
+			optionDatum.title = p.slice(startIndex, endIndex);
+			if (optionDatum.path.startsWith("~files~"))
+			{
+				optionDatum.title += " (file table)";
+			}
 		}
+
+		// Track max title size
 		titleWidth = Math.max(titleWidth, optionDatum.title.length);
+
+		// Add title and path to filterkeys
 		optionDatum.filterKeys.push(optionDatum.title.toLowerCase());
 		optionDatum.filterKeys.push(optionDatum.path.toLowerCase());
+
 		optionData.push(optionDatum);
 	}
 
+	// Set the ui.  Needs its own loop, since titleWidth needs a completed loop.
 	for (const optionDatum of optionData)
 	{
 		optionDatum.ui.innerHTML =
@@ -158,9 +166,6 @@ function refreshSelectUi(data)
 	});
 
 	// Re-add options with new sort order
-	const oldValue = data.selectUi.value;
-
-	// readd options sorted
 	while (data.selectUi.options.length)
 	{
 		data.selectUi.remove(0);
@@ -257,13 +262,6 @@ _inlineScripts.tablefiles.rollPopup =
 	buttonIds: [ "Roll", "Cancel" ],
 	onOpen: async (data, parent, firstButton, SettingType, resolveFnc) =>
 	{
-		const paths = getTablePaths();
-		if (paths.length === 0)
-		{
-			resolveFnc("No table rolled.  No tables available.\n\n");
-			return true;
-		}
-
 		//////////////////////////
 		// Row 1 of UI (filter) //
 		//////////////////////////
@@ -290,10 +288,34 @@ _inlineScripts.tablefiles.rollPopup =
 		//////////////////////////
 		// Row 2 of UI (select) //
 		//////////////////////////
+		let tablePaths = [];
+		const rawPaths = _inlineScripts.state.sessionState.tablefiles.paths;
+		for (const path in rawPaths)
+		{
+			const file = app.vault.fileMap[removeHeader(path)];
+			if (!file) { continue; }
+			if (!file.children || path.startsWith("~files~"))
+			{
+				tablePaths.push(path);
+			}
+			else
+			{
+				for (const child of file.children)
+				{
+					if (child.children) { continue; }
+					tablePaths.push(child.path);
+				}
+			}
+		}
+		if (tablePaths.length === 0)
+		{
+			resolveFnc("No table rolled.  No tables available.\n\n");
+			return true;
+		}
 		const selectUi = document.createElement("select");
 			data.selectUi = selectUi;
 			// Find longest title
-			for (const path of paths)
+			for (const path of tablePaths)
 			{
 				const label = path;
 				const value = path;
@@ -517,7 +539,7 @@ _inlineScripts.tablefiles.rollPopup =
 				data.current.configuration.offset--;
 				const tblLines =
 					await getCurrentTableItems(data);
-				data.configUi.startLine.value = tblLines[0];
+				data.configUi.startLine.value = tblLines[0] || "";
 				e.target.toggleClass(
 					"iscript_smallButtonDisabled",
 					data.current.configuration.offset === 0);
@@ -549,7 +571,7 @@ _inlineScripts.tablefiles.rollPopup =
 				const tblLines =
 					await getCurrentTableItems(
 					data, data.current.configuration.offset);
-				data.configUi.startLine.value = tblLines[0];
+				data.configUi.startLine.value = tblLines[0] || "";
 				e.target.toggleClass(
 					"iscript_smallButtonDisabled", tblLines.length <= 1);
 				data.configUi.startLineUp.toggleClass(
@@ -633,7 +655,11 @@ _inlineScripts.tablefiles.rollPopup =
 			"<option value='&thinsp;Weighted item 1-5' " +
 				"data-regex='(.*) [0-9]+-([0-9]+)'></option>" +
 			"<option value='&thinsp;1-5 Weighted item' " +
-				"data-regex='[0-9]+-(?<range>[0-9]+) (?<item>.*)'></option>";
+				"data-regex='[0-9]+-(?<range>[0-9]+) (?<item>.*)'></option>" +
+			"<option value='&thinsp;Path - base file name' " +
+				"data-regex='.*?([^/]+)\\.[^.]*$'></option>" +
+			"<option value='&thinsp;Path - full file name' " +
+				"data-regex='.*?([^/]+)$'></option>" +
 		configUi.append(itemFormatOptions);
 
 		updateTableConfig(data);
@@ -660,6 +686,11 @@ _inlineScripts.tablefiles.rollPopup =
 		}
 		catch (e){}
 		let items = await getCurrentTableItems(data);
+		if (!items.length)
+		{
+			resolveFnc("");
+			return;
+		}
 		let hasRange = false;
 		for (let i = 0; i < items.length; i++)
 		{
@@ -774,7 +805,26 @@ return (file.children ? "Folder" : "File") +
 	" __" + $1 + "__ added to table paths.\n\n";
 ```
 __
-tbl add {path: path string} - Adds {path} to the list of registered table paths.  {path} is either an individual file, or a folder filled with table files.
+tbl add {path: path string} - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
+
+
+__
+```
+^tbl addfiletable ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+)$
+```
+__
+```js
+$1 = ($1.match(/\"[^\"]\"/)) ? $1.slice(1, -1) : $1;
+let file = app.vault.fileMap[$1];
+if (!file || !file.children)
+{
+	return "File-table not added.  Folder __" + $1 + "__ not found.\n\n";
+}
+_inlineScripts.state.sessionState.tablefiles.paths["~files~" + $1] = 1;
+return "File-table __" + $1 + "__ added to table paths.\n\n";
+```
+__
+tbl addfiletable {path: path string} - Adds the folder {path} to the list of registered table paths as a file-table.  A file-table is a virtual table where each item is a file in the {path} folder.
 
 
 __
@@ -789,7 +839,14 @@ if (paths.length)
 {
 	for (const path of paths)
 	{
-		result += ". " + path + "\n";
+		if (!path.startsWith("~files~"))
+		{
+			result += ". " + path + "\n";
+		}
+		else
+		{
+			result += ". " + removeHeader(path) + " _(file table)_\n";
+		}
 	}
 }
 else
@@ -810,7 +867,7 @@ __
 ```js
 const result = popups.custom(
 	"Select a table to pick from", _inlineScripts.tablefiles.rollPopup);
-return result || "No table rolled.  User canceled.\n\n";
+return result !== null ? result : "No table rolled.  User canceled.\n\n";
 ```
 __
 tbl roll - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.
