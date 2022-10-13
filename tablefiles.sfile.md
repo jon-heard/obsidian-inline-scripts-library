@@ -10,7 +10,7 @@ __
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.tablefiles.paths");
-confirmObjectPath("_inlineScripts.state.sessionState.tablefiles.settings");
+confirmObjectPath("_inlineScripts.state.sessionState.tablefiles.configuration");
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.tablefiles",
 	function()
@@ -18,7 +18,7 @@ confirmObjectPath(
 		expand("tbl reset");
 	});
 confirmObjectPath("_inlineScripts.tablefiles.priorRoll");
-_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; max-width: 39em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset }");
+_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 45em; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% }");
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -71,13 +71,17 @@ function makeUiRow(contents)
 	{
 		const td = document.createElement("td");
 		td.append(content);
+		if (content.tagName === "DIV")
+		{
+			td.classList.add("iscript_minWidth");
+		}
 		tr.append(td);
 	}
 	return tbl;
 }
 async function getCurrentTableItems(data, offset)
 {
-	offset ||= data.current.settings.offset || 0;
+	offset ||= data.current.configuration?.offset || 0;
 	const file = app.vault.fileMap[data.current.path];
 	if (!file) { return []; }
 	const content = await app.vault.cachedRead(file);
@@ -87,18 +91,23 @@ async function updateTableConfig(data)
 {
 	data.current = {};
 	data.current.path = data.selectUi.value;
-	data.current.settings =
-		_inlineScripts.state.sessionState.tablefiles.settings[data.current.path];
+	data.current.configuration =
+		_inlineScripts.state.sessionState.tablefiles.
+		configuration[data.current.path];
 	data.configUi.path.value = data.current.path;
-	data.configUi.title.value = data.current.settings?.title || "";
-	data.configUi.description.value = data.current.settings?.description || "";
-	data.configUi.tags.value = data.current.settings?.tags || "";
+	data.configUi.title.value = data.current.configuration?.title || "";
+	data.configUi.description.value =
+		data.current.configuration?.description || "";
+	data.configUi.tags.value = data.current.configuration?.tags || "";
 	const tblLines = await getCurrentTableItems(data);
 	data.configUi.startLine.value = tblLines[0];
 	data.configUi.startLineUp.toggleClass(
-		"iscript_smallButtonDisabled", !(data.current?.settings?.offset));
+		"iscript_smallButtonDisabled", !(data.current?.configuration?.offset));
 	data.configUi.startLineDown.toggleClass(
 		"iscript_smallButtonDisabled", tblLines.length <= 1);
+	data.configUi.itemFormat.value = data.current.configuration?.itemFormat || "";
+
+	refreshItemFormatSample(data);
 }
 function refreshSelectUi(data)
 {
@@ -115,7 +124,7 @@ function refreshSelectUi(data)
 		};
 		const config =
 			_inlineScripts.state.sessionState.
-			tablefiles.settings[optionDatum.path];
+			tablefiles.configuration[optionDatum.path];
 		if (config)
 		{
 			optionDatum.title = config.title || "";
@@ -226,6 +235,19 @@ function updateFilter(data)
 		}
 	}
 }
+function refreshItemFormatSample(data)
+{
+	let match;
+	try
+	{
+		match =
+			data.configUi.startLine.value.match(
+			new RegExp(data.configUi.itemFormat.value || "(.*)"));
+	}
+	catch(e){}
+	data.configUi.sampleItem.value = match?.groups?.item || match?.[1] || "";
+	data.configUi.sampleRange.value = match?.groups?.range || match?.[2] || "";
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -242,9 +264,9 @@ _inlineScripts.tablefiles.rollPopup =
 			return true;
 		}
 
-		/////////////////
-		// Row 1 of UI //
-		/////////////////
+		//////////////////////////
+		// Row 1 of UI (filter) //
+		//////////////////////////
 		let uiRow = [ 0, 1 ];
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Filter";
@@ -257,18 +279,17 @@ _inlineScripts.tablefiles.rollPopup =
 			{
 				if (e.key === "Enter") { firstButton.click(); }
 			});
-			uiRow[1].addEventListener("keyup", e =>
+			uiRow[1].addEventListener("input", e =>
 			{
 				updateFilter(data);
 			});
 		let tbl = makeUiRow(uiRow);
 			tbl.style["margin-bottom"] = 0;
-			tbl.childNodes[0].childNodes[0].style.width = "0%";
 			parent.append(tbl);
 
-		/////////////////
-		// Row 2 of UI //
-		/////////////////
+		//////////////////////////
+		// Row 2 of UI (select) //
+		//////////////////////////
 		const selectUi = document.createElement("select");
 			data.selectUi = selectUi;
 			// Find longest title
@@ -295,9 +316,9 @@ _inlineScripts.tablefiles.rollPopup =
 			refreshSelectUi(data);
 			parent.append(selectUi);
 
-		/////////////////
-		// Row 3 of ui //
-		/////////////////
+		/////////////////////////////////////////
+		// Row 3 of ui (count, format, unique) //
+		/////////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Pick count";
@@ -318,37 +339,38 @@ _inlineScripts.tablefiles.rollPopup =
 				}
 			});
 		uiRow[2] = document.createElement("div");
-			uiRow[2].innerText = "Pick format";
+			uiRow[2].innerText = "Unique picks";
 			uiRow[2].classList.add("iscript_popupLabel");
 			uiRow[2].classList.add("iscript_nextPopupLabel");
-		uiRow[3] = document.createElement("select");
-			data.formatUi = uiRow[3];
-			uiRow[3].classList.add("dropdown");
-			uiRow[3].options[0] = new Option("Comma separated");
-			uiRow[3].options[1] = new Option("Bulleted list");
-			uiRow[3].options[2] = new Option("Perioded list");
-			uiRow[3].value =
-				_inlineScripts.tablefiles.priorRoll.format || "Comma separated";
-			uiRow[3].addEventListener("keypress", e =>
-			{
-				if (e.key === "Enter") { firstButton.click(); }
-			});
-		uiRow[4] = document.createElement("div");
-			uiRow[4].innerText = "Unique picks";
-			uiRow[4].classList.add("iscript_popupLabel");
-			uiRow[4].classList.add("iscript_nextPopupLabel");
-		uiRow[5] = document.createElement("div");
-			data.uniqueUi = uiRow[5];
-			uiRow[5].classList.add("checkbox-container");
-			uiRow[5].toggleClass(
+		uiRow[3] = document.createElement("div");
+			data.uniqueUi = uiRow[3];
+			uiRow[3].classList.add("checkbox-container");
+			uiRow[3].toggleClass(
 				"is-enabled", _inlineScripts.tablefiles.priorRoll.unique);
-			uiRow[5].addEventListener("click", e =>
+			uiRow[3].addEventListener("click", e =>
 			{
 				e.target.toggleClass(
 					"is-enabled",
 					!e.target.classList.contains("is-enabled"));
 			});
+		uiRow[4] = document.createElement("div");
+			uiRow[4].innerText = "Pick format";
+			uiRow[4].classList.add("iscript_popupLabel");
+			uiRow[4].classList.add("iscript_nextPopupLabel");
+		uiRow[5] = document.createElement("select");
+			data.formatUi = uiRow[5];
+			uiRow[5].classList.add("dropdown");
+			uiRow[5].options[0] = new Option("Comma separated");
+			uiRow[5].options[1] = new Option("Bulleted list");
+			uiRow[5].options[2] = new Option("Perioded list");
+			uiRow[5].value =
+				_inlineScripts.tablefiles.priorRoll.format || "Comma separated";
+			uiRow[5].addEventListener("keypress", e =>
+			{
+				if (e.key === "Enter") { firstButton.click(); }
+			});
 		tbl = makeUiRow(uiRow);
+			tbl.childNodes[0].childNodes[1].style.width = "0%";
 			parent.append(tbl);
 
 		/////////////////
@@ -375,9 +397,9 @@ _inlineScripts.tablefiles.rollPopup =
 			});
 			parent.nextSibling.prepend(cfgBtn);
 
-		//////////////////////////
-		// Row 4 of ui (config) //
-		//////////////////////////
+		////////////////////////
+		// Row 4 of ui (path) //
+		////////////////////////
 		uiRow = [ 0, 1 ];		
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Path";
@@ -388,12 +410,11 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].setAttr("readonly", true);
 			uiRow[1].style["background-color"] = "var(--background-secondary)";
 		tbl = makeUiRow(uiRow);
-			tbl.childNodes[0].childNodes[0].style.width = "0%";
 			configUi.append(tbl);
 
-		//////////////////////////
-		// Row 5 of ui (config) //
-		//////////////////////////
+		//////////////////////////////////////
+		// Row 5 of ui (title, description) //
+		//////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3 ];
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Title";
@@ -405,13 +426,13 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].style.width = "7em";
 			uiRow[1].addEventListener("change", e =>
 			{
-				if (!data.current.settings)
+				if (!data.current.configuration)
 				{
-					data.current.settings =
+					data.current.configuration =
 						_inlineScripts.state.sessionState.tablefiles.
-						settings[data.current.path] = {};
+						configuration[data.current.path] = {};
 				}
-				data.current.settings.title = e.target.value;
+				data.current.configuration.title = e.target.value;
 				refreshSelectUi(data);
 			});
 		uiRow[2] = document.createElement("div");
@@ -423,22 +444,22 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[3].type = "text";
 			uiRow[3].addEventListener("change", e =>
 			{
-				if (!data.current.settings)
+				if (!data.current.configuration)
 				{
-					data.current.settings =
+					data.current.configuration =
 						_inlineScripts.state.sessionState.tablefiles.
-						settings[data.current.path] = {};
+						configuration[data.current.path] = {};
 				}
-				data.current.settings.description = e.target.value;
+				data.current.configuration.description = e.target.value;
 				refreshSelectUi(data);
 			});
 		tbl = makeUiRow(uiRow);
 			tbl.childNodes[0].childNodes[3].style.width = "100%";
 			configUi.append(tbl);
 
-		//////////////////////////
-		// Row 6 of ui (config) //
-		//////////////////////////
+		////////////////////////////////////
+		// Row 6 of ui (tags, start-line) //
+		////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Filter-tags";
@@ -447,16 +468,16 @@ _inlineScripts.tablefiles.rollPopup =
 			data.configUi.tags = uiRow[1];
 			uiRow[1].type = "text";
 			uiRow[1].setAttr("placeholder", "Space-separated");
-			uiRow[1].style.width = "10em";
+			uiRow[1].style.width = "15em";
 			uiRow[1].addEventListener("change", e =>
 			{
-				if (!data.current.settings)
+				if (!data.current.configuration)
 				{
-					data.current.settings =
+					data.current.configuration =
 						_inlineScripts.state.sessionState.tablefiles.
-						settings[data.current.path] = {};
+						configuration[data.current.path] = {};
 				}
-				data.current.settings.tags = e.target.value;
+				data.current.configuration.tags = e.target.value;
 				refreshSelectUi(data);
 				if (data.filterUi.value)
 				{
@@ -483,25 +504,26 @@ _inlineScripts.tablefiles.rollPopup =
 				{
 					return;
 				}
-				if (!data.current.settings)
+				if (!data.current.configuration)
 				{
-					data.current.settings =
+					data.current.configuration =
 						 _inlineScripts.state.sessionState.tablefiles.
-						 settings[data.current.path] = {};
+						 configuration[data.current.path] = {};
 				}
-				if (!data.current.settings.offset)
+				if (!data.current.configuration.offset)
 				{
-					data.current.settings.offset = 0;
+					data.current.configuration.offset = 0;
 				}
-				data.current.settings.offset--;
+				data.current.configuration.offset--;
 				const tblLines =
 					await getCurrentTableItems(data);
 				data.configUi.startLine.value = tblLines[0];
 				e.target.toggleClass(
 					"iscript_smallButtonDisabled",
-					data.current.settings.offset === 0);
+					data.current.configuration.offset === 0);
 				data.configUi.startLineDown.toggleClass(
 					"iscript_smallButtonDisabled", false);
+				refreshItemFormatSample(data);
 			});
 		uiRow[5] = document.createElement("button");
 			data.configUi.startLineDown = uiRow[5];
@@ -513,27 +535,103 @@ _inlineScripts.tablefiles.rollPopup =
 				{
 					return;
 				}
-				if (!data.current.settings)
+				if (!data.current.configuration)
 				{
-					data.current.settings =
+					data.current.configuration =
 						_inlineScripts.state.sessionState.tablefiles.
-						settings[data.current.path] = {};
+						configuration[data.current.path] = {};
 				}
-				if (!data.current.settings.offset)
+				if (!data.current.configuration.offset)
 				{
-					data.current.settings.offset = 0;
+					data.current.configuration.offset = 0;
 				}
-				data.current.settings.offset++;
+				data.current.configuration.offset++;
 				const tblLines =
-					await getCurrentTableItems(data, data.current.settings.offset);
+					await getCurrentTableItems(
+					data, data.current.configuration.offset);
 				data.configUi.startLine.value = tblLines[0];
 				e.target.toggleClass(
 					"iscript_smallButtonDisabled", tblLines.length <= 1);
 				data.configUi.startLineUp.toggleClass(
 					"iscript_smallButtonDisabled", false);
+				refreshItemFormatSample(data);
 			});
 		tbl = makeUiRow(uiRow);
 			configUi.append(tbl);
+
+		////////////////////////////////////////
+		// Row 7 of ui (item format, samples) //
+		////////////////////////////////////////
+		uiRow = [ 0, 1, 2, 3, 4, 5 ];
+		uiRow[0] = document.createElement("div");
+			uiRow[0].innerText = "Item format";
+			uiRow[0].classList.add("iscript_popupLabel");
+		uiRow[1] = document.createElement("input");
+			data.configUi.itemFormat = uiRow[1];
+			uiRow[1].type = "text";
+			uiRow[1].setAttr("placeholder", "(.*)");
+			uiRow[1].setAttr("list", "itemFormatOptions");
+			uiRow[1].style.width = "11.5em";
+			uiRow[1].addEventListener("input", e =>
+			{
+				if (e.target.value[0] === " ")
+				{
+					for (const option of data.configUi.itemFormatOptions.options)
+					{
+						if (option.value === e.target.value)
+						{
+							e.target.value = option.dataset.regex;
+						}
+					}
+				}
+				refreshItemFormatSample(data);
+			});
+			uiRow[1].addEventListener("change", e =>
+			{
+				if (!data.current.configuration)
+				{
+					data.current.configuration =
+						_inlineScripts.state.sessionState.tablefiles.
+						configuration[data.current.path] = {};
+				}
+				data.current.configuration.itemFormat =
+					e.target.value;
+			});
+		uiRow[2] = document.createElement("div");
+			uiRow[2].innerText = "Sample item";
+			uiRow[2].classList.add("iscript_popupLabel");
+			uiRow[2].classList.add("iscript_nextPopupLabelSquished");
+		uiRow[3] = document.createElement("input");
+			data.configUi.sampleItem = uiRow[3];
+			uiRow[3].type = "text";
+			uiRow[3].setAttr("readonly", true);
+			uiRow[3].style["background-color"] = "var(--background-secondary)";
+		uiRow[4] = document.createElement("div");
+			uiRow[4].innerText = "Sample Range";
+			uiRow[4].classList.add("iscript_popupLabel");
+			uiRow[4].classList.add("iscript_nextPopupLabelSquished");
+		uiRow[5] = document.createElement("input");
+			data.configUi.sampleRange = uiRow[5];
+			uiRow[5].type = "text";
+			uiRow[5].setAttr("readonly", true);
+			uiRow[5].style["background-color"] = "var(--background-secondary)";
+			uiRow[5].style.width = "3.5em";
+		tbl = makeUiRow(uiRow);
+			configUi.append(tbl);
+
+		/////////////////////////////////
+		// Item format option dropdown //
+		/////////////////////////////////
+		let itemFormatOptions = document.createElement("datalist");
+		data.configUi.itemFormatOptions = itemFormatOptions;
+		itemFormatOptions.id = "itemFormatOptions";
+		itemFormatOptions.innerHTML =
+			"<option value='&thinsp;Basic item' data-regex='(.*)'></option>" +
+			"<option value='&thinsp;Weighted item 1-5' " +
+				"data-regex='(.*) [0-9]+-([0-9]+)'></option>" +
+			"<option value='&thinsp;1-5 Weighted item' " +
+				"data-regex='[0-9]+-(?<range>[0-9]+) (?<item>.*)'></option>";
+		configUi.append(itemFormatOptions);
 
 		updateTableConfig(data);
 	},
@@ -550,21 +648,56 @@ _inlineScripts.tablefiles.rollPopup =
 		_inlineScripts.tablefiles.priorRoll.format = format;
 		_inlineScripts.tablefiles.priorRoll.unique = unique;
 
-		const items = await getCurrentTableItems(data);
-		if (unique)
+		let regex = null;
+		try
 		{
-			count = Math.min(count, items.length);
+			regex =
+				new RegExp(_inlineScripts.state.sessionState.tablefiles.
+				configuration[selected].itemFormat || "(.*)");
 		}
+		catch (e){}
+		let items = await getCurrentTableItems(data);
+		let hasRange = false;
+		for (let i = 0; i < items.length; i++)
+		{
+			let match = items[i].match(regex);
+			items[i] =
+			[
+				match?.groups?.item || match?.[1] || items[i],
+				match?.groups?.range || match?.[2] || null
+			];
+			if (items[i][1])
+			{
+				hasRange = true;
+			}
+		}
+		if (hasRange)
+		{
+			items.filter(v => v[1]);
+			items.sort((lhs, rhs) =>
+			{
+				lhs[1] - rhs[1];
+			});
+		}
+		else
+		{
+			for (let i = 0; i < items.length; i++)
+			{
+				items[i][1] = (i+1);
+			}
+		}
+
+		count = (unique && count >= items.length) ? items.length : count;
 		let result = [];
 		for (let i = 0; i < count; i++)
 		{
 			let nextEntry;
 			do
 			{
-				nextEntry = aPick(items);
+				nextEntry = aPickWeight(items);
 			}
-			while(unique && result.includes(nextEntry));
-			result.push(nextEntry);
+			while(unique && result.includes(nextEntry[0]));
+			result.push(nextEntry[0]);
 		}
 		switch (format)
 		{
@@ -610,10 +743,10 @@ const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.tablefiles");
 _inlineScripts.state.sessionState.tablefiles.paths = {};
-_inlineScripts.state.sessionState.tablefiles.settings = {};
+_inlineScripts.state.sessionState.tablefiles.configuration = {};
 ```
 __
-tbl reset - Clears registered table paths and table path settings.
+tbl reset - Clears registered table paths and table path configurations.
 
 
 __
