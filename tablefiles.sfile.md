@@ -18,7 +18,7 @@ confirmObjectPath(
 		expand("tbl reset");
 	});
 confirmObjectPath("_inlineScripts.tablefiles.priorRoll");
-_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { min-width: 45em; width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% }");
+_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ function makeUiRow(contents)
 	{
 		const td = document.createElement("td");
 		td.append(content);
-		if (content.tagName === "DIV")
+		if (content.tagName === "DIV" || content.tagName === "BUTTON")
 		{
 			td.classList.add("iscript_minWidth");
 		}
@@ -326,8 +326,9 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[1] = document.createElement("input");
 			data.countUi = uiRow[1];
 			uiRow[1].type = "text";
+			uiRow[1].classList.add("iscript_textbox_squished");
 			uiRow[1].setAttr("placeholder", 1);
-			uiRow[1].style.width = "4em";
+			uiRow[1].style.width = "3em";
 			uiRow[1].setAttr("maxlength", 4);
 			uiRow[1].value = _inlineScripts.tablefiles.priorRoll.count || "";
 			uiRow[1].addEventListener("keypress", e =>
@@ -360,6 +361,8 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[5] = document.createElement("select");
 			data.formatUi = uiRow[5];
 			uiRow[5].classList.add("dropdown");
+			uiRow[5].style["padding-left"] = "6px";
+			uiRow[5].style["padding-right"] = "27px";
 			uiRow[5].options[0] = new Option("Comma separated");
 			uiRow[5].options[1] = new Option("Bulleted list");
 			uiRow[5].options[2] = new Option("Perioded list");
@@ -385,8 +388,7 @@ _inlineScripts.tablefiles.rollPopup =
 		const cfgBtnText = "Table configuration &nbsp; ";
 		let cfgBtn = document.createElement("button");
 			cfgBtn.innerHTML = cfgBtnText + "▼";
-		    cfgBtn.style["margin-left"] = "0em";
-    	    cfgBtn.style["margin-right"] = "0";
+		    cfgBtn.style["margin"] = "0";
     	    cfgBtn.style["font-size"] = "15px";
     	    cfgBtn.style["padding"] = "6px 20px";
 			cfgBtn.addEventListener("click", async () =>
@@ -397,18 +399,19 @@ _inlineScripts.tablefiles.rollPopup =
 			});
 			parent.nextSibling.prepend(cfgBtn);
 
-		//////////////////////////////////////
-		// Row 5 of ui (title, description) //
-		//////////////////////////////////////
+		////////////////////////////////////////////
+		// Row 4 of ui (title, description, path) //
+		////////////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
 			uiRow[0].innerText = "Title";
 			uiRow[0].classList.add("iscript_popupLabel");
 		uiRow[1] = document.createElement("input");
 			data.configUi.title = uiRow[1];
+			uiRow[1].classList.add("iscript_textbox_squished");
 			uiRow[1].type = "text";
 			uiRow[1].setAttr("placeholder", "Display");
-			uiRow[1].style.width = "7em";
+			uiRow[1].style["min-width"] = "7em !important";
 			uiRow[1].addEventListener("change", e =>
 			{
 				if (!data.current.configuration)
@@ -427,6 +430,7 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[3] = document.createElement("input");
 			data.configUi.description = uiRow[3];
 			uiRow[3].type = "text";
+			uiRow[3].classList.add("iscript_textbox_squished");
 			uiRow[3].addEventListener("change", e =>
 			{
 				if (!data.current.configuration)
@@ -445,15 +449,15 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[5] = document.createElement("input");
 			data.configUi.path = uiRow[5];
 			uiRow[5].type = "text";
+			uiRow[5].classList.add("iscript_textbox_squished");
 			uiRow[5].setAttr("readonly", true);
-			uiRow[5].style.width = "12em";
+			uiRow[5].style["min-width"] = "12em !important";
 			uiRow[5].style["background-color"] = "var(--background-secondary)";
 		tbl = makeUiRow(uiRow);
-			tbl.childNodes[0].childNodes[3].style.width = "100%";
 			configUi.append(tbl);
 
 		////////////////////////////////////
-		// Row 6 of ui (tags, start-line) //
+		// Row 5 of ui (tags, start-line) //
 		////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
@@ -462,6 +466,7 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[1] = document.createElement("input");
 			data.configUi.tags = uiRow[1];
 			uiRow[1].type = "text";
+			uiRow[1].classList.add("iscript_textbox_squished");
 			uiRow[1].setAttr("placeholder", "Space-separated");
 			uiRow[1].addEventListener("change", e =>
 			{
@@ -485,6 +490,7 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[3] = document.createElement("input");
 			data.configUi.startLine = uiRow[3];
 			uiRow[3].type = "text";
+			uiRow[3].classList.add("iscript_textbox_squished");
 			uiRow[3].setAttr("readonly", true);
 			uiRow[3].style["background-color"] = "var(--background-secondary)";
 		uiRow[4] = document.createElement("button");
@@ -554,7 +560,7 @@ _inlineScripts.tablefiles.rollPopup =
 			configUi.append(tbl);
 
 		////////////////////////////////////////
-		// Row 7 of ui (item format, samples) //
+		// Row 6 of ui (item format, samples) //
 		////////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
@@ -563,9 +569,10 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[1] = document.createElement("input");
 			data.configUi.itemFormat = uiRow[1];
 			uiRow[1].type = "text";
+			uiRow[1].classList.add("iscript_textbox_squished");
 			uiRow[1].setAttr("placeholder", "(.*)");
 			uiRow[1].setAttr("list", "itemFormatOptions");
-			uiRow[1].style["min-width"] = "11.5em";
+			uiRow[1].style["max-width"] = "11.5em !important";
 			uiRow[1].addEventListener("input", e =>
 			{
 				if (e.target.value[0] === " ")
@@ -598,6 +605,7 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[3] = document.createElement("input");
 			data.configUi.sampleItem = uiRow[3];
 			uiRow[3].type = "text";
+			uiRow[3].classList.add("iscript_textbox_squished");
 			uiRow[3].setAttr("readonly", true);
 			uiRow[3].style["background-color"] = "var(--background-secondary)";
 		uiRow[4] = document.createElement("div");
@@ -607,9 +615,10 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[5] = document.createElement("input");
 			data.configUi.sampleRange = uiRow[5];
 			uiRow[5].type = "text";
+			uiRow[5].classList.add("iscript_textbox_squished");
+			uiRow[5].style.width = "3em";
 			uiRow[5].setAttr("readonly", true);
 			uiRow[5].style["background-color"] = "var(--background-secondary)";
-			uiRow[5].style.width = "3.5em";
 		tbl = makeUiRow(uiRow);
 			configUi.append(tbl);
 
