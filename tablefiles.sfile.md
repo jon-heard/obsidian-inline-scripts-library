@@ -617,7 +617,7 @@ _inlineScripts.tablefiles.rollPopup =
 				}
 			});
 		uiRow[2] = document.createElement("div");
-			uiRow[2].innerText = "Table start line";
+			uiRow[2].innerText = "Starting line";
 			uiRow[2].classList.add("iscript_popupLabel");
 			uiRow[2].classList.add("iscript_nextPopupLabel");
 		uiRow[3] = document.createElement("input");
