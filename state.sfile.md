@@ -22,6 +22,12 @@ __
 ```
 __
 ```js
+if (_inlineScripts?.state?.inSetup) { return; }
+
+const confirmObjectPath =
+	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+confirmObjectPath("_inlineScripts.state.inSetup", true);
+
 const STATE_FILE_NAME = "Ξ_state.data.md";
 
 async function saveState()
@@ -41,16 +47,12 @@ async function removeFile(filename)
 	}
 }
 
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.listeners.onReset");
 confirmObjectPath("_inlineScripts.state.listeners.onLoad");
 
-if (_inlineScripts.state.inSetup) { return; }
-_inlineScripts.state.inSetup = true;
-
 // Determine root folder for state file (every time, in case sfiles are moved)
 confirmObjectPath("_inlineScripts.state.stateFile");
+let stateFileHasBeenSet = false;
 for (const sfile of _inlineScripts.inlineScripts.plugin.settings.shortcutFiles)
 {
 	if (sfile.address.endsWith("state.sfile.md"))
@@ -59,7 +61,7 @@ for (const sfile of _inlineScripts.inlineScripts.plugin.settings.shortcutFiles)
 		if (_inlineScripts.state.stateFile.path != path)
 		{
 			_inlineScripts.state.stateFile.path = path;
-			delete _inlineScripts.state.sessionState;
+			stateFileHasBeenSet = true;
 		}
 		break;
 	}
@@ -109,6 +111,7 @@ if (!_inlineScripts.state.sessionState)
 		await app.vault.adapter.copy(
 			oldStateFiles[0],
 			_inlineScripts.state.stateFile.path);
+		stateFileHasBeenSet = true;
 		// Delete oldStateFilePossibilities
 		for (const oldStateFilePossibility of oldStateFilePossibilities)
 		{
@@ -118,7 +121,7 @@ if (!_inlineScripts.state.sessionState)
 }
 
 // Load the state file if state is not defined (initial load, or sfile moved)
-if (!_inlineScripts.state.sessionState)
+if (!_inlineScripts.state.sessionState || stateFileHasBeenSet)
 {
 	try
 	{
