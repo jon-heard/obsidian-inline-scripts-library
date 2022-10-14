@@ -2,6 +2,148 @@ Shortcut file to load tables from files and roll them.
 
 
 __
+__
+```js
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+function aPick(a) { return a[roll(a.length)-1]; }
+function aPickWeight(a, wIndex, theRoll)
+{
+	wIndex = wIndex || 1;
+	theRoll = theRoll || roll(a.last()[wIndex]);
+	for (const item of a)
+	{
+		if (item[wIndex] >= theRoll)
+		{
+			return item;
+		}
+	}
+	return a.last();
+}
+function removeHeader(path)
+{
+	return path.match("^(?:~.*~)?(.*)")[1];
+}
+async function getTableItems(path, offset)
+{
+	if (!path.startsWith("~files~"))
+	{
+		const file = app.vault.fileMap[path];
+		if (!file) { return []; }
+		const content = await app.vault.cachedRead(file);
+		return content.split("\n").slice(offset || 0).filter(v => v);
+	}
+	else
+	{
+		const file = app.vault.fileMap[removeHeader(path)];
+		if (!file || !file.children)
+		{
+			return [];
+		}
+		return file.children.map(v => v.path);
+	}
+}
+async function rollTable(
+	tablePath, count, uniquePicks, format, isFileTable, startOffset, itemFormat)
+{
+	const file = app.vault.fileMap[tablePath];
+	if (!file)
+	{
+		return "No table rolled.  Path __" + tablePath + "__ not found.\n\n";
+	}
+	if (file.children && !isFileTable)
+	{
+		return "No table rolled.  Path __" +
+			tablePath + "__ is not a table file.\n\n";
+	}
+	if (!file.children && isFileTable)
+	{
+		return "No table rolled.  'isFileTable' specified, but path __" +
+			$1 + "__ is not a folder.\n\n";
+	}
+	if (!Number.isInteger(count) || count < 1)
+	{
+		return "No table rolled.  Invalid count given.\n\n";
+	}
+	if (!Number.isInteger(startOffset) || startOffset < 0)
+	{
+		return "No table rolled.  Invalid startOffset given.\n\n";
+	}
+	try
+	{
+		itemFormat = new RegExp(itemFormat || "(.*)");
+	}
+	catch (e)
+	{
+		return "No table rolled.  Invalid itemFormat given.\n\n";
+	}
+	tablePath = (isFileTable ? "~files~" : "") + tablePath;
+	let items = await getTableItems(tablePath, startOffset);
+	if (!items.length)
+	{
+		return "";
+	}
+	let itemsHaveRange = false;
+	for (let i = 0; i < items.length; i++)
+	{
+		let match = items[i].match(itemFormat);
+		items[i] =
+		[
+			match?.groups?.item || match?.[1] || items[i],
+			match?.groups?.range || match?.[2] || null
+		];
+		if (items[i][1])
+		{
+			itemsHaveRange = true;
+		}
+	}
+	if (itemsHaveRange)
+	{
+		items.filter(v => v[1]);
+		items.sort((lhs, rhs) =>
+		{
+			lhs[1] - rhs[1];
+		});
+	}
+	else
+	{
+		for (let i = 0; i < items.length; i++)
+		{
+			items[i][1] = (i+1);
+		}
+	}
+
+	count = (uniquePicks && count >= items.length) ? items.length : count;
+	let result = [];
+	for (let i = 0; i < count; i++)
+	{
+		let nextEntry;
+		do
+		{
+			nextEntry = aPickWeight(items);
+		}
+		while(uniquePicks && result.includes(nextEntry[0]));
+		result.push(nextEntry[0]);
+	}
+	switch (format)
+	{
+		case "bullets":
+			result = "- " + result.join("\n- ") + "\n";
+			break;
+		case "periods":
+			result = ". " + result.join("\n. ") + "\n";
+			break;
+		default:
+			result = result.join(", ");
+			break;
+	}
+	return result;
+}
+```
+__
+Helper functions
+
+
+__
 ```
 ^sfile setup$
 ```
@@ -23,25 +165,6 @@ _inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabe
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-function roll(max) { return Math.trunc(Math.random() * max + 1); }
-function aPick(a) { return a[roll(a.length)-1]; }
-function aPickWeight(a, wIndex, theRoll)
-{
-	wIndex = wIndex || 1;
-	theRoll = theRoll || roll(a.last()[wIndex]);
-	for (const item of a)
-	{
-		if (item[wIndex] >= theRoll)
-		{
-			return item;
-		}
-	}
-	return a.last();
-}
-function removeHeader(path)
-{
-	return path.match("^(?:~.*~)?(.*)")[1];
-}
 function makeUiRow(contents)
 {
 	const tbl = document.createElement("table");
@@ -62,23 +185,11 @@ function makeUiRow(contents)
 }
 async function getCurrentTableItems(data, offset)
 {
-	if (!data.current.path.startsWith("~files~"))
+	if (offset === undefined)
 	{
-		offset ||= data.current.configuration?.offset || 0;
-		const file = app.vault.fileMap[data.current.path];
-		if (!file) { return []; }
-		const content = await app.vault.cachedRead(file);
-		return content.split("\n").slice(offset).filter(v => v);
+		offset = data.current.configuration?.offset || 0;
 	}
-	else
-	{
-		const file = app.vault.fileMap[removeHeader(data.current.path)];
-		if (!file || !file.children)
-		{
-			return [];
-		}
-		return file.children.map(v => v.path);
-	}
+	return getTableItems(data.current.path, offset);
 }
 async function updateTableConfig(data)
 {
@@ -385,11 +496,11 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[5].classList.add("dropdown");
 			uiRow[5].style["padding-left"] = "6px";
 			uiRow[5].style["padding-right"] = "27px";
-			uiRow[5].options[0] = new Option("Comma separated");
-			uiRow[5].options[1] = new Option("Bulleted list");
-			uiRow[5].options[2] = new Option("Perioded list");
+			uiRow[5].options[0] = new Option("Comma separated", "commas");
+			uiRow[5].options[1] = new Option("Bulleted list", "bullets");
+			uiRow[5].options[2] = new Option("Perioded list", "periods");
 			uiRow[5].value =
-				_inlineScripts.tablefiles.priorRoll.format || "Comma separated";
+				_inlineScripts.tablefiles.priorRoll.format || "commas";
 			uiRow[5].addEventListener("keypress", e =>
 			{
 				if (e.key === "Enter") { firstButton.click(); }
@@ -668,84 +779,21 @@ _inlineScripts.tablefiles.rollPopup =
 	{
 		if (buttonId !== "Roll") { return null; }
 		const selected = data.selectUi.value;
-		let count = Number(data.countUi.value) || 1;
-		const format = data.formatUi.value;
+		const path = removeHeader(selected);
+		const count = Number(data.countUi.value) || 1;
 		const unique = data.uniqueUi.classList.contains("is-enabled");
+		const format = data.formatUi.value;
+		const isFileTable = selected.startsWith("~files~");
+		const startOffset = data.current.configuration?.offset || 0;
+		const itemFormat = data.current.configuration?.itemFormat || "";
 
 		_inlineScripts.tablefiles.priorRoll.table = selected;
 		_inlineScripts.tablefiles.priorRoll.count = count === 1 ? "" : count;
 		_inlineScripts.tablefiles.priorRoll.format = format;
 		_inlineScripts.tablefiles.priorRoll.unique = unique;
 
-		let regex = null;
-		try
-		{
-			regex =
-				new RegExp(_inlineScripts.state.sessionState.tablefiles.
-				configuration[selected].itemFormat || "(.*)");
-		}
-		catch (e){}
-		let items = await getCurrentTableItems(data);
-		if (!items.length)
-		{
-			resolveFnc("");
-			return;
-		}
-		let hasRange = false;
-		for (let i = 0; i < items.length; i++)
-		{
-			let match = items[i].match(regex);
-			items[i] =
-			[
-				match?.groups?.item || match?.[1] || items[i],
-				match?.groups?.range || match?.[2] || null
-			];
-			if (items[i][1])
-			{
-				hasRange = true;
-			}
-		}
-		if (hasRange)
-		{
-			items.filter(v => v[1]);
-			items.sort((lhs, rhs) =>
-			{
-				lhs[1] - rhs[1];
-			});
-		}
-		else
-		{
-			for (let i = 0; i < items.length; i++)
-			{
-				items[i][1] = (i+1);
-			}
-		}
-
-		count = (unique && count >= items.length) ? items.length : count;
-		let result = [];
-		for (let i = 0; i < count; i++)
-		{
-			let nextEntry;
-			do
-			{
-				nextEntry = aPickWeight(items);
-			}
-			while(unique && result.includes(nextEntry[0]));
-			result.push(nextEntry[0]);
-		}
-		switch (format)
-		{
-			case "Bulleted list":
-				result = "- " + result.join("\n- ") + "\n";
-				break;
-			case "Perioded list":
-				result = ". " + result.join("\n. ") + "\n";
-				break;
-			default:
-				result = result.join(", ");
-				break;
-		}
-		resolveFnc(result);
+		resolveFnc(rollTable(
+			path, count, unique, format, isFileTable, startOffset, itemFormat));
 	}
 };//);
 ```
@@ -871,3 +919,38 @@ return result !== null ? result : "No table rolled.  User canceled.\n\n";
 ```
 __
 tbl roll - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.
+
+
+__
+```
+^tbl roll ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ?(.*)$
+```
+__
+```js
+let parameters;
+try
+{
+	parameters = (new Function("return { " + $2 + "}"))();
+}
+catch(e)
+{
+	return "No table rolled.  Unable to parse parameters.\n\n";
+}
+const defaultParameters =
+	{
+		count: 1, uniquePicks: false, format: "commas", isFileTable: false,
+		startOffset: 0, itemFormat: ""
+	};
+parameters = Object.assign({}, defaultParameters, parameters);
+return rollTable(
+	$1, parameters.count, parameters.uniquePicks, parameters.format,
+	parameters.isFileTable, parameters.startOffset, parameters.itemFormat);
+```
+__
+tbl roll {table file: path text} {parameters: text, default: ""} - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
+	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
+	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
+	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
+	- __isFileTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
+	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for file-tables.
+	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
