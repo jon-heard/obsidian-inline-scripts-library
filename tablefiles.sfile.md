@@ -39,7 +39,7 @@ async function getTableItems(path, offset)
 		{
 			return [];
 		}
-		return file.children.map(v => v.path);
+		return file.children.map(v => "[[" + v.path + "|" + v.basename + "]]");
 	}
 }
 async function rollTable(
@@ -438,6 +438,7 @@ _inlineScripts.tablefiles.rollPopup =
 			selectUi.classList.add("dropdown");
 			selectUi.classList.add("iscript_listSelect");
 			selectUi.style["font-family"] = "monospace";
+			selectUi.style.margin = "0.5em 0em";
 			selectUi.addEventListener("keypress", e =>
 			{
 				if (e.key === "Enter") { firstButton.click(); }
@@ -768,9 +769,9 @@ _inlineScripts.tablefiles.rollPopup =
 			"<option value='&thinsp;1-5 Weighted item' " +
 				"data-regex='[0-9]+-(?<range>[0-9]+) (?<item>.*)'></option>" +
 			"<option value='&thinsp;Path - base file name' " +
-				"data-regex='.*?([^/]+)\\.[^.]*$'></option>" +
+				"data-regex='\\|(.*)]]$'></option>" +
 			"<option value='&thinsp;Path - full file name' " +
-				"data-regex='.*?([^/]+)$'></option>" +
+				"data-regex='.*?([^/]+)\\|.*$'></option>" +
 		configUi.append(itemFormatOptions);
 
 		updateTableConfig(data);
@@ -838,15 +839,15 @@ __
 __
 ```js
 $1 = $1.replaceAll(/^\"|\"$/g, "");
+let original$1 = $1;
 let file = app.vault.fileMap[$1];
 if (!file && !$1.endsWith(".md"))
 {
-	$1 += ".md";
-	file = app.vault.fileMap[$1];
+	file = app.vault.fileMap[$1 + ".md"];
 }
 if (!file)
 {
-	return "Path not added.  Path __" + $1 + "__ not found.\n\n";
+	return "Path not added.  Path __" + original$1 + "__ not found.\n\n";
 }
 _inlineScripts.state.sessionState.tablefiles.paths[$1] = 1;
 return (file.children ? "Folder" : "File") +
