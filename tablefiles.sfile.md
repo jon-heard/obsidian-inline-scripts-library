@@ -837,7 +837,7 @@ __
 ```
 __
 ```js
-$1 = ($1.match(/\"[^\"]\"/)) ? $1.slice(1, -1) : $1;
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 let file = app.vault.fileMap[$1];
 if (!file && !$1.endsWith(".md"))
 {
@@ -862,7 +862,7 @@ __
 ```
 __
 ```js
-$1 = ($1.match(/\"[^\"]\"/)) ? $1.slice(1, -1) : $1;
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 let file = app.vault.fileMap[$1];
 if (!file || !file.children)
 {
@@ -927,6 +927,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 let parameters;
 try
 {

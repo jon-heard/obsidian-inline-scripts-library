@@ -90,6 +90,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.basename; }
 const file = $1 ? app.vault.fileMap[$1 + ".md"] : null;
 if (!file)
@@ -121,6 +122,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.basename; }
 const file = $1 ? app.vault.fileMap[$1 + ".md"] : null;
 if (!file)
@@ -186,6 +188,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.basename; }
 const file = $1 ? app.vault.fileMap[$1 + ".md"] : null;
 if (!file)
@@ -246,6 +249,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.basename; }
 const file = $1 ? app.vault.fileMap[$1 + ".md"] : null;
 if (!file)

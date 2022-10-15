@@ -216,7 +216,7 @@ lists rename {original list name: name text} {new list name: name text} - Change
 
 __
 ```
-^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ ].*"|[^ ]) (.+)$
+^lists? replace ([_a-zA-Z][_a-zA-Z0-9]*) ("[^ ].*"|[^ ]+) (.+)$
 ```
 __
 ```js
@@ -383,6 +383,7 @@ __
 ```
 __
 ```js
+$2 = $2.replaceAll(/^\"|\"$/g, "");
 _inlineScripts.state.sessionState.lists[$1] = { type: "folder", content: $2 };
 return "List __" +
 	$1 + "__ added as a folder-list linked to the folder \"__" + $2 + "__\".\n\n";
@@ -413,6 +414,7 @@ __
 ```
 __
 ```js
+$2 = $2.replaceAll(/^\"|\"$/g, "");
 let file = app.vault.fileMap[$1];
 if ((!file || file.children) && !$1.endsWith(".md"))
 {

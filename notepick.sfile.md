@@ -74,6 +74,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 // Pick random items
 let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4);
 if (result[0])
@@ -94,6 +95,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 // Pick random items
 let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4);
 if (result[0])

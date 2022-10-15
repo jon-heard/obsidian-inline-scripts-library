@@ -7,6 +7,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 $2 ||= "md";
 if (!app.vault.fileMap[$1])
 {
@@ -28,6 +29,7 @@ __
 ```
 __
 ```js
+$1 = $1.replaceAll(/^\"|\"$/g, "");
 const folder = app.vault.fileMap[$1];
 if (!folder)
 {

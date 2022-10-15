@@ -217,6 +217,7 @@ __
 ```
 __
 ```js
+$2 = $2.replaceAll(/^\"|\"$/g, "");
 // Heading
 let result = "The card system's settings are updated:\n";
 
@@ -446,6 +447,7 @@ __
 ```
 __
 ```js
+$2 = $2.replaceAll(/^\"|\"$/g, "");
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
 if (!pile)
 {
