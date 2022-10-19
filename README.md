@@ -283,10 +283,19 @@ This shortcut-file has a tutorial video available:
 ### tablefiles.sfile
 Shortcut file to load tables from files and roll them.
 
-- __tbl reset__ - Clears registered table paths and table path settings.
-- __tbl add {path: path string}__ - Adds {path} to the list of registered table paths.  {path} is either an individual file, or a folder filled with table files.
+- __tbl reset__ - Clears registered table paths and table path configurations.
+- __tbl add {path: path string}__ - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
+- __tbl addfiletable {path: path string}__ - Adds the folder {path} to the list of registered table paths as a file-table.  A file-table is a virtual table where each item is a file in the {path} folder.
 - __tbl list__ - Get a list of the registered table paths.
 - __tbl roll__ - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.
+- __tbl roll {table file: path text} {parameters: text, default: ""}__ - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
+	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
+	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
+	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
+	- __isFileTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
+	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
+	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for file-tables.
+	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
 
 ***
 

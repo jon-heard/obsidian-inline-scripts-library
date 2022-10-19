@@ -43,8 +43,18 @@ async function getTableItems(path, offset)
 	}
 }
 async function rollTable(
-	tablePath, count, uniquePicks, format, isFileTable, startOffset, itemFormat)
+	tablePath, count, uniquePicks, format, useConfig, startOffset, itemFormat)
 {
+	if (useConfig)
+	{
+		const configuration =
+			_inlineScripts.state.sessionState.tablefiles.configuration[tablePath] ||
+			{};
+		startOffset = configuration.offset || 0;
+		itemFormat = configuration.itemFormat || "";
+	}
+	const isFileTable = tablePath.startsWith("~files~");
+	tablePath = removeHeader(tablePath);
 	const file = app.vault.fileMap[tablePath];
 	if (!file)
 	{
@@ -123,6 +133,34 @@ async function rollTable(
 		}
 		while(uniquePicks && result.includes(nextEntry[0]));
 		result.push(nextEntry[0]);
+	}
+	// "pick-and-replace" handling
+	for (let i = 0; i < result.length; i++)
+	{
+		if (result[i].startsWith("~pick-and-replace~"))
+		{
+			let nextEntryPath = result[i].slice("~pick-and-replace~".length);
+			if (!app.vault.fileMap[nextEntryPath] &&
+				app.vault.fileMap[nextEntryPath + ".md"])
+			{
+				nextEntryPath += ".md";
+			}
+			if (!app.vault.fileMap[nextEntryPath])
+			{
+				nextEntryPath =
+					(app.vault.fileMap[tablePath]?.parent?.path || "") + "/" +
+					nextEntryPath;
+			}
+			if (!app.vault.fileMap[nextEntryPath] &&
+				app.vault.fileMap[nextEntryPath + ".md"])
+			{
+				nextEntryPath += ".md";
+			}
+			if (app.vault.fileMap[nextEntryPath])
+			{
+				result[i] = await rollTable(nextEntryPath, 1, false, format, true);
+			}
+		}
 	}
 	switch (format)
 	{
@@ -779,22 +817,18 @@ _inlineScripts.tablefiles.rollPopup =
 	onClose: async (data, resolveFnc, buttonId) =>
 	{
 		if (buttonId !== "Roll") { return null; }
-		const selected = data.selectUi.value;
-		const path = removeHeader(selected);
+		const path = data.selectUi.value;
 		const count = Number(data.countUi.value) || 1;
 		const unique = data.uniqueUi.classList.contains("is-enabled");
 		const format = data.formatUi.value;
-		const isFileTable = selected.startsWith("~files~");
-		const startOffset = data.current.configuration?.offset || 0;
-		const itemFormat = data.current.configuration?.itemFormat || "";
 
-		_inlineScripts.tablefiles.priorRoll.table = selected;
+		_inlineScripts.tablefiles.priorRoll.table = path;
 		_inlineScripts.tablefiles.priorRoll.count = count === 1 ? "" : count;
 		_inlineScripts.tablefiles.priorRoll.format = format;
 		_inlineScripts.tablefiles.priorRoll.unique = unique;
 
-		resolveFnc(rollTable(
-			path, count, unique, format, isFileTable, startOffset, itemFormat));
+		resolveFnc(await rollTable(
+			path, count, unique, format, true));
 	}
 };//);
 ```
@@ -941,12 +975,16 @@ catch(e)
 const defaultParameters =
 	{
 		count: 1, uniquePicks: false, format: "commas", isFileTable: false,
-		startOffset: 0, itemFormat: ""
+		useConfig: false, startOffset: 0, itemFormat: ""
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
-return rollTable(
+if (!$1.startsWith("~files~") && parameters.isFileTable)
+{
+	$1 = "~files~" + $1;
+}
+return await rollTable(
 	$1, parameters.count, parameters.uniquePicks, parameters.format,
-	parameters.isFileTable, parameters.startOffset, parameters.itemFormat);
+	parameters.useConfig, parameters.startOffset, parameters.itemFormat);
 ```
 __
 tbl roll {table file: path text} {parameters: text, default: ""} - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
@@ -954,5 +992,6 @@ tbl roll {table file: path text} {parameters: text, default: ""} - Get random re
 	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
 	- __isFileTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
+	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for file-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
