@@ -235,7 +235,7 @@ else
 	}
 }
 refreshPreviewOnNextModify(file);
-app.vault.modify(file, result);
+await app.vault.modify(file, result);
 return "Note __" +
 	$1 + "__, variable __" + $2 + "__ set to __" + $3 + "__.\n\n";
 ```
