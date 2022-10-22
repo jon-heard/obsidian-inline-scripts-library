@@ -17,7 +17,7 @@ if (!listNames.length)
 	return "No lists available.\n\n";
 }
 
-const pick = popups.pick("Choose a list to view", listNames);
+const pick = popups.pick("Choose a list to view", listNames, 0, "adaptive");
 if (pick === null) { return null; }
 
 return expand("lists list " + listNames[pick]);
@@ -38,7 +38,7 @@ let listName = null;
 if (listNames.length)
 {
 	listNames = [ "!! New list !!" ].concat(listNames);
-	const pick = popups.pick("Choose a list to add to", listNames);
+	const pick = popups.pick("Choose a list to add to", listNames, 0, "adaptive");
 	if (pick === null) { return null; }
 	if (!pick)
 	{
@@ -131,7 +131,7 @@ if (!listNames.length)
 }
 
 const pick =
-	popups.pick("Choose a (non-empty) list to pick randomly from", listNames);
+	popups.pick("Choose a list to pick randomly from", listNames, 0, "adaptive");
 if (pick === null) { return null; }
 
 return expand("lists pick " + listNames[pick]);
@@ -154,11 +154,11 @@ if (!listNames.length)
 }
 
 const pick =
-	popups.pick("Choose a list (non-empty) to remove an item from", listNames);
+	popups.pick("Choose a list to remove an item from", listNames, 0, "adaptive");
 if (pick === null) { return null; }
 
 let items = await getListItems(listNames[pick]);
-const pick2 = popups.pick("Choose an item to remove.", items);
+const pick2 = popups.pick("Choose an item to remove.", items, 0, "adaptive");
 if (pick2 === null) { return null; }
 
 return expand("lists remove " + listNames[pick] + " " + items[pick2]);
@@ -183,12 +183,12 @@ if (!listNames.length)
 }
 
 const pick =
-	popups.pick("Choose a (non-empty) list to replace an item from", listNames);
+	popups.pick("Choose a list to replace an item from", listNames, 0, "adaptive");
 if (pick === null) { return null; }
 
 let items = await getListItems(listNames[pick]);
 items = [...new Set(items)];
-const pick2 = popups.pick("Choose an item to replace.", items);
+const pick2 = popups.pick("Choose an item to replace.", items, 0, "adaptive");
 if (pick2 === null) { return null; }
 
 let replacement =
@@ -218,7 +218,7 @@ if (!listNames.length)
 	return "No lists available.\n\n";
 }
 
-const pick = popups.pick("Choose a list to remove", listNames);
+const pick = popups.pick("Choose a list to remove", listNames, 0, "adaptive");
 if (pick === null) { return null; }
 return expand("lists removelist " + listNames[pick]);
 ```
@@ -241,7 +241,7 @@ const folders =
 	Object.keys(app.vault.fileMap).filter(v => app.vault.fileMap[v].children);
 const pick =
 	popups.pick("Choose the folder to attach <b>" + listName + "</b> to.",
-	folders);
+	folders, 0, "adaptive");
 if (pick === null) { return null; }
 
 return expand("lists addfolder " + listName + " " + folders[pick]);
@@ -271,7 +271,7 @@ do
 		"<br/><br/>Lists so far:</br>" + picks.join("<br/>") + "<br/><br/>";
 	let pick =
 		popups.pick("Choose a list to attach to the combo-list <b>" + listName +
-		"</b>" + listsSoFar, choices);
+		"</b>" + listsSoFar, choices, 0, "adaptive");
 	if (pick === null) { return null; }
 	if (!picks.length)
 	{

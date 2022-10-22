@@ -16,7 +16,7 @@ if (!clipNames.length)
 {
 	return "No clips to get.";
 }
-const pick = popups.pick("Choose a clip to get", clipNames);
+const pick = popups.pick("Choose a clip to get", clipNames, 0, "adaptive");
 if (pick === null) { return null; }
 return _inlineScripts.state.sessionState.clips[clipNames[pick]];
 ```
@@ -37,7 +37,7 @@ if (!clipNames.length)
 {
 	return "No clips to remove.\n\n";
 }
-const pick = await popups.pick("Choose a clip to remove", clipNames);
+const pick = await popups.pick("Choose a clip to remove", clipNames, 0, "adaptive");
 if (pick === null) { return null; }
 delete _inlineScripts.state.sessionState.clips[clipNames[pick]];
 return "Clip __" + clipNames[pick] + "__ removed.\n\n";

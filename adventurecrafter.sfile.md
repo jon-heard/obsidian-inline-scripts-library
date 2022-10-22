@@ -242,7 +242,7 @@ let message = "Select the next theme.\n\nCurrent theme slots:\n";
 message +=
 	"<div style='display:inline-block;text-align:left'>" + expand("themes")[1] +
 	"</div><br/><br/>";
-let pick = popups.pick(message, themeCaptions);
+let pick = popups.pick(message, themeCaptions, 0, "adaptive");
 if (pick === null) { return null; }
 themeSlots.push(pick);
 return "Theme slot __" +
@@ -527,7 +527,8 @@ for (let i = 0; i < characters.length; i++)
 	}
 }
 
-const pick = popups.pick("Choose a character to duplicate", characterDisplays);
+const pick =
+	popups.pick("Choose a character to duplicate", characterDisplays, 0, "adaptive");
 if (pick === null) { return null; }
 expand("lists add characters " + characters[pick]);
 return "Character __" + characters[pick] + "__ duplicated.\n\n";
@@ -564,7 +565,8 @@ for (let i = 0; i < characters.length; i++)
 	characterDisplays[i] += " (x " + count + ")"
 }
 
-const pick = popups.pick("Choose a character to Reduce", characterDisplays);
+const pick =
+	popups.pick("Choose a character to Reduce", characterDisplays, 0, "adaptive");
 if (pick === null) { return null; }
 expand("lists remove characters " + characters[pick]);
 return "Character __" + characters[pick] + "__ reduced.\n\n";
@@ -604,7 +606,8 @@ for (let i = 0; i < characters.length; i++)
 	}
 }
 
-const pick = popups.pick("Choose a character to rename", characterDisplays);
+const pick =
+	popups.pick("Choose a character to rename", characterDisplays, 0, "adaptive");
 if (pick == null) { return null; }
 const replacement =
 	popups.input("Enter a new text for the character.", characters[pick]);
@@ -709,7 +712,8 @@ for (let i = 0; i < plots.length; i++)
 	}
 }
 
-const pick = popups.pick("Choose a plotline to duplicate", plotDisplays);
+const pick =
+	popups.pick("Choose a plotline to duplicate", plotDisplays, 0, "adaptive");
 if (pick === null) { return null; }
 expand("lists add plotlines " + plots[pick]);
 return "Plotline __" + plots[pick] + "__ duplicated.\n\n";
@@ -746,7 +750,7 @@ for (let i = 0; i < plots.length; i++)
 	plotDisplays[i] += " (x " + count + ")"
 }
 
-const pick = popups.pick("Choose a plotline to Reduce", plotDisplays);
+const pick = popups.pick("Choose a plotline to Reduce", plotDisplays, 0, "adaptive");
 if (pick === null) { return null; }
 expand("lists remove plotlines " + plots[pick]);
 return "Plotline __" + plots[pick] + "__ reduced.\n\n";
@@ -785,7 +789,7 @@ for (let i = 0; i < plots.length; i++)
 	}
 }
 
-const pick = popups.pick("Choose a plotline to rename", plotDisplays);
+const pick = popups.pick("Choose a plotline to rename", plotDisplays, 0, "adaptive");
 if (pick == null) { return null; }
 const replacement =
 	popups.input("Enter a new text for the plotline.", plots[pick]);

@@ -33,7 +33,7 @@ const odds =
 	"Likely", "Very likely", "Near sure thing",
 	"Sure thing", "Has to be"
 ];
-const pick = popups.pick("Choose the odds", odds, 4);
+const pick = popups.pick("Choose the odds", odds, 4, 11);
 if (pick === null) { return null; }
 
 return expand("fate " + (pick - 4));
@@ -50,8 +50,8 @@ __
 __
 ```js
 const pick =
-	popups.pick("How was the previous scene?",
-	[ "More controlled", "More chaotic" ], 1);
+	popups.pick("How was the previous scene?", [ "More controlled", "More chaotic" ],
+	1, 2);
 if (pick === null) { return null; }
 
 return expand("scene " + (pick * 2 - 1));

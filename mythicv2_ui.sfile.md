@@ -47,7 +47,7 @@ const stateString =
 	"enabled" : "disabled";
 const pick = popups.pick(
 	"Set 'details' mode? (currently <b>" + stateString + "</b>)",
-	[ "Disable", "Enable" ]);
+	[ "Disable", "Enable" ], 0, 2);
 if (pick === null) { return null; }
 
 if (!!pick === (stateString === "enabled"))
@@ -76,10 +76,11 @@ const odds =
 	"Unlikely", "50 / 50", "likely",
 	"Very likely", "Sure thing", "Has to be"
 ];
-const pick = popups.pick("Choose the odds", odds, 4);
+const pick = popups.pick("Choose the odds", odds, 4, 9);
 if (pick === null) { return null; }
 
-const pick2 = popups.pick("What answer is best for the pc(s)?", [ "YES", "NO" ]);
+const pick2 =
+	popups.pick("What answer is best for the pc(s)?", [ "YES", "NO" ], 0, 2);
 if (pick2 === null) { return null; }
 
 return expand( "fate " + (pick - 4) + " " + (pick2 ? "n" : "y") );
@@ -98,7 +99,7 @@ __
 ```js
 clearDetailsIfUserTriggered();
 const pick = popups.pick(
-	"How was the previous scene?", [ "More controlled", "More chaotic" ], 1);
+	"How was the previous scene?", [ "More controlled", "More chaotic" ], 1, 2);
 if (pick === null) { return null; }
 
 return expand("scene " + (pick * 2 - 1));
@@ -122,7 +123,7 @@ const choices =
 	"0", "+1", "+2",
 	"+3 (ALL descriptors make the npc MORE ACTIVE)"
 ];
-const pick = popups.pick("Enter the total descriptor modifier for the npc.\n\nConsider the npc's three descriptors in the current situation.\n+1 for descriptors that make the npc MORE active.\n-1 for descriptors that make the npc LESS active.\n0 for descriptors that don't affect npc activity.", choices, 3);
+const pick = popups.pick("Enter the total descriptor modifier for the npc.\n\nConsider the npc's three descriptors in the current situation.\n+1 for descriptors that make the npc MORE active.\n-1 for descriptors that make the npc LESS active.\n0 for descriptors that don't affect npc activity.", choices, 3, 7);
 if (pick === null) { return null; }
 
 const choices2 =
@@ -131,7 +132,7 @@ const choices2 =
 	"10","11","12","13","14","15","16","17",
 	"18","19","20"
 ];
-const pick2 = popups.pick("Enter the base disposition for the npc for this scene.\n\nIf the npc has a base dispositon for this scene, select it.\nIf the npc does NOT yet have a base disposition for this scene, select 'Random'.", choices2);
+const pick2 = popups.pick("Enter the base disposition for the npc for this scene.\n\nIf the npc has a base dispositon for this scene, select it.\nIf the npc does NOT yet have a base disposition for this scene, select 'Random'.", choices2, 20);
 if (pick2 === null) { return null; }
 
 if (!pick2)
@@ -162,7 +163,9 @@ const dispositionMods =
 	"-2 (Passive)", "0 (Moderate)", "+2 (Active)",
 	"+4 (Aggressive)"
 ];
-const pick = popups.pick("Enter the npc's current disposition modifier.", dispositionMods, 1);
+const pick =
+	popups.pick("Enter the npc's current disposition modifier.", dispositionMods, 1,
+	4);
 if (pick === null) { return null; }
 
 return expand("action " + (pick * 2 - 2));

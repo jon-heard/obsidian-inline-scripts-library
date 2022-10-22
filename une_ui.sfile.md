@@ -16,7 +16,7 @@ const rLevels =
 	"Order", "Calm", "Standard",
 	"Disarray", "Chaos"
 ];
-const pick0 = popups.pick("Choose the randomness of the scene", rLevels, 2);
+const pick0 = popups.pick("Choose the randomness of the scene", rLevels, 2, 5);
 if (pick0 === null) { return null; }
 
 const relationship =
@@ -25,7 +25,7 @@ const relationship =
 	"Distrustful", "Hostile", "Hated"
 ];
 const pick1 =
-	popups.pick("Choose the NPC's feelings towards the pc(s)", relationship, 3);
+	popups.pick("Choose the NPC's feelings towards the pc(s)", relationship, 3, 7);
 if (pick1 === null) { return null; }
 
 const demeanors =
@@ -34,7 +34,7 @@ const demeanors =
 	"Friendly", "Hostile", "Inquisitive",
 	"Knowing", "Mysterious", "Prejudice"
 ];
-const pick2 = popups.pick("Choose the pc's demeanor", demeanors);
+const pick2 = popups.pick("Choose the pc's demeanor", demeanors, 0, 9);
 if (pick2 === null) { return null; }
 
 if (pick2 === 0)
@@ -64,7 +64,7 @@ const rLevels =
 	"Order", "Calm", "Standard",
 	"Disarray", "Chaos"
 ];
-const pick = popups.pick("Choose the randomness of the scene", rLevels, 2);
+const pick = popups.pick("Choose the randomness of the scene", rLevels, 2, 5);
 if (pick === null) { return null; }
 
 return expand("une character " + (pick+1));
@@ -86,7 +86,7 @@ const relationship =
 	"Distrustful", "Hostile", "Hated"
 ];
 const pick1 =
-	popups.pick("Choose the NPC's feelings towards the pc(s)", relationship, 3);
+	popups.pick("Choose the NPC's feelings towards the pc(s)", relationship, 3, 7);
 if (pick1 === null) { return null; }
 
 const demeanors =
@@ -95,7 +95,7 @@ const demeanors =
 	"Friendly", "Hostile", "Inquisitive",
 	"Knowing", "Mysterious", "Prejudice"
 ];
-const pick2 = popups.pick("Choose the pc's demeanor", demeanors);
+const pick2 = popups.pick("Choose the pc's demeanor", demeanors, 9);
 if (pick2 === null) { return null; }
 
 if (pick2 === 0)
@@ -124,7 +124,7 @@ const rLevels =
 	"Order", "Calm", "Standard",
 	"Disarray", "Chaos"
 ];
-const pick = popups.pick("Choose the randomness of the scene", rLevels, 2);
+const pick = popups.pick("Choose the randomness of the scene", rLevels, 2, 5);
 if (pick === null) { return null; }
 
 return expand("une power " + (pick+1));
@@ -146,7 +146,7 @@ const relationship =
 	"Distrustful", "Hostile", "Hated"
 ];
 const pick = popups.pick(
-	"Choose the NPC's feelings towards the pc(s)", relationship, 3);
+	"Choose the NPC's feelings towards the pc(s)", relationship, 3, 7);
 if (pick === null) { return null; }
 
 return expand("une mood " + (pick+1));
@@ -168,7 +168,7 @@ const demeanors =
 	"Friendly", "Hostile", "Inquisitive",
 	"Knowing", "Mysterious", "Prejudice"
 ];
-const pick = popups.pick("Choose the pc's demeanor", demeanors);
+const pick = popups.pick("Choose the pc's demeanor", demeanors, 9);
 if (pick === null) { return null; }
 
 if (pick === 0)
