@@ -49,10 +49,15 @@ __
 ```js
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+
+// Reset themes
 confirmObjectPath("_inlineScripts.state.sessionState.adventurecrafter");
 _inlineScripts.state.sessionState.adventurecrafter.themeSlots = [];
+
+// Check lists state
 confirmObjectPath("_inlineScripts.state.sessionState.lists");
 
+// Setup plotlines list (built upon threads list, if it's there)
 if (!_inlineScripts.state.sessionState.lists.threads)
 {
 	_inlineScripts.state.sessionState.lists.plotlines =
@@ -67,6 +72,7 @@ else
 		{ type: "combo", content: ["threads", "plotline_dupes"] };
 }
 
+// Setup characters list (built upon pcs & npcs lists, if they are there)
 if (!_inlineScripts.state.sessionState.lists.pcs ||
 	!_inlineScripts.state.sessionState.lists.npcs)
 {
@@ -82,7 +88,8 @@ else
 		{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 }
 
-return "Adventure crafter reset.\n\n";
+// Return message to user
+return expFormat("Adventure crafter reset.");
 ```
 __
 adventurecrafter reset - Resets adventurecrafter state to defaults.
@@ -95,36 +102,48 @@ __
 ```
 __
 ```js
+// Themes must be filled before creating a turning point
 if (expand("themes pick").length < 4)
 {
-	return "Turning point not generated.  Not all theme slots filled.\n\n";
+	return expFormat("Turning point not generated.  Not all theme slots filled.");
 }
+
+// Create 5 plot-points for this turning point. Hold "none" plot-points for the end.
 let result = "Turning point:\n";
 let nones = [];
+debugger;
 for (let i = 0; i < 5; i++)
 {
 	const plotPoint = expand("plot point");
-	if (plotPoint.length < 4)
+	// "normal" plot-points have a length of 4 or more
+	if (plotPoint.length >= 4)
 	{
-		result += plotPoint[1] + "\n";
+		result += plotPoint[1] + "\n    " + plotPoint[3] + "\n";
 	}
+	// "none" plot-points have a length of less than 4
 	else
 	{
+		// Only allow 3 "none" plotpoints
 		if (nones.length < 3)
 		{
 			nones.push(plotPoint[1]);
 		}
+		// If already have 3 "none", just try again
 		else
 		{
 			i--;
 		}
 	}
 }
+// Add "none" plotpoints to the end of the list, then remove extra "\n" at the end.
 for (const none of nones)
 {
 	result += "" + none + "\n";
 }
-return result + "\n";
+result = result.slice(0, -1);
+
+// Format and return the result
+return expFormat(result);
 ```
 __
 turning point - Gets a list of five plot points to represent a major milestone in a plotline.
@@ -136,34 +155,44 @@ __
 ```
 __
 ```js
+// Themes must be filled before creating a plot point
 const themePick = expand("themes pick");
 if (themePick.length < 4)
 {
-	return "Plot point not generated.  Not all theme slots filled.\n\n";
+	return expFormat("Plot point not generated.  Not all theme slots filled.");
 }
+
+// Setup plot-point output as array to allow splitting it up in turning-point
 let result = [ "Plot point:\n" ];
 const plotPoint = aPickWeight(_inlineScripts.adventurecrafter.plot, themePick[3]);
+// Handle a normal plot-point
 if (!plotPoint[7])
 {
-	result.push(
-		"- " + plotPoint[0] + "    _(" + themePick[1] + ")_\n    - " +
-		plotPoint[6]);
+	result.push("- " + plotPoint[0] + "    _(" + themePick[1] + ")_");
+	result.push("\n    ");
+	result.push("- " + plotPoint[6]);
 }
+// Handle a special plot-point
 else
 {
+	// Handle "none" plot-point
 	if (plotPoint[7] === 1)
 	{
+		// Having just this element signifies this as a "none" plotpoint.
 		result.push("- " + plotPoint[0]);
-		result.push(""); // Blank entry signifies this as a "none" plotpoint
 	}
+	// Handle "meta" plot-point
 	else if (plotPoint[7] === 2)
 	{
 		const metaPoint = aPickWeight(_inlineScripts.adventurecrafter.plot_meta);
-		result.push("- " + metaPoint[0] + "    _(META)_\n    - " + metaPoint[2]);
+		result.push("- " + metaPoint[0] + "    _(META)_");
+		result.push("\n    ");
+		result.push("- " + metaPoint[2]);
 	}
 }
-result.push("\n\n");
-return result;
+// Add an extra element for the expFormat suffix.  Lets "turning point" remove it.
+result.push("");
+return expFormat(result);
 ```
 __
 plot point - Gets a single plot point, generated from the plot points table.
@@ -176,25 +205,32 @@ __
 ```
 __
 ```js
+// return array to allow (a) formatting by "plot point" shortcut (b) signify error.
 if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
-	return [ "Theme not picked.  Not all theme slots filled.\n\n" ];
+	return expFormat([ "Theme not picked.  Not all theme slots filled." ]);
 }
+
+// Pick which theme slot to use
 let pick = roll(10);
 if      (pick <  5) { pick = 0; }
 else if (pick <  8) { pick = 1; }
 else if (pick < 10) { pick = 2; }
-else
+else // if pick === 10
 {
-	pick =
-		_inlineScripts.state.sessionState.adventurecrafter.priorPickWas3rd ? 4 : 3;
-	_inlineScripts.state.sessionState.adventurecrafter.priorPickWas3rd =
-		!_inlineScripts.state.sessionState.adventurecrafter.priorPickWas3rd;
+	// Alternate between theme[3] and theme[4].  Start with theme[3].
+	let state = _inlineScripts.state.sessionState.adventurecrafter;
+	pick = state.priorPickWas3 ? 4 : 3;
+	state.priorPickWas3 = !state.priorPickWas3;
 }
+
+// Get the theme at the picked theme slot
 pick = _inlineScripts.state.sessionState.adventurecrafter.themeSlots[pick];
-return [
+
+// Return the theme
+return expFormat([
 	"Theme __", _inlineScripts.adventurecrafter.themes[pick], "__ picked _(",
-	(pick+1), ")_.\n\n" ];
+	(pick+1), ")_." ]);
 ```
 __
 themes pick - Picks a random theme from the chosen themes, as per the Adventure Crafter rules.
@@ -206,18 +242,22 @@ __
 ```
 __
 ```js
-let result = [ "Current theme set:\n", "" ];
-const themes = _inlineScripts.adventurecrafter.themes;
+const themeNames = _inlineScripts.adventurecrafter.themes;
 const themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
+// Begin the expansion
+let result = [ "Theme slots:\n", "" ];
+// Add to expansion - the theme in each theme slot, or empty if theme slot unfilled.
 for (let i = 0; i < 5; i++)
 {
-	result[1] += (i+1) + " - " + (themes[ themeSlots[i] ?? 9 ] || "") + "\n";
+	result[1] += (i+1) + " - " + (themeNames[ themeSlots[i] ?? 9 ] || "") + "\n";
 }
-result.push("\n");
-return result;
+// Remove extra newline from the end of the expansion
+result[1] = result[1].slice(0, -1);
+
+return expFormat(result);
 ```
 __
-themes - Shows the list of chosen themes.
+themes - Shows the list of picked themes.
 
 
 __
@@ -226,27 +266,48 @@ __
 ```
 __
 ```js
+// Prevent adding over 5 themes
 let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
-	return "Theme not added.  All five theme slots are already filled.\n\n";
+	return expFormat("Theme not added.  All five theme slots are filled.");
 }
-const themes = _inlineScripts.adventurecrafter.themes;
-const themeCaptions =
-	themes.map((v, i) =>
+
+// Get theme info
+const themeNames = _inlineScripts.adventurecrafter.themes;
+const themeDescriptions = _inlineScripts.adventurecrafter.themeDescriptions;
+
+// Setup the picker popup
+let themeSlotDisplay = themeSlots.map((v, i) =>
 	{
+		return (i + 1) + " - " + themeNames[v];
+	});
+for (let i = themeSlotDisplay.length; i < 5; i++)
+{
+	themeSlotDisplay.push((i + 1) + " -");
+}
+themeSlotDisplay = themeSlotDisplay.join("\n");
+const popupMessage =
+	"Select the next theme.\n\nCurrent theme slots:\n" +
+	"<div style='display:inline-block;text-align:left'>" + themeSlotDisplay +
+	"</div><br/><br/>";
+const popupOptions = themeNames.map((v, i) =>
+	 {
 		return v.padEnd(16, " ") +
 			_inlineScripts.adventurecrafter.themeDescriptions[i];
-	});
-let message = "Select the next theme.\n\nCurrent theme slots:\n";
-message +=
-	"<div style='display:inline-block;text-align:left'>" + expand("themes")[1] +
-	"</div><br/><br/>";
-let pick = popups.pick(message, themeCaptions, 0, "adaptive");
+	 });
+
+// Show picker popup for user to pick a theme
+let pick = popups.pick(popupMessage, popupOptions, 0, "adaptive");
 if (pick === null) { return null; }
+
+// Add the picked theme
 themeSlots.push(pick);
-return "Theme slot __" +
-	themeSlots.length + "__ set to __" + themes[pick] + "__\n\n";
+
+// Notify the user in the expansion
+const result =
+	"Theme slot __" + themeSlots.length + "__ set to __" + themeNames[pick] + "__";
+return expFormat(result);
 ```
 __
 themes add - Chooses a theme for the next unchosen theme-slot.
@@ -258,23 +319,34 @@ __
 ```
 __
 ```js
+// Prevent adding over 5 themes
 let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
-	return [
-		"Theme not added.  All five theme slots are already filled.", "\n\n" ];
+	return expFormat(
+		[ "", "Theme not added.  All five theme slots are already filled.", "" ]);
 }
-let r = roll(5);
-// Seek unused theme (if theme slots aren't already filled)
-while (themeSlots.length < 5 && themeSlots.includes(r-1))
+
+// Pick from 1 to 5.  Repeat until the pick is the index of an unslotted theme.
+let r;
+do
 {
 	r = roll(5);
 }
-themeSlots.push(r-1);
-const themes = _inlineScripts.adventurecrafter.themes;
-return [
-	"Theme slot __" + themeSlots.length + "__ set to __" + themes[r-1] + "__",
-	"\n\n" ];
+while (themeSlots.includes(r - 1)
+	   // Prevent infinite loops from race conditions (an exceptional error)
+       && themeSlots.length < 5);
+
+// Add the picked theme to the theme slots
+themeSlots.push(r - 1);
+
+// Notify the user in the expansion
+const result =
+[
+	"", "Theme slot __" + themeSlots.length + "__ set to __" +
+	_inlineScripts.adventurecrafter.themes[r-1] + "__.", ""
+];
+return expFormat(result);
 ```
 __
 themes roll - Picks a random theme for the next unchosen theme-slot.
@@ -286,13 +358,18 @@ __
 ```
 __
 ```js
-let result = "";
+// Begin expansion
+let result = [];
+
+// Repeatedly roll a random theme until all theme slots are filled
 do
 {
-	result += expand("themes roll")[0] + "\n";
+	result.push(expand("themes roll")[1]);
 }
 while (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5);
-return result + "\n";
+
+// Notify the user in the expansion
+return expFormat(result.join("\n"));
 ```
 __
 themes fill - Picks random themes for the remaining unchosen theme-slots.
@@ -305,7 +382,7 @@ __
 __
 ```js
 _inlineScripts.state.sessionState.adventurecrafter.themeSlots = [];
-return "All theme slots cleared.\n\n";
+return expFormat("All theme slots cleared.");
 ```
 __
 themes clear - Clears all chosen themes.
@@ -331,9 +408,7 @@ const specialTraits = [
 	[ "THE CHARACTER IS CONNECTED TO AN EXISTING CHARACTER", 100, "This Character has some relationship to another, existing Character in this Adventure. Roll on the Characters List to see who. A result of New Character is changed to Choose The Most Logical Character. The connection can be anything, from the two Characters are related, they know each other, they were former friends, they both work in the same occupation or belong to the same organization, they look or act similarly, they have similar skills or equipment, etc. The connection can be as close or as distant as you like." ]
 ];
 
-let special = aPickWeight(specialTraits);
-special = "- Special trait - " + special[0] + "\n    - " + special[2] + "\n";
-
+// Identity trait
 let identity = aPickWeight(identities);
 if (identity[0][2])
 {
@@ -355,6 +430,7 @@ else
 }
 identity = "- Identity - " + identity.join(", ") + "\n";
 
+// Descriptor trait
 let descriptor = aPickWeight(descriptors);
 if (descriptor[2])
 {
@@ -376,7 +452,12 @@ else
 }
 descriptor = "- Descriptor - " + descriptor.join(", ") + "\n";
 
-return "Character:\n" + special + identity + descriptor + "\n";
+// Special trait
+let special = aPickWeight(specialTraits);
+special = "- Special trait - " + special[0] + "\n    - " + special[2];
+
+// Return full character
+return expFormat("Character:\n" + identity + descriptor + special);
 ```
 __
 ac chars gen - Generates a new character description, as per the Adventure Crafter rules.
@@ -386,35 +467,49 @@ ac chars gen - Generates a new character description, as per the Adventure Craft
 __
 __
 ```js
+// Get list from the list system, replacing duplicate items with text of dupe count
 const getFormattedList = function(
-	listName, hideCount, prefixType /* 0-index,1-none,2-bullets*/)
+	listName, includeCount /* 0: never, 1: if over 1, 2: always */,
+	prefixType /* 0: index, 1: none, 2: period-bullets*/,
+	noMarkdown)
 {
-	let formattedEntries = {};
-	const rawEntries = expand("lists listraw " + listName);
-	for (let i = 0; i < rawEntries.length; i++)
+	// Gather info on entries
+	let entryInfo = {};
+	const entriesWithDuplicates = expand("lists listraw " + listName);
+	for (let i = 0; i < entriesWithDuplicates.length; i++)
 	{
-		if (formattedEntries[rawEntries[i]])
+		if (entryInfo[entriesWithDuplicates[i]])
 		{
-			formattedEntries[rawEntries[i]].count++;
+			entryInfo[entriesWithDuplicates[i]].count++;
 		}
 		else
 		{
-			formattedEntries[rawEntries[i]] = { index: (i+1), count: 1 };
+			entryInfo[entriesWithDuplicates[i]] = { index: (i+1), count: 1 };
 		}
 	}
+
+	// Create output from entries & info
+	// (iterate over entriesWithDuplicates to maintain entry order)
 	let result = [];
 	let isEmpty = true;
-	for (const entry of rawEntries)
+	for (const entry of entriesWithDuplicates)
 	{
-		if (formattedEntries[entry])
+		if (entryInfo[entry])
 		{
-			const e = formattedEntries[entry];
+			const e = entryInfo[entry];
+			let countDisplay = " _(x " + e.count + ")_";
+			if (noMarkdown)
+			{
+				countDisplay = countDisplay.replace("_(x", "(x").replace(")_", ")");
+			}
+			if (includeCount === 0 || (includeCount === 1 && e.count === 1))
+			{
+				countDisplay = "";
+			}
 			result.push(
 				(prefixType===1 ? "" : prefixType===2 ? ". " : (e.index + " - ")) +
-				entry +
-				((hideCount || e.count === 1) ? "" : " _(x " + e.count + ")_")
-			);
-			delete formattedEntries[entry];
+				entry + countDisplay);
+			delete entryInfo[entry];
 			isEmpty = false;
 		}
 	}
@@ -422,6 +517,7 @@ const getFormattedList = function(
 	{
 		result.push("NONE");
 	}
+
 	return result;
 };
 ```
@@ -435,38 +531,54 @@ __
 ```
 __
 ```js
-const NEW_ENTRY_MSG = "Create a new character";
+// Roll the character pick (from a table of 25 entries, as seen on pg.121)
 const r = roll(25);
+
+// Get the character listed at the roll (or nothing, if no character is at the roll)
 let result = expand("lists pick characters " + r)[1];
+
+// If a character was picked, just return that
 if (result)
 {
-	result = [ "Character __", result, "__ picked." ];
+	return expFormat([ "Character __", result, "__ picked." ]);
 }
+
+// Predefine a common message
+const NEW_ENTRY_MSG = "Create a new character";
+
+// If pick didn't have a character, get the default value of the table entry.
+// ("Create a new character" is just a message, while "Choose most logical character"
+//  needs extra logic, which follows this if block)
 if (!result)
 {
 	if (r < 13)
 	{
-		result = r%4 ? [ NEW_ENTRY_MSG ] : null;
+		result = r%4 ? NEW_ENTRY_MSG : "choose";
 	}
 	else
 	{
-		result = (r-1)%4 ? null : [ NEW_ENTRY_MSG ];
+		result = (r-1)%4 ? "choose" : NEW_ENTRY_MSG;
 	}
 }
-if (!result)
+
+// If a "Choose most logical character" entry was picked, create the message
+if (result === "choose")
 {
-	let list = await getFormattedList("characters", true, 2);
+	// If there ARE characters, make the message to list them
+	let list = await getFormattedList("characters", 0, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
-		result = [ "Choose the most logical character:\n" + list.join("\n") ];
+		result = "Choose the most logical character:\n" + list.join("\n");
 	}
+	// If there ARE NO characters, default to "Create a new character" message
 	else
 	{
-		result = [ NEW_ENTRY_MSG ];
+		result = NEW_ENTRY_MSG;
 	}
 }
-result.push("\n\n");
-return result;
+
+// Return the picked table entry
+return expFormat([ result ]);
 ```
 __
 ac chars pick - Picks a random character, as per the Adventure Crafter rules.
@@ -478,8 +590,10 @@ __
 ```
 __
 ```js
-return "Characters:\n" +
-	(await getFormattedList("characters", false, 2)).join("\n") + "\n\n";
+// Return a message with the list of characters
+return expFormat(
+	"Characters:\n" + (await getFormattedList("characters", 1, 2)).join("\n")
+);
 ```
 __
 ac chars - Lists all character entries.
@@ -491,6 +605,7 @@ __
 ```
 __
 ```js
+// Just straight rely on the "lists" system for functionality and output
 return expand("lists add characters " + $1);
 ```
 __
@@ -503,35 +618,25 @@ __
 ```
 __
 ```js
-const rawCharacters = expand("lists listraw characters");
-if (!rawCharacters.length)
+// Get the list of characters
+let choices = await getFormattedList("characters", 2, 1, true);
+
+// Early-out if no characters to duplicate
+if (choices.length === 1 && choices[0] === "NONE")
 {
-	return "No character Duplicated.  There are no characters.\n\n";
+	return expFormat("No character Duplicated.  There are no characters.");
 }
 
-const characters = [...new Set(rawCharacters)];
-let characterDisplays = [...characters];
-for (let i = 0; i < characters.length; i++)
-{
-	let count = 0;
-	for (let j = 0; j < rawCharacters.length; j++)
-	{
-		if (rawCharacters[j] === characters[i])
-		{
-			count++;
-		}
-	}
-	if (count > 1)
-	{
-		characterDisplays[i] += " (x " + count + ")"
-	}
-}
-
-const pick =
-	popups.pick("Choose a character to duplicate", characterDisplays, 0, "adaptive");
+// Show a pick popup to let the user pick from that list of characters
+let pick =
+	popups.pick("Choose a character to duplicate", choices, 0, "adaptive");
 if (pick === null) { return null; }
+
+// Duplicate the chosen character
+let characters = await getFormattedList("characters", 0, 1);
 expand("lists add characters " + characters[pick]);
-return "Character __" + characters[pick] + "__ duplicated.\n\n";
+
+return expFormat("Character __" + characters[pick] + "__ duplicated.");
 ```
 __
 ac chars dupe - Asks the user for a character from the characters list and adds a new entry for that character.
@@ -543,33 +648,25 @@ __
 ```
 __
 ```js
-const rawCharacters = expand("lists listraw characters");
-if (!rawCharacters.length)
+// Get the list of characters
+let choices = await getFormattedList("characters", 2, 1, true);
+
+// Early-out if no characters to duplicate
+if (choices.length === 1 && choices[0] === "NONE")
 {
-	return "No character reduced.  " +
-		"There are no characters.\n\n";
+	return expFormat("No character reduced.  There are no characters.");
 }
 
-const characters = [...new Set(rawCharacters)];
-let characterDisplays = [...characters];
-for (let i = 0; i < characters.length; i++)
-{
-	let count = 0;
-	for (let j = 0; j < rawCharacters.length; j++)
-	{
-		if (rawCharacters[j] === characters[i])
-		{
-			count++;
-		}
-	}
-	characterDisplays[i] += " (x " + count + ")"
-}
-
-const pick =
-	popups.pick("Choose a character to Reduce", characterDisplays, 0, "adaptive");
+// Show a pick popup to let the user pick from that list of characters
+let pick =
+	popups.pick("Choose a character to reduce", choices, 0, "adaptive");
 if (pick === null) { return null; }
+
+// Reduce the chosen character
+let characters = await getFormattedList("characters", 0, 1);
 expand("lists remove characters " + characters[pick]);
-return "Character __" + characters[pick] + "__ reduced.\n\n";
+
+return expFormat("Character __" + characters[pick] + "__ reduced.");
 ```
 __
 ac chars reduce - Asks the user for a character from the characters list and removes one entry for that character.
@@ -581,40 +678,32 @@ __
 ```
 __
 ```js
-let rawCharacters = expand("lists listraw characters");
-if (!rawCharacters.length)
+// Get the list of characters
+let choices = await getFormattedList("characters", 2, 1, true);
+
+// Early-out if no characters to duplicate
+if (choices.length === 1 && choices[0] === "NONE")
 {
-	return "No character renamed.  " +
-		"There are no characters.\n\n";
+	return expFormat("No character renamed.  There are no characters.");
 }
 
-let characters = [...new Set(rawCharacters)];
-let characterDisplays = [...characters];
-for (let i = 0; i < characters.length; i++)
-{
-	let count = 0;
-	for (let j = 0; j < rawCharacters.length; j++)
-	{
-		if (rawCharacters[j] === characters[i])
-		{
-			count++;
-		}
-	}
-	if (count > 1)
-	{
-		characterDisplays[i] += " (x " + count + ")"
-	}
-}
+// Show a pick popup to let the user pick from that list of characters
+let pick =
+	popups.pick("Choose a character to rename", choices, 0, "adaptive");
+if (pick === null) { return null; }
 
-const pick =
-	popups.pick("Choose a character to rename", characterDisplays, 0, "adaptive");
-if (pick == null) { return null; }
+let characters = await getFormattedList("characters", 0, 1);
+
+// Show a text popup to let the user enter a new name for the chosen character
 const replacement =
-	popups.input("Enter a new text for the character.", characters[pick]);
+	popups.input("Enter a new name for the character.", characters[pick]);
 if (!replacement) { return null; }
+
+// Rename the chosen character
 expand("lists replace characters \"" + characters[pick] + "\" " + replacement);
-return "Character __" +
-	characters[pick] + "__ renamed to __" + replacement + "__.\n\n";
+
+return expFormat(
+	"Character __" + characters[pick] + "__ renamed to __" + replacement + "__.");
 ```
 __
 ac chars rename - Asks the user for a character from the characters list and what to change it's text to, then changes the character's text.
@@ -627,31 +716,47 @@ __
 ```
 __
 ```js
-const NEW_ENTRY_MSG = "Create a new plotline";
+// Roll the plotline pick (from a table of 25 entries, as seen on pg.121)
 const r = roll(25);
+
+// Get the plotline listed at the roll (or nothing, if no plotline is at the roll)
 let result = expand("lists pick plotlines " + r)[1];
+
+// If a plotline was picked, just return that
 if (result)
 {
-	result = [ "Plotline __", result, "__ picked." ];
+	return expFormat([ "Plotline __", result, "__ picked." ]);
 }
+
+// Predefine a common message
+const NEW_ENTRY_MSG = "Create a new plotline";
+
+// If pick didn't have a character, get the default value of the table entry.
+// ("Create a new character" is just a message, while "Choose most logical character"
+//  needs extra logic, which follows this if block)
 if (!result)
 {
-	result = (r+2)%4 ? null : [ NEW_ENTRY_MSG ];
+	result = (r+2)%4 ? "choose" : [ NEW_ENTRY_MSG ];
 }
-if (!result)
+
+// If a "Choose most logical character" entry was picked, create the message
+if (result === "choose")
 {
-	let list = await getFormattedList("plotlines", true, 2);
+	// If there ARE characters, make the message to list them
+	let list = await getFormattedList("plotlines", 0, 2);
 	if (list.length > 1 || list[0] !== "NONE")
 	{
-		result = [ "Choose the most logical plotline:\n" + list.join("\n") ];
+		result = "Choose the most logical plotline:\n" + list.join("\n");
 	}
+	// If there ARE NO characters, default to "Create a new character" message
 	else
 	{
-		result = [ NEW_ENTRY_MSG ];
+		result = NEW_ENTRY_MSG;
 	}
 }
-result.push("\n\n");
-return result;
+
+// Return the picked table entry
+return expFormat([ result ]);
 ```
 __
 ac plots pick - Picks a random plotline, as per the Adventure Crafter rules.
@@ -663,8 +768,10 @@ __
 ```
 __
 ```js
-return "Plotlines:\n" +
-	(await getFormattedList("plotlines", false, 2)).join("\n") + "\n\n";
+// Return a message with the list of plotlines
+return expFormat(
+	"Plotlines:\n" + (await getFormattedList("plotlines", 1, 2)).join("\n")
+);
 ```
 __
 ac plots - Lists all plotline entries.
@@ -676,6 +783,7 @@ __
 ```
 __
 ```js
+// Just straight rely on the "lists" system for functionality and output
 return expand("lists add plotlines " + $1);
 ```
 __
@@ -688,35 +796,25 @@ __
 ```
 __
 ```js
-const rawPlots = expand("lists listraw plotlines");
-if (!rawPlots.length)
+// Get the list of plotlines
+let choices = await getFormattedList("plotlines", 2, 1, true);
+
+// Early-out if no plotlines to duplicate
+if (choices.length === 1 && choices[0] === "NONE")
 {
-	return "No plotline duplicated.  There are no plotlines.\n\n";
+	return expFormat("No plotline Duplicated.  There are no plotlines.");
 }
 
-const plots = [...new Set(rawPlots)];
-let plotDisplays = [...plots];
-for (let i = 0; i < plots.length; i++)
-{
-	let count = 0;
-	for (let j = 0; j < rawPlots.length; j++)
-	{
-		if (rawPlots[j] === plots[i])
-		{
-			count++;
-		}
-	}
-	if (count > 1)
-	{
-		plotDisplays[i] += " (x " + count + ")"
-	}
-}
-
-const pick =
-	popups.pick("Choose a plotline to duplicate", plotDisplays, 0, "adaptive");
+// Show a pick popup to let the user pick from that list of plotlines
+let pick =
+	popups.pick("Choose a plotline to duplicate", choices, 0, "adaptive");
 if (pick === null) { return null; }
-expand("lists add plotlines " + plots[pick]);
-return "Plotline __" + plots[pick] + "__ duplicated.\n\n";
+
+// Duplicate the chosen plotline
+let plotlines = await getFormattedList("plotlines", 0, 1);
+expand("lists add plotlines " + plotlines[pick]);
+
+return expFormat("Plotline __" + plotlines[pick] + "__ duplicated.");
 ```
 __
 ac plots dupe - Asks the user for a plotline from the plotlines list and adds a new entry for that plotline.
@@ -728,32 +826,25 @@ __
 ```
 __
 ```js
-const rawPlots = expand("lists listraw plotlines");
-if (!rawPlots.length)
+// Get the list of plotlines
+let choices = await getFormattedList("plotlines", 2, 1, true);
+
+// Early-out if no plotlines to duplicate
+if (choices.length === 1 && choices[0] === "NONE")
 {
-	return "No plotlines reduced.  " +
-		"There are no plotline.\n\n";
+	return expFormat("No plotline reduced.  There are no plotlines.");
 }
 
-const plots = [...new Set(rawPlots)];
-let plotDisplays = [...plots];
-for (let i = 0; i < plots.length; i++)
-{
-	let count = 0;
-	for (let j = 0; j < rawPlots.length; j++)
-	{
-		if (rawPlots[j] === plots[i])
-		{
-			count++;
-		}
-	}
-	plotDisplays[i] += " (x " + count + ")"
-}
-
-const pick = popups.pick("Choose a plotline to Reduce", plotDisplays, 0, "adaptive");
+// Show a pick popup to let the user pick from that list of plotlines
+let pick =
+	popups.pick("Choose a plotline to reduce", choices, 0, "adaptive");
 if (pick === null) { return null; }
-expand("lists remove plotlines " + plots[pick]);
-return "Plotline __" + plots[pick] + "__ reduced.\n\n";
+
+// Reduce the chosen plotline
+let plotlines = await getFormattedList("plotlines", 0, 1);
+expand("lists remove plotlines " + plotlines[pick]);
+
+return expFormat("Plotline __" + plotlines[pick] + "__ reduced.");
 ```
 __
 ac plots reduce - Asks the user for a plotline from the plotlines list and removes one entry for that plotline.
@@ -765,37 +856,32 @@ __
 ```
 __
 ```js
-let rawPlots = expand("lists listraw plotlines");
-if (!rawPlots.length)
+// Get the list of plotlines
+let choices = await getFormattedList("plotlines", 2, 1, true);
+
+// Early-out if no plotlines to duplicate
+if (choices.length === 1 && choices[0] === "NONE")
 {
-	return "No plotlines renamed.  There are no plotlines.\n\n";
+	return expFormat("No plotline renamed.  There are no plotlines.");
 }
 
-let plots = [...new Set(rawPlots)];
-let plotDisplays = [...plots];
-for (let i = 0; i < plots.length; i++)
-{
-	let count = 0;
-	for (let j = 0; j < rawPlots.length; j++)
-	{
-		if (rawPlots[j] === plots[i])
-		{
-			count++;
-		}
-	}
-	if (count > 1)
-	{
-		plotDisplays[i] += " (x " + count + ")"
-	}
-}
+// Show a pick popup to let the user pick from that list of plotlines
+let pick =
+	popups.pick("Choose a plotline to rename", choices, 0, "adaptive");
+if (pick === null) { return null; }
 
-const pick = popups.pick("Choose a plotline to rename", plotDisplays, 0, "adaptive");
-if (pick == null) { return null; }
+let plotlines = await getFormattedList("plotlines", 0, 1);
+
+// Show a text popup to let the user enter a new name for the chosen plotline
 const replacement =
-	popups.input("Enter a new text for the plotline.", plots[pick]);
+	popups.input("Enter a new name for the plotline.", plotlines[pick]);
 if (!replacement) { return null; }
-expand("lists replace plotlines \"" + plots[pick] + "\" " + replacement);
-return "Plotline __" + plots[pick] + "__ renamed to __" + replacement + "__.\n\n";
+
+// Rename the chosen plotline
+expand("lists replace plotlines \"" + plotlines[pick] + "\" " + replacement);
+
+return expFormat(
+	"Plotline __" + plotlines[pick] + "__ renamed to __" + replacement + "__.");
 ```
 __
 ac plots rename - Asks the user for a plotline from the plotlines list and what to change it's text to, then changes the plotline's text.
@@ -878,8 +964,7 @@ confirmObjectPath(
 confirmObjectPath(
 	"_inlineScripts.adventurecrafter.themes",
 	[
-		"ACTION", "TENSION", "MYSTERY",
-		"SOCIAL", "PERSONAL"
+		"ACTION", "TENSION", "MYSTERY", "SOCIAL", "PERSONAL"
 	]);
 
 confirmObjectPath(
@@ -889,7 +974,7 @@ confirmObjectPath(
 		"Anxiety provoking (for the characters at least)",
 		"Questions: raising and answering",
 		"Interaction of people and/or factions",
-		"Individual and intimate situations"
+		"Personal situations (for the characters)"
 	]);
 
 confirmObjectPath(
