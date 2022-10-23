@@ -7,12 +7,17 @@ This shortcut-file has a tutorial video available:
 __
 __
 ```js
+// This is referred to by a few different systems
 const CARDPILE_VIEW_TYPE = "inline-scripts-cardpile-view";
+
+// Get the current back-image, url
 function getBackImage()
 {
 	return _inlineScripts.state.sessionState.cards.backImage ||
 	       _inlineScripts.cards.defaultBackImage;
 }
+
+// Turn a relative path url into an absolute path url based in the vault's root
 function getAbsolutePath(path)
 {
 	if (path.startsWith("data:image")) { return path; }
@@ -20,26 +25,23 @@ function getAbsolutePath(path)
 	if (!path) { return ""; }
 	return app.vault.getResourcePath(path);
 }
+
+// Create a block of html code to represent a specific card
 function createCardUi(isFaceUp, card, id, scale, includeDataSrc)
 {
-	scale ||= 1.0;
-	const front = getAbsolutePath(card.path);
-	const back =
-		getAbsolutePath(getBackImage());
-
 	const result = document.createElement("img");
 	result.classList.add("cardUi");
-	result.src = isFaceUp ? front : back;
-	const size = _inlineScripts.state.sessionState.cards.size;
-	result.style.width = (size * scale) + "px";
-	result.style.height = (size * card.aspect * scale) + "px";
+	result.src = getAbsolutePath(isFaceUp ? card.path : getBackImage());
+	const size = _inlineScripts.state.sessionState.cards.size * (scale || 1.0);
+	result.style.width = size + "px";
+	result.style.height = (size * card.aspect) + "px";
 	if (id != undefined)
 	{
 		result.dataset.id = id;
 	}
 	if (includeDataSrc)
 	{
-		result.dataset.src = front;
+		result.dataset.src = getAbsolutePath(card.path);
 	}
 	if (isFaceUp)
 	{
@@ -65,10 +67,13 @@ __
 ```js
 const confirmObjectPath =
 	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+
+// Event callbacks for cards system events
 confirmObjectPath(
 	"_inlineScripts.cards.listeners.onPileListChanged.cards_pileViewer",
 	function()
 	{
+		// React to pile list changes by updating the dropdown list
 		const leaves = app.workspace.getLeavesOfType(CARDPILE_VIEW_TYPE);
 		for (const leaf of leaves)
 		{
@@ -79,6 +84,7 @@ confirmObjectPath(
 	"_inlineScripts.cards.listeners.onPileChanged.cards_pileViewer",
 	function()
 	{
+		// React to pile changes by refreshing the current pile of every view
 		const leaves = app.workspace.getLeavesOfType(CARDPILE_VIEW_TYPE);
 		for (const leaf of leaves)
 		{
@@ -86,171 +92,10 @@ confirmObjectPath(
 		}
 	});
 
-const plugin = _inlineScripts.inlineScripts.plugin;
-
-if (!_inlineScripts.inlineScripts.hasRegisteredCardPileView)
-{
-	_inlineScripts.inlineScripts.hasRegisteredCardPileView = true;
-	class CardPileView extends _inlineScripts.inlineScripts.helperFncs.ItemView
-	{
-		pileSelect;
-		zoomSelect;
-		cardDisplay;
-		dragReorder;
-		_onDragReordered;
-
-		constructor(leaf)
-		{
-			super(leaf);
-			this._onDragReordered = this.onDragReordered.bind(this);
-		}
-	
-		load()
-		{
-			const root = this.containerEl.children[1];
-			root.style.overflow = "unset";
-			const header = document.createElement('div');
-			header.classList.add("iscript_pileViewer_header");
-			root.appendChild(header);
-
-			this.pileSelect = document.createElement("select");
-			this.pileSelect.classList.add("iscript_pileViewer_select");
-			this.pileSelect.options[this.pileSelect.options.length] =
-				new Option("");
-			this.pileSelect.onchange = () =>
-			{
-				this.refreshPile(true);
-			}
-			header.appendChild(this.pileSelect);
-
-			this.zoomSelect = document.createElement("select");
-			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("25%");
-			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("50%");
-			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("75%");
-			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("100%", undefined, undefined, true);
-			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("200%");
-			this.zoomSelect.options[this.zoomSelect.options.length] =
-				new Option("300%");
-			this.zoomSelect.onchange = () =>
-			{
-				this.refreshPile(true);
-			}
-			header.appendChild(this.zoomSelect);
-
-			this.cardDisplay = document.createElement("div");
-			this.cardDisplay.classList.add("iscript_pileViewer_content");
-			root.appendChild(this.cardDisplay);
-
-			this.refreshPileList();
-		}
-
-		refreshPileList()
-		{
-			const names = Object.keys(
-				_inlineScripts.state.sessionState.cards.piles);
-			names.sort();
-			const oldValue = this.pileSelect.value;
-			this.pileSelect.options.length = 0;
-			this.pileSelect.options
-				[this.pileSelect.options.length] =
-				new Option("");
-			for (const name of names)
-			{
-				this.pileSelect.options[this.pileSelect.options.length] =
-					new Option(name);
-			}
-			this.pileSelect.value = oldValue;
-			if (this.pileSelect.value !== oldValue)
-			{
-				this.refreshPile(true);
-			}
-		}
-
-		refreshPile(force)
-		{
-			if (_inlineScripts.cards.listeners.changedPile !==
-			    this.pileSelect.value && !force &&
-			    _inlineScripts.cards.listeners.changedPile)
-			{
-				return;
-			}
-			this.cardDisplay.innerText = "";
-			if (!this.pileSelect.value) { return; }
-			const pileName = this.pileSelect.value;
-			const pile = _inlineScripts.state.sessionState.cards.piles[pileName];
-			if (!pile.cards.length)
-			{
-				let emptyMsg = document.createElement("div");
-				emptyMsg.innerText = "-- Empty card-pile --";
-				emptyMsg.classList.add("iscript_emptyMsg");
-				this.cardDisplay.append(emptyMsg);
-				return;
-			}
-			const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
-			for (let i = pile.cards.length-1; i >= 0; i--)
-			{
-				let cardUi = createCardUi(pile.isFaceUp, pile.cards[i], i, zoom);
-				this.cardDisplay.append(cardUi);
-				cardUi.classList.add("iscript_viewerCardUi");
-				cardUi.addEventListener("dblclick", () =>
-				{
-					cardUi.classList.remove("rotated" + pile.cards[i].rotation);
-					pile.cards[i].rotation++;
-					if (pile.cards[i].aspect !== 1)
-					{
-						pile.cards[i].rotation++;
-					}
-					if (pile.cards[i].rotation > 3)
-					{
-						pile.cards[i].rotation = 0;
-					}
-					cardUi.classList.add("rotated" + pile.cards[i].rotation);
-				});
-			}
-			this.dragReorder =
-				new _inlineScripts.inlineScripts.helperFncs.DragReorder(
-					this.cardDisplay, this._onDragReordered);
-		}
-
-		onDragReordered()
-		{
-			const pileName = this.pileSelect.value;
-			const cards =
-				_inlineScripts.state.sessionState.cards.piles[pileName].cards;
-			let newCards = [];
-			for (let i = this.cardDisplay.childNodes.length - 1; i >= 0; i--)
-			{
-				newCards.push(cards[this.cardDisplay.childNodes[i].dataset.id]);
-				this.cardDisplay.childNodes[i].dataset.id = newCards.length-1;
-			}
-			_inlineScripts.state.sessionState.cards.piles[pileName].cards =
-				newCards;
-		}
-	
-		getViewType()
-		{
-			return CARDPILE_VIEW_TYPE;
-		}
-	
-		getDisplayText()
-		{
-			return "Inline Scripts - Card-pile view";
-		}
-	
-		getIcon()
-		{
-			return CARDPILE_VIEW_TYPE;
-		}
-	}
-	plugin.registerView(CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
-}
+// Custom CSS
 _inlineScripts.inlineScripts.helperFncs.addCss("cards_pileviewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .iscript_emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
 
+// Panel icon
 _inlineScripts.inlineScripts.helperFncs.addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
  <g class="layer">
@@ -268,6 +113,192 @@ _inlineScripts.inlineScripts.helperFncs.addIcon(CARDPILE_VIEW_TYPE, `
   </g>
  </g>
 </svg>`);
+
+// Only register this viewer panel registration once per Obsidian session
+if (_inlineScripts.inlineScripts.hasRegisteredCardPileView) { return; }
+_inlineScripts.inlineScripts.hasRegisteredCardPileView = true;
+
+// This viewer panel's class for registration
+class CardPileView extends _inlineScripts.inlineScripts.helperFncs.ItemView
+{
+	// Member vars
+	pileSelect;
+	zoomSelect;
+	cardDisplay;
+	dragReorder;
+	_onDragReordered;
+
+	constructor(leaf)
+	{
+		super(leaf);
+		this._onDragReordered = this.onDragReordered.bind(this);
+	}
+
+	// Initial setup
+	load()
+	{
+		// UI element creation
+		const root = this.containerEl.children[1];
+		root.style.overflow = "unset";
+		// Row for the pile select and the zoom select
+		const header = document.createElement('div');
+		header.classList.add("iscript_pileViewer_header");
+		root.appendChild(header);
+		// The pile select for selecting the current pile
+		this.pileSelect = document.createElement("select");
+		this.pileSelect.classList.add("iscript_pileViewer_select");
+		this.pileSelect.options[this.pileSelect.options.length] = new Option("");
+		this.pileSelect.onchange = () => { this.refreshPile(true); }
+		header.appendChild(this.pileSelect);
+		// The zoom select for selecting the current zoom
+		this.zoomSelect = document.createElement("select");
+		this.zoomSelect.options[0] = new Option("25%");
+		this.zoomSelect.options[1] = new Option("50%");
+		this.zoomSelect.options[2] = new Option("75%");
+		this.zoomSelect.options[3] = new Option("100%", undefined, undefined, true);
+		this.zoomSelect.options[4] = new Option("200%");
+		this.zoomSelect.options[5] = new Option("300%");
+		this.zoomSelect.onchange = () =>
+		{
+			this.refreshPile(true);
+		}
+		header.appendChild(this.zoomSelect);
+		// Main space for card visualization UIs
+		this.cardDisplay = document.createElement("div");
+		this.cardDisplay.classList.add("iscript_pileViewer_content");
+		root.appendChild(this.cardDisplay);
+
+		// First refresh of list of piles in the select ui
+		this.refreshPileList();
+	}
+
+	// Update the list of piles in the select ui
+	refreshPileList()
+	{
+		// Remember the current pile while the select is being re-populated
+		const oldValue = this.pileSelect.value;
+
+		// Clear the select
+		this.pileSelect.options.length = 0;
+
+		// Add a blank option
+		this.pileSelect.options[this.pileSelect.options.length] = new Option("");
+
+		// Add an option for each pile
+		const piles = Object.keys(_inlineScripts.state.sessionState.cards.piles);
+		piles.sort();
+		for (const pile of piles)
+		{
+			this.pileSelect.options[this.pileSelect.options.length] =
+				new Option(pile);
+		}
+
+		// Restore the current pile. If not available, clear the pile view (refresh).
+		this.pileSelect.value = oldValue;
+		if (this.pileSelect.value !== oldValue)
+		{
+			this.refreshPile(true);
+		}
+	}
+
+	// Update the visualization of the current pile being viewed
+	refreshPile(force)
+	{
+		// Only refresh if being forced, or if the pile that changed is specified and
+		// is the current pile
+		if (!force && _inlineScripts.cards.listeners.changedPile &&
+		    _inlineScripts.cards.listeners.changedPile !== this.pileSelect.value)
+		{
+			return;
+		}
+
+		// Clear the view to repopulate it
+		this.cardDisplay.innerText = "";
+
+		// Get the current pile
+		const pile =
+			_inlineScripts.state.sessionState.cards.piles[this.pileSelect.value];
+		if (!pile) { return; }
+
+		// If pile has no cards, add a ui saying so, then early out
+		if (!pile.cards.length)
+		{
+			let emptyMsg = document.createElement("div");
+				emptyMsg.innerText = "-- Empty card-pile --";
+				emptyMsg.classList.add("iscript_emptyMsg");
+				this.cardDisplay.append(emptyMsg);
+			return;
+		}
+
+		// Work out the zoom level
+		const zoom = Number(this.zoomSelect.value.slice(0,-1)) / 100.0;
+
+		// Add a visualization ui for each card in the current pile
+		for (let i = pile.cards.length-1; i >= 0; i--)
+		{
+			let cardUi = createCardUi(pile.isFaceUp, pile.cards[i], i, zoom);
+				cardUi.classList.add("iscript_viewerCardUi");
+				this.cardDisplay.append(cardUi);
+
+			// Card ui double-click triggers rotation of the card
+			cardUi.addEventListener("dblclick", async () =>
+			{
+				cardUi.classList.remove("rotated" + pile.cards[i].rotation);
+				pile.cards[i].rotation++;
+				if (pile.cards[i].aspect !== 1)
+				{
+					pile.cards[i].rotation++;
+				}
+				if (pile.cards[i].rotation > 3)
+				{
+					pile.cards[i].rotation = 0;
+				}
+				cardUi.classList.add("rotated" + pile.cards[i].rotation);
+
+				// Save the state
+				expand("state save");
+			});
+		}
+
+		// Setup a drag system to handle drag-reordering the cards
+		this.dragReorder =
+			new _inlineScripts.inlineScripts.helperFncs.DragReorder(
+				this.cardDisplay, this._onDragReordered);
+	}
+
+	// Event callback for reorder event of the drag system
+	async onDragReordered()
+	{
+		// Get the current pile
+		const pile =
+			_inlineScripts.state.sessionState.cards.piles[this.pileSelect.value];
+
+		// Create a new cards array, based on the old one, but with the new card order
+		let newCards = [];
+		for (let i = this.cardDisplay.childNodes.length - 1; i >= 0; i--)
+		{
+			newCards.push(pile.cards[this.cardDisplay.childNodes[i].dataset.id]);
+			this.cardDisplay.childNodes[i].dataset.id = newCards.length-1;
+		}
+
+		// Put new cards array in the current pile
+		pile.cards = newCards;
+
+		// Save the state
+		expand("state save");
+	}
+
+	// Return the string id for this panel type
+	getViewType() { return CARDPILE_VIEW_TYPE; }
+	// Return the caption for this panel type
+	getDisplayText() { return "Inline Scripts - Card-pile view"; }
+	// Return the string id for the iconfor this panel type
+	getIcon() { return CARDPILE_VIEW_TYPE; }
+}
+
+// Register the panel type with the above class
+_inlineScripts.inlineScripts.plugin.registerView(
+	CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 ```
 __
 Sets up this shortcut-file
@@ -281,7 +312,11 @@ __
 ```js
 delete _inlineScripts.cards?.listeners?.onPileListChanged?.cards_pileViewer;
 delete _inlineScripts.cards?.listeners?.onPileChanged?.cards_pileViewer;
+
+// Remove the pileviewer css
 _inlineScripts.inlineScripts.helperFncs.removeCss("cards_pileviewer");
+
+// Remove all instances of the pileviewer ui
 app.workspace.detachLeavesOfType(CARDPILE_VIEW_TYPE);
 ```
 __
@@ -294,9 +329,7 @@ __
 ```
 __
 ```js
-const plugin = _inlineScripts.inlineScripts.plugin;
-await plugin.app.workspace.getRightLeaf(false).setViewState(
-	{ type: CARDPILE_VIEW_TYPE });
+await app.workspace.getRightLeaf(false).setViewState({ type: CARDPILE_VIEW_TYPE });
 ```
 __
 cards open viewer - Open a panel for viewing card-piles.

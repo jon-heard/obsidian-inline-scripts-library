@@ -30,15 +30,6 @@ confirmObjectPath("_inlineScripts.state.inSetup", true);
 
 const STATE_FILE_NAME = "Ξ_state.data.md";
 
-async function saveState()
-{
-	const stateString = JSON.stringify(_inlineScripts.state.sessionState);
-	if (stateString === _inlineScripts.state.stateFile.priorString) { return; }
-	await app.vault.adapter.write(
-		_inlineScripts.state.stateFile.path, stateString);
-	_inlineScripts.state.stateFile.priorString = stateString;
-}
-
 async function removeFile(filename)
 {
 	if (await app.vault.adapter.exists(filename))
@@ -140,7 +131,7 @@ if (!_inlineScripts.state.sessionState || stateFileHasBeenSet)
 				_inlineScripts.state.stateFile.path + "\n\t", e);
 		}
 		_inlineScripts.state.sessionState = {};
-		await saveState();
+		expand("state save");
 	}
 }
 
@@ -151,7 +142,7 @@ confirmObjectPath(
 	{
 		if (expansionInfo.isUserTriggered)
 		{
-			await saveState();
+			expand("state save");
 		}
 	});
 
@@ -252,3 +243,20 @@ return "State set.\n\n";
 ```
 __
 state set {state: text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.
+
+
+__
+```
+^state save$
+```
+__
+```js
+const stateString = JSON.stringify(_inlineScripts.state.sessionState);
+if (stateString === _inlineScripts.state.stateFile.priorString) { return; }
+await app.vault.adapter.write(
+	_inlineScripts.state.stateFile.path, stateString);
+_inlineScripts.state.stateFile.priorString = stateString;
+return "State saved.\n\n";
+```
+__
+state save - Store the state to file.  This is called automatically after each shortcut expansion that triggers a state change.

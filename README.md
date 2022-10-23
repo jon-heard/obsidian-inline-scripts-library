@@ -54,6 +54,7 @@ This shortcut-file has 2 tutorial videos available.  The first one is right for 
 - __state get__ - Expands to a state-string - a string containing all data for the current session state.
 - __state restore__ - Loads the session state from the last "state get" shortcut expansion in the current note.
 - __state set {state: text}__ - Loads the session state from {state}, a state-string created with the "state get" shortcut.
+- __state save__ - Store the state to file.  This is called automatically after each shortcut expansion that triggers a state change.
 
 ***
 
