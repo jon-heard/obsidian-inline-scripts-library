@@ -47,8 +47,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 
 // Reset themes
 confirmObjectPath("_inlineScripts.state.sessionState.adventurecrafter");
@@ -88,7 +87,6 @@ else
 		{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 }
 
-// Return message to user
 return expFormat("Adventure crafter reset.");
 ```
 __
@@ -102,8 +100,8 @@ __
 ```
 __
 ```js
-// Themes must be filled before creating a turning point
-if (expand("themes pick").length < 4)
+// Early-out if theme-slots aren't filled with chosen themes
+if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
 	return expFormat("Turning point not generated.  Not all theme slots filled.");
 }
@@ -142,7 +140,6 @@ for (const none of nones)
 }
 result = result.slice(0, -1);
 
-// Format and return the result
 return expFormat(result);
 ```
 __
@@ -155,12 +152,14 @@ __
 ```
 __
 ```js
-// Themes must be filled before creating a plot point
-const themePick = expand("themes pick");
-if (themePick.length < 4)
+// Early-out if theme-slots aren't filled with chosen themes
+if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
 	return expFormat("Plot point not generated.  Not all theme slots filled.");
 }
+
+// Pick the theme to use for this turning point
+const themePick = expand("themes pick");
 
 // Setup plot-point output as array to allow splitting it up in turning-point
 let result = [ "Plot point:\n" ];
@@ -190,7 +189,8 @@ else
 		result.push("- " + metaPoint[2]);
 	}
 }
-// Add an extra element for the expFormat suffix.  Lets "turning point" remove it.
+
+// Add an extra element to hold the expFormat suffix.  Lets the suffix be removable.
 result.push("");
 return expFormat(result);
 ```
@@ -205,7 +205,7 @@ __
 ```
 __
 ```js
-// return array to allow (a) formatting by "plot point" shortcut (b) signify error.
+// Early-out if theme-slots aren't filled with chosen themes
 if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
 	return expFormat([ "Theme not picked.  Not all theme slots filled." ]);
@@ -227,7 +227,7 @@ else // if pick === 10
 // Get the theme at the picked theme slot
 pick = _inlineScripts.state.sessionState.adventurecrafter.themeSlots[pick];
 
-// Return the theme
+// Return the picked theme
 return expFormat([
 	"Theme __", _inlineScripts.adventurecrafter.themes[pick], "__ picked _(",
 	(pick+1), ")_." ]);
@@ -244,13 +244,16 @@ __
 ```js
 const themeNames = _inlineScripts.adventurecrafter.themes;
 const themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
-// Begin the expansion
+
+// Begin an expansion listing the theme-slots
 let result = [ "Theme slots:\n", "" ];
+
 // Add to expansion - the theme in each theme slot, or empty if theme slot unfilled.
 for (let i = 0; i < 5; i++)
 {
 	result[1] += (i+1) + " - " + (themeNames[ themeSlots[i] ?? 9 ] || "") + "\n";
 }
+
 // Remove extra newline from the end of the expansion
 result[1] = result[1].slice(0, -1);
 
@@ -266,8 +269,9 @@ __
 ```
 __
 ```js
-// Prevent adding over 5 themes
 let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
+
+// Early out if all theme-slots are already filled
 if (themeSlots.length >= 5)
 {
 	return expFormat("Theme not added.  All five theme slots are filled.");
@@ -304,7 +308,6 @@ if (pick === null) { return null; }
 // Add the picked theme
 themeSlots.push(pick);
 
-// Notify the user in the expansion
 const result =
 	"Theme slot __" + themeSlots.length + "__ set to __" + themeNames[pick] + "__";
 return expFormat(result);
@@ -319,8 +322,9 @@ __
 ```
 __
 ```js
-// Prevent adding over 5 themes
 let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
+
+// Early out if all theme-slots are already filled
 if (themeSlots.length >= 5)
 {
 	return expFormat(
@@ -340,7 +344,7 @@ while (themeSlots.includes(r - 1)
 // Add the picked theme to the theme slots
 themeSlots.push(r - 1);
 
-// Notify the user in the expansion
+// Create and return expansion string-array
 const result =
 [
 	"", "Theme slot __" + themeSlots.length + "__ set to __" +
@@ -358,7 +362,7 @@ __
 ```
 __
 ```js
-// Begin expansion
+// Begin expansion of all theme-slots filled
 let result = [];
 
 // Repeatedly roll a random theme until all theme slots are filled
@@ -368,7 +372,6 @@ do
 }
 while (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5);
 
-// Notify the user in the expansion
 return expFormat(result.join("\n"));
 ```
 __
@@ -456,7 +459,7 @@ descriptor = "- Descriptor - " + descriptor.join(", ") + "\n";
 let special = aPickWeight(specialTraits);
 special = "- Special trait - " + special[0] + "\n    - " + special[2];
 
-// Return full character
+// Return generated character
 return expFormat("Character:\n" + identity + descriptor + special);
 ```
 __
@@ -537,7 +540,7 @@ const r = roll(25);
 // Get the character listed at the roll (or nothing, if no character is at the roll)
 let result = expand("lists pick characters " + r)[1];
 
-// If a character was picked, just return that
+// If character was picked, return that (otherwise use table defaults: rest of code)
 if (result)
 {
 	return expFormat([ "Character __", result, "__ picked." ]);
@@ -590,7 +593,7 @@ __
 ```
 __
 ```js
-// Return a message with the list of characters
+// Return the list of characters
 return expFormat(
 	"Characters:\n" + (await getFormattedList("characters", 1, 2)).join("\n")
 );
@@ -605,7 +608,7 @@ __
 ```
 __
 ```js
-// Just straight rely on the "lists" system for functionality and output
+// Rely on the "lists" system for functionality and output
 return expand("lists add characters " + $1);
 ```
 __
@@ -651,7 +654,7 @@ __
 // Get the list of characters
 let choices = await getFormattedList("characters", 2, 1, true);
 
-// Early-out if no characters to duplicate
+// Early-out if no characters to reduce
 if (choices.length === 1 && choices[0] === "NONE")
 {
 	return expFormat("No character reduced.  There are no characters.");
@@ -681,7 +684,7 @@ __
 // Get the list of characters
 let choices = await getFormattedList("characters", 2, 1, true);
 
-// Early-out if no characters to duplicate
+// Early-out if no characters to rename
 if (choices.length === 1 && choices[0] === "NONE")
 {
 	return expFormat("No character renamed.  There are no characters.");
@@ -722,7 +725,7 @@ const r = roll(25);
 // Get the plotline listed at the roll (or nothing, if no plotline is at the roll)
 let result = expand("lists pick plotlines " + r)[1];
 
-// If a plotline was picked, just return that
+// If plotline was picked, return that (otherwise use table defaults: rest of code)
 if (result)
 {
 	return expFormat([ "Plotline __", result, "__ picked." ]);
@@ -768,7 +771,7 @@ __
 ```
 __
 ```js
-// Return a message with the list of plotlines
+// Return the list of plotlines
 return expFormat(
 	"Plotlines:\n" + (await getFormattedList("plotlines", 1, 2)).join("\n")
 );
@@ -783,7 +786,7 @@ __
 ```
 __
 ```js
-// Just straight rely on the "lists" system for functionality and output
+// Rely on the "lists" system for functionality and output
 return expand("lists add plotlines " + $1);
 ```
 __
@@ -829,7 +832,7 @@ __
 // Get the list of plotlines
 let choices = await getFormattedList("plotlines", 2, 1, true);
 
-// Early-out if no plotlines to duplicate
+// Early-out if no plotlines to reduce
 if (choices.length === 1 && choices[0] === "NONE")
 {
 	return expFormat("No plotline reduced.  There are no plotlines.");
@@ -859,7 +862,7 @@ __
 // Get the list of plotlines
 let choices = await getFormattedList("plotlines", 2, 1, true);
 
-// Early-out if no plotlines to duplicate
+// Early-out if no plotlines to rename
 if (choices.length === 1 && choices[0] === "NONE")
 {
 	return expFormat("No plotline renamed.  There are no plotlines.");
@@ -907,8 +910,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.adventurecrafter.themeSlots", []);
 confirmObjectPath("_inlineScripts.state.sessionState.lists");

@@ -26,7 +26,7 @@ function getAbsolutePath(path)
 	return app.vault.getResourcePath(path);
 }
 
-// Create a block of html code to represent a specific card
+// Create a block of html to represent a specific card
 function createCardUi(isFaceUp, card, id, scale, includeDataSrc)
 {
 	const result = document.createElement("img");
@@ -35,10 +35,7 @@ function createCardUi(isFaceUp, card, id, scale, includeDataSrc)
 	const size = _inlineScripts.state.sessionState.cards.size * (scale || 1.0);
 	result.style.width = size + "px";
 	result.style.height = (size * card.aspect) + "px";
-	if (id != undefined)
-	{
-		result.dataset.id = id;
-	}
+	result.dataset.id = id;
 	if (includeDataSrc)
 	{
 		result.dataset.src = getAbsolutePath(card.path);
@@ -65,8 +62,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 
 // Event callbacks for cards system events
 confirmObjectPath(
@@ -93,7 +89,7 @@ confirmObjectPath(
 	});
 
 // Custom CSS
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileviewer", ".iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_pileViewer_content { overflow-y: scroll; height: calc(100% - 0.75em); } .iscript_emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
+_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileviewer", ".iscript_pileViewer_container { display: flex; flex-direction: column; padding: 0.5em !important; } .iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_content { overflow-y: scroll; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
 
 // Panel icon
 _inlineScripts.inlineScripts.helperFncs.addIcon(CARDPILE_VIEW_TYPE, `
@@ -140,6 +136,7 @@ class CardPileView extends _inlineScripts.inlineScripts.helperFncs.ItemView
 		// UI element creation
 		const root = this.containerEl.children[1];
 		root.style.overflow = "unset";
+		root.classList.add("iscript_pileViewer_container");
 		// Row for the pile select and the zoom select
 		const header = document.createElement('div');
 		header.classList.add("iscript_pileViewer_header");
@@ -330,6 +327,7 @@ __
 __
 ```js
 await app.workspace.getRightLeaf(false).setViewState({ type: CARDPILE_VIEW_TYPE });
+return null;
 ```
 __
 cards open viewer - Open a panel for viewing card-piles.
