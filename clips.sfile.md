@@ -17,16 +17,21 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+
+// Make sure state and "pirorExpansion" value are setup
 confirmObjectPath("_inlineScripts.state.sessionState.clips");
 confirmObjectPath("_inlineScripts.clips.priorExpansion", "");
+
+// Event callback - state.onReset
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.clips",
 	function()
 	{
 		expand("clips reset");
 	});
+
+// Event callback - inlineScripts.onExapsion
 confirmObjectPath(
 	"_inlineScripts.inlineScripts.listeners.onExpansion.clips",
 	(expansionInfo) =>
@@ -58,8 +63,10 @@ __
 ```
 __
 ```js
+// Reset state object
 _inlineScripts.state.sessionState.clips = {};
-return "All clips cleared.\n\n";
+
+return expFormat("All clips cleared.");
 ```
 __
 clips reset - Removes all clips.
@@ -71,8 +78,11 @@ __
 ```
 __
 ```js
-let clipNames = Object.keys(_inlineScripts.state.sessionState.clips);
-return "Clips:\n" + (clipNames.length ? clipNames.join(", ") : "NONE") + "\n\n";
+// Expand to a list of clip names
+const clipNames = Object.keys(_inlineScripts.state.sessionState.clips);
+const result = "Clips:\n. " + (clipNames.length ? clipNames.join("\n. ") : "NONE");
+
+return expFormat(result);
 ```
 __
 clips - Lists all stored clips.
@@ -84,9 +94,13 @@ __
 ```
 __
 ```js
+// Make clip titles case-insensitive
 $1 = $1.toLowerCase();
+
+// Assign the clip contents to the clip name
 _inlineScripts.state.sessionState.clips[$1] = $2;
-return "Clip __" + $1 + "__ set to:\n" + $2 + "\n\n";
+
+return expFormat("Clip __" + $1 + "__ set to:\n" + $2);
 ```
 __
 clips set {name: name text} {value: text} - Creates / Sets a clip named {name} to the string {value}.
@@ -98,9 +112,11 @@ __
 ```
 __
 ```js
+// Make clip titles case-insensitive
 $1 = $1.toLowerCase();
-let text = _inlineScripts.state.sessionState.clips[$1];
-return text || "";
+
+// Expand to the text associated with the clip name (or empty string for invalid name)
+return _inlineScripts.state.sessionState.clips[$1] || "";
 ```
 __
 clips get {name: name text} - Expands to the value stored in clip {name}.
@@ -113,10 +129,14 @@ __
 ```
 __
 ```js
+// Make clip titles case-insensitive
 $1 = $1.toLowerCase();
+
+// Assign prior expansion text to the clip name
 _inlineScripts.state.sessionState.clips[$1] = _inlineScripts.clips.priorExpansion;
-return "Clip __" +
-	$1 + "__ set to:\n***\n" + _inlineScripts.clips.priorExpansion + "\n***\n\n";
+
+return expFormat(
+	"Clip __" + $1 + "__ set to:\n" + _inlineScripts.clips.priorExpansion);
 ```
 __
 clips expansion {name: name text} - Creates a clip named {name} that stores the previous expansion.
@@ -128,13 +148,21 @@ __
 ```
 __
 ```js
+// Make clip titles case-insensitive
 $1 = $1.toLowerCase();
+
+// If clip exists, remove it and notify user
 if (_inlineScripts.state.sessionState.clips[$1])
 {
 	delete _inlineScripts.state.sessionState.clips[$1];
-	return "Clip __" + $1 + "__ removed.\n\n";
+	return expFormat("Clip __" + $1 + "__ removed.");
 }
-return "Clip __" + $1 + "__ not removed.  Does not exist.\n\n";
+
+// If clip doesn't exist, just notify user
+else
+{
+	return expFormat("Clip __" + $1 + "__ not removed.  Does not exist.");
+}
 ```
 __
 clips remove {name: name text} - Removes the clip named {name}.
