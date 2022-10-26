@@ -10,39 +10,177 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
 
+// Turn a relative path url into an absolute path url based in the vault's root
 function getAbsolutePath(path)
 {
-	if (path.startsWith("data:image/png;base64")) { return path; }
+	if (path.startsWith("data:image")) { return path; }
 	path = app.vault.fileMap[path];
 	if (!path) { return ""; }
 	return app.vault.getResourcePath(path);
 }
 
-confirmObjectPath("_inlineScripts.cards_ui.cardSizePopup",
+// Get the current back-image, url
+function getBackImage()
 {
+	return _inlineScripts.state.sessionState.cards.backImage ||
+	       _inlineScripts.cards.defaultBackImage;
+}
+
+// Custom popop definition for various card manipulations
+confirmObjectPath("_inlineScripts.cards_ui.manipulateCardsPopup",
+{
+	// Setup function
 	onOpen: async (data, parent, firstButton, SettingType) =>
 	{
-		const currentSize = _inlineScripts.state.sessionState.cards.size;
-		const sampleCard =
-			Object.values(_inlineScripts.state.sessionState.cards.piles)
-			[0]?.cards[0];
-		let samplePath = getAbsolutePath(
-			sampleCard ? sampleCard.path :
-			_inlineScripts.state.sessionState.cards.backImage);
+		data.pileNames = Object.keys(_inlineScripts.state.sessionState.cards.piles);
 
+		// Source pile dropdown
+		new SettingType(parent)
+			.setName(
+				data.defaults?.dst === undefined ? "Card-pile" : "Source card-pile")
+			.setDesc(data.descriptions?.src)
+			.addDropdown(dropdown =>
+			{
+				dropdown.addOptions(data.pileNames);
+				dropdown.setValue(
+					data.defaults?.src ?
+					data.pileNames.indexOf(data.defaults?.src) :
+					0);
+				data.src = dropdown;
+				dropdown.selectEl.addEventListener("keypress", e =>
+				{
+					if (e.key === "Enter") { firstButton.click(); }
+				});
+				return dropdown;
+			});
+
+		// Destination pile dropdown
+		if (data.defaults?.dst !== undefined)
+		{
+			new SettingType(parent)
+				.setName("Destination Card-pile")
+				.setDesc(data.descriptions?.dst)
+				.addDropdown(dropdown =>
+				{
+					dropdown.addOptions(data.pileNames);
+					dropdown.setValue(
+						data.defaults?.dst ?
+						data.pileNames.indexOf(data.defaults?.dst) :
+						0);
+					data.dst = dropdown;
+					dropdown.selectEl.addEventListener("keypress", e =>
+				    {
+						if (e.key === "Enter") { firstButton.click(); }
+				    });
+					return dropdown;
+				});
+		}
+
+		// Count textbox
+		if (data.defaults?.count !== undefined)
+		{
+			new SettingType(parent)
+				.setName("Count")
+				.setDesc(data.descriptions?.count)
+				.addText(text =>
+				{
+					text.setValue(data.defaults?.count + "");
+					data.count = text;
+					text.inputEl.addEventListener("keypress", e =>
+				    {
+						if (e.key === "Enter") { firstButton.click(); }
+						else if (e.keyCode < 48 || e.keyCode > 57)
+						{
+							window.event.returnValue = null;
+						}
+				    });
+					text.inputEl.addEventListener("blur", e =>
+				    {
+					    if (Number(e.target.value) < 1)
+					    {
+						    e.target.value = "1";
+					    }
+				    });
+					return text;
+				});
+		}
+
+		// Topbottom dropdown
+		if (data.defaults?.topBottom !== undefined)
+		{
+			new SettingType(parent)
+				.setName("Top or bottom")
+				.setDesc(data.descriptions?.topBottom)
+				.addDropdown(dropdown =>
+				{
+					dropdown.addOptions([ "Top", "Bottom" ]);
+					dropdown.setValue(data.defaults?.topBottom);
+					data.topBottom = dropdown;
+					dropdown.selectEl.addEventListener("keypress", e =>
+				    {
+						if (e.key === "Enter") { firstButton.click(); }
+				    });
+					return dropdown;
+				});
+		}
+
+		// Rotate toggle button
+		if (data.defaults?.rotate !== undefined)
+		{
+			new SettingType(parent)
+				.setName("Rotate cards")
+				.setDesc(data.descriptions?.rotate)
+				.addToggle(toggle =>
+				{
+					toggle.setValue(data.defaults?.rotate);
+					data.rotate = toggle;
+					toggle.toggleEl.addEventListener("keypress", e =>
+				    {
+						if (e.key === "Enter") { firstButton.click(); }
+				    });
+					return toggle;
+				});
+		}
+	},
+
+	// Shutown function
+	onClose: async (data, resolveFnc, buttonId) =>
+	{
+		if (buttonId !== "Ok") { return; }
+		let result = { src: data.pileNames[data.src.getValue()] };
+		if (data.dst) { result.dst = data.pileNames[data.dst.getValue()]; }
+		if (data.count) { result.count = data.count.getValue(); }
+		if (data.topBottom) { result.topBottom = data.topBottom.getValue(); }
+		if (data.rotate) { result.rotate = data.rotate.getValue(); }
+		resolveFnc(result);
+	}
+});
+
+// Custom popop definition for altering the settings of the cards system
+confirmObjectPath("_inlineScripts.cards_ui.settingsPopup",
+{
+	// Setup function
+	onOpen: async (data, parent, firstButton, SettingType) =>
+	{
+		// The current card size (before we change it)
+		const currentSize = _inlineScripts.state.sessionState.cards.size;
+		const currentBackImage = getBackImage();
+
+		// A parent div to center the card visualization
 		let sampleContainerUi = document.createElement("div");
 		sampleContainerUi.style["text-align"] = "center";
 		parent.append(sampleContainerUi);
 
+		// The card visualization
 		data.sampleUi = document.createElement("img");
-		data.sampleUi.src = samplePath;
+		data.sampleUi.src = getAbsolutePath(currentBackImage);
 		data.sampleUi.style.width = currentSize + "px";
 		sampleContainerUi.append(data.sampleUi);
 
-		let sizerUi = new SettingType(parent)
+		// A slider to change the card size
+		let sizeUi = new SettingType(parent)
 			.setName("Size (" + currentSize + ")")
 			.setDesc("Pick the size for all cards (in pixels).")
 			.addSlider((slider) =>
@@ -56,77 +194,49 @@ confirmObjectPath("_inlineScripts.cards_ui.cardSizePopup",
 						data.titleUi.innerText = "Size (" + value + ")";
 					});
 				data.sliderUi = slider;
+				slider.sliderEl.addEventListener("keypress", e =>
+				{
+					if (e.key === "Enter") { firstButton.click(); }
+				});
 				return slider;
 			});
-		data.titleUi = sizerUi.nameEl;
-	},
-	onClose: async (data, resolveFnc, buttonId) =>
-	{
-		if (buttonId !== "Ok") { return; }
-		resolveFnc(data.sliderUi.getValue());
-	}
-});
+		// Keep track of the slider label - to change its text when the size changes
+		data.titleUi = sizeUi.nameEl;
 
-confirmObjectPath("_inlineScripts.cards_ui.cardPropertiesPopup",
-{
-	onOpen: async (data, parent, firstButton, SettingType) =>
-	{
-		new SettingType(parent)
-			.setName("Facing")
-			.setDesc("Set all cards to be face-up or face-down.")
-			.addDropdown((dropdown) =>
+		// A dropdown to select the card back
+		let backImageUi = new SettingType(parent)
+			.setName("Back image")
+			.setDesc("Choose the image to represent the back of all cards.")
+			.addDropdown(dropdown =>
 			{
-				dropdown.addOptions([ "Don't change", "Face-down", "Face-up" ]);
-				data.facing = dropdown;
+				data.backImageOptions = [""].concat(
+					Object.keys(app.vault.fileMap).filter(
+						v => { return v.match(/.(?:png|bmp|gif|jpg|jpeg)$/); }
+					));
+				dropdown.addOptions(data.backImageOptions);
+				dropdown.setValue(data.backImageOptions.indexOf(currentBackImage));
+				dropdown.onChange(value =>
+				{
+					data.sampleUi.src = getAbsolutePath(
+						data.backImageOptions[value] ||
+						_inlineScripts.cards.defaultBackImage);
+				});
+				data.backImageUi = dropdown;
+				dropdown.selectEl.addEventListener("keypress", e =>
+				{
+					if (e.key === "Enter") { firstButton.click(); }
+				});
 				return dropdown;
 			});
-		new SettingType(parent)
-			.setName("Allow rotated")
-			.setDesc(
-				"If allowed, each card has a 50/50 chance of being upside-down.")
-			.addDropdown((dropdown) =>
-			{
-				dropdown.addOptions([ "Don't change", "Allow", "Prevent" ]);
-				data.allowRotated = dropdown;
-				return dropdown;
-			});
-		new SettingType(parent)
-			.setName("Allow duplicated")
-			.setDesc("If allowed then cards are copied, instead of moved, when drawn.")
-			.addDropdown((dropdown) =>
-			{
-				dropdown.addOptions([ "Don't change", "Allow", "Prevent" ]);
-				data.allowDuplicated = dropdown;
-				return dropdown;
-			});
-		const o = new SettingType(parent)
-			.setName("Set origin")
-			.setDesc("If true, the origin of each card is set to THIS card-pile.")
-			.addToggle((toggle) =>
-			{
-				data.setOrigin = toggle;
-				return toggle;
-			});
-			o.descEl.innerHTML +=
-				"<br/>This is used in the \"cards recall\" shortcut.";
-			o.infoEl.parentElement.parentElement.parentElement.style
-				["overflow-x"] = "hidden";
 	},
+
+	// Shutown function
 	onClose: async (data, resolveFnc, buttonId) =>
 	{
 		if (buttonId !== "Ok") { return; }
 		resolveFnc({
-			facing:
-				data.facing.getValue() === "1" ? "down" :
-				data.facing.getValue() === "2" ? "up" : "",
-			allowRotated:
-				data.allowRotated.getValue() === "1" ? "y" :
-				data.allowRotated.getValue() === "2" ? "n" : "",
-			allowDuplicated:
-				data.allowDuplicated.getValue() === "1" ? "y" :
-				data.allowDuplicated.getValue() === "2" ? "n" : "",
-			setOrigin:
-				data.setOrigin.getValue() ? "y" : "n"
+			size: data.sliderUi.getValue(),
+			backImage: data.backImageOptions[data.backImageUi.getValue()] || "default"
 		});
 	}
 });
@@ -138,53 +248,32 @@ Sets up this shortcut-file
 __
 __
 ```js
-userChooseExistingPileId = function(requestMessage, failMessage)
+// Show a popup for choosing an existing pile
+userChoosesPileId = function(requestMessage, failMessage, pileToBlock)
 {
+	// Get names of the piles
 	const pileNames =
-		Object.keys(_inlineScripts.state.sessionState.cards.piles)
-		.map(v => v || "{table}");
+		Object.keys(_inlineScripts.state.sessionState.cards.piles).
+		filter(v => v !== pileToBlock);
 	if (!pileNames.length)
 	{
-		return [null, failMessage + "  No card-piles to choose from.\n\n"];
+		return [ null, expFormat(failMessage + "No card-piles available.") ];
 	}
+
+	// Show a popup to choose from the pile names
 	const pileIndex =
-		popups.pick("Choose a card-pile " + requestMessage, pileNames);
-	if (pileIndex === null)
-	{
-		return [null, failMessage + "  User canceled.\n\n"];
-	}
-	let pile = pileNames[pileIndex];
-	if (pile === "{table}") { pile = ""; }
-	return [pile, null];
+		popups.pick("Choose a card-pile " + requestMessage, pileNames, 0, "adaptive");
+	if (pileIndex === null) { return [ null, null ]; }
+
+	// Return the chosen pile name
+	return [ pileNames[pileIndex], null ];
 }
 
-userChooseNewOrExistingPileId = function(requestMessage)
+// Return true if at least one pile exists, return false otherwise
+function doPilesExist()
 {
-	const message =
-		"Enter the name for a card-pile " + requestMessage +
-		".<br/><br/>The name must either be empty, or must..." +
-		"<br/>- Contain no spaces" +
-		"<br/>- Start with a letter or underscore" +
-		"<br/>- Contain only letters, underscores & numbers";
-	const regex_confirm = /^[_a-zA-Z][_a-zA-Z0-9]*$/;
-	const redoMessage = "Invalid entry #%1.  Try again.<br/><br/>";
-	const options =
-		Object.keys(_inlineScripts.state.sessionState.cards.piles)
-		.map(v => v || "{table}");
-	let result = popups.input(message, "", options);
-	let redoCount = 0;
-	while (result && !result.match(regex_confirm))
-	{
-		redoCount++;
-		result = popups.input(
-			redoMessage.replace("%1", redoCount) + message, result, options);
-		if (result === "{table}")
-		{
-			result = "";
-		}
-	}
-	return result;
-};
+	return !!( Object.keys(_inlineScripts.state.sessionState.cards.piles).length );
+}
 ```
 __
 Helper scripts
@@ -192,32 +281,123 @@ Helper scripts
 
 __
 ```
-^ui cards? backimage$
+^ui cards? reset$
 ```
 __
 ```js
-// TODO
+return expand("cards reset");
 ```
 __
-hidden - Asks the user to choose what image to display on the back-side of all cards.
+ui cards reset - Clears all card-piles.
 
 
 __
 ```
-^ui cards? size$
+^ui cards? settings$
 ```
 __
 ```js
-const newValue = popups.custom("Choose size for all cards.",
-	_inlineScripts.cards_ui.cardSizePopup);
-if (!newValue)
+// Show a custom popup 
+const newSettings = popups.custom(
+	"Choose settings for all cards", _inlineScripts.cards_ui.settingsPopup);
+if (newSettings === null) { return null; }
+return expand("cards settings " + newSettings.size + " " + newSettings.backImage);
+```
+__
+ui cards settings - Asks the user to choose what image to display on the back-side of all cards.
+***
+
+
+__
+```
+^ui cards? pile$
+```
+__
+```js
+// Get the data-string to import
+const toImport = popups.input("Enter a name for the new pile");
+if (toImport === null) { return null; }
+if (_inlineScripts.state.sessionState.cards.piles[toImport])
 {
-	return "Cards size not set.  User canceled.\n\n";
+	return expFormat("Card-pile not created.  __" + toImport + "__ already exists.");
 }
-return expand("cards size " + newValue);
+
+// User decides whether to rotate cards
+const isFaceUp = popups.pick(
+	"How should cards face in the card-pile?", [ "Face-down", "Face-up" ], 0, 2);
+if (isFaceUp === null) { return null; }
+
+// User decides whether to rotate cards
+const hideMoved = popups.pick(
+	"Should cards be printed when drawn or picked into the card-pile",
+	[ "Yes", "No" ], _inlineScripts.state.sessionState.cards.priorShowMoved ? 0 : 1,
+	2);
+if (hideMoved === null) { return null; }
+
+// Pile creation shortcut is called
+return expand(
+	"cards pile " + toImport + " " + (isFaceUp ? "up" : "down") + " " +
+	(hideMoved ? "n" : "y"));
 ```
 __
-ui cards size - Lets you pick the card size.
+ui cards pile - Asks the user to enter a name for the new card-pile.  Then asks the user to enter the facing and show-moved flag for the new card pile.  Then creates a new pile with the choices.
+
+
+__
+```
+^ui cards? remove$
+```
+__
+```js
+// User chooses the pile to remove
+const pile = await userChoosesPileId("to remove", "Card-pile not removed.");
+if (pile[0] == null) { return pile[1]; }
+
+// User decides whether to rotate cards
+const doRecall = popups.pick(
+	"Try recalling card-pile's cards before removing it?", [ "Yes", "No" ], 0, 2);
+if (doRecall === null) { return null; }
+
+// Shuffle shortcut is called
+return expand("cards remove " + pile[0] + " " + (doRecall ? "n" : "y"));
+```
+__
+ui cards remove - Asks the user to choose a card-pile to remove, then removes that card-pile.
+
+
+__
+```
+^ui cards? pilesettings$
+```
+__
+```js
+// User chooses the pile to change settings for
+const pileName =
+	await userChoosesPileId("to change settings for", "Card-pile not changed.");
+if (pileName[0] == null) { return pileName[1]; }
+
+// Get the pile to use it's current settings for defaults
+const pile = _inlineScripts.state.sessionState.cards.piles[pileName[0]];
+
+// User decides whether to rotate cards
+const isFaceUp = popups.pick(
+	"How should cards face in the card-pile?", [ "Face-down", "Face-up" ],
+	pile.isFaceUp ? 1 : 0, 2);
+if (isFaceUp === null) { return null; }
+
+// User decides whether to rotate cards
+const hideMoved = popups.pick(
+	"Should cards be printed when drawn or picked into the card-pile",
+	[ "Yes", "No" ], pile.showMoved ? 0 : 1, 2);
+if (hideMoved === null) { return null; }
+
+// Pile creation shortcut is called
+return expand(
+	"cards pilesettings " + pileName[0] + " " + (isFaceUp ? "up" : "down") + " " +
+	(hideMoved ? "n" : "y"));
+```
+__
+ui cards pilesettings - Asks the user to enter a name for the new card-pile.  Then asks the user to enter the facing and show-moved flag for the new card pile.  Then creates a new pile with the choices.
 ***
 
 
@@ -227,9 +407,10 @@ __
 ```
 __
 ```js
-// Choose folder
+// Make a list of viable folders to choose from
 const folders = Object.keys(app.vault.fileMap)
 	.filter(v => app.vault.fileMap[v].children?.length)
+	// Choose folders with non-markdown files
 	.filter(v =>
 	{
 		for (const child of app.vault.fileMap[v].children)
@@ -241,35 +422,71 @@ const folders = Object.keys(app.vault.fileMap)
 		}
 		return false;
 	});
-let folder = popups.pick("Choose a folder to take card images from", folders);
-if (!folder)
-{
-	return "Card-pile not created.  User canceled.\n\n";
-}
+
+// Show a popup to select a folder to pull cards from
+let folder =
+	popups.pick("Choose a folder to take card images from", folders, 0, "adaptive");
+if (!folder) { return null; }
 folder = folders[folder];
 
-const pileId = await userChooseNewOrExistingPileId("to hold the new cards");
-if (pileId === null)
-{
-	return "Card-pile not created.  User canceled.\n\n";
-}
+// Show a popup to select the pile to put the cards into
+const pileId =
+	await userChoosesPileId("to hold new cards", "Card images not loaded.");
+if (pileId === null) { return pile[1]; }
 
-// Facing option
-facing = popups.confirm(
-	"Which way do you want to face cards?",
-	[ "Face-down", "Face-up" ]);
-if (facing === null)
-{
-	return "Cards not created.  User canceled.\n\n";
-}
-facing = facing ? "down" : "up";
-
-return expand("cards fromfolder " + pileId + " " + folder + " " + facing);
+return expand("cards fromfolder " + pileId[0] + " " + folder);
 ```
 __
-ui cards fromfolder - Asks the user to choose one of the non-empty folders.
-Asks the user to enter a name to give the new card-pile.
-Creates a card-pile based on images in the given folder and remembers it with the given name.
+ui cards fromfolder - Asks the user to choose which folder to create new cards from.  Asks the user to choose a card-pile to put the new cards into.  Creates the cards and puts them into the chosen card-pile.
+***
+
+
+__
+```
+^ui cards? list$
+```
+__
+```js
+return expand("cards list");
+```
+__
+ui cards list - Lists all card-piles.
+
+
+__
+```
+^ui cards? peek$
+```
+__
+```js
+// Show a custom popup 
+const data =
+{
+	defaults:
+	{
+		src: _inlineScripts.state.sessionState.cards.priorPeekPile || "",
+		count: 1,
+		topBottom: 0
+	},
+	descriptions:
+	{
+		src: "Card-pile to peek into",
+		count: "How many cards to peek",
+		topBottom: "Peek at top or bottom of card-pile"
+	}
+};
+const result = popups.custom(
+	"Choose peek options", _inlineScripts.cards_ui.manipulateCardsPopup, data);
+if (result === null) { return null; }
+
+// Run the non-ui shortcut
+return expand(
+	"cards peek " + result.count + " " + result.src + " " +
+	(result.topBottom === "1" ? "y" : "n"));
+```
+__
+ui cards peek - Asks the user to choose a card-pile to peek into, a count of how many cards to peek and whether to peek from the bottom or top.  Calls the peek shortcut with these choices.
+***
 
 
 __
@@ -278,129 +495,62 @@ __
 ```
 __
 ```js
-// Source pile option
-let srcPile =
-	await userChooseExistingPileId("to draw from", "Cards not drawn.");
-if (srcPile[0] == null)
+// Show a custom popup 
+const data =
 {
-	return srcPile[1];
-}
-srcPile = srcPile[0];
-
-// Destination pile option
-const dstPile = await userChooseNewOrExistingPileId("to draw into");
-if (dstPile === null)
-{
-	return "Cards not imported.  User canceled.\n\n";
-}
-
-// Picking option
-let isPicking =
-	popups.confirm("Do you want to pick the cards to draw?", [ "no", "yes" ]);
-if (isPicking === null)
-{
-	return "Cards not drawn.  User canceled.\n\n";
-}
-isPicking = isPicking ? "n" : "y";
-
-// Non-picking options
-let facing = "";
-let count = "";
-if (isPicking === "n")
-{
-	// Facing option
-	facing = popups.pick(
-		"Do you want to flip the cards being drawn?",
-		[ "Don't flip", "Flip face-up", "Flip face-down" ], 1);
-	if (facing === null)
+	defaults:
 	{
-		return "Cards not drawn.  User canceled.\n\n";
-	}
-	facing =
-		(facing == 1) ? "up" :
-		(facing == 2) ? "down" :
-		"";
-
-	// Count option
-	let countOptions = [];
-	const max =
-		_inlineScripts.state.sessionState.cards.piles[srcPile].cards.length;
-	for (let i = 1; i < max-1; i++)
+		src: _inlineScripts.state.sessionState.cards.priorDrawSrc || "",
+		dst: _inlineScripts.state.sessionState.cards.priorDrawDst || "",
+		count: 1,
+	},
+	descriptions:
 	{
-		countOptions.push(i + "");
+		src: "Card-pile to draw from",
+		dst: "Card-pile to add to",
+		count: "How many cards to draw"
 	}
-	countOptions.push("All");
-	count = popups.pick("How many cards do you want to draw?", countOptions);
-	if (count === null)
-	{
-		return "Cards not drawn.  User canceled.\n\n";
-	}
-	count = countOptions[count];
-}
-
-return expand(
-	"cards draw " + srcPile + " " + dstPile + " " + count + " " + facing + " " +
-	isPicking);
-```
-__
-ui cards draw - Asks the user to choose a source card-pile.
-Asks the user to enter a destination card-pile.
-Asks the user if they want to pick the drawn cards.    If they want to, lets them pick.  Otherwise...
-Asks the user if they want to flip, and which way.
-Asks the user how many cards to draw.
-Draws the cards.
-
-
-__
-```
-^ui cards? show$
-```
-__
-```js
-const pile =
-	await userChooseExistingPileId("to show", "Cards not shown.");
-if (pile[0] == null)
-{
-	return pile[1];
-}
-return expand("cards show " + pile[0]);
-```
-__
-ui cards show - Asks the user to choose a card-pile.
-Adds images of the cards in the chosen card-pile to the note.
-***
-
-
-__
-```
-^ui cards? properties$
-```
-__
-```js
-let pile =
-	await userChooseExistingPileId("to set properties for", "Cards not set.");
-if (pile[0] == null)
-{
-	return pile[1];
-}
-pile = pile[0];
-
+};
 const result = popups.custom(
-	"Choose properties for cards in the <b>" + pile + "</b> card-pile.",
-	_inlineScripts.cards_ui.cardPropertiesPopup);
-if (!result)
-{
-	return "Cards not set.  User canceled.\n\n";
-}
+	"Choose draw options", _inlineScripts.cards_ui.manipulateCardsPopup, data);
+if (result === null) { return null; }
 
-return expand(
-	"cards properties " + pile + " " + result.facing + " " + result.allowRotated +
-	" " + result.allowDuplicated + " " + result.setOrigin);
+// Run the non-ui shortcut
+return expand("cards draw " + result.count + " " + result.dst + " " + result.src);
 ```
 __
-ui cards properties - Asks the user which card-pile to set properties for.
-Shows a popup with all properties, each defaulting to "unchanged".  User can change the wanted properties.
-When the user is finished, all chosen properties are changed on all cards in the card-pile.
+ui cards draw - Asks the user to choose a card-pile to draw from and one to add to.  Also asks for how many cards to draw.  Then runs the draw shortcut based on those card-piles and count.
+
+
+__
+```
+^ui cards? pick$
+```
+__
+```js
+// Show a custom popup 
+const data =
+{
+	defaults:
+	{
+		src: _inlineScripts.state.sessionState.cards.priorPickSrc || "",
+		dst: _inlineScripts.state.sessionState.cards.priorPickDst || ""
+	},
+	descriptions:
+	{
+		src: "Card-pile to pick from",
+		dst: "Card-pile to add to"
+	}
+};
+const result = popups.custom(
+	"Choose pick options", _inlineScripts.cards_ui.manipulateCardsPopup, data);
+if (result === null) { return null; }
+
+// Run the non-ui shortcut
+return expand("cards pick " + result.dst + " " + result.src);
+```
+__
+ui cards pick - Asks the user to choose a card-pile to pick from and one to add to, then runs the pick shortcut based on those card-piles.
 ***
 
 
@@ -410,92 +560,57 @@ __
 ```
 __
 ```js
-const pile =
-	await userChooseExistingPileId("to shuffle", "Cards not shuffled.");
-if (pile[0] == null)
+// Show a custom popup 
+const data =
 {
-	return pile[1];
-}
-return expand("cards shuffle " + pile[0]);
+	defaults:
+	{
+		src: 0,
+		rotate: false
+	},
+	descriptions:
+	{
+		src: "Card-pile to shuffle",
+		rotate: "Rotate cards while shuffling?"
+	}
+};
+const result = popups.custom(
+	"Choose pick options", _inlineScripts.cards_ui.manipulateCardsPopup, data);
+if (result === null) { return null; }
+
+// Run the non-ui shortcut
+return expand("cards shuffle " + result.src + " " + (result.rotate ? "y" : "n"));
 ```
 __
-ui cards shuffle - Asks the user to choose a card-pile.
-Randomizes the card-pile's card order and rotation.
+ui cards shuffle - Asks the user to choose a card-pile to shuffle and whether to rotate the cards while shuffling, then shuffles that card-pile.
 
 
 __
 ```
-^ui cards? flip$
+^ui cards? unrotate$
 ```
 __
 ```js
-// Pile option
-let pile =
-	await userChooseExistingPileId("to flip", "Cards not flipped.");
-if (pile[0] == null)
-{
-	return pile[1];
-}
-pile = pile[0];
-
-// Picking option
-let isPicking =
-	popups.confirm("Do you want to pick the cards to flip?", [ "no", "yes" ]);
-if (isPicking === null)
-{
-	return "Cards not flipped.  User canceled.\n\n";
-}
-isPicking = isPicking ? "n" : "y";
-
-// Non-picking options
-let facing = "";
-let count = "";
-if (isPicking === "n")
-{
-	// Facing option
-	facing = popups.confirm(
-		"Which way do you want to flip cards?",
-		[ "Face-down to face-up", "Face-up to face-down" ]);
-	if (facing === null)
-	{
-		return "Cards not flipped.  User canceled.\n\n";
-	}
-	facing = facing ? "up" : "down";
-
-	// Count option
-	let countOptions = [];
-	const cards = _inlineScripts.state.sessionState.cards.piles[pile].cards;
-	let counter = 0;
-	for (const card of cards)
-	{
-		if (card.isFaceDown === facing)
-		{
-			counter++;
-			countOptions.push(counter + "");
-		}
-	}
-	countOptions.pop(); // The last option is equivalient to "All" so remove it
-	countOptions.push("All");
-	count = popups.pick(
-		"How many cards do you want to flip " + facing + "?",
-		countOptions);
-	if (count === null)
-	{
-		return "Cards not flipped.  User canceled.\n\n";
-	}
-	count = countOptions[count];
-}
-
-// Do flip
-return expand(
-	"cards flip " + pile + " " + count + " " + facing + " " + isPicking);
+const pile = await userChoosesPileId("to un-rotate", "Cards not un-rotated.");
+if (pile[0] == null) { return pile[1]; }
+return expand("cards unrotate " + pile[0]);
 ```
 __
-ui cards flip - Asks the user to choose a card-pile.
-Asks the user if they want to pick the cards to flip.  If they want to, lets them pick.  Otherwise...
-Asks the user which way they want to flip.
-Asks the user how many cards to flip.
-Flips the cards.
+ui cards unrotate - Asks the user to choose a card-pile to un-rotate, then un-rotates that card-pile.  Un-rotating means to turn all cards right-side-up.
+
+
+__
+```
+^ui cards? reverse$
+```
+__
+```js
+const pile = await userChoosesPileId("to reverse", "Card-pile not reversed.");
+if (pile[0] == null) { return pile[1]; }
+return expand("cards reverse " + pile[0]);
+```
+__
+ui cards reverse - Asks the user to choose a card-pile to reverse, then reverses the order of the cards in that card-pile.
 
 
 __
@@ -504,36 +619,26 @@ __
 ```
 __
 ```js
-const pileId = await userChooseNewOrExistingPileId("to recall");
-if (pileId === null)
-{
-	return "Cards not recalled.  User canceled.\n\n";
-}
-
-return expand("cards recall " + pileId);
+const pile = await userChoosesPileId("to recall", "Cards not recalled.");
+if (pile[0] == null) { return pile[1]; }
+return expand("cards recall " + pile[0]);
 ```
 __
-ui cards recall - Asks the user to enter a card-pile.
-Moves all cards that have the chosen card-pile as their origin, from their current card-pile back into the chosen card-pile.
+ui cards recall -  Asks the user to choose a card-pile to recall, then recalls that card-pile.  Recalling means finding all cards with that card-pile as their origin, then moving them to that card-pile.
 
 
 __
 ```
-^ui cards? destroy$
+^ui cards? reorigin$
 ```
 __
 ```js
-const pile =
-	await userChooseExistingPileId("to destroy", "Cards not destroyed.");
-if (pile[0] == null)
-{
-	return pile[1];
-}
-return expand("cards destroy " + pile[0]);
+const pile = await userChoosesPileId("to re-origin", "Cards not re-origined.");
+if (pile[0] == null) { return pile[1]; }
+return expand("cards reorigin " + pile[0]);
 ```
 __
-ui cards destroy - Asks the user to choose a card-pile.
-Destroys the chosen card-pile and all cards within it.
+ui cards reorigin - Asks the user to choose a card-pile to re-origin, then re-origins that card-pile.  Re-origining means setting the origin of all cards in a card-pile to that card-pile.
 ***
 
 
@@ -543,26 +648,26 @@ __
 ```
 __
 ```js
-const pileId = await userChooseNewOrExistingPileId("to import");
-if (pileId === null)
-{
-	return "Cards not imported.  User canceled.\n\n";
-}
-let defaultDataString =
-	JSON.stringify(_inlineScripts.state.sessionState.cards.piles[pileId]);
-const importString =
-	popups.input("Enter the data string to import", defaultDataString);
-if (importString === null)
-{
-	return "Cards not imported.  User canceled.\n\n";
-}
+// Get the pile to import into
+let pile =
+	await userChoosesPileId("to import into", "Card-pile not imported.");
+if (pile[0] == null) { return pile[1]; }
+pile = pile[0];
 
-return expand("cards import " + pileId + " " + importString);
+// Get the pile's data-string for the default value
+let defaultDataString =
+	JSON.stringify(_inlineScripts.state.sessionState.cards.piles[pile]);
+
+// Get the data-string to import
+const toImport = popups.input("Enter the data-string to import", defaultDataString);
+if (toImport === null) { return null; }
+if (toImport === defaultDataString) { return null; }
+
+// Run the import shortcut
+return expand("cards reorigin " + pile + " " + toImport);
 ```
 __
-ui cards import - Asks the user to enter a card-pile.
-Asks the user to enter the data string to import.
-Imports the data string and assigns the new card-pile  to the entered one.
+ui cards import - Asks the user to choose a card-pile to import into and to enter a data-string to import, then tries importing that data-string into that card-pile.
 
 
 __
@@ -571,14 +676,12 @@ __
 ```
 __
 ```js
-const pile =
-	await userChooseExistingPileId("to export", "Cards not exported.");
-if (pile[0] == null)
-{
-	return pile[1];
-}
+const pile = await userChoosesPileId("to export", "Card-pile not exported.");
+if (pile[0] == null) { return pile[1]; }
 return expand("cards export " + pile[0]);
 ```
 __
-ui cards export - Asks the user to choose a card-pile.
-Expands to a data string containing all data for the chosen card-pile.
+ui cards export - Asks the user to choose a card-pile to export, then exports that card-pile.
+> The __hand__ card-pile's settings are updated:
+> . __Facing__ remains __up__.
+> . __ShowMoved__ remains __true__.

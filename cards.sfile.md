@@ -88,7 +88,7 @@ function createCardUi_inNote(isFaceUp, card)
 	const alt = (!card.rotation || !isFaceUp) ? "" : "rotated" + card.rotation;
 	const width = _inlineScripts.state.sessionState.cards.size;
 	const height = Math.trunc(width * card.aspect);
-	return "![" + alt + "|" + width + "x" + height + "](" + path + ")";
+	return "![" + alt + "|" + width + "x" + height + "](" + path + ") ";
 }
 ```
 __
