@@ -491,10 +491,12 @@ Expands to a data string containing all data for the chosen card-pile.
 ### clips_ui.sfile
 An extension to __clips.sfile__ that provides graphical ui versions of shortcuts.
 
-- __ui clips get__ - Asks the user to choose from list of clips.
-Expands to the value of that clip.
-	- Alternative: __cg__
-- __ui clips remove__ - Asks the user to choose from list of clips.
-Removes that clip.
+- __ui clips reset__ - Removes all clips.
+- __ui clips__ - Lists all stored clips.
+- __ui clips set__ - Asks user for a clip name and value, then assigns the value to the clip name.
+- __ui clips get__ - Asks the user to choose from list of clips, then expands to the value of that clip.
+	- Alternative: __ui cg__
+- __ui clips expansion__ - Asks the user to enter a clip name, then assigns the prior shortcut expansion  text to it.
+- __ui clips remove__ - Asks the user to choose a clip, then removes that clip.
 
 ***

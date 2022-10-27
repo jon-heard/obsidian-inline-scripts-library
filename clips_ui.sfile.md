@@ -69,8 +69,7 @@ if (pick === null) { return null; }
 return expand("clips get " + clipNames[pick]);
 ```
 __
-ui clips get - Asks the user to choose from list of clips.
-Expands to the value of that clip.
+ui clips get - Asks the user to choose from list of clips, then expands that clip.
 	- Alternative: __ui cg__
 
 

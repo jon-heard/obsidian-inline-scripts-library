@@ -357,7 +357,7 @@ lists pick {list name: name text} - Gets a random item from the list {list name}
 
 __
 ```
-^lists? shortcutbatch (|[_a-zA-Z][_a-zA-Z0-9]*) -- (.*)$
+^lists? shortcutbatch ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
 ```
 __
 ```js
@@ -365,7 +365,7 @@ if (!_inlineScripts.state.sessionState.lists[$1])
 {
 	return "Shortcut batch not run.  List __" + $1 + "__ not found.\n\n";
 }
-let result = "Shortcut batch begun for list __" + $1 + "__...\n\n";
+let result = "Shortcut batch for list __" + $1 + "__...\n\n";
 for (const item of getListItems($1))
 {
 	result += expand($2.replaceAll("%1", item));

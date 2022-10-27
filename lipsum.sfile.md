@@ -11,7 +11,10 @@ __
 ```
 __
 ```js
+// Only do this once
 if (window._inlineScripts?.lipsum) { return; }
+
+// Data to make output text from
 let l = `
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et sem quam. Proin viverra egestas sem, et finibus mi volutpat eget. Aliquam vel nulla mattis, malesuada lectus sed, sagittis eros. Etiam vulputate, felis nec aliquam tempor, velit ex lobortis nisi, ac aliquet magna arcu id velit. Nam odio ligula, consequat eget elit non, accumsan rutrum est. Mauris vitae ligula nec lacus finibus venenatis at molestie ligula. Ut suscipit ex et finibus gravida.
@@ -35,6 +38,8 @@ Aliquam nec sapien urna. Aliquam bibendum, ligula id lobortis elementum, odio nu
 Ut pharetra semper leo at convallis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean vulputate, ex in imperdiet pharetra, leo libero mattis nunc, at tristique turpis libero ac lectus. Suspendisse potenti. Integer sed dolor at urna ultricies ornare. Ut auctor vulputate diam, sit amet condimentum lectus mattis at. Aenean placerat molestie arcu at pretium. Donec consequat nibh nulla, vel mollis lacus tincidunt et.
 
 `
+
+// Break data into pieces to recombine for output text
 let pSizes = [];
 let sentences = [];
 l = l.trim().split("\n\n");
@@ -54,22 +59,19 @@ Takes a source Lorem Ipsum text, generated at https://lipsum.com/feed/html, and 
 
 
 __
-__
-```js
-function roll(max) { return Math.trunc(Math.random() * max + 1); }
-function aPick(a) { return a[roll(a.length)-1]; }
-```
-__
-Helper scripts
-
-
-__
 ```
 ^lipsum ?(|[1-9][0-9]*)$
 ```
 __
 ```js
+// Count parameter defaults to 1
 $1 = Number($1) || 1;
+
+// Helper functions
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
+function aPick(a) { return a[roll(a.length)-1]; }
+
+// Generate and return text from the data created on setup
 let result = "";
 for (let i = 0; i < $1; i++)
 {
