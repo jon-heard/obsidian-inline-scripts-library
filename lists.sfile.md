@@ -257,7 +257,7 @@ let itemCount = getListItems($1).length;
 // If no items, early out
 if (itemCount === 0)
 {
-	return expFormat("Failed to pick from list __" + $1 + "__.  List is empty.");
+	return expFormat([ "Failed to pick from list __" + $1 + "__.  List is empty." ]);
 }
 
 // Use the unlisted pick shortcut, which takes the index to pick.  The unlisted
