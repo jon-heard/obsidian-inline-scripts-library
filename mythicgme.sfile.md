@@ -102,8 +102,7 @@ _inlineScripts.state.sessionState.lists.threads =
 
 // Return a heading for scene 1
 return "***\n\n\n### SCENE " +
-	_inlineScripts.state.sessionState.mythicgme.scene +
-	"\n- Setup:\n    - ";
+	_inlineScripts.state.sessionState.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 __
 mythicgme reset - Resets mythic state to defaults and displays scene heading.
@@ -113,8 +112,14 @@ mythicgme reset - Resets mythic state to defaults and displays scene heading.
 __
 __
 ```js
+// Run a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
+
+// Pick an item from array a.
 function aPick(a) { return a[roll(a.length)-1]; }
+
+// Pick an item from array a, weighted by element wIndex of the item.  If theRoll is
+// passed, use that as the roll.
 function aPickWeight(a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;
@@ -221,7 +226,7 @@ __
 ```
 __
 ```js
-// Adjust the chaos by parameter 1
+// Adjust the chaos by the parameter
 let result =
 	($1 === "1") ? expUnformat(expand("chaos++")) :
 	($1 === "-1") ? expUnformat(expand("chaos--")) :
@@ -245,7 +250,7 @@ if (chk <= _inlineScripts.state.sessionState.mythicgme.chaos)
 	{
 		result += "\n- Scene altered";
 	}
-	// Event Roll?  Replace the scene with a random event
+	// Even Roll?  Replace the scene with a random event
 	else
 	{
 		result += "\n- Scene interrupted:\n    - event - " + expand("event")[1];
