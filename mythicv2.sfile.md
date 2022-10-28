@@ -37,7 +37,7 @@ if (_inlineScripts.inlineScripts.
 }
 
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.mythicv2.chaos", 4);
 confirmObjectPath("_inlineScripts.state.sessionState.mythicv2.scene", 1);
 confirmObjectPath(
@@ -80,7 +80,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.mythicv2");
 _inlineScripts.state.sessionState.mythicv2.chaos = 4;
@@ -250,7 +250,7 @@ clearDetailsIfUserTriggered();
 let outcomes = [ ["ANGER",4],["SADNESS",5],["FEAR",6],["THREAD NEGATIVE",7,"threads"],["PC NEGATIVE",8,"pcs"],["FOCUS NPC",9,"npcs"],["NPC POSITIVE",10,"npcs"],["FOCUS PC",11,"pcs"],["NPC NEGATIVE",12,"npcs"],["FOCUS THREAD",13,"threads"],["PC POSITIVE",14,"pcs"],["THREAD POSITIVE",15,"threads"],["COURAGE",16],["HAPPINESS",17],["CALM",99] ];
 let result = roll("roll1",10) + roll("roll2",10) + getChaosAdjust();
 result = aPickWeight("", outcomes, 1, result);
-let focus = expand("lists pick " + (result[2] || ""));
+let focus = result[2] ? expand("lists pick " + result[2]) : "";
 focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 return "Detail:\n" + result[0] + focus + getDetails() + "\n\n";
 ```
@@ -267,7 +267,7 @@ __
 clearDetailsIfUserTriggered();
 let outcomes = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35,null,true],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight("eventRoll", outcomes);
-let focus = expand("lists pick " + (result[2] || ""));
+let focus = result[2] ? expand("lists pick " + result[2) : "";
 focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning " + (result[3] ? "description" : "action"))[1];
 return [ "Event:\n", result[0] + focus + " - " + meaning, getDetails(), "\n\n" ];

@@ -10,7 +10,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Turn a relative path url into an absolute path url based in the vault's root
 function getAbsolutePath(path)
@@ -209,10 +209,11 @@ confirmObjectPath("_inlineScripts.cards_ui.settingsPopup",
 			.setDesc("Choose the image to represent the back of all cards.")
 			.addDropdown(dropdown =>
 			{
-				data.backImageOptions = [""].concat(
+				data.backImageOptions =
 					Object.keys(app.vault.fileMap).filter(
 						v => { return v.match(/.(?:png|bmp|gif|jpg|jpeg)$/); }
-					));
+					);
+				data.backImageOptions.unshift("");
 				dropdown.addOptions(data.backImageOptions);
 				dropdown.setValue(data.backImageOptions.indexOf(currentBackImage));
 				dropdown.onChange(value =>
@@ -248,7 +249,7 @@ Sets up this shortcut-file
 __
 __
 ```js
-// Show a popup for choosing an existing pile
+// User chooses an existing pile
 userChoosesPileId = function(requestMessage, failMessage, pileToBlock)
 {
 	// Get names of the piles
@@ -260,7 +261,7 @@ userChoosesPileId = function(requestMessage, failMessage, pileToBlock)
 		return [ null, expFormat(failMessage + "No card-piles available.") ];
 	}
 
-	// Show a popup to choose from the pile names
+	// Choose a pile
 	const pileIndex =
 		popups.pick("Choose a card-pile " + requestMessage, pileNames, 0, "adaptive");
 	if (pileIndex === null) { return [ null, null ]; }
@@ -297,14 +298,15 @@ __
 ```
 __
 ```js
-// Show a custom popup 
+// Choose settings
 const newSettings = popups.custom(
 	"Choose settings for all cards", _inlineScripts.cards_ui.settingsPopup);
 if (newSettings === null) { return null; }
+
 return expand("cards settings " + newSettings.size + " " + newSettings.backImage);
 ```
 __
-ui cards settings - Asks the user to choose what image to display on the back-side of all cards.
+ui cards settings - User chooses card size and card back image.
 ***
 
 
@@ -340,7 +342,7 @@ return expand(
 	(hideMoved ? "n" : "y"));
 ```
 __
-ui cards pile - Asks the user to enter a name for the new card-pile.  Then asks the user to enter the facing and show-moved flag for the new card pile.  Then creates a new pile with the choices.
+ui cards pile - User enters a name, card-facing and show-moved flag for the new card-pile.  Card-pile is created from the choices.
 
 
 __
@@ -362,7 +364,7 @@ if (doRecall === null) { return null; }
 return expand("cards remove " + pile[0] + " " + (doRecall ? "n" : "y"));
 ```
 __
-ui cards remove - Asks the user to choose a card-pile to remove, then removes that card-pile.
+ui cards remove - User choses a card-pile to remove, then removes that card-pile.
 
 
 __
@@ -397,7 +399,7 @@ return expand(
 	(hideMoved ? "n" : "y"));
 ```
 __
-ui cards pilesettings - Asks the user to enter a name for the new card-pile.  Then asks the user to enter the facing and show-moved flag for the new card pile.  Then creates a new pile with the choices.
+ui cards pilesettings - User chooses a card-pile, then choses its card-facing and show-moved flag.
 ***
 
 
@@ -423,13 +425,13 @@ const folders = Object.keys(app.vault.fileMap)
 		return false;
 	});
 
-// Show a popup to select a folder to pull cards from
+// Choose a folder to create cards from
 let folder =
 	popups.pick("Choose a folder to take card images from", folders, 0, "adaptive");
 if (!folder) { return null; }
 folder = folders[folder];
 
-// Show a popup to select the pile to put the cards into
+// Choose a pile to put the cards into
 const pileId =
 	await userChoosesPileId("to hold new cards", "Card images not loaded.");
 if (pileId === null) { return pile[1]; }
@@ -437,7 +439,7 @@ if (pileId === null) { return pile[1]; }
 return expand("cards fromfolder " + pileId[0] + " " + folder);
 ```
 __
-ui cards fromfolder - Asks the user to choose which folder to create new cards from.  Asks the user to choose a card-pile to put the new cards into.  Creates the cards and puts them into the chosen card-pile.
+ui cards fromfolder - User choses a folder to create new cards from, then choses a card-pile to put them into.  Cards are created and added to the chosen card-pile.
 ***
 
 
@@ -485,7 +487,7 @@ return expand(
 	(result.topBottom === "1" ? "y" : "n"));
 ```
 __
-ui cards peek - Asks the user to choose a card-pile to peek into, a count of how many cards to peek and whether to peek from the bottom or top.  Calls the peek shortcut with these choices.
+ui cards peek - User choses a card-pile, how many cards to peek and what side to peek from (top or bottom).  The peeked cards are printed to the note.
 ***
 
 
@@ -519,7 +521,7 @@ if (result === null) { return null; }
 return expand("cards draw " + result.count + " " + result.dst + " " + result.src);
 ```
 __
-ui cards draw - Asks the user to choose a card-pile to draw from and one to add to.  Also asks for how many cards to draw.  Then runs the draw shortcut based on those card-piles and count.
+ui cards draw - User choses one card-pile to draw from, one to add to and how many cards to draw.  Cards are moved from the top of one card-pile to the top of the other.
 
 
 __
@@ -550,7 +552,7 @@ if (result === null) { return null; }
 return expand("cards pick " + result.dst + " " + result.src);
 ```
 __
-ui cards pick - Asks the user to choose a card-pile to pick from and one to add to, then runs the pick shortcut based on those card-piles.
+ui cards pick - User choses one card-pile to pick from and one to add to, then the user picks the cards to move from the top of one to the top of the other.
 ***
 
 
@@ -582,7 +584,7 @@ if (result === null) { return null; }
 return expand("cards shuffle " + result.src + " " + (result.rotate ? "y" : "n"));
 ```
 __
-ui cards shuffle - Asks the user to choose a card-pile to shuffle and whether to rotate the cards while shuffling, then shuffles that card-pile.
+ui cards shuffle - User choses a card-pile, and whether to rotate the cards while shuffling.  The card-pile is then shuffled.
 
 
 __
@@ -596,7 +598,7 @@ if (pile[0] == null) { return pile[1]; }
 return expand("cards unrotate " + pile[0]);
 ```
 __
-ui cards unrotate - Asks the user to choose a card-pile to un-rotate, then un-rotates that card-pile.  Un-rotating means to turn all cards right-side-up.
+ui cards unrotate - User choses a card-pile, then all the card-pile's cards are turned right-side-up.
 
 
 __
@@ -610,7 +612,7 @@ if (pile[0] == null) { return pile[1]; }
 return expand("cards reverse " + pile[0]);
 ```
 __
-ui cards reverse - Asks the user to choose a card-pile to reverse, then reverses the order of the cards in that card-pile.
+ui cards reverse - User choses a card-pile, then the card-pile's order is reversed.
 
 
 __
@@ -624,7 +626,7 @@ if (pile[0] == null) { return pile[1]; }
 return expand("cards recall " + pile[0]);
 ```
 __
-ui cards recall -  Asks the user to choose a card-pile to recall, then recalls that card-pile.  Recalling means finding all cards with that card-pile as their origin, then moving them to that card-pile.
+ui cards recall -  User choses a card-pile, then the card-pile is recalled.  Recalling means finding all cards with the card-pile as their origin, then moving them to the card-pile.
 
 
 __
@@ -638,7 +640,7 @@ if (pile[0] == null) { return pile[1]; }
 return expand("cards reorigin " + pile[0]);
 ```
 __
-ui cards reorigin - Asks the user to choose a card-pile to re-origin, then re-origins that card-pile.  Re-origining means setting the origin of all cards in a card-pile to that card-pile.
+ui cards reorigin - Asks the user to choose a card-pile, then the card-pile is re-origined..  Re-origining means setting the origin of all cards in a card-pile to that card-pile.
 ***
 
 
@@ -667,7 +669,8 @@ if (toImport === defaultDataString) { return null; }
 return expand("cards reorigin " + pile + " " + toImport);
 ```
 __
-ui cards import - Asks the user to choose a card-pile to import into and to enter a data-string to import, then tries importing that data-string into that card-pile.
+ui cards import - User chooses a card-pile and enters a data-string representation of a card-pile. 
+ The data-string is turned into a card-pile and assigned to the card-pile the user chose.
 
 
 __
@@ -681,7 +684,4 @@ if (pile[0] == null) { return pile[1]; }
 return expand("cards export " + pile[0]);
 ```
 __
-ui cards export - Asks the user to choose a card-pile to export, then exports that card-pile.
-> The __hand__ card-pile's settings are updated:
-> . __Facing__ remains __up__.
-> . __ShowMoved__ remains __true__.
+ui cards export - User chooses a card-pile, then the card-pile is exported to a data-string, which is printed to the note.

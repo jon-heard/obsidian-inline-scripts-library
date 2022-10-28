@@ -7,68 +7,110 @@ An extension to __lists.sfile__ that provides graphical ui versions of shortcuts
 
 __
 ```
-^ui lists? list$
+^ui lists? reset$
 ```
 __
 ```js
-const listNames = Object.keys(_inlineScripts.state.sessionState.lists).sort();
-if (!listNames.length)
+return expand("list reset");
+```
+__
+ui lists reset - Clears all lists.
+***
+
+
+__
+```
+^ui lists?$
+```
+__
+```js
+// Get the list of list names
+let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+if (!lists.length)
 {
-	return "No lists available.\n\n";
+	return expFormat("No lists available.");
 }
 
-const pick = popups.pick("Choose a list to view", listNames, 0, "adaptive");
+// Add "all lists" option
+lists.unshift("<All lists>");
+
+// Choose a list (or "all lists")
+const pick = popups.pick("Choose a list to view", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
-return expand("lists list " + listNames[pick]);
+// If the user chose "all-lists", show all lists infos
+if (pick === 0)
+{
+	return expand("lists");
+}
+
+// return expansion of the list info
+return expand("lists " + lists[pick]);
 ```
 __
-ui lists list - Asks the user to choose from all lists.
-Show all items in that list.
+ui lists - User chooses a list (options include "all lists"), then shows info on the chosen list.
 
 
 __
 ```
-^ui lists? add$
+^ui lists? rename$
 ```
 __
 ```js
-let listNames = Object.keys(_inlineScripts.state.sessionState.lists).sort();
-let listName = null;
-if (listNames.length)
+// Get the list of list names
+let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+
+// Make sure there is a list to rename
+if (!lists.length)
 {
-	listNames = [ "!! New list !!" ].concat(listNames);
-	const pick = popups.pick("Choose a list to add to", listNames, 0, "adaptive");
-	if (pick === null) { return null; }
-	if (!pick)
-	{
-		listNames = [];
-	}
-	else
-	{
-		listName = listNames[pick];
-	}
-}
-if (!listNames.length)
-{
-	listName = popups.input("Enter a list to add to");
-	if (!listName)
-	{
-		return null;
-	}
+	return expFormat("List not renamed.  No lists to rename.");
 }
 
-const item =
-	popups.input("Type up an item to add to list <b>" + listName + "</b>");
-if (!item) { return null; }
+// Choose a list
+const pick = popups.pick("Choose a list to rename", lists, 0, "adaptive");
+if (pick === null) { return null; }
 
-return expand("lists add " + listName + " " + item);
+// Enter a new name
+const newName =
+	popups.input("Enter a new name for __" + lists[pick] + "__", lists[pick]);
+if (newName === null) { return null; }
+
+// Make sure entered list name is in a valid format
+if (!newName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
+{
+	return expFormat(
+		"List item not added.  List name __\"" + newName + "\"_ isn't valid.");
+}
+
+return expand("lists rename " + lists[pick] + " " + newName);
 ```
 __
-ui lists add - Asks the user to choose from all lists.
-Asks the user to enter an item to add to that list.
-Allows duplicate items.
-    - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
+ui lists rename - User chooses a list, and enters a new name for it.  The list is renamed.
+
+
+__
+```
+^ui lists? removelist$
+```
+__
+```js
+// Get the list of list names
+let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+
+// Make sure there is a list to rename
+if (!lists.length)
+{
+	return expFormat("List not removed.  No lists to remove.");
+}
+
+// Choose a list
+const pick = popups.pick("Choose a list to remove", lists, 0, "adaptive");
+if (pick === null) { return null; }
+
+return expand("lists removelist " + lists[pick]);
+```
+__
+ui lists removelist - User chooses a list, which is removed.
 
 
 __
@@ -106,13 +148,24 @@ function getListItems(name)
 		}
 	}
 }
+
 // returns the names of lists that have items.
 function getNamesOfPopulatedLists()
 {
 	return Object.keys(_inlineScripts.state.sessionState.lists)
-		  .sort()
-		  .filter(v => getListItems(v).length);
+		  .filter(v => getListItems(v).length)
+		  .sort();
 };
+
+// Filter list names to those of basic and combo type
+function filterListsToBasicAndCombo(lists)
+{
+	return lists.filter(v =>
+	{
+		const type = _inlineScripts.state.sessionState.lists[v].type;
+		return (type === "basic" || type === "combo");
+	});
+}
 ```
 __
 Helper scripts
@@ -124,50 +177,81 @@ __
 ```
 __
 ```js
-const listNames = await getNamesOfPopulatedLists();
-if (!listNames.length)
+// Get the list of populated list's names
+const lists = await getNamesOfPopulatedLists();
+
+// Make sure there is a list to pick from
+if (!lists.length)
 {
-	return "There are no non-empty lists.\n\n";
+	return expFormat("No item picked.  There are no non-empty lists.");
 }
 
+// Choose a list
 const pick =
-	popups.pick("Choose a list to pick randomly from", listNames, 0, "adaptive");
+	popups.pick("Choose a list to randomly pick from", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
-return expand("lists pick " + listNames[pick]);
+return expand("lists pick " + lists[pick]);
 ```
 __
-ui lists pick - Asks the user to choose from all lists.
-Gets a random item from that list.
+ui lists pick - User chooses a non-empty list, a random item is picked from that list and returned.
+***
 
 
 __
 ```
-^ui lists? remove$
+^ui lists? add$
 ```
 __
 ```js
-const listNames = await getNamesOfPopulatedLists();
-if (!listNames.length)
+// Get the list of list names
+let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+
+// Only include lists of basic and combo type
+lists = filterListsToBasicAndCombo(lists);
+
+// Choice defaults to 0 (which means creating a new list to add to)
+let listName = "";
+
+// If choices aren't empty, ask user to choose which list to add to
+if (lists.length)
 {
-	return "There are no non-empty lists.\n\n";
+	// Add option for a new list
+	lists.unshift("<New list>");
+
+	// Choose a list
+	const pick = popups.pick("Choose a list to add to", lists, 0, "adaptive");
+	if (pick === null) { return null; }
+
+	// If user's choice wasn't "new list", record the choice
+	if (pick > 0) { listName = lists[pick]; }
 }
 
-const pick =
-	popups.pick("Choose a list to remove an item from", listNames, 0, "adaptive");
-if (pick === null) { return null; }
+// If choice was "new list", OR there are no lists, get a name for the new list.
+if (listName === "")
+{
+	listName = popups.input("Enter a list to add to");
+	if (!listName) { return null; }
 
-let items = await getListItems(listNames[pick]);
-const pick2 = popups.pick("Choose an item to remove.", items, 0, "adaptive");
-if (pick2 === null) { return null; }
+	// Make sure entered list name is in a valid format
+	if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
+	{
+		return expFormat(
+			"List item not added.  List name __\"" + listName + "\"_ isn't valid.");
+	}
+}
 
-return expand("lists remove " + listNames[pick] + " " + items[pick2]);
+// Get the item to add to the chosen list
+const item =
+	popups.input("Type up an item to add to list <b>" + listName + "</b>");
+if (!item) { return null; }
+
+return expand("lists add " + listName + " " + item);
 ```
 __
-ui lists remove - Asks the user to choose from all lists.
-Asks the user to choose an item from that list.
-Removes the last instance of that item from that list.
-    - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
+ui lists add - User chooses a list to add to and an item to add.  The item is added to the list.
+    - Identical items within a list are allowed.
+    - Can only add to (1) basic lists and (2) combo lists with at least one basic list as a sub-list.
 
 
 __
@@ -176,55 +260,94 @@ __
 ```
 __
 ```js
-const listNames = await getNamesOfPopulatedLists();
-if (!listNames.length)
+// Get the list of populated list's names
+const lists = await getNamesOfPopulatedLists();
+
+// Only include lists of basic and combo type
+lists = filterListsToBasicAndCombo(lists);
+
+// Make sure there is a list to replace items in
+if (!lists.length)
 {
-	return "There are no non-empty lists.\n\n";
+	return expFormat("No item replaced.  There are no non-empty lists.");
 }
 
-const pick =
-	popups.pick("Choose a list to replace an item from", listNames, 0, "adaptive");
+// Choose a list
+const pick = popups.pick("Choose a list to replace items from", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
-let items = await getListItems(listNames[pick]);
-items = [...new Set(items)];
-const pick2 = popups.pick("Choose an item to replace.", items, 0, "adaptive");
-if (pick2 === null) { return null; }
+// Get items from the list
+let items = await getListItems(lists[pick]);
 
+// Count diplicate items
+let itemCounts = {};
+for (const item of items)
+{
+	itemCount[item] = (itemCount[item] || 0) + 1;
+}
+
+// Remove duplicate items
+items = [...new Set(items)];
+let itemLabels = [...items];
+
+// Add count to items with duplicates
+for (let i = 0; i < items.length; i++)
+{
+	const count = itemCounts[items[i]];
+	itemLabels[i] = items[i] + (count <= 1 ? "" : "  (x " + count + ")");
+}
+
+// Choose an item
+const pick2 = popups.pick("Choose an item to replace.", itemLabels, 0, "adaptive");
+if (pick2 === null) { return null; }
+const item = items[pick2];
+
+// Eenter a new item text
 let replacement =
-	popups.input("Enter a replacement for \"<b>" + items[pick2] + "</b>\".",
-	items[pick2]);
+	popups.input("Enter text to replace <b>\"" + item + "\"</b> with.", item);
 if (!replacement) { return null; }
 
-let item = items[pick2].replaceAll(" ", "\t");
-return expand("lists replace " + listNames[pick] + " " + item + " " + replacement);
+return expand("lists replace " + lists[pick] + " \"" + item + "\" " + replacement);
 ```
 __
-ui lists replace - Asks the user to choose from all lists.
-Asks the user to choose an item from that list.
-Asks the user to enter a new value for that item.
-Replaces all instances of the item within the list with the replacement.
+ui lists replace - User chooses a list, an item from the list and enters text to replace the item with.  All instances of the item are replaced with the text.
+    - Can only replace from (1) basic lists and (2) combo lists that contain basic lists.
 
 
 __
 ```
-^ui lists? removelist$
+^ui lists? remove$
 ```
 __
 ```js
-const listNames = Object.keys(_inlineScripts.state.sessionState.lists).sort();
-if (!listNames.length)
+// Get the list of populated list's names
+const lists = await getNamesOfPopulatedLists();
+
+// Only include lists of basic and combo type
+lists = filterListsToBasicAndCombo(lists);
+
+// Make sure there is a list to remove items from
+if (!lists.length)
 {
-	return "No lists available.\n\n";
+	return expFormat("No item removed.  There are no non-empty lists.");
 }
 
-const pick = popups.pick("Choose a list to remove", listNames, 0, "adaptive");
+// Choose a list
+const pick = popups.pick("Choose a list to replace items from", lists, 0, "adaptive");
 if (pick === null) { return null; }
-return expand("lists removelist " + listNames[pick]);
+
+// Get items from the list
+let items = await getListItems(lists[pick]);
+
+// Remove duplicate items
+items = [...new Set(items)];
+
+return expand("lists remove " + lists[pick] + " " + items[pick2]);
 ```
 __
-ui lists removelist - Asks the user to choose from all lists.
-Removes that list.
+ui lists remove - User choses a list and an item from the list.  The last instance of the item is removed from the list.
+    - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
+***
 
 
 __
@@ -233,14 +356,30 @@ __
 ```
 __
 ```js
-let listName = popups.input("Type the name of the new folder-list.");
+// Enter a list name
+listName = popups.input("Enter a name for the new folder-list");
 if (!listName) { return null; }
-listName = listName.replace(" ", "_");
 
+// Confirm the list name is in a valid format
+if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
+{
+	return expFormat(
+		"Folder-List not added.  List name __\"" + listName + "\"_ isn't valid.");
+}
+
+// Confirm the list name is available
+if (_inline.state.sessionState.lists[$1])
+{
+	return expFormat("Folder-list not added.  Name __\"" + $1 + "\"__ unavailable.");
+}
+
+// Get a list of folders
 const folders =
 	Object.keys(app.vault.fileMap).filter(v => app.vault.fileMap[v].children);
+
+// Choose a folder
 const pick =
-	popups.pick("Choose the folder to attach <b>" + listName + "</b> to.",
+	popups.pick("Choose the folder to attach list <b>" + listName + "</b> to.",
 	folders, 0, "adaptive");
 if (pick === null) { return null; }
 
@@ -258,37 +397,148 @@ __
 ```
 __
 ```js
-let listName = popups.input("Type the name of the new combo-list.");
+// Enter a list name
+listName = popups.input("Enter a name for the new combo-list");
 if (!listName) { return null; }
-listName = listName.replace(" ", "_");
 
-let choices = Object.keys(_inlineScripts.state.sessionState.lists);
-let picks = [];
+// Confirm the list name is in a valid format
+if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
+{
+	return expFormat(
+		"Combo-List not added.  List name __\"" + listName + "\"_ isn't valid.");
+}
+
+// Confirm the list name is available
+if (_inline.state.sessionState.lists[$1])
+{
+	return expFormat("Combo-list not added.  Name __\"" + $1 + "\"__ unavailable.");
+}
+
+// Get the list of list names
+let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+
+// Get all lists to use as sub-lists
+let subLists = [];
 do
 {
+	// Show selected lists so far
 	const listsSoFar =
-		!picks.length ? "" :
-		"<br/><br/>Lists so far:</br>" + picks.join("<br/>") + "<br/><br/>";
+		!subLists.length ? "" :
+		"<br/><br/>Lists so far:</br>- " + subLists.join("<br/>- ") + "<br/><br/>";
+
+	// Pick the next sub-list
 	let pick =
-		popups.pick("Choose a list to attach to the combo-list <b>" + listName +
-		"</b>" + listsSoFar, choices, 0, "adaptive");
+		popups.pick("Choose a list to link to the new combo-list <b>" + listName +
+		"</b> as a sub-list" + listsSoFar, lists, 0, "adaptive");
 	if (pick === null) { return null; }
-	if (!picks.length)
+
+	// After the first choice, add the option to finish the list of sub-lists
+	if (!subLists.length)
 	{
-		choices.unshift("!! No more lists !!");
+		lists.unshift("<No more lists>");
 		pick++;
 	}
-	else if (pick === 0)
+
+	// A choice of 0 means "No more lists" was chosen
+	if (pick === 0)
 	{
 		break;
 	}
-	picks.push(choices[pick]);
+
+	// Add the chosen list to the sub-lists
+	subLists.push(lists[pick]);
 }
 while (true);
 
 return expand("lists addcombo " + listName + " " + picks.join(" "));
 ```
 __
-ui lists addcombo - Asks the user to type a name for the new combo-list.
-Asks the user to choose different lists.
-Creates the combo-list, attached to the different lists.
+ui lists addcombo - User enters a name for he comb-list and chooses sub-lists.  A combo-list is made from the choices.
+***
+
+
+__
+```
+^ui lists? shortcutbatch$
+```
+__
+```js
+// Get the list of populated list's names
+const lists = await getNamesOfPopulatedLists();
+
+// Make sure there is a list to run in a batch shortcut
+if (!lists.length)
+{
+	return expFormat("No shorcut batched.  There are no non-empty lists.");
+}
+
+// Choose a list
+const pick = popups.pick("Choose a list for a batch shortut", lists, 0, "adaptive");
+if (pick === null) { return null; }
+
+// Enter the shortcut text
+const batchShortcut =
+	popups.input("Enter a shortcut-text.  Put \"%1\" where the list item should be.");
+
+return expand("lists shortcutbatch " + lists[pick] + " " + batchShortcut);
+```
+__
+ui lists shortcutbatch - User chooses a list and enters a shortcut-text.  The shortcut-text is run for each item in the list, with "%1" being replaced by the list item.
+
+
+__
+```
+^ui lists? fromfile lines$
+```
+__
+```js
+// Get the list of list names
+let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+
+// Only include lists of basic and combo type
+lists = filterListsToBasicAndCombo(lists);
+
+// Choice defaults to 0 (which means creating a new list to add to)
+let listName = "";
+
+// If choices aren't empty, ask user to choose which list to add to
+if (lists.length)
+{
+	// Add option for a new list
+	lists.unshift("<New list>");
+
+	// Choose a list
+	const pick = popups.pick("Choose a list to add to", lists, 0, "adaptive");
+	if (pick === null) { return null; }
+
+	// If user's choice wasn't "new list", record the choice
+	if (pick > 0) { listName = lists[pick]; }
+}
+
+// If choice was "new list", OR there are no lists, get a name for the new list.
+if (listName === "")
+{
+	listName = popups.input("Enter a list to add to");
+	if (!listName) { return null; }
+
+	// Make sure entered list name is in a valid format
+	if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
+	{
+		return expFormat(
+			"List item not added.  List name __\"" + listName + "\"_ isn't valid.");
+	}
+}
+
+// Get a list of files
+const filenames =
+	Object.keys(app.vault.fileMap).filter(v => !app.vault.fileMap[v].children);
+
+// Choose a file
+const pick2 =
+	popups.pick("Choose the file to load lines from.", filenames, 0, "adaptive");
+if (pick2 === null) { return null; }
+
+return expand("lists fromfile lines " + listName + " \"" + filenames[pick2] + "\"");
+```
+__
+ui lists fromfile lines - Use chooses a list (or enters a new list) and chooses a file.  The file is broken into lines, which are added to the list as items.

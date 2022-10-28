@@ -188,7 +188,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.tablefiles.paths");
 confirmObjectPath("_inlineScripts.state.sessionState.tablefiles.configuration");
 confirmObjectPath(
@@ -198,7 +198,7 @@ confirmObjectPath(
 		expand("tbl reset");
 	});
 confirmObjectPath("_inlineScripts.tablefiles.priorRoll");
-_inlineScripts.inlineScripts.helperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
+_inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -842,7 +842,7 @@ __
 ```
 __
 ```js
-_inlineScripts.inlineScripts.helperFncs.removeCss("tablefiles");
+_inlineScripts.inlineScripts.HelperFncs.removeCss("tablefiles");
 delete _inlineScripts?.state?.sessionState?.tablefiles;
 delete _inlineScripts?.state?.listeners?.onReset?.tablefiles;
 ```
@@ -857,7 +857,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.tablefiles");
 _inlineScripts.state.sessionState.tablefiles.paths = {};
 _inlineScripts.state.sessionState.tablefiles.configuration = {};
@@ -950,7 +950,7 @@ __
 ```js
 const result = popups.custom(
 	"Select a table to pick from", _inlineScripts.tablefiles.rollPopup);
-return result !== null ? result : "No table rolled.  User canceled.\n\n";
+return result !== null ? result : null;
 ```
 __
 tbl roll - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.

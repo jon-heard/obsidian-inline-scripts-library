@@ -15,7 +15,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.notepick");
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.notepick",
@@ -48,7 +48,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState");
 _inlineScripts.state.sessionState.notepick = {};
 return "All notepicks cleared.\n\n";

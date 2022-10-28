@@ -17,7 +17,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Make sure state and "pirorExpansion" value are setup
 confirmObjectPath("_inlineScripts.state.sessionState.clips");

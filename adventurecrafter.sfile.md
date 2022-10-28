@@ -47,7 +47,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Reset themes
 confirmObjectPath("_inlineScripts.state.sessionState.adventurecrafter");
@@ -301,7 +301,7 @@ const popupOptions = themeNames.map((v, i) =>
 			_inlineScripts.adventurecrafter.themeDescriptions[i];
 	 });
 
-// Show picker popup for user to pick a theme
+// Choose a theme
 let pick = popups.pick(popupMessage, popupOptions, 0, "adaptive");
 if (pick === null) { return null; }
 
@@ -630,7 +630,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 	return expFormat("No character Duplicated.  There are no characters.");
 }
 
-// Show a pick popup to let the user pick from that list of characters
+// Choose a character
 let pick =
 	popups.pick("Choose a character to duplicate", choices, 0, "adaptive");
 if (pick === null) { return null; }
@@ -660,7 +660,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 	return expFormat("No character reduced.  There are no characters.");
 }
 
-// Show a pick popup to let the user pick from that list of characters
+// Choose a character
 let pick =
 	popups.pick("Choose a character to reduce", choices, 0, "adaptive");
 if (pick === null) { return null; }
@@ -690,14 +690,14 @@ if (choices.length === 1 && choices[0] === "NONE")
 	return expFormat("No character renamed.  There are no characters.");
 }
 
-// Show a pick popup to let the user pick from that list of characters
+// Choose a character
 let pick =
 	popups.pick("Choose a character to rename", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 let characters = await getFormattedList("characters", 0, 1);
 
-// Show a text popup to let the user enter a new name for the chosen character
+// Enter a new name
 const replacement =
 	popups.input("Enter a new name for the character.", characters[pick]);
 if (!replacement) { return null; }
@@ -808,7 +808,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 	return expFormat("No plotline Duplicated.  There are no plotlines.");
 }
 
-// Show a pick popup to let the user pick from that list of plotlines
+// Choose a plotline
 let pick =
 	popups.pick("Choose a plotline to duplicate", choices, 0, "adaptive");
 if (pick === null) { return null; }
@@ -838,7 +838,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 	return expFormat("No plotline reduced.  There are no plotlines.");
 }
 
-// Show a pick popup to let the user pick from that list of plotlines
+// Choose a plotline
 let pick =
 	popups.pick("Choose a plotline to reduce", choices, 0, "adaptive");
 if (pick === null) { return null; }
@@ -868,14 +868,14 @@ if (choices.length === 1 && choices[0] === "NONE")
 	return expFormat("No plotline renamed.  There are no plotlines.");
 }
 
-// Show a pick popup to let the user pick from that list of plotlines
+// Choose a plotline
 let pick =
 	popups.pick("Choose a plotline to rename", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 let plotlines = await getFormattedList("plotlines", 0, 1);
 
-// Show a text popup to let the user enter a new name for the chosen plotline
+// Enter a new name
 const replacement =
 	popups.input("Enter a new name for the plotline.", plotlines[pick]);
 if (!replacement) { return null; }
@@ -910,7 +910,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.adventurecrafter.themeSlots", []);
 confirmObjectPath("_inlineScripts.state.sessionState.lists");

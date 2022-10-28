@@ -20,7 +20,7 @@ __
 // Trigger the event callback calls for a change in what piles are available
 function onPileListChanged()
 {
-	_inlineScripts.inlineScripts.helperFncs.
+	_inlineScripts.inlineScripts.HelperFncs.
 		callEventListenerCollection(
 			"cards.onPileListChanged",
 			_inlineScripts.cards.listeners.onPileListChanged);
@@ -30,7 +30,7 @@ function onPileListChanged()
 function onPileChanged(pileName)
 {
 	_inlineScripts.cards.listeners.changedPile = pileName;
-	_inlineScripts.inlineScripts.helperFncs.
+	_inlineScripts.inlineScripts.HelperFncs.
 		callEventListenerCollection(
 			"cards.onPileChanged",
 			_inlineScripts.cards.listeners.onPileChanged);
@@ -101,7 +101,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Confirm state exists.  If not setup default state.
 confirmObjectPath(
@@ -128,7 +128,7 @@ confirmObjectPath("_inlineScripts.cards.listeners.onPileListChanged");
 confirmObjectPath("_inlineScripts.cards.listeners.onPileChanged");
 
 // Custom CSS
-_inlineScripts.inlineScripts.helperFncs.addCss("cards", ".rotated1, img[alt='rotated1'] { transform: rotate(90deg); } .rotated2, img[alt='rotated2'] { transform: rotate(180deg); } .rotated3, img[alt='rotated3'] { transform: rotate(270deg); } .rotated, img[alt='rotated'] { transform: rotate(180deg); } .iscript_cardChoice { filter: brightness(75%); cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { filter:brightness(100%); } .iscript_cardSelected { filter:brightness(100%); border-color: yellow; }");
+_inlineScripts.inlineScripts.HelperFncs.addCss("cards", ".rotated1, img[alt='rotated1'] { transform: rotate(90deg); } .rotated2, img[alt='rotated2'] { transform: rotate(180deg); } .rotated3, img[alt='rotated3'] { transform: rotate(270deg); } .rotated, img[alt='rotated'] { transform: rotate(180deg); } .iscript_cardChoice { filter: brightness(75%); cursor: pointer; border-width: 4px; border-style: solid;border-color: black; } .iscript_cardChoice:hover { filter:brightness(100%); } .iscript_cardSelected { filter:brightness(100%); border-color: yellow; }");
 
 // Default card back image (hardcoded as base64)
 confirmObjectPath("_inlineScripts.cards.defaultBackImage",
@@ -193,7 +193,7 @@ __
 __
 ```js
 // Custom css remove
-_inlineScripts.inlineScripts.helperFncs.removeCss("cards");
+_inlineScripts.inlineScripts.HelperFncs.removeCss("cards");
 // Delete systems
 delete _inlineScripts.cards;
 delete _inlineScripts.state?.sessionState?.cards;
@@ -210,7 +210,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Make sure state container is ready
 confirmObjectPath("_inlineScripts.state.sessionState");
@@ -892,7 +892,7 @@ if (!srcPile)
 _inlineScripts.state.sessionState.cards.priorPickDst = $1;
 _inlineScripts.state.sessionState.cards.priorPickSrc = $2;
 
-// Show custom popup for picking cards
+// Pick cards
 let picks = popups.custom(
 	"Pick cards from the <b>" + $2 + "</b> card-pile.",
 	_inlineScripts.cards.cardPickerPopup, { pileId: $2 });

@@ -20,7 +20,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed", true);
 confirmObjectPath(
@@ -54,7 +54,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.notevars");
 _inlineScripts.state.sessionState.notevars.isMarkdownRefreshed = true;
 return "All notepicks cleared.\n\n";
@@ -163,7 +163,7 @@ function refreshPreviewOnNextModify(file)
 	}
 
 	// Find the view for the given file
-	const leaf = _inlineScripts.inlineScripts.helperFncs.getLeafForFile(file);
+	const leaf = _inlineScripts.inlineScripts.HelperFncs.getLeafForFile(file);
 	if (!leaf) { return; }
 	const view = leaf.view;
 

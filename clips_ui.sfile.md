@@ -48,7 +48,7 @@ if (value === null) { return null; }
 return expand("clips set " + name + " " + value);
 ```
 __
-ui clips set - Asks user for a clip name and value, then assigns the value to the clip name.
+ui clips set - User enters a clip name and a clip value.  The value is then assigned to the clip name.
 
 
 __
@@ -69,7 +69,7 @@ if (pick === null) { return null; }
 return expand("clips get " + clipNames[pick]);
 ```
 __
-ui clips get - Asks the user to choose from list of clips, then expands that clip.
+ui clips get - User chooses a clip, which is then expanded into the note.
 	- Alternative: __ui cg__
 
 
@@ -88,7 +88,7 @@ name = name.replaceAll(" ", "_");
 return expand("clips expansion " + name);
 ```
 __
-ui clips expansion - Asks the user to enter a clip name, then assigns the prior shortcut expansion  text to it.
+ui clips expansion - User enters a clip name.  The prior expansion's text is then assigned to the clip name.
 
 
 __
@@ -109,4 +109,4 @@ if (pick === null) { return null; }
 return expand("clips remove " + clipNames[pick]);
 ```
 __
-ui clips remove - Asks the user to choose a clip, then removes that clip.
+ui clips remove - User chooses a clip, which is then removed.

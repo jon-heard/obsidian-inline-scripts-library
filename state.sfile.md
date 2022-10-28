@@ -25,7 +25,7 @@ __
 if (_inlineScripts?.state?.inSetup) { return; }
 
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.inSetup", true);
 
 const STATE_FILE_NAME = "Ξ_state.data.md";
@@ -174,7 +174,7 @@ __
 _inlineScripts.state.sessionState = {};
 
 // Notify listeners of state.onReset event
-_inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
+_inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
 	"state.onReset", _inlineScripts.state.listeners.onReset);
 
 return "All state cleared.\n\n";
@@ -236,7 +236,7 @@ catch (e)
 }
 
 // Notify listeners of state.onLoad event
-_inlineScripts.inlineScripts.helperFncs.callEventListenerCollection(
+_inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
 	"state.onLoad", _inlineScripts.state.listeners.onLoad);
 
 return "State set.\n\n";

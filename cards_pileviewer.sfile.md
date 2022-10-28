@@ -62,7 +62,7 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Event callbacks for cards system events
 confirmObjectPath(
@@ -89,10 +89,10 @@ confirmObjectPath(
 	});
 
 // Custom CSS
-_inlineScripts.inlineScripts.helperFncs.addCss("cards_pileviewer", ".iscript_pileViewer_container { display: flex; flex-direction: column; padding: 0.5em !important; } .iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_content { overflow-y: scroll; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
+_inlineScripts.inlineScripts.HelperFncs.addCss("cards_pileviewer", ".iscript_pileViewer_container { display: flex; flex-direction: column; padding: 0.5em !important; } .iscript_pileViewer_header { display: flex; margin-bottom: 0.5em; } .iscript_pileViewer_content { overflow-y: scroll; } .iscript_pileViewer_select { flex-grow: 1; margin-right: 0.25em; } .iscript_emptyMsg { text-align: center; margin-top: 1em; font-weight: bold; color: grey } .iscript_notDragged { filter: brightness(50%); } .iscript_viewerCardUi { margin: .1em; -webkit-user-drag: none; }");
 
 // Panel icon
-_inlineScripts.inlineScripts.helperFncs.addIcon(CARDPILE_VIEW_TYPE, `
+_inlineScripts.inlineScripts.HelperFncs.addIcon(CARDPILE_VIEW_TYPE, `
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
  <g class="layer">
   <title>Layer 1</title>
@@ -115,7 +115,7 @@ if (_inlineScripts.inlineScripts.hasRegisteredCardPileView) { return; }
 _inlineScripts.inlineScripts.hasRegisteredCardPileView = true;
 
 // This viewer panel's class for registration
-class CardPileView extends _inlineScripts.inlineScripts.helperFncs.ItemView
+class CardPileView extends _inlineScripts.inlineScripts.HelperFncs.ItemView
 {
 	// Member vars
 	pileSelect;
@@ -259,7 +259,7 @@ class CardPileView extends _inlineScripts.inlineScripts.helperFncs.ItemView
 
 		// Setup a drag system to handle drag-reordering the cards
 		this.dragReorder =
-			new _inlineScripts.inlineScripts.helperFncs.DragReorder(
+			new _inlineScripts.inlineScripts.HelperFncs.DragReorder(
 				this.cardDisplay, this._onDragReordered);
 	}
 
@@ -311,7 +311,7 @@ delete _inlineScripts.cards?.listeners?.onPileListChanged?.cards_pileViewer;
 delete _inlineScripts.cards?.listeners?.onPileChanged?.cards_pileViewer;
 
 // Remove the pileviewer css
-_inlineScripts.inlineScripts.helperFncs.removeCss("cards_pileviewer");
+_inlineScripts.inlineScripts.HelperFncs.removeCss("cards_pileviewer");
 
 // Remove all instances of the pileviewer ui
 app.workspace.detachLeavesOfType(CARDPILE_VIEW_TYPE);

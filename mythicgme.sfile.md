@@ -36,7 +36,7 @@ if (_inlineScripts.inlineScripts.sfileIndices["mythicv2"])
 }
 
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.mythicgme.chaos", 5);
 confirmObjectPath("_inlineScripts.state.sessionState.mythicgme.scene", 1);
 confirmObjectPath(
@@ -78,7 +78,7 @@ __
 __
 ```js
 const confirmObjectPath =
-	_inlineScripts.inlineScripts.helperFncs.confirmObjectPath;
+	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 confirmObjectPath("_inlineScripts.state.sessionState.mythicgme");
 _inlineScripts.state.sessionState.mythicgme.chaos = 5;
 _inlineScripts.state.sessionState.mythicgme.scene = 1;
@@ -229,7 +229,7 @@ __
 ```js
 const FOCUS_TABLE = [ ["REMOTE",7],["NPC ACTS",28,"npcs"],["NEW NPC",35],["THREAD ADVANCE",45,"threads"],["THREAD LOSS",52,"threads"],["THREAD END",55,"threads"],["PC NEGATIVE",67,"pcs"],["PC POSITIVE",75,"pcs"],["AMBIGUOUS",83],["NPC NEGATIVE",92,"npcs"],["NPC POSITIVE",100,"npcs"] ];
 let result = aPickWeight(FOCUS_TABLE);
-let focus = expand("lists pick " + (result[2] || ""));
+let focus = result[2] ? expand("lists pick " + result[2]) : "";
 focus = (focus.length < 2) ? "" : (" (" + focus[1] + ")");
 let meaning = expand("meaning")[1];
 return [ "Event:\n", result[0] + focus + " - " + meaning, "\n\n" ];
