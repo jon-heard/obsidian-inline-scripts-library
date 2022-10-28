@@ -82,6 +82,9 @@ if (!newName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 		"List item not added.  List name __\"" + newName + "\"_ isn't valid.");
 }
 
+// If newName IS oldName, do nothing
+if (newName === lists[pick]) { return null; }
+
 return expand("lists rename " + lists[pick] + " " + newName);
 ```
 __
@@ -117,8 +120,10 @@ __
 __
 ```js
 // get the items of a given list, regardless of list type.
-function getListItems(name)
+async function getListItems(name)
 {
+	return expand("lists listraw " + name);
+/*
 	let list = _inlineScripts.state.sessionState.lists[name];
 	if (!list) { return []; }
 	switch (list.type)
@@ -147,14 +152,18 @@ function getListItems(name)
 				a.toLowerCase().localeCompare(b.toLowerCase()) );
 		}
 	}
+*/
 }
 
+//  An array filter function that allows for async predicate
+const asyncFilter = async (arr, predicate) => Promise.all(arr.map(predicate))
+	.then((results) => arr.filter((_v, index) => results[index]));
+
 // returns the names of lists that have items.
-function getNamesOfPopulatedLists()
+async function getNamesOfPopulatedLists()
 {
-	return Object.keys(_inlineScripts.state.sessionState.lists)
-		  .filter(v => getListItems(v).length)
-		  .sort();
+	let result = Object.keys(_inlineScripts.state.sessionState.lists).sort();
+	return asyncFilter(result, async v => (await getListItems(v)).length);
 };
 
 // Filter list names to those of basic and combo type
@@ -212,6 +221,7 @@ lists = filterListsToBasicAndCombo(lists);
 
 // Choice defaults to 0 (which means creating a new list to add to)
 let listName = "";
+let listItems = [];
 
 // If choices aren't empty, ask user to choose which list to add to
 if (lists.length)
@@ -224,7 +234,11 @@ if (lists.length)
 	if (pick === null) { return null; }
 
 	// If user's choice wasn't "new list", record the choice
-	if (pick > 0) { listName = lists[pick]; }
+	if (pick > 0)
+	{
+		listName = lists[pick];
+		listItems = [...new Set(await getListItems(listName))];
+	}
 }
 
 // If choice was "new list", OR there are no lists, get a name for the new list.
@@ -243,7 +257,8 @@ if (listName === "")
 
 // Get the item to add to the chosen list
 const item =
-	popups.input("Type up an item to add to list <b>" + listName + "</b>");
+	popups.input("Type up an item to add to list <b>" + listName + "</b>", "",
+		listItems);
 if (!item) { return null; }
 
 return expand("lists add " + listName + " " + item);
@@ -261,7 +276,7 @@ __
 __
 ```js
 // Get the list of populated list's names
-const lists = await getNamesOfPopulatedLists();
+let lists = await getNamesOfPopulatedLists();
 
 // Only include lists of basic and combo type
 lists = filterListsToBasicAndCombo(lists);
@@ -283,7 +298,7 @@ let items = await getListItems(lists[pick]);
 let itemCounts = {};
 for (const item of items)
 {
-	itemCount[item] = (itemCount[item] || 0) + 1;
+	itemCounts[item] = (itemCounts[item] || 0) + 1;
 }
 
 // Remove duplicate items
@@ -321,7 +336,7 @@ __
 __
 ```js
 // Get the list of populated list's names
-const lists = await getNamesOfPopulatedLists();
+let lists = await getNamesOfPopulatedLists();
 
 // Only include lists of basic and combo type
 lists = filterListsToBasicAndCombo(lists);
@@ -333,7 +348,7 @@ if (!lists.length)
 }
 
 // Choose a list
-const pick = popups.pick("Choose a list to replace items from", lists, 0, "adaptive");
+const pick = popups.pick("Choose list to remove an item from", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
 // Get items from the list
@@ -341,6 +356,10 @@ let items = await getListItems(lists[pick]);
 
 // Remove duplicate items
 items = [...new Set(items)];
+
+// Choose an item from the list
+const pick2 = popups.pick("Choose an item to remove", items, 0, "adaptive");
+if (pick2 === null) { return null; }
 
 return expand("lists remove " + lists[pick] + " " + items[pick2]);
 ```
@@ -368,9 +387,10 @@ if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 }
 
 // Confirm the list name is available
-if (_inline.state.sessionState.lists[$1])
+if (_inlineScripts.state.sessionState.lists[listName])
 {
-	return expFormat("Folder-list not added.  Name __\"" + $1 + "\"__ unavailable.");
+	return expFormat(
+		"Folder-list not added.  Name __\"" + listName + "\"__ unavailable.");
 }
 
 // Get a list of folders
@@ -409,9 +429,10 @@ if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 }
 
 // Confirm the list name is available
-if (_inline.state.sessionState.lists[$1])
+if (_inlineScripts.state.sessionState.lists[listName])
 {
-	return expFormat("Combo-list not added.  Name __\"" + $1 + "\"__ unavailable.");
+	return expFormat(
+		"Combo-list not added.  Name __\"" + listName + "\"__ unavailable.");
 }
 
 // Get the list of list names
@@ -419,6 +440,7 @@ let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 
 // Get all lists to use as sub-lists
 let subLists = [];
+let noMoreMsg = "";
 do
 {
 	// Show selected lists so far
@@ -428,8 +450,8 @@ do
 
 	// Pick the next sub-list
 	let pick =
-		popups.pick("Choose a list to link to the new combo-list <b>" + listName +
-		"</b> as a sub-list" + listsSoFar, lists, 0, "adaptive");
+		popups.pick("Choose a list to link as a sub-list" + noMoreMsg + listsSoFar,
+		lists, 0, "adaptive");
 	if (pick === null) { return null; }
 
 	// After the first choice, add the option to finish the list of sub-lists
@@ -437,6 +459,7 @@ do
 	{
 		lists.unshift("<No more lists>");
 		pick++;
+		noMoreMsg = "<br/>or choose \"&lt;No more lists&gt;\" if done linking";
 	}
 
 	// A choice of 0 means "No more lists" was chosen
@@ -450,7 +473,7 @@ do
 }
 while (true);
 
-return expand("lists addcombo " + listName + " " + picks.join(" "));
+return expand("lists addcombo " + listName + " " + subLists.join(" "));
 ```
 __
 ui lists addcombo - User enters a name for he comb-list and chooses sub-lists.  A combo-list is made from the choices.

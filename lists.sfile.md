@@ -80,7 +80,7 @@ __
 ```js
 function caseInsensitiveSort(lhs, rhs)
 {
-	a.toLowerCase().localeCompare(b.toLowerCase());
+	return lhs.toLowerCase().localeCompare(rhs.toLowerCase());
 }
 
 // a function to get the items of a given list, for all possible list types.
@@ -364,7 +364,7 @@ const ERROR_MSG_PREFIX = "Item __" + $2 + "__ not replaced in list __" + $1 + "_
 // Confirm that the list exists
 if (!_inlineScripts.state.sessionState.lists[$1])
 {
-	return expFormat(ERROR_PREFIX + "List __" + $1 + "__ not found.");
+	return expFormat(ERROR_MSG_PREFIX + "List __" + $1 + "__ not found.");
 }
 
 // Relacement is handled differently for different list types
@@ -416,7 +416,7 @@ const ERROR_MSG_PREFIX =
 // Confirm that the list exists
 if (!_inlineScripts.state.sessionState.lists[$1])
 {
-	return expFormat(ERROR_PREFIX + "List not found.");
+	return expFormat(ERROR_MSG_PREFIX + "List not found.");
 }
 
 // Remove is handled differently for different list types
@@ -435,13 +435,13 @@ switch (_inlineScripts.state.sessionState.lists[$1].type)
 			}
 		}
 		// If we get here, no items were removed
-		return expFormat([ ERROR_PREFIX, "Item not found." ]);
+		return expFormat([ ERROR_MSG_PREFIX, "Item not found." ]);
 	}
 	// Combo type - Iterate over sub-items backwards, running remove until successful.
 	case "combo":
 	{
 		const subLists =  _inlineScripts.state.sessionState.lists[$1].content;
-		for (let i = sublists.length-1; i >= 0; i--)
+		for (let i = subLists.length-1; i >= 0; i--)
 		{
 			const result = expand("lists remove " + subLists[i] + " " + $2);
 			if (result.length === 1)
@@ -450,11 +450,11 @@ switch (_inlineScripts.state.sessionState.lists[$1].type)
 			}
 		}
 		// If we get here, no items were removed
-		return expFormat([ ERROR_PREFIX, "Unable to remove from any sub-list." ]);
+		return expFormat([ ERROR_MSG_PREFIX, "Unable to remove from any sub-list." ]);
 	}
 	// Any other type doesn't support removal
 	default:
-		return expFormat([ ERROR_PREFIX, "List type doesn't support removal." ]);
+		return expFormat([ ERROR_MSG_PREFIX, "List type doesn't support removal." ]);
 }
 ```
 __
@@ -473,7 +473,7 @@ __
 $2 = $2.replaceAll(/^\"|\"$/g, "");
 
 // Confirm the list name is available
-if (_inline.state.sessionState.lists[$1])
+if (_inlineScripts.state.sessionState.lists[$1])
 {
 	return expFormat("File-list not created.  Name __\"" + $1 + "\"__ unavailable.");
 }
@@ -497,7 +497,7 @@ __
 let subLists = $2.split(" ").filter(v => v);
 
 // Confirm the list name is available
-if (_inline.state.sessionState.lists[$1])
+if (_inlineScripts.state.sessionState.lists[$1])
 {
 	return expFormat("Combo-list not created.  Name __\"" + $1 + "\"__ unavailable.");
 }
@@ -506,7 +506,7 @@ if (_inline.state.sessionState.lists[$1])
 _inlineScripts.state.sessionState.lists[$1] = { type: "combo", content: subLists };
 
 return expFormat(
-	"Combo-list __" + $1 + "__ added, linked to:\n. " + links.join("\n. "));
+	"Combo-list __" + $1 + "__ added, linked to:\n. " + subLists.join("\n. "));
 ```
 __
 lists addcombo {list name: name text} {sub-list: name text separated by spaces} - Creates a combo-list named {list name} that is linked to the lists given in {sub-list}.  A "combo-list" is a list who's items are all of the items of its linked sub-lists.
