@@ -67,10 +67,10 @@ __
 // Count parameter defaults to 1
 $1 = Number($1) || 1;
 
-// Make a roll from 1 to max.
+// Helper function - Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
-// Pick an item from array a.
+// Helper function - Pick an item from array a.
 function aPick(a) { return a[roll(a.length)-1]; }
 
 // Generate and return text from the data created on setup

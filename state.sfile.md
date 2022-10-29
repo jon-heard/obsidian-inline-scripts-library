@@ -32,7 +32,7 @@ confirmObjectPath("_inlineScripts.state.inSetup", true);
 // The name of the state data-file - the file to store the state in
 const STATE_FILE_NAME = "Ξ_state.data.md";
 
-// removeFile - Remomve a file without triggering an exception if it doesn't exist
+// Helper function - Remomve file without triggering an exception if it doesn't exist
 async function removeFile(filename)
 {
 	if (await app.vault.adapter.exists(filename))

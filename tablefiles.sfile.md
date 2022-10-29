@@ -278,7 +278,7 @@ _inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabe
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-// Take an array of elements and make a row of ui from them
+// Helper function - Take an array of elements and make a row of ui from them
 function makeUiRow(elements)
 {
 	// Setup the table for the row
@@ -302,7 +302,7 @@ function makeUiRow(elements)
 	return tbl;
 }
 
-// Wrapper for getTableItems to get the CURRENTLY selected table's items specifically
+// Helper function - Wrapper for getTableItems to use the CURRENTLY selected table
 async function getCurrentTableItems(data, offset)
 {
 	// If offset is undefined use current table's offset. If that is undefined, use 0
@@ -311,8 +311,8 @@ async function getCurrentTableItems(data, offset)
 	return getTableItems(data.current.path, offset);
 }
 
-// Called each time a different table is selected from the list.  Updates the ui and
-// data to match the selected table.
+// Helper function - Called each time a different table is selected from the list.
+// Updates the ui and data to match the selected table.
 async function updateTableConfig(data)
 {
 	// Set the current table path and configuration
@@ -347,7 +347,8 @@ async function updateTableConfig(data)
 	refreshItemFormatSample(data);
 }
 
-// Called when any data-changes occur which might affect the table-select-list-ui
+// Helper function - Called when data-changes occur which may affect the
+// table-select-list-ui
 function refreshTableListUi(data)
 {
 	let maxTitleWidth = 0;
@@ -460,7 +461,7 @@ function refreshTableListUi(data)
 	}
 }
 
-// Called whenever time the filter or the filterkeys change
+// Helper function - Called whenever time the filter or the filterkeys change
 function updateFilter(data)
 {
 	// Start with all table entries, to be reduced by each filter entry's non-hits
@@ -506,7 +507,7 @@ function updateFilter(data)
 	}
 }
 
-// This is called when anything the item-format samples are based on changes
+// Helper function - Called when anything item-format samples are based on changes
 function refreshItemFormatSample(data)
 {
 	// Use the startLine value for the sample.  Get a match with itemFormat

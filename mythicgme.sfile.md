@@ -50,7 +50,7 @@ confirmObjectPath(
 confirmObjectPath(
 	"_inlineScripts.state.sessionState.lists.threads",{ type: "basic", content: [] });
 
-// Event callback function: state.onReset
+// Event callback - state.onReset
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.mythicgme",
 	function()

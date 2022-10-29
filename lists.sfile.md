@@ -245,7 +245,7 @@ __
 ```
 __
 ```js
-// Make a roll from 1 to max.
+// Helper function - Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
 // Get the number of items

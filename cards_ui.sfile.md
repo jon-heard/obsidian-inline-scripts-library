@@ -12,7 +12,7 @@ __
 ```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
-// Turn a relative path url into an absolute path url based in the vault's root
+// Helper function - Turn relative path into absolute path based in the vault's root
 function getAbsolutePath(path)
 {
 	if (path.startsWith("data:image")) { return path; }
@@ -21,7 +21,7 @@ function getAbsolutePath(path)
 	return app.vault.getResourcePath(path);
 }
 
-// Get the current back-image, url
+// Helper function - Get the current back-image, url
 function getBackImage()
 {
 	return _inlineScripts.state.sessionState.cards.backImage ||

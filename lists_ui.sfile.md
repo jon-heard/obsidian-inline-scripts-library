@@ -123,36 +123,6 @@ __
 async function getListItems(name)
 {
 	return expand("lists listraw " + name);
-/*
-	let list = _inlineScripts.state.sessionState.lists[name];
-	if (!list) { return []; }
-	switch (list.type)
-	{
-		case "basic":
-			return list.content;
-			break;
-		case "folder":
-			const targetFile = app.fileManager.vault.fileMap[list.content];
-			if (!targetFile || !targetFile.children)
-			{
-				return [];
-			}
-			return [... targetFile.children ]
-				.filter(v => !v.children)
-				.filter(v => v.name.endsWith(".md"))
-				.map(v => "[[" + v.basename + "]]");
-		case "combo":
-		{
-			let result = [];
-			for (const sublist of list.content)
-			{
-				result = result.concat(getListItems(sublist));
-			}
-			return result.sort( (a, b) =>
-				a.toLowerCase().localeCompare(b.toLowerCase()) );
-		}
-	}
-*/
 }
 
 //  An array filter function that allows for async predicate

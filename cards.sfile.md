@@ -523,7 +523,7 @@ if (!folder.children)
 	return expFormat("Cards not created.  __" + $2 + "__ is not a folder.");
 }
 
-// Get an image size by loading and reading its binary content
+// Helper function - Get an image size by loading and reading its binary content
 // Note - has a reliable, but slow backup function "getImageSize_reliable"
 async function getImageSize_fast(file)
 {
@@ -597,7 +597,8 @@ async function getImageSize_fast(file)
 	return { w: result[0], h: result[1] };
 }
 
-// Get an image size by running it through the html system (backup for fast method)
+// Helper function - Get image size by running image through html system
+// NOTE - is a backup for the fast method
 async function getImageSize_reliable(file)
 {
 	let result = null;
