@@ -108,10 +108,8 @@ $1 = $1.replaceAll(/^\"|\"$/g, "");
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
 
-// Get the file object for the specified note
+// Get the file object for the specified note.  Early if not available or is a folder
 const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
-
-// If no file object, or is a folder, early out
 if (!file)
 {
 	return expFormat([ "", "No value.  Note __" + $1 + "__ not found." ]);
@@ -122,10 +120,8 @@ if (file.children)
 		[ "", "No value.  __" + $1 + "__ is a folder." ]);
 }
 
-// Get the file's cached data
+// Get the file's cached data.  Early out if not available.
 const cache = app.metadataCache.getFileCache(file);
-
-// If no cached data, early out
 if (!cache)
 {
 	return expFormat(
@@ -133,10 +129,9 @@ if (!cache)
 }
 
 // Get the front-matter object
-const fm = cache.frontmatter;
-
 // If no front-matter, early out (no message, since it technically worked, but the
 // variable is empty)
+const fm = cache.frontmatter;
 if (!fm)
 {
 	return null;
@@ -164,10 +159,8 @@ $1 = $1.replaceAll(/^\"|\"$/g, "");
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
 
-// Get the file object for the specified note
+// Get the file object for the specified note.  Early out if unavailable, or folder
 const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
-
-// If no file object, or is a folder, early out
 if (!file)
 {
 	return expFormat([ "", "No value.  Note __" + $1 + "__ not found." ]);
@@ -178,10 +171,8 @@ if (file.children)
 		[ "", "No value.  __" + $1 + "__ is a folder." ]);
 }
 
-// Get the file's cached data
+// Get the file's cached data.  Early out if unavailable
 const cache = app.metadataCache.getFileCache(file);
-
-// If no cached data, early out
 if (!cache)
 {
 	return expFormat(
@@ -190,10 +181,9 @@ if (!cache)
 }
 
 // Get the front-matter object
-const fm = cache.frontmatter;
-
 // If no front-matter, early out (no message, since it technically worked, but the
 // variable is empty)
+const fm = cache.frontmatter;
 if (!fm)
 {
 	return null;
@@ -259,10 +249,8 @@ $1 = $1.replaceAll(/^\"|\"$/g, "");
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
 
-// Get the file object for the specified note
+// Get the file object for the specified note.  Early out if unavailable or is folder
 const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
-
-// If no file object, or is a folder, early out
 if (!file)
 {
 	return expFormat(
@@ -274,10 +262,8 @@ if (file.children)
 		[ "", "Variable __" + $2 + "__ not set.  __" + $1 + "__ is a folder." ]);
 }
 
-// Get the file's content
+// Get the file's content.  Early out if unavailable.
 const content = await app.vault.cachedRead(file);
-
-// If failed to load content,early out
 if (content === null || content === undefined)
 {
 	return expFormat(
@@ -286,7 +272,6 @@ if (content === null || content === undefined)
 
 // Resolve value - escape characters for newline and tab
 $3 = $3.replaceAll("\\n", "\n").replaceAll("\\t", "\t");
-
 
 // Start the final expansion
 let result;
@@ -358,10 +343,8 @@ $1 = $1.replaceAll(/^\"|\"$/g, "");
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
 
-// Get the file object for the specified note
+// Get the file object for the specified note.  Early out if unavailable or a folder
 const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
-
-// If no file object, or is a folder, early out
 if (!file)
 {
 	return expFormat(
@@ -373,10 +356,8 @@ if (file.children)
 		[ "", "Variable __" + $2 + "__ not set.  __" + $1 + "__ is a folder." ]);
 }
 
-// Get the file's content
+// Get the file's content.  Early out if unavailable
 const content = await app.vault.cachedRead(file);
-
-// If failed to load content,early out
 if (content === null || content === undefined)
 {
 	return expFormat(

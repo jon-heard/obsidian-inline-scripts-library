@@ -224,7 +224,7 @@ __
 ```
 __
 ```js
-// Error out if list doesn't exist
+// Error out if specified list doesn't exist
 if (!_inlineScripts.state.sessionState.lists[$1])
 {
 	return expFormat("List __" + $1 + "__ not removed.  List does not exist.");
@@ -248,10 +248,8 @@ __
 // Helper function - Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
-// Get the number of items
+// Get the number of items.  Early out if no items
 let itemCount = getListItems($1).length;
-
-// If no items, early out
 if (itemCount === 0)
 {
 	return expFormat([ "Failed to pick from list __" + $1 + "__.  List is empty." ]);
@@ -278,10 +276,8 @@ $2 = Number($2) - 1;
 // Generic expansion messages
 const ERROR_MSG_PREFIX = "Item not picked from ist __" + $1 + "__.  ";
 
-// Get the list's items
+// Get the list's items.  Early out if parameter is out-of-bounds
 let items = getListItems($1);
-
-// If the item index is out-of-bounds, error out.
 if ($2 >= items.length)
 {
 	return expFormat(

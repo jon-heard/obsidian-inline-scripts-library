@@ -353,9 +353,8 @@ __
 ```
 __
 ```js
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -384,7 +383,8 @@ if ($2 === "y")
 		if (card.origin === $1) { continue; }
 
 		// Get the origin pile
-		const originPile = _inlineScripts.state.sessionState.cards.piles[card.origin];
+		const originPile =
+			_inlineScripts.state.sessionState.cards.piles[card.origin];
 		if (!originPile) { continue; }
 
 		// Move the card to the origin pile
@@ -447,9 +447,8 @@ __
 ```
 __
 ```js
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -502,9 +501,8 @@ __
 // Remove quotes around the path
 $2 = $2.replaceAll(/^\"|\"$/g, "");
 
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -742,10 +740,8 @@ if (!$3 && !_inlineScripts.state.sessionState.cards.priorPeekIsBottom)
 if (!$2) { $2 = _inlineScripts.state.sessionState.cards.priorPeekPile; }
 if (!$3) { $3 = _inlineScripts.state.sessionState.cards.priorPeekIsBottom; }
 
-// Get the specified pile
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$2];
-
-// Early out if specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -877,11 +873,9 @@ if (!$2 && !_inlineScripts.state.sessionState.cards.priorPickSrc)
 if (!$1) { $1 = _inlineScripts.state.sessionState.cards.priorPickDst; }
 if (!$2) { $2 = _inlineScripts.state.sessionState.cards.priorPickSrc; }
 
-// Get the the source and destination piles
+// Get the the source and destination piles, early out if either doesn't exist
 const dstPile = _inlineScripts.state.sessionState.cards.piles[$1];
 const srcPile = _inlineScripts.state.sessionState.cards.piles[$2];
-
-// Early out if either the source or destination pile doesn't exist
 if (!dstPile)
 {
 	return expFormat(
@@ -945,10 +939,8 @@ __
 ```
 __
 ```js
-// Get the specified pile
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if the specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -990,10 +982,8 @@ __
 ```
 __
 ```js
-// Get the specified pile
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Eary out if the specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -1031,10 +1021,8 @@ __
 ```
 __
 ```js
-// Get the specified pile
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if the specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -1059,14 +1047,13 @@ __
 ```
 __
 ```js
-// Get the list of piles and the specified pile
+// Get the list of piles and the specified pile, early out if it doesn't exist
 const piles = _inlineScripts.state.sessionState.cards.piles;
 const pile = piles[$1];
-
-// Early out if the specified pile doesn't exist
 if (!pile)
 {
-	return expFormat("Cards not recalled.  The __" + $1 + "__ card-pile was not found.");
+	return expFormat(
+		"Cards not recalled.  The __" + $1 + "__ card-pile was not found.");
 }
 
 // Iterate over all piles, pulling all cards with an origin of the specified pile
@@ -1110,10 +1097,8 @@ __
 ```
 __
 ```js
-// Get the specified pile
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if the specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(
@@ -1179,10 +1164,8 @@ __
 ```
 __
 ```js
-// Get the specified pile
+// Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];
-
-// Early out if the specified pile doesn't exist
 if (!pile)
 {
 	return expFormat(

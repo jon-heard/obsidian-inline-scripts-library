@@ -24,7 +24,7 @@ __
 ```
 __
 ```js
-// Get the list of list names
+// Get the list of list names, early out empty
 let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 if (!lists.length)
 {
@@ -38,14 +38,8 @@ lists.unshift("<All lists>");
 const pick = popups.pick("Choose a list to view", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
-// If the user chose "all-lists", show all lists infos
-if (pick === 0)
-{
-	return expand("lists");
-}
-
-// return expansion of the list info
-return expand("lists " + lists[pick]);
+// return expansion of the list info (or ALL lists if pick is 0)
+return expand("lists" + (pick ? " " + lists[pick]) : ""));
 ```
 __
 ui lists - User chooses a list (options include "all lists"), then shows info on the chosen list.
@@ -57,10 +51,8 @@ __
 ```
 __
 ```js
-// Get the list of list names
+// Get the list of list names, early out if empty
 let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
-
-// Make sure there is a list to rename
 if (!lists.length)
 {
 	return expFormat("List not renamed.  No lists to rename.");
@@ -70,12 +62,10 @@ if (!lists.length)
 const pick = popups.pick("Choose a list to rename", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
-// Enter a new name
+// Enter a new name, early out if not in a valid format
 const newName =
 	popups.input("Enter a new name for __" + lists[pick] + "__", lists[pick]);
 if (newName === null) { return null; }
-
-// Make sure entered list name is in a valid format
 if (!newName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 {
 	return expFormat(
@@ -97,10 +87,8 @@ __
 ```
 __
 ```js
-// Get the list of list names
+// Get the list of list names, early out if empty
 let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
-
-// Make sure there is a list to rename
 if (!lists.length)
 {
 	return expFormat("List not removed.  No lists to remove.");
@@ -156,10 +144,8 @@ __
 ```
 __
 ```js
-// Get the list of populated list's names
+// Get the list of populated list's names, early out if empty
 const lists = await getNamesOfPopulatedLists();
-
-// Make sure there is a list to pick from
 if (!lists.length)
 {
 	return expFormat("No item picked.  There are no non-empty lists.");
@@ -214,10 +200,9 @@ if (lists.length)
 // If choice was "new list", OR there are no lists, get a name for the new list.
 if (listName === "")
 {
+	// Enter name, early out if not in a valid format
 	listName = popups.input("Enter a list to add to");
 	if (!listName) { return null; }
-
-	// Make sure entered list name is in a valid format
 	if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 	{
 		return expFormat(
@@ -248,10 +233,8 @@ __
 // Get the list of populated list's names
 let lists = await getNamesOfPopulatedLists();
 
-// Only include lists of basic and combo type
+// Only include lists of basic and combo type, early out if empty
 lists = filterListsToBasicAndCombo(lists);
-
-// Make sure there is a list to replace items in
 if (!lists.length)
 {
 	return expFormat("No item replaced.  There are no non-empty lists.");
@@ -308,10 +291,8 @@ __
 // Get the list of populated list's names
 let lists = await getNamesOfPopulatedLists();
 
-// Only include lists of basic and combo type
+// Only include lists of basic and combo type, early out if empty
 lists = filterListsToBasicAndCombo(lists);
-
-// Make sure there is a list to remove items from
 if (!lists.length)
 {
 	return expFormat("No item removed.  There are no non-empty lists.");
@@ -345,18 +326,14 @@ __
 ```
 __
 ```js
-// Enter a list name
+// Enter a list name, early out if not in a valid format or unavailable
 listName = popups.input("Enter a name for the new folder-list");
 if (!listName) { return null; }
-
-// Confirm the list name is in a valid format
 if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 {
 	return expFormat(
 		"Folder-List not added.  List name __\"" + listName + "\"_ isn't valid.");
 }
-
-// Confirm the list name is available
 if (_inlineScripts.state.sessionState.lists[listName])
 {
 	return expFormat(
@@ -387,18 +364,14 @@ __
 ```
 __
 ```js
-// Enter a list name
+// Enter a list name, early out if not in a valid format or unavailable
 listName = popups.input("Enter a name for the new combo-list");
 if (!listName) { return null; }
-
-// Confirm the list name is in a valid format
 if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 {
 	return expFormat(
 		"Combo-List not added.  List name __\"" + listName + "\"_ isn't valid.");
 }
-
-// Confirm the list name is available
 if (_inlineScripts.state.sessionState.lists[listName])
 {
 	return expFormat(
@@ -456,10 +429,8 @@ __
 ```
 __
 ```js
-// Get the list of populated list's names
+// Get the list of populated list's names, early out if empty
 const lists = await getNamesOfPopulatedLists();
-
-// Make sure there is a list to run in a batch shortcut
 if (!lists.length)
 {
 	return expFormat("No shorcut batched.  There are no non-empty lists.");
@@ -511,10 +482,9 @@ if (lists.length)
 // If choice was "new list", OR there are no lists, get a name for the new list.
 if (listName === "")
 {
+	// Enter a new list name.  Early out if not in a valid format
 	listName = popups.input("Enter a list to add to");
 	if (!listName) { return null; }
-
-	// Make sure entered list name is in a valid format
 	if (!listName.match(/^[_a-zA-Z][_a-zA-Z0-9]*$/))
 	{
 		return expFormat(

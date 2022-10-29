@@ -241,19 +241,15 @@ __
 // Get the content of the current note
 const content = await app.vault.cachedRead( app.workspace.getActiveFile());
 
-// Find the last expansion of "state get" in the content.
+// Find the last expansion of "state get" in the content.  Early out if no expansions
 const getMsgIndex = content.lastIndexOf(GET_MSG_PREFIX);
-
-// If there are no expansions of "state get" in the content, early out.
 if (getMsgIndex < 0)
 {
 	return expFormat("State not loaded.  Last state not found.");
 }
 
-// Get the end index of the data-string in the content.
+// Get the end index of the data-string in the content.  Early out if endIndex failed
 const endIndex = content.indexOf("\n", getMsgIndex + GET_MSG_PREFIX.length);
-
-// If unable to get the end index of the data-string in the content, early out.
 if (endIndex < 0)
 {
 	return expFormat("State not loaded.  Last state has a bad format.");
@@ -303,7 +299,7 @@ __
 ```
 __
 ```js
-// Get the current state's data-string
+// Get the current state's data-string.
 const stateString = JSON.stringify(_inlineScripts.state.sessionState);
 
 // If the data-string hasn't changed, do nothing

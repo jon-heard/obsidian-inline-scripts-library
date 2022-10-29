@@ -115,12 +115,21 @@ let nones = [];
 debugger;
 for (let i = 0; i < 5; i++)
 {
+	// Get a polot point
 	const plotPoint = expand("plot point");
+
+	if (!plotPoint[0])
+	{
+		return expFormat(
+			"Turning point not generated.  Plot point error: " + plotPoint.join(""));
+	}
+
 	// "normal" plot-points have a length of 4 or more
-	if (plotPoint.length >= 4)
+	else if (plotPoint.length >= 4)
 	{
 		result += plotPoint[1] + "\n    " + plotPoint[3] + "\n";
 	}
+
 	// "none" plot-points have a length of less than 4
 	else
 	{
@@ -136,6 +145,7 @@ for (let i = 0; i < 5; i++)
 		}
 	}
 }
+
 // Add "none" plotpoints to the end of the list, then remove extra "\n" at the end.
 for (const none of nones)
 {
@@ -158,15 +168,22 @@ __
 // Early-out if theme-slots aren't filled with chosen themes
 if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
-	return expFormat("Plot point not generated.  Not all theme slots filled.");
+	return expFormat(
+		[ "", "Plot point not generated.  Not all theme slots filled." ]);
 }
 
-// Pick the theme to use for this turning point
+// Pick the theme to use for this turning point, if error then early out
 const themePick = expand("themes pick");
+if (!themePick[0])
+{
+	return expFormat(
+		[ "", "Plot point not generated.  Theme error: " + themePick.join("") ]);
+}
 
 // Setup plot-point output as array to allow splitting it up in turning-point
 let result = [ "Plot point:\n" ];
 const plotPoint = aPickWeight(_inlineScripts.adventurecrafter.plot, themePick[3]);
+
 // Handle a normal plot-point
 if (!plotPoint[7])
 {
@@ -174,6 +191,7 @@ if (!plotPoint[7])
 	result.push("\n    ");
 	result.push("- " + plotPoint[6]);
 }
+
 // Handle a special plot-point
 else
 {
@@ -183,6 +201,7 @@ else
 		// Having just this element signifies this as a "none" plotpoint.
 		result.push("- " + plotPoint[0]);
 	}
+
 	// Handle "meta" plot-point
 	else if (plotPoint[7] === 2)
 	{
@@ -195,6 +214,7 @@ else
 
 // Add an extra element to hold the expFormat suffix.  Lets the suffix be removable.
 result.push("");
+
 return expFormat(result);
 ```
 __
@@ -211,7 +231,7 @@ __
 // Early-out if theme-slots aren't filled with chosen themes
 if (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5)
 {
-	return expFormat([ "Theme not picked.  Not all theme slots filled." ]);
+	return expFormat([ "", "Theme not picked.  Not all theme slots filled." ]);
 }
 
 // Pick which theme slot to use
@@ -331,7 +351,7 @@ let themeSlots = _inlineScripts.state.sessionState.adventurecrafter.themeSlots;
 if (themeSlots.length >= 5)
 {
 	return expFormat(
-		[ "", "Theme not added.  All five theme slots are already filled.", "" ]);
+		[ "", "Theme not added.  All five theme slots are already filled." ]);
 }
 
 // Pick from 1 to 5.  Repeat until the pick is the index of an unslotted theme.
@@ -347,13 +367,10 @@ while (themeSlots.includes(r - 1)
 // Add the picked theme to the theme slots
 themeSlots.push(r - 1);
 
-// Create and return expansion string-array
-const result =
-[
-	"", "Theme slot __" + themeSlots.length + "__ set to __" +
-	_inlineScripts.adventurecrafter.themes[r-1] + "__.", ""
-];
-return expFormat(result);
+
+return expFormat(
+	[ "Theme slot __" + themeSlots.length + "__ set to __" + 
+	_inlineScripts.adventurecrafter.themes[r-1] + "__." ]);
 ```
 __
 themes roll - Picks a random theme for the next unchosen theme-slot.
@@ -371,7 +388,13 @@ let result = [];
 // Repeatedly roll a random theme until all theme slots are filled
 do
 {
-	result.push(expand("themes roll")[1]);
+	// Roll the next theme.  If there's an error, early out
+	const result = expUnformat(expand("themes roll"));
+	if (!result[0])
+	{
+		return expFormat("Themes not filled.  Theme roll error: " + result.join(""));
+	}
+	result.push([1]);
 }
 while (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5);
 
@@ -634,8 +657,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 }
 
 // Choose a character
-let pick =
-	popups.pick("Choose a character to duplicate", choices, 0, "adaptive");
+let pick = popups.pick("Choose a character to duplicate", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 // Duplicate the chosen character
@@ -664,8 +686,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 }
 
 // Choose a character
-let pick =
-	popups.pick("Choose a character to reduce", choices, 0, "adaptive");
+let pick = popups.pick("Choose a character to reduce", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 // Reduce the chosen character
@@ -694,8 +715,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 }
 
 // Choose a character
-let pick =
-	popups.pick("Choose a character to rename", choices, 0, "adaptive");
+let pick = popups.pick("Choose a character to rename", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 let characters = await getFormattedList("characters", 0, 1);
@@ -812,8 +832,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 }
 
 // Choose a plotline
-let pick =
-	popups.pick("Choose a plotline to duplicate", choices, 0, "adaptive");
+let pick = popups.pick("Choose a plotline to duplicate", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 // Duplicate the chosen plotline
@@ -842,8 +861,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 }
 
 // Choose a plotline
-let pick =
-	popups.pick("Choose a plotline to reduce", choices, 0, "adaptive");
+let pick = popups.pick("Choose a plotline to reduce", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 // Reduce the chosen plotline
@@ -872,8 +890,7 @@ if (choices.length === 1 && choices[0] === "NONE")
 }
 
 // Choose a plotline
-let pick =
-	popups.pick("Choose a plotline to rename", choices, 0, "adaptive");
+let pick = popups.pick("Choose a plotline to rename", choices, 0, "adaptive");
 if (pick === null) { return null; }
 
 let plotlines = await getFormattedList("plotlines", 0, 1);

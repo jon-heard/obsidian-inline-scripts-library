@@ -138,10 +138,8 @@ $2 = Number($2) || 1;
 // Split toIgnore into filenames
 $4 = $4.split("|");
 
-// Get the file object for the given folder
+// Get the file object for the given folder.  Early out of doesn't exist or is a file
 const folder = app.vault.fileMap[$1];
-
-// If file object doesn't exist, or isn't a file, early out.
 if (!folder)
 {
 	return expFormat([ "","No files picked.  Folder __" + $1 + "__ doesn't exist." ]);
@@ -190,10 +188,8 @@ __
 ```
 __
 ```js
-// Get the specified pick from the state
+// Get the specified pick from the state.  Early out if specified pick isn't stored.
 const picks = _inlineScripts.state.sessionState.notepick[$1];
-
-// If the specified pick is not in the state, early out.
 if (!picks)
 {
 	return expFormat([ "", "No pick.  Pick id __" + $1 + "__ not found." ]);
@@ -212,10 +208,8 @@ __
 ```
 __
 ```js
-// Get the specified pick from the state
+// Get the specified pick from the state.  Early out if specified pick isn't stored.
 const pick = _inlineScripts.state.sessionState.notepick[$1];
-
-// If the specified pick is not in the state, early out.
 if (!pick)
 {
 	return expFormat(

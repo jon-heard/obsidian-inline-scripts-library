@@ -42,15 +42,15 @@ __
 // Remove quotes around path parameter
 $1 = $1.replaceAll(/^\"|\"$/g, "");
 
-// Confirm that the path is a valid folder
+// Confirm that the path is a valid folder, early out if not
 const folder = app.vault.fileMap[$1];
 if (!folder)
 {
-	return "Extension not changed.  Folder __" + $1 + "__ not found.\n\n";
+	return expFormat("Extension not changed.  Folder __" + $1 + "__ not found.");
 }
 if (!folder.children)
 {
-	return "Extension not changed.  __" + $1 + "__ is not a folder.\n\n";
+	return expFormat("Extension not changed.  __" + $1 + "__ is not a folder.");
 }
 
 // Find an unused list name (to use "lists shortcutbatch" shortcut)

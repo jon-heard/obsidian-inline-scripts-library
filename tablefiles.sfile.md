@@ -950,19 +950,24 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 	},
 	onClose: async (data, resolveFnc, buttonId) =>
 	{
+		// Do nothing unless the "Rolled" button was hit
 		if (buttonId !== "Roll") { return null; }
+
+		// Get parameters from ui
 		const path = data.selectUi.value;
 		const count = Number(data.countUi.value) || 1;
 		const unique = data.uniqueUi.classList.contains("is-enabled");
 		const format = data.formatUi.value;
 		const useExpFormat = data.useExpFormatUi.classList.contains("is-enabled");
 
+		// Record parameters for the next roll
 		_inlineScripts.tablefiles.priorRoll.table = path;
 		_inlineScripts.tablefiles.priorRoll.count = count === 1 ? "" : count;
 		_inlineScripts.tablefiles.priorRoll.format = format;
 		_inlineScripts.tablefiles.priorRoll.unique = unique;
 		_inlineScripts.tablefiles.priorRoll.useExpFormat = useExpFormat;
 
+		// Do the roll
 		resolveFnc(await rollTable(
 			path, count, unique, format, useExpFormat, true));
 	}
@@ -1067,10 +1072,8 @@ __
 ```
 __
 ```js
-// Get the paths
+// Get the paths.  Early out if empty
 const paths = Object.keys(_inlineScripts.state.sessionState.tablefiles.paths);
-
-// If there are no paths, early out with the proper expansion
 if (!paths.length)
 {
 	return expFormat("Table paths:\n. NONE");
