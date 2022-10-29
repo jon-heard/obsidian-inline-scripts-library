@@ -53,7 +53,7 @@ confirmObjectPath(
 // Setup the session-specific state
 confirmObjectPath("_inlineScripts.mythicv2.details", []);
 
-// Event callback: state.onReset
+// Event callback - state.onReset
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.mythicv2",
 	function()

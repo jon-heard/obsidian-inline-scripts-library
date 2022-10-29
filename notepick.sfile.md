@@ -14,9 +14,12 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+
+// Setup the state
 confirmObjectPath("_inlineScripts.state.sessionState.notepick");
+
+// Event callback - state.onReseet
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.notepick",
 	function()
@@ -34,7 +37,10 @@ __
 ```
 __
 ```js
+// Delete the state
 delete _inlineScripts.state?.sessionState?.notepick;
+
+// Delete the event callback
 delete _inlineScripts.state?.listeners?.onReset?.notepick;
 ```
 __
@@ -47,11 +53,13 @@ __
 ```
 __
 ```js
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+
+// Restart the state
 confirmObjectPath("_inlineScripts.state.sessionState");
 _inlineScripts.state.sessionState.notepick = {};
-return "All notepicks cleared.\n\n";
+
+return expFormat("All notepicks cleared.");
 ```
 __
 notepick reset - Clears all picks.
@@ -61,7 +69,10 @@ notepick reset - Clears all picks.
 __
 __
 ```js
+// Run a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
+
+// Pick an item from array a.
 function aPick(a) { return a[roll(a.length)-1]; }
 ```
 __
@@ -74,15 +85,15 @@ __
 ```
 __
 ```js
+// Remove any quotes around the folder path
 $1 = $1.replaceAll(/^\"|\"$/g, "");
-// Pick random items
-let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4);
-if (result[0])
-{
-	return result;
-}
 
-// Get the front matter for the items
+// Pick random items.  If error, early-out.
+let result = expUnformat(
+	expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4));
+if (!result[0]) { return expFormat(result); }
+
+// Return the list of items picked
 return expand("notepick getPick " + $3);
 ```
 __
@@ -95,21 +106,19 @@ __
 ```
 __
 ```js
+// Remove any quotes around the folder path
 $1 = $1.replaceAll(/^\"|\"$/g, "");
-// Pick random items
-let result = expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4);
-if (result[0])
-{
-	return null;
-}
 
-// Get the front matter for the items
-result = expand("notepick frontmatter " + $3);
-if (result[0])
-{
-	return null;
-}
-return result[2];
+// Pick random items.  If error, early-out.
+let result = expUnformat(
+	expand("notepick pickFromFolder " + $1 + " " + $2 + " " + $3 + " " + $4));
+if (!result[0]) { return expFormat(result); }
+
+// Get the front matter for the items.  If error, early-out.
+result = expUnformat(expand("notepick frontmatter " + $3));
+if (!result[0]) { return expFormat(result); }
+
+return result[1];
 ```
 __
 notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames} - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
@@ -122,27 +131,40 @@ __
 ```
 __
 ```js
+// Remove any quotes around the folder path
 $1 = $1.replaceAll(/^\"|\"$/g, "");
-$2 = Number($2 || 1);
+// Count defaults to 1
+$2 = Number($2) || 1;
+// Split toIgnore into filenames
 $4 = $4.split("|");
 
+// Get the file object for the given folder
 const folder = app.vault.fileMap[$1];
-if (!folder || !folder.children)
+
+// If file object doesn't exist, or isn't a file, early out.
+if (!folder)
 {
-	return [
-		"No files picked.  The folder __" + $1 + "__ was not found, " +
-		"or is not a folder.\n\n" ];
+	return expFormat([ "","No files picked.  Folder __" + $1 + "__ doesn't exist." ]);
+}
+if (!folder.children)
+{
+	return expFormat([ "", "No files picked.  __" + $1 + "__ isn't a folder." ]);
 }
 
+// Get the non-folder children of folder
 let files = folder.children.filter(v => !v.children).map(v => v.path);
+
+// Remove the files excluded by the "to ignore" parameter
 files = files.filter(v => !$4.includes(v));
+
+// If file count is under the pick count, early out.
 if (files.length < $2)
 {
-	return [
-		"No files picked.  The folder __" + $1 +
-		"__ does not contain enough files.\n\n" ];
+	return expFormat(
+		[ "", "No files picked.  Not enough files in Folder __" + $1 + "__." ]);
 }
 
+// Randomly pick <count> of the files.
 const pick = [];
 while (pick.length < $2)
 {
@@ -152,9 +174,11 @@ while (pick.length < $2)
 		pick.push(nextPickItem);
 	}
 }
+
+// Add the files picked to the state
 _inlineScripts.state.sessionState.notepick[$3] = pick;
 
-return ["", $2 + " file(s) picked" + ($3 ? " for " + $3 : "") + ".\n\n" ];
+return expFormat([ $2 + " file(s) picked" + ($3 ? " for " + $3 : "") + "." ]);
 ```
 __
 notepick pickFromFolder {folder name: path text} {count: >0, default: 1} {pick id: name text, default: ""} {to ignore: | separated filenames} - Picks {count} random notes from folder {folder name} and remembers them as {pick id}.  Any files in {to ignore} are never picked.
@@ -166,13 +190,17 @@ __
 ```
 __
 ```js
+// Get the specified pick from the state
 const picks = _inlineScripts.state.sessionState.notepick[$1];
+
+// If the specified pick is not in the state, early out.
 if (!picks)
 {
-	return ["No pick.  Pick id __" + $1 + "__ not found." ];
+	return expFormat([ "", "No pick.  Pick id __" + $1 + "__ not found." ]);
 }
-return [
-	"Pick" + ($1 ? " __" + $1 + "__" : "") + ":\n", picks.join("\n"), "\n\n" ];
+
+return expFormat(
+	[ "Pick" + ($1 ? " __" + $1 + "__" : "") + ":\n", picks.join("\n"), "" ]);
 ```
 __
 notepick getPick {pick id: name text, default: ""} - Gets a list of the files last picked for {pick id}.
@@ -184,27 +212,30 @@ __
 ```
 __
 ```js
+// Get the specified pick from the state
 const pick = _inlineScripts.state.sessionState.notepick[$1];
+
+// If the specified pick is not in the state, early out.
 if (!pick)
 {
-	return [ "No frontmatter gathered.  Pick id __" + $1 + "__ not found." ];
+	return expFormat(
+		[ "", "No frontmatter gathered.  Pick id __" + $1 + "__ not found." ]);
 }
+
+// Get the file objects of the picks
 const files = pick.map(v => app.vault.fileMap[v]);
 
-let fileNotFound = null;
+// Confirm that all picks have valid file objects.  If not, early out.
 for (let i = 0; i < pick.length; i++)
 {
 	if (!files[i])
 	{
-		fileNotFound = pick[i];
-		break;
+		return expFormat(
+			[ "", "No frontmatter gathered.  __" + fileNotFound + "__ not found." ]);
 	}
 }
-if (fileNotFound)
-{
-	return [ "No frontmatter gathered.  __" + fileNotFound + "__ not found." ];
-}
 
+// Get the frontmatter for each of the picks.
 let result = {};
 for (const file of files)
 {
@@ -212,9 +243,8 @@ for (const file of files)
 		app.metadataCache.getFileCache(file).frontmatter || {};
 }
 
-return [
-	"", "Frontmatter gathered for " + pick.length + " note(s).\n", result,
-	"\n\n" ];
+return expFormat(
+	[ "Frontmatter gathered for " + pick.length + " note(s).\n", result, "" ]);
 ```
 __
 notepick frontmatter {pick id: name text, default: ""} - Gets the frontmatter from the notes that are remembered in {pick id}.
