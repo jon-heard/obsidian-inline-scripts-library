@@ -37,11 +37,11 @@ __
 ```
 __
 ```js
-// Delete the state
-delete _inlineScripts.state?.sessionState?.notepick;
-
-// Delete the event callback
+// Event callback removal
 delete _inlineScripts.state?.listeners?.onReset?.notepick;
+
+// State removal
+delete _inlineScripts.state?.sessionState?.notepick;
 ```
 __
 Shuts down this shortcut-file

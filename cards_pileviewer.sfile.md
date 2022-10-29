@@ -307,14 +307,16 @@ __
 ```
 __
 ```js
+// Event callback removal
 delete _inlineScripts.cards?.listeners?.onPileListChanged?.cards_pileViewer;
 delete _inlineScripts.cards?.listeners?.onPileChanged?.cards_pileViewer;
 
-// Remove the pileviewer css
+// Custom CSS removal
 _inlineScripts.inlineScripts.HelperFncs.removeCss("cards_pileviewer");
 
-// Remove all instances of the pileviewer ui
+// UI removal
 app.workspace.detachLeavesOfType(CARDPILE_VIEW_TYPE);
+
 ```
 __
 Shuts down this shortcut-file

@@ -71,11 +71,11 @@ __
 ```
 __
 ```js
-// Remove the state
-delete _inlineScripts.state?.sessionState?.mythicv2;
-
-// Remove the event callbacks
+// Event callback removal
 delete _inlineScripts.state?.listeners?.onReset?.mythicv2;
+
+// State removal
+delete _inlineScripts.state?.sessionState?.mythicv2;
 ```
 __
 Shuts down this shortcut-file

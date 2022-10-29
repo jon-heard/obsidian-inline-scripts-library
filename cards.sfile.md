@@ -192,13 +192,18 @@ __
 ```
 __
 ```js
-// Custom css remove
-_inlineScripts.inlineScripts.HelperFncs.removeCss("cards");
-// Delete systems
-delete _inlineScripts.cards;
-delete _inlineScripts.state?.sessionState?.cards;
+// Event callback removal
 delete _inlineScripts.state?.listeners?.onReset?.cards;
 delete _inlineScripts.state?.listeners?.onLoad?.cards;
+
+// Custom CSS removal
+_inlineScripts.inlineScripts.HelperFncs.removeCss("cards");
+
+// State removal
+delete _inlineScripts.state?.sessionState?.cards;
+
+// Session state removal
+delete _inlineScripts.cards;
 ```
 __
 Shuts down this shortcut-file

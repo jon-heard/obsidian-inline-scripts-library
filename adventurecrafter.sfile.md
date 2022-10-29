@@ -899,9 +899,14 @@ __
 ```
 __
 ```js
-delete _inlineScripts.adventurecrafter;
-delete _inlineScripts.state?.sessionState?.adventurecrafter;
+// Event callback removal
 delete _inlineScripts.state?.listeners?.onReset?.adventurecrafter;
+
+// State removal
+delete _inlineScripts.state?.sessionState?.adventurecrafter;
+
+// Session state removal
+delete _inlineScripts.adventurecrafter;
 ```
 __
 Shuts down this shortcut-file

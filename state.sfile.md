@@ -179,7 +179,7 @@ __
 ```
 __
 ```js
-// Cleanup vars
+// State removal
 delete _inlineScripts.state;
 ```
 __

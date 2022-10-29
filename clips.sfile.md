@@ -50,8 +50,11 @@ __
 ```
 __
 ```js
-delete _inlineScripts.state?.listeners?.onReset?.clips;
+// Event callback removal
 delete _inlineScripts.inlineScripts?.listeners?.onExpansion?.clips;
+
+// State removal
+delete _inlineScripts.state?.listeners?.onReset?.clips;
 ```
 __
 Shuts down this shortcut-file

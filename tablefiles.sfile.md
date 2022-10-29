@@ -977,14 +977,14 @@ __
 ```
 __
 ```js
-// Custom CSS removal
-_inlineScripts.inlineScripts.HelperFncs.removeCss("tablefiles");
+// Event callback removal
+delete _inlineScripts?.state?.listeners?.onReset?.tablefiles;
 
 // State removal
 delete _inlineScripts?.state?.sessionState?.tablefiles;
 
-// Event callback removal
-delete _inlineScripts?.state?.listeners?.onReset?.tablefiles;
+// Custom CSS removal
+_inlineScripts.inlineScripts.HelperFncs.removeCss("tablefiles");
 ```
 __
 Shuts down this shortcut-file
