@@ -92,7 +92,7 @@ return expFormat(
 ```
 __
 notevars isMarkdownRefreshed {state: y OR n, default: ""} - If {state} is given, assigns it to the notevars "isMarkdownRefreshed" flag.  Otherwise, displays the current "isMarkdownRefreshed" flag.
-If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
+    - If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
 ***
 
 

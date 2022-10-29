@@ -66,24 +66,22 @@ This shortcut-file has a tutorial video available:
 
 - __lists reset__ - Clears all lists.
 ***
-- __lists__ - Shows all lists and all items for each list.
-- __lists list {list name: name text}__ - Shows all items in the list {list name}.
-***
-- __lists add {list name: name text} {item: text}__ - Adds {item} to the list {list name}.  Allows duplicate items.
-    - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
+- __lists__ - Shows all lists and their info: type, associations and items.
+- __lists {list name: name text}__ - Shows all info for the single list {list name}: type, associations and items.
 - __lists rename {original list name: name text} {new list name: name text}__ - Changes the name of list {original list name} to {new list name}.
-- __lists replace {list name: name text} {item: text} {replacement: text}__ - Replaces all instances of {item} with {replacement}.  {item} can only have spaces if it's surrounded by quotes.
-- __lists remove {list name: name text} {item: text}__ - Removes an instance of {item} from the list {list name}.
-    - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
 - __lists removelist {list name: name text}__ - Removes the entire list {list name}.
-***
 - __lists pick {list name: name text}__ - Gets a random item from the list {list name}.
-- __lists shortcutbatch {list name: name text} -- {shortcut: text}__ - Runs shortcut {shortcut} once for each item in list {list name}, replacing "%1" in {shortcut} with the item.
+- __lists add {list name: name text} {item: text}__ - Adds {item} to the list {list name}.  Allows duplicate items.
+    - Can only add to (1) basic lists and (2) combo lists which contain basic lists.
+- __lists replace {list name: name text} {item: text} {replacement: text}__ - Replaces all instances of {item} with {replacement}.  {item} must be quoted if it has any space.
+- __lists remove {list name: name text} {item: text}__ - Removes an instance of {item} from the list {list name}.
+    - Can only remove from (1) basic lists and (2) combo lists which contain basic lists.
 ***
 - __lists addfolder {list name: name text} {folder: path text}__ - Creates a folder-list named {list name} that is linked to the folder {folder}.  A "folder-list" is a list who's items are the names of the notes in the linked folder.
-- __lists addcombo {list name: name text} {sub list 1: name text, default: ""} {sub list 2: name text, default: ""}...__ - Creates a combo-list named {list name} that is linked to the sublists given as {sub list 1}, {sub list 2}, etc.  A "combo-list" is a list who's items are all of the items of its linked sublists.
+- __lists addcombo {list name: name text} {sub-list: name text separated by spaces}__ - Creates a combo-list named {list name} that is linked to the lists given in {sub-list}.  A "combo-list" is a list who's items are all of the items of its linked sub-lists.
 ***
-- __lists fromfile lines {list name: name text} {file: path text}__ - Takes the file {file} and breaks it up into individual lines.  Adds each of those lines to list {list name} as an item.
+- __lists shortcutbatch {list name: name text} {shortcut: text}__ - Runs shortcut {shortcut} once for each item in list {list name}, replacing "%1" in {shortcut} with the item.
+- __lists fromfile lines {list name: name text} {file: path text}__ - Takes the file {file}, breaks it up into individual lines and adds each of those lines, as items, to list {list name}.
 
 ***
 
@@ -98,12 +96,12 @@ This shortcut-file has a tutorial video available:
 - __notevars reset__ - Clears the isMarkdownRefreshed flag.
 ***
 - __notevars isMarkdownRefreshed {state: y OR n, default: ""}__ - If {state} is given, assigns it to the notevars "isMarkdownRefreshed" flag.  Otherwise, displays the current "isMarkdownRefreshed" flag.
-If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
+    - If isMarkdownRefreshed flag is set then a note's markdown is refreshed each time one of it's variables is set.
 ***
 - __notevars get {note name: path text} {variable name: name text}__ - Expands to the value of variable {variable name} in note {note name}.  If {note name} is "." then it represents the current note.
 - __notevars getArray {note name: path text} {array name: name text} {index: >=0}__ - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
 - __notevars set {note name: path text} {variable name: name text} {value: text}__ - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
-- __notevars setArray {note name: path text} {array name: name text} {value1: text},{value2: text},...__ - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
+- __notevars setArray {note name: path text} {array name: name text} {values: comma separated text}__ - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
 
 ***
 
@@ -193,20 +191,20 @@ Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __myth
 Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
-- __une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship TO pc: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to pc} and {demeanor} are values for "une interact".
+- __une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship TO PC: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to PC} and {demeanor} are values for "une interact".
 ***
 - __une character {randomness: 1 TO 5 (order to chaos), default: 3 (standard)}__ - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
-- __une interact {relationship to pc: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "mood", "bearing" and "focus" together.  {relationship to pc} is a value for "mood".  {demeanor} is a value for "bearing".
+- __une interact {relationship to PC: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "mood", "bearing" and "focus" together.  {relationship to PC} is a value for "mood".  {demeanor} is a value for "bearing".
 ***
-- __une identity__ - Generates a 2-word description for a character.
-- __une power {randomness: 1 TO 5 (order to chaos), default: 3 (standard)}__ - Generates a character's power level relative to pc's power level, based on {randomness}.
-- __une motive__ - Generates three 2-word descriptions for a character's motivations.
+- __une identity__ - Generates a 2-word description for an NPC.
+- __une power {randomness: 1 TO 5 (order to chaos), default: 3 (standard)}__ - Generates an NPC's power level relative to PC's power level, based on {randomness}.
+- __une motive__ - Generates three 2-word descriptions for an NPC's motivations.
 ***
-- __une mood {relationship to pc: 1 TO 7 (love to hate), default: 4 (neutral)}__ - Generates a character's willingness to socialize for this interaction, based on {relationship to pc}.
-- __une bearing {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Generates a character's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
+- __une mood {relationship to PC: 1 TO 7 (love to hate), default: 4 (neutral)}__ - Generates an NPC's willingness to socialize for this interaction, based on {relationship to PC}.
+- __une bearing {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Generates an NPC's attitude for this interaction, based on {demeanor}: a number defaulting to random and meaning one of the following:
     1 - sceming       2 - insane       3 - friendly          4 - hostile
     5 - inquisitive    6 - knowing    7 - mysterious    8 - prejudiced
-- __une focus__ - Generates a character's primary interest for this interaction.
+- __une focus__ - Generates an NPC's primary interest for this interaction.
 
 ***
 
@@ -222,7 +220,7 @@ This shortcut-file has a tutorial video available:
 - __plot point__ - Gets a single plot point, generated from the plot points table.
 ***
 - __themes pick__ - Picks a random theme from the chosen themes, as per the Adventure Crafter rules.
-- __themes__ - Shows the list of chosen themes.
+- __themes__ - Shows the list of picked themes.
 - __themes add__ - Chooses a theme for the next unchosen theme-slot.
 - __themes roll__ - Picks a random theme for the next unchosen theme-slot.
 - __themes fill__ - Picks random themes for the remaining unchosen theme-slots.
@@ -253,31 +251,34 @@ This shortcut-file has a tutorial video available:
 [Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
 - __cards reset__ - Clears all card-piles.
-- __cards backimage {file name: path text}__ - Sets the image to use for the back-side of all cards to {file name}.
-- __cards size {card size: >0}__ - Sets the width for all cards in pixels.  Card height follows.
-- __cards__ - Lists all card-piles.
+- __cards settings {size: >0, default: ""} {back-image: path text, default: ""}__ - Updates the settings for the cards system.
+    - __{size}__ - The width for all cards, in pixels.  Card height scales to match.
+    - __{back-image}__ - The path to an image file to represent face-down cards, or "default" to reset to the default back-image.
 ***
-- __cards pile {pile id: name text}__ - Creates an empty pile {pile id}.
-- __cards fromfolder {pile id: name text, default: table} {folder: path text} {facing: up OR down, default: up}__ - Creates cards based on images in {folder} and puts them into the {pile id} pile facing {facing}.
-- __cards draw {source pile id: name text, default: table} {destination pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: current} {pick: y OR n, default: n}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.  If {facing} is given, all moved cards are set to {facing}.  If {pick} is "y", then the user chooses which cards to draw.
-	- If a card has "allowDuplicate" turned on, then it is not moved, but copied.  The newly created card has its origin set to {destination pile id}.
-- __cards show {pile id: name text, default: table}__ - Displays all cards in the {pile id} card-pile.
-- __cards showreverse {pile id: name text, default: table}__ - Displays all cards in the {pile id} card-pile, but in reverse order.
+- __cards pile {pile id: name text} {facing: up OR down, default: down} {show moved: y OR n, default: prior}__ - Creates an empty card-pile {pile id} with all cards facing {facing} (face-up or face-down).  If {show moved}, cards that are drawn or picked into the {pile id} card-pile are also printed to the note.
+- __cards remove {pile id: name text} {recall: y OR n, default: n}__ - Removes the {pile id} card-pile, including all cards within it.  If {recall}, all cards in {pile id} are recalled before the {pile id} card-pile is removed.  If the {pile id} card-pile is the origin for any cards, then they are orphaned, and immediately re-origined to their current card-pile.
+- __cards pilesettings {pile id: name text} {facing: up OR down, default: current} {show moved: y OR n, default: current}__ - Updates the settings for the {pile id} card-pile.
+    - __{facing}__ - Are the {pile id} card-pile's cards shown face-up or face-down?
+    - __{show moved}__ - Are cards that are drawn or picked into the {pile id} card-pile also printed to the note?
 ***
-- __cards properties {pile id: name text, default: table} {facing: up OR down, default: current} {allow rotated: y OR n, default: current} {allow duplicate: y OR n, default: current} {set origin: y OR n, default: n}__ - Changes the entered properties for all cards in the {pile id} card-pile.
-	- facing - Set all cards to be face-up or face-down.
-	- allow rotated -If allowed, each card has a 50/50 chance of being upside-down.
-	- allow duplicate - If allowed, cards are copied, instead of moved when drawn.
-	- set origin - If true, the origin of each card is set to THIS card-pile.  This is used in the "cards recall" shortcut.
+- __cards fromfolder {pile id: name text} {folder: path text}__ - Creates cards based on images in {folder} and puts them into the {pile id} card-pile.
+	- Note that this does not randomize the new cards.  Call the "cards shuffle" shortcut to do that.
 ***
-- __cards shuffle {pile id: name text, default: table}__ - Randomizes the card order and rotation for the {pile id} card-pile.
-- __cards reverse {pile id: name text, default: table}__ - Reverses the order of the cards in card-pile {pile id}.
-- __cards flip {pile id: name text, default: table} {count: >0 OR "all", default: 1} {facing: up OR down, default: up} {pick: y OR n, default: n}__ - Flips {count} face-down cards to face-up in the {pile id} card-pile.  If {facing} is "down", then flipping is from face-up to face-down.  If {pick} is "y", then the user chooses which cards to flip.
-- __cards recall {pile id: name text, default: table} {facing: up OR down, default: current}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
-- __cards destroy {pile id: name text, default: table}__ - Removes the {pile id} card-pile, including all cards within it.
+- __cards list__ - Lists all card-piles.
+- __cards peek {count: >0 OR "all", default: 1} {pile id: name text, default: prior} {from the bottom: y OR n, default: prior OR n}__ - Displays the first {count} cards in the {pile id} card-pile, or ALL cards if {count} is "all".  If {from the bottom}, displays the LAST {count} cards instead.
 ***
-- __cards import {pile id: name text, default: table} {data: text}__ - Makes a card-pile from the data string {data} and remembers it as {pile id}.
-- __cards export {pile id: name text, default: table}__ - Expands to a data string containing all date for the {pile id} card-pile.
+- __cards draw {count: >0 OR "all", default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
+- __cards pick {destination pile id: name text, default: prior} {source pile id: name text, default: prior}__ - Has the user choose cards from the {source pile id} card-pile.  Moves the chosen cards into the {destination pile id} card-pile.
+***
+- __cards shuffle {pile id: name text} {rotate: y OR n, default: n}__ - Randomizes the card order for the {pile id}.  If {rotate}, then card rotations are also randomized.
+	- Rotation typically means 0 or 180 degrees (right-side-up or up-side-down), but can also mean 90 or 270 degrees if the card is square.
+- __cards unrotate {pile id: name text}__ - Sets the rotation for all cards in the {pile id} card-pile to 0 (right-side-up).
+- __cards reverse {pile id: name text}__ - Reverses the order of the cards in the {pile id} card-pile.
+- __cards recall {pile id: name text}__ - Moves all cards that have the {pile id} card-pile as their origin, from their current card-piles back into the {pile id} card-pile.  If {facing} is specified, all cards in {pile id} are then put to face {facing}.
+- __cards reorigin {pile id: name text}__ - Sets the origin of all cards in the {pile id} card-pile to {pile id}.
+***
+- __cards import {pile id: name text, default: table} {data: text}__ - Imports the {data} into the {pile id} card pile.
+- __cards export {pile id: name text}__ - Expands to a data-string containing all date for the {pile id} card-pile.
 
 ***
 
@@ -286,17 +287,18 @@ Shortcut file to load tables from files and roll them.
 
 - __tbl reset__ - Clears registered table paths and table path configurations.
 - __tbl add {path: path string}__ - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
-- __tbl addfiletable {path: path string}__ - Adds the folder {path} to the list of registered table paths as a file-table.  A file-table is a virtual table where each item is a file in the {path} folder.
+- __tbl addfoldertable {path: path string}__ - Adds the folder {path} to the list of registered table paths as a folder-table.  A folder-table is a virtual table where each item is a file in the {path} folder.
 - __tbl list__ - Get a list of the registered table paths.
 - __tbl roll__ - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.
 - __tbl roll {table file: path text} {parameters: text, default: ""}__ - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
 	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
 	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
-	- __isFileTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
+	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
 	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
-	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for file-tables.
+	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
+	- __useExpressionFormat__ - If true, the result is outputted in the standard expression format.
 
 ***
 
@@ -317,8 +319,8 @@ A shortcut to run commands through the Dice Roller plugin.
 ### files.sfile
 Shortcuts for working with files in the vault.
 
-- __files extensionchange {file name: path text} {extension: nospace text, default: md}__ - Changes the extension of file {file name} to {extension}.
-- __files shortcutbatch {folder name: path text} -- {shortcut: text}__ - Runs shortcut {shortcut} once for each file in folder {folder name}, replacing "%1" in {shortcut} with the file's name.
+- __files extensionchange {file name: path text} {extension: nospace text, default: "md"}__ - Changes the extension of file {file name} to {extension}.
+- __files shortcutbatch {folder name: path text} {shortcut: text}__ - Runs shortcut {shortcut} once for each file in folder {folder name}, replacing "%1" in {shortcut} with the file's name.
 
 ***
 
@@ -356,30 +358,28 @@ A decent Lorum Ipsum generator.
 ### lists_ui.sfile
 An extension to __lists.sfile__ that provides graphical ui versions of shortcuts.
 
-- __ui lists list__ - Asks the user to choose from all lists.
-Show all items in that list.
-- __ui lists add__ - Asks the user to choose from all lists.
-Asks the user to enter an item to add to that list.
-Allows duplicate items.
-    - Can only add to (1) basic lists and (2) combo lists that contain basic lists.
-- __ui lists pick__ - Asks the user to choose from all lists.
-Gets a random item from that list.
-- __ui lists remove__ - Asks the user to choose from all lists.
-Asks the user to choose an item from that list.
-Removes the last instance of that item from that list.
+- __ui lists reset__ - Clears all lists.
+***
+- __ui lists__ - User chooses a list (options include "all lists"), then shows info on the chosen list.
+- __ui lists rename__ - User chooses a list, and enters a new name for it.  The list is renamed.
+- __ui lists removelist__ - User chooses a list, which is removed.
+- __ui lists pick__ - User chooses a non-empty list, a random item is picked from that list and returned.
+***
+- __ui lists add__ - User chooses a list to add to and an item to add.  The item is added to the list.
+    - Identical items within a list are allowed.
+    - Can only add to (1) basic lists and (2) combo lists with at least one basic list as a sub-list.
+- __ui lists replace__ - User chooses a list, an item from the list and enters text to replace the item with.  All instances of the item are replaced with the text.
+    - Can only replace from (1) basic lists and (2) combo lists that contain basic lists.
+- __ui lists remove__ - User choses a list and an item from the list.  The last instance of the item is removed from the list.
     - Can only remove from (1) basic lists and (2) combo lists that contain basic lists.
-- __ui lists replace__ - Asks the user to choose from all lists.
-Asks the user to choose an item from that list.
-Asks the user to enter a new value for that item.
-Replaces all instances of the item within the list with the replacement.
-- __ui lists removelist__ - Asks the user to choose from all lists.
-Removes that list.
+***
 - __ui lists addfolder__ - Asks the user to type a name for the new folder-list.
 Asks the user to choose a folder.
 Creates the folder-list, attached to the folder.
-- __ui lists addcombo__ - Asks the user to type a name for the new combo-list.
-Asks the user to choose different lists.
-Creates the combo-list, attached to the different lists.
+- __ui lists addcombo__ - User enters a name for he comb-list and chooses sub-lists.  A combo-list is made from the choices.
+***
+- __ui lists shortcutbatch__ - User chooses a list and enters a shortcut-text.  The shortcut-text is run for each item in the list, with "%1" being replaced by the list item.
+- __ui lists fromfile lines__ - Use chooses a list (or enters a new list) and chooses a file.  The file is broken into lines, which are added to the list as items.
 
 ***
 
@@ -406,9 +406,9 @@ Rolls and shows an action for the npc to take.
 ### mythicgme_ui.sfile
 An extension to __mythicgme.sfile__ that provides graphical ui versions of shortcuts.
 
-- __fate__ - Ask user to choose the odds for this fate check.
-Display the answer to a yes/no question, possibly with a random event attached.
-- __scene__ - Ask user to choose whether chaos increased or decreased last scene.
+- __ui fate__ - Asks the user to choose the odds for this fate check.
+Displays the answer to a yes/no question, possibly with a random event attached.
+- __ui scene__ - Asks the user to choose whether chaos increased or decreased last scene.
 Starts a new scene with the chosen chaos value adjustment.
 
 ***
@@ -416,21 +416,27 @@ Starts a new scene with the chosen chaos value adjustment.
 ### une_ui.sfile
 An extension to __une.sfile__ that provides graphical ui versions of shortcuts.
 
-- __ui une__ - Asks the user to choose the scene's randomness (for picking the npc's power).
-Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
-Asks the user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
-Displays the npc's character (identity, power, motive) and the npc's interaction for this scene (mood, bearing, focus).
-- __ui une character__ - Asks the user to choose the scene's randomness (for picking the npc's power).
-Displays the npc's character (identity, power, motive).
-- __ui une interact__ - Asks the user to choose the npc's felings towards the pc(s) (for the npc's mood).
-Asks the user to choose the npc's demeanor, or pick it randomly (for the npc's bearing).
-Displays the npc's interaction for this scene (mood, bearing, focus).
+- __ui une__ - Asks the user to choose the scene's randomness (for picking the NPC's power).
+Asks the user to choose the NPC's felings towards the PC(s) (for the NPC's mood).
+Asks the user to choose the NPC's demeanor, or pick it randomly (for the NPC's bearing).
+Displays the NPC's character (identity, power, motive) and the NPC's interaction for this scene (mood, bearing, focus).
+***
+- __ui une character__ - Asks the user to choose the scene's randomness (for picking the NPC's power).
+Displays the NPC's character (identity, power, motive).
+- __ui une interact__ - Asks the user to choose the NPC's feelings towards the PC(s) (for the NPC's mood).
+Asks the user to choose the NPC's demeanor, or pick it randomly (for the NPC's bearing).
+Displays the NPC's interaction for this scene (mood, bearing, focus).
+***
+- __ui une identity__ - Generates a 2-word description for an NPC.
 - __ui une power__ - Asks the user to choose the scene's randomness.
-Displays the npc's power relative to the pc(s) power.
-- __ui une mood__ - Asks the user to choose the npc's felings towards the pc(s).
-Displays the npc's mood for this scene.
-- __ui une bearing__ - Asks the user to choose the npc's demeanor, or pick it randomly.
-Displays a the npc's bearing.
+Displays the NPC's power relative to the PC power(s).
+- __ui une motive__ - Generates three 2-word descriptions for an NPC's motivations.
+***
+- __ui une mood__ - Asks the user to choose the NPC's felings towards the PC(s).
+Displays the NPC's mood for this scene.
+- __ui une bearing__ - Asks the user to choose the NPC's demeanor, or pick it randomly.
+Displays a the NPC's bearing.
+- __ui une focus__ - Generates an NPC's primary interest for this interaction.
 
 ***
 
@@ -450,41 +456,30 @@ An extension to __cards.sfile__ that provides graphical ui versions of shortcuts
 This shortcut-file has a tutorial video available:
 [Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
 
-- __ui cards size__ - Lets you pick the card size.
+- __ui cards reset__ - Clears all card-piles.
+- __ui cards settings__ - User chooses card size and card back image.
 ***
-- __ui cards fromfolder__ - Asks the user to choose one of the non-empty folders.
-Asks the user to enter a name to give the new card-pile.
-Creates a card-pile based on images in the given folder and remembers it with the given name.
-- __ui cards draw__ - Asks the user to choose a source card-pile.
-Asks the user to enter a destination card-pile.
-Asks the user if they want to pick the drawn cards.    If they want to, lets them pick.  Otherwise...
-Asks the user if they want to flip, and which way.
-Asks the user how many cards to draw.
-Draws the cards.
-- __ui cards show__ - Asks the user to choose a card-pile.
-Adds images of the cards in the chosen card-pile to the note.
+- __ui cards pile__ - User enters a name, card-facing and show-moved flag for the new card-pile.  Card-pile is created from the choices.
+- __ui cards remove__ - User choses a card-pile to remove, then removes that card-pile.
+- __ui cards pilesettings__ - User chooses a card-pile, then choses its card-facing and show-moved flag.
 ***
-- __ui cards properties__ - Asks the user which card-pile to set properties for.
-Shows a popup with all properties, each defaulting to "unchanged".  User can change the wanted properties.
-When the user is finished, all chosen properties are changed on all cards in the card-pile.
+- __ui cards fromfolder__ - User choses a folder to create new cards from, then choses a card-pile to put them into.  Cards are created and added to the chosen card-pile.
 ***
-- __ui cards shuffle__ - Asks the user to choose a card-pile.
-Randomizes the card-pile's card order and rotation.
-- __ui cards flip__ - Asks the user to choose a card-pile.
-Asks the user if they want to pick the cards to flip.  If they want to, lets them pick.  Otherwise...
-Asks the user which way they want to flip.
-Asks the user how many cards to flip.
-Flips the cards.
-- __ui cards recall__ - Asks the user to enter a card-pile.
-Moves all cards that have the chosen card-pile as their origin, from their current card-pile back into the chosen card-pile.
-- __ui cards destroy__ - Asks the user to choose a card-pile.
-Destroys the chosen card-pile and all cards within it.
+- __ui cards list__ - Lists all card-piles.
+- __ui cards peek__ - User choses a card-pile, how many cards to peek and what side to peek from (top or bottom).  The peeked cards are printed to the note.
 ***
-- __ui cards import__ - Asks the user to enter a card-pile.
-Asks the user to enter the data string to import.
-Imports the data string and assigns the new card-pile  to the entered one.
-- __ui cards export__ - Asks the user to choose a card-pile.
-Expands to a data string containing all data for the chosen card-pile.
+- __ui cards draw__ - User choses one card-pile to draw from, one to add to and how many cards to draw.  Cards are moved from the top of one card-pile to the top of the other.
+- __ui cards pick__ - User choses one card-pile to pick from and one to add to, then the user picks the cards to move from the top of one to the top of the other.
+***
+- __ui cards shuffle__ - User choses a card-pile, and whether to rotate the cards while shuffling.  The card-pile is then shuffled.
+- __ui cards unrotate__ - User choses a card-pile, then all the card-pile's cards are turned right-side-up.
+- __ui cards reverse__ - User choses a card-pile, then the card-pile's order is reversed.
+- __ui cards recall__ - User choses a card-pile, then the card-pile is recalled.  Recalling means finding all cards with the card-pile as their origin, then moving them to the card-pile.
+- __ui cards reorigin__ - Asks the user to choose a card-pile, then the card-pile is re-origined..  Re-origining means setting the origin of all cards in a card-pile to that card-pile.
+***
+- __ui cards import__ - User chooses a card-pile and enters a data-string representation of a card-pile. 
+ The data-string is turned into a card-pile and assigned to the card-pile the user chose.
+- __ui cards export__ - User chooses a card-pile, then the card-pile is exported to a data-string, which is printed to the note.
 
 ***
 
@@ -493,10 +488,10 @@ An extension to __clips.sfile__ that provides graphical ui versions of shortcuts
 
 - __ui clips reset__ - Removes all clips.
 - __ui clips__ - Lists all stored clips.
-- __ui clips set__ - Asks user for a clip name and value, then assigns the value to the clip name.
-- __ui clips get__ - Asks the user to choose from list of clips, then expands to the value of that clip.
+- __ui clips set__ - User enters a clip name and a clip value.  The value is then assigned to the clip name.
+- __ui clips get__ - User chooses a clip, which is then expanded into the note.
 	- Alternative: __ui cg__
-- __ui clips expansion__ - Asks the user to enter a clip name, then assigns the prior shortcut expansion  text to it.
-- __ui clips remove__ - Asks the user to choose a clip, then removes that clip.
+- __ui clips expansion__ - User enters a clip name.  The prior expansion's text is then assigned to the clip name.
+- __ui clips remove__ - User chooses a clip, which is then removed.
 
 ***
