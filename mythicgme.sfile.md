@@ -112,7 +112,7 @@ mythicgme reset - Resets mythic state to defaults and displays scene heading.
 __
 __
 ```js
-// Run a roll from 1 to max.
+// Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
 // Pick an item from array a.

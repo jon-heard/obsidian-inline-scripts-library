@@ -245,11 +245,8 @@ __
 ```
 __
 ```js
-// Helper function
-function roll(max)
-{
-	return Math.trunc(Math.random() * max + 1);
-}
+// Make a roll from 1 to max.
+function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
 // Get the number of items
 let itemCount = getListItems($1).length;

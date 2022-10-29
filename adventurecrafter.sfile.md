@@ -22,7 +22,10 @@ This requires that __mythicv2.sfile__ or __mythicgme.sfile__ comes before __adve
 __
 __
 ```js
+// Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
+
+// Pick an item from array a.
 function aPickWeight(a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;

@@ -72,7 +72,7 @@ __
 __
 ```js
 // Remove the state
-delete _inlineScripts.state.sessionState.mythicv2;
+delete _inlineScripts.state?.sessionState?.mythicv2;
 
 // Remove the event callbacks
 delete _inlineScripts.state?.listeners?.onReset?.mythicv2;
@@ -135,7 +135,7 @@ mythicv2 details {state: y OR n, default: ""} - If {state} is given, assigns it 
 __
 __
 ```js
-// Run a roll from 1 to max.  Store the result as a detail with the name parameter
+// Make a roll from 1 to max.  Store the result as a detail with the name parameter
 function roll(name, max)
 {
 	return addDetails(name, Math.trunc(Math.random() * max + 1));

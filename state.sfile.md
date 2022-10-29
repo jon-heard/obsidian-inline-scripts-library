@@ -22,14 +22,17 @@ __
 ```
 __
 ```js
-if (_inlineScripts?.state?.inSetup) { return; }
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
-const confirmObjectPath =
-	_inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+// Prevent running this shortcut multiple times concurrently.  There are race-
+// condition in the file handling.
+if (_inlineScripts?.state?.inSetup) { return; }
 confirmObjectPath("_inlineScripts.state.inSetup", true);
 
+// The name of the state data-file - the file to store the state in
 const STATE_FILE_NAME = "Ξ_state.data.md";
 
+// removeFile - Remomve a file without triggering an exception if it doesn't exist
 async function removeFile(filename)
 {
 	if (await app.vault.adapter.exists(filename))
@@ -38,17 +41,22 @@ async function removeFile(filename)
 	}
 }
 
+// Setup the event callback arrays
 confirmObjectPath("_inlineScripts.state.listeners.onReset");
 confirmObjectPath("_inlineScripts.state.listeners.onLoad");
 
-// Determine root folder for state file (every time, in case sfiles are moved)
+// Determine root folder for state data-file (every time, in case sfiles are moved)
 confirmObjectPath("_inlineScripts.state.stateFile");
 let stateFileHasBeenSet = false;
+// Find the "state" sfile in the sfile's list...
 for (const sfile of _inlineScripts.inlineScripts.plugin.settings.shortcutFiles)
 {
+	// Found the "state" sfile!
 	if (sfile.address.endsWith("state.sfile.md"))
 	{
+		// Make the state data-file be stored right next to the state sfile
 		const path = sfile.address.slice(0, -14) + STATE_FILE_NAME;
+		// If the new path is different, change it and remember that it's been changed
 		if (_inlineScripts.state.stateFile.path != path)
 		{
 			_inlineScripts.state.stateFile.path = path;
@@ -58,7 +66,9 @@ for (const sfile of _inlineScripts.inlineScripts.plugin.settings.shortcutFiles)
 	}
 }
 
-// Handle old state file locations (if state isn't already setup)
+// Handle old versions of state data-file locations by finding the latest one and
+// copying it to the new state data-file.  Then remove all existing old version files.
+// NOTE - this block is to upgrade old vaults to the latest state system version.
 if (!_inlineScripts.state.sessionState)
 {
 	const oldStateFilePossibilities =
@@ -111,41 +121,52 @@ if (!_inlineScripts.state.sessionState)
 	}
 }
 
-// Load the state file if state is not defined (initial load, or sfile moved)
+// Load the state file if running initial setup, or if the state file has been moved
 if (!_inlineScripts.state.sessionState || stateFileHasBeenSet)
 {
 	try
 	{
+		// Get the raw content
 		const stateString =
 			await app.vault.adapter.read(_inlineScripts.state.stateFile.path);
+		// Parse the content
 		const state = JSON.parse(stateString);
+		// Assign parsed content to the state
 		_inlineScripts.state.sessionState = state;
+		// Assign raw content to the "priorString" to recognize when state has changed
 		_inlineScripts.state.stateFile.priorString = stateString;
 	}
 	catch (e)
 	{
+		// If parsing failed, create a console error
 		if (e.code !== "ENOENT")
 		{
 			console.error(
 				"state.sfile\n\tUnable to load from state file:\n\t" +
 				_inlineScripts.state.stateFile.path + "\n\t", e);
 		}
-		_inlineScripts.state.sessionState = {};
+		// Make sure we have SOMETHING for the state
+		_inlineScripts.state.sessionState ||= {};
+		// Trigger a state save to make sure the state data-file is up to date
 		expand("state save");
 	}
 }
 
-// React to every user-triggered shortcut expansion by re-saving the state
+// Event callback - inlineScripts.onExpansion - React to each user-triggered shortcut
+// expansion by checking for state changes and re-saving if there are any.
 confirmObjectPath(
 	"_inlineScripts.inlineScripts.listeners.onExpansion.state",
 	async (expansionInfo) =>
 	{
+		// Only re-save if the expansion is user-triggered
 		if (expansionInfo.isUserTriggered)
 		{
+			// Check for state changes and re-save if there are any.
 			expand("state save");
 		}
 	});
 
+// End the block to running this shortcut multiple times concurrently.
 _inlineScripts.state.inSetup = false;
 ```
 __
@@ -171,16 +192,28 @@ __
 ```
 __
 ```js
+// Wipe out all states
 _inlineScripts.state.sessionState = {};
 
 // Notify listeners of state.onReset event
 _inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
 	"state.onReset", _inlineScripts.state.listeners.onReset);
 
-return "All state cleared.\n\n";
+return expFormat("All state cleared.");
 ```
 __
 state reset - Clears all session state.
+
+
+__
+__
+```js
+// The part of the "state get" expansion that is not the state data-string.
+// Used in "state get" and "state restore" shortcuts.
+const GET_MSG_PREFIX = "State:\n";
+```
+__
+Helper script
 
 
 __
@@ -189,7 +222,11 @@ __
 ```
 __
 ```js
-return "State:\n" + JSON.stringify(_inlineScripts.state.sessionState) + "\n\n";
+// Return the state data-string.
+// NOTE: don't use the expansion-format's prefix or line-prefix.  This makes the
+// data-string is easier to select and copy in the note.
+return expFormat(
+	GET_MSG_PREFIX + JSON.stringify(_inlineScripts.state.sessionState), true, true);
 ```
 __
 state get - Expands to a state-string - a string containing all data for the current session state.
@@ -201,19 +238,31 @@ __
 ```
 __
 ```js
-const GET_PREFIX = "State:\n";
+// Get the content of the current note
 const content = await app.vault.cachedRead( app.workspace.getActiveFile());
-const startIndex = content.lastIndexOf(GET_PREFIX);
-if (startIndex < 0)
+
+// Find the last expansion of "state get" in the content.
+const getMsgIndex = content.lastIndexOf(GET_MSG_PREFIX);
+
+// If there are no expansions of "state get" in the content, early out.
+if (getMsgIndex < 0)
 {
-	return "State not loaded.  Last state not found.";
+	return expFormat("State not loaded.  Last state not found.");
 }
-const endIndex = content.indexOf("\n", startIndex + GET_PREFIX.length);
+
+// Get the end index of the data-string in the content.
+const endIndex = content.indexOf("\n", getMsgIndex + GET_MSG_PREFIX.length);
+
+// If unable to get the end index of the data-string in the content, early out.
 if (endIndex < 0)
 {
-	return "State not loaded.  Last state has a bad format.";
+	return expFormat("State not loaded.  Last state has a bad format.");
 }
-const stateString = content.slice(startIndex + GET_PREFIX.length, endIndex);
+
+// Get the data-String from the content.
+const stateString = content.slice(getMsgIndex + GET_MSG_PREFIX.length, endIndex);
+
+// Load the data-string into the state.
 return expand("state set " + stateString);
 ```
 __
@@ -226,20 +275,23 @@ __
 ```
 __
 ```js
+// Try to parse the given data-string
 try
 {
+	// If data-string parsed, assign to the state
 	_inlineScripts.state.sessionState = JSON.parse($1);
 }
 catch (e)
 {
-	return "State not loaded. Invalid state:\n" + $1 + "\n\n";
+	// Notify the user of the failure to parse
+	return expFormat("State not loaded. Invalid state:\n" + $1);
 }
 
-// Notify listeners of state.onLoad event
+// Call event callbacks for the state.onLoad event
 _inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
 	"state.onLoad", _inlineScripts.state.listeners.onLoad);
 
-return "State set.\n\n";
+return expFormat("State set.");
 ```
 __
 state set {state: text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.
@@ -251,12 +303,23 @@ __
 ```
 __
 ```js
+// Get the current state's data-string
 const stateString = JSON.stringify(_inlineScripts.state.sessionState);
-if (stateString === _inlineScripts.state.stateFile.priorString) { return; }
+
+// If the data-string hasn't changed, do nothing
+if (stateString === _inlineScripts.state.stateFile.priorString)
+{
+	return expFormat("State unchanged since prior save");
+}
+
+// Write the data-string to the state data-file
 await app.vault.adapter.write(
 	_inlineScripts.state.stateFile.path, stateString);
+
+// Remember the new data-string to check for future changes
 _inlineScripts.state.stateFile.priorString = stateString;
-return "State saved.\n\n";
+
+return expFormat("State saved.");
 ```
 __
 state save - Store the state to file.  This is called automatically after each shortcut expansion that triggers a state change.

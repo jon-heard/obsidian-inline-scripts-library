@@ -12,8 +12,14 @@ __une_ui.sfile__ - Graphical UI versions of some of these shortcuts.
 __
 __
 ```js
+// Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
+
+// Pick an item from array a.
 function aPick(a) { return a[roll(a.length)-1]; }
+
+// Pick an item from array a, weighted by element wIndex of the item.  If theRoll is
+// passed, use that as the roll.
 function aPickWeight(a, wIndex, theRoll)
 {
 	wIndex = wIndex || 1;
