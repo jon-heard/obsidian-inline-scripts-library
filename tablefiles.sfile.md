@@ -1032,7 +1032,7 @@ if (!file)
 }
 
 // Add the path to the state
-_inlineScripts.state.sessionState.tablefiles.paths[$1] = 1;
+_inlineScripts.state.sessionState.tablefiles.paths[file.path] = 1;
 
 return expFormat(
 	(file.children ? "Folder" : "File") + " __" + $1 + "__ added to table paths.");
