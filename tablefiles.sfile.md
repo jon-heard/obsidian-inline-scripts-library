@@ -236,7 +236,7 @@ async function rollTable(
 			break;
 	}
 
-	// If useExpressionFormat, then use the standard expression format
+	// If useExpansionFormat, then use the standard expansion format
 	if (useExpFormat)
 	{
 		result = expFormat(result);
@@ -653,7 +653,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			parent.append(tbl);
 
 		/////////////////////////////////////////////////
-		// Row 4 of ui (unique, use expression format) //
+		// Row 4 of ui (unique, use expansion format) //
 		/////////////////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4 ];
 		uiRow[0] = document.createElement("div");
@@ -670,7 +670,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			});
 		uiRow[2] = document.createElement("div");
 		uiRow[3] = document.createElement("div");
-			uiRow[3].innerText = "Use expression format";
+			uiRow[3].innerText = "Use expansion format";
 			uiRow[3].classList.add("iscript_popupLabel");
 			uiRow[3].classList.add("iscript_nextPopupLabel");
 		uiRow[4] = document.createElement("div");
@@ -1144,7 +1144,7 @@ catch(e)
 const defaultParameters =
 	{
 		count: 1, uniquePicks: false, format: "commas", isFolderTable: false,
-		useConfig: false, startOffset: 0, itemFormat: "", useExpressionFormat: false
+		useConfig: false, startOffset: 0, itemFormat: "", useExpansionFormat: false
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
 
@@ -1158,7 +1158,7 @@ if (!$1.startsWith("~folder~") && parameters.isFolderTable)
 // expFormat() since this could very well be used inline.
 return await rollTable(
 	$1, parameters.count, parameters.uniquePicks, parameters.format,
-	parameters.useExpressionFormat, parameters.useConfig, parameters.startOffset,
+	parameters.useExpansionFormat, parameters.useConfig, parameters.startOffset,
 	parameters.itemFormat));
 ```
 __
@@ -1170,4 +1170,4 @@ tbl roll {table file: path text} {parameters: text, default: ""} - Get random re
 	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
-	- __useExpressionFormat__ - If true, the result is outputted in the standard expression format.
+	- __useExpansionFormat__ - If true, the result is outputted in the standard expansion format.
