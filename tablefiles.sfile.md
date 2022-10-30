@@ -388,8 +388,8 @@ function refreshTableListUi(data)
 			// File checks should have been resolved by now.  This is exceptional!
 			if (!file) { console.error("File not found: " + tableItemDatum.path); }
 
-			// Use the table file's basename for its title
-			tableItemDatum.title = file?.basename || "<Undefined>";
+			// Use table file's basename for its title (or "name" if it's a folder)
+			tableItemDatum.title = file?.basename || file?.name || "<Undefined>";
 
 			// If this is a folder table, include that in the title
 			if (tableItemDatum.path.startsWith("~folder~"))
