@@ -399,6 +399,12 @@ if ($2 === "y")
 	result +=
 		"__" + recallCount + " / " + cardCount + "__ cards in the __" + $1 +
 		"__ card-pile are recalled to other card-piles.\n";
+
+	// Notify of all piles (potentially) changing
+	if (recallCount > 0)
+	{
+		onPileChanged(null);
+	}
 }
 
 // Add notification about removing this pile
