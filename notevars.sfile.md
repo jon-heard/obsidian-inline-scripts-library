@@ -311,15 +311,21 @@ else
 }
 
 // Modify the variable in the frontmatter of the note
-_inlineScripts.inlineScripts.HelperFncs.addToNote(toAdd.text, toAdd, file.path);
+await _inlineScripts.inlineScripts.HelperFncs.addToNote(toAdd.text, toAdd, file.path);
 
 // Update the file's reading view
 if (_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed)
 {
-	const view = _inlineScripts.inlineScripts.HelperFncs.getLeafForFile(file)?.view;
-	if (view)
+	const leaves = _inlineScripts.inlineScripts.HelperFncs.getLeavesForFile(file);
+	if (leaves.length)
 	{
-		setTimeout(() => view.modes.preview.rerender(true), 1000);
+		setTimeout(() =>
+		{
+			for (const leaf of leaves)
+			{
+				leaf.view.modes.preview.rerender(true)
+			}
+		}, 1000);
 	}
 }
 
