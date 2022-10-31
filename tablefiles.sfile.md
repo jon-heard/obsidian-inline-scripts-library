@@ -1,5 +1,8 @@
 Shortcut file to load tables from files and roll them.
 
+This shortcut-file has a tutorial video available:
+[Using the "tablefiles" shortcut-file to roll tables in text files](https://www.youtube.com/watch?v=kE3IlJn7COM) (runtime 9:00)
+
 
 __
 __

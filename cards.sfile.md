@@ -1,7 +1,7 @@
 Shortcuts for working with virtual cards.
 
 This shortcut-file has a tutorial video available:
-[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
+[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=KkpjTL2UvtQ) (runtime 12:43)
 
 Here are some good card images you can download to try this out:
 [Playing cards](https://opengameart.org/sites/default/files/Playing%20Cards.zip) - Standard playing cards.  Nice quality, though rather large file-size.

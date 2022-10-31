@@ -1,7 +1,7 @@
 Adds an Obsidian panel type that lets you view card-piles.
 
 This shortcut-file has a tutorial video available:
-[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=-m4n7d3aKC8) (runtime 9:01)
+[Using the "cards" shortcut-file to use virtual cards](https://www.youtube.com/watch?v=KkpjTL2UvtQ) (runtime 12:43)
 
 
 __
