@@ -200,44 +200,6 @@ notevars getArray {note name: path text} {array name: name text} {index: >=0} - 
 
 
 __
-__
-```js
-// Refresh the specified file's view the next time it is changed.
-// This lets variable changes propegate to DataView inline queries.
-function refreshPreviewOnNextModify(file)
-{
-	// This function does nothing unless isMarkdownRefreshed flag is true
-	if (!_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed) { return; }
-
-	// This function does nothing unless the file is opened in Obsidian
-	if (!_inlineScripts.inlineScripts.HelperFncs.getLeafForFile(file)) { return; }
-
-	// Setup an event callback for a file being changed
-	const onChanged = (changedFile) =>
-	{
-		// If the changed file is the one we're monitoring
-		if (changedFile === file)
-		{
-			// Stop monitoring for file changes
-			app.metadataCache.off("changed", onChanged);
-
-			// Find the view for the specified file
-			const leaf = _inlineScripts.inlineScripts.HelperFncs.getLeafForFile(file);
-			if (!leaf) { return; }
-			const view = leaf.view;
-
-			// Force the view to re-render on the next frame
-			setTimeout(() => view.modes.preview.rerender(true), 0);
-		}
-	}
-	app.metadataCache.on("changed", onChanged);
-}
-```
-__
-Helper scripts
-
-
-__
 ```
 ^notevars set ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
 ```
@@ -247,7 +209,7 @@ __
 $1 = $1.replaceAll(/^\"|\"$/g, "");
 
 // If notename is ".", change it to the current file
-if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
+if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path || ""; }
 
 // Get the file object for the specified note.  Early out if unavailable or is folder
 const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
@@ -270,59 +232,96 @@ if (content === null || content === undefined)
 		[ "", "Variable __" + $2 + "__ not set. Note __" + $1 + "__ read failed." ]);
 }
 
-// Resolve value - escape characters for newline and tab
-$3 = $3.replaceAll("\\n", "\n").replaceAll("\\t", "\t");
+// Adjust value to resolve escape characters for newline and tab
+$3 = $3.trim().replaceAll("\\n", "\n").replaceAll("\\t", "\t");
 
-// Start the final expansion
-let result;
-
-// Get the file content's header
+// Get the file content's frontmatter
 const fmMatch = content.match(/^(\n*---)(\n[\S\s]*\n)(\n*---\n)/);
+
+// Is the new value multiline?
+const isValueMultiline = $3.includes("\n") || $3[0] === "-";
+
+// Determine what to add and where
+let toAdd = { text: "", start: 0, end: 0 };
 
 // If there isn't yet a frontmatter, create it along with the variable name/value pair
 if (!fmMatch)
 {
-	result = "---\n" + $2 + ": " + $3 + "\n---\n\n" + content;
+	// Define what to add
+	toAdd.text = "---\n" + $2 + ": " + $3 + "\n---\n\n";
 }
 
 // If there IS a frontmatter, add the variable name/value pair to it
 else
 {
 	// Find the variable in the frontmatter
-	const varMatch = fmMatch[2].match("(\n" + $2 + ":)[^\n]*\n");
+	const varMatch =
+		fmMatch[2].match("\n( *)(" + $2 + " *:)(\n|(?: |\t)[^\n]*\n)");
 
-	// If the variable is found, modify it
-	if (varMatch)
+	// If the variable is NOT found append it to the frontmatter
+	if (!varMatch)
 	{
-		// Determine what character the variable definition ends at
-		let valueEndIndex = varMatch.index + varMatch[0].length;
-		while(fmMatch[2][valueEndIndex] === "-" ||
-		      fmMatch[2][valueEndIndex] === " ")
-		{
-			valueEndIndex = fmMatch[2].indexOf("\n", valueEndIndex) + 1;
-		}
-
-		// Insert the new variable definition in the old one's place
-		result =
-			fmMatch[1] + fmMatch[2].slice(0, varMatch.index) + varMatch[1] + " " +
-			$3 + "\n" + fmMatch[2].slice(valueEndIndex) + fmMatch[3] +
-			content.slice(fmMatch[0].length);
+		toAdd.text = $2 + (
+			isValueMultiline ?
+			":\n  " + $3.replaceAll("\n", "\n  ") + "\n" :
+			": " + $3 + "\n"
+		);
+		toAdd.start = fmMatch[1].length + fmMatch[2].length;
+		toAdd.end = toAdd.start;
 	}
 
-	// If the variable is not found append it to the frontmatter
+	// If the variable IS found, modify it
 	else
 	{
-		result =
-			fmMatch[1] + fmMatch[2] + $2 + ": " + $3 + "\n" + fmMatch[3] +
-			content.slice(fmMatch[0].length);
+		// Define value-entry
+		const lineIndent = "\n" + varMatch[1] + "  ";
+		toAdd.text =
+			isValueMultiline ?
+			lineIndent + $3.replaceAll("\n", lineIndent) :
+			" " + $3;
+		// Define start of definition
+		toAdd.start =
+			fmMatch[1].length + varMatch.index + varMatch[1].length +
+			varMatch[2].length + 1;
+		// Define end of definition
+		let lineStart = toAdd.start;
+		let lineEnd = content.indexOf("\n", toAdd.start + 1);
+		if (varMatch[3].trim())
+		{
+			// Old definition is single-line
+			toAdd.end = lineEnd;
+		}
+		else
+		{
+			// Old definition is multi-line
+			let lineStartRegex = new RegExp("^" + varMatch[1] + "(?:- | )");
+			while (lineEnd !== -1)
+			{
+				var line = content.slice(lineStart + 1, lineEnd);
+				if (!line.match(lineStartRegex))
+				{
+					toAdd.end = lineStart;
+					break;
+				}
+				lineStart = lineEnd;
+				lineEnd = content.indexOf("\n", lineStart + 1);
+			}
+		}
 	}
 }
 
-// Add an event callback to react to the next file-change by updating the file's view
-refreshPreviewOnNextModify(file);
+// Modify the variable in the frontmatter of the note
+_inlineScripts.inlineScripts.HelperFncs.addToNote(toAdd.text, toAdd, file.path);
 
-// Write the content changes back into the file
-await app.vault.modify(file, result);
+// Update the file's reading view
+if (_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed)
+{
+	const view = _inlineScripts.inlineScripts.HelperFncs.getLeafForFile(file)?.view;
+	if (view)
+	{
+		setTimeout(() => view.modes.preview.rerender(true), 1000);
+	}
+}
 
 return expFormat(
 	"Note __" + $1 + "__, variable __" + $2 + "__ set to __" + $3 + "__.");
@@ -337,102 +336,19 @@ __
 ```
 __
 ```js
-// Remove any quotes that surround the path
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+// Get the input array
+const valueArray = $3.split(",").map(v => v.trim());
 
-// If notename is ".", change it to the current file
-if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
+// Call "notevars set" with the input array
+const result =
+	expand("notevars set " + $1 + " " + $2 + " " + "- " + valueArray.join("\\n- "));
 
-// Get the file object for the specified note.  Early out if unavailable or a folder
-const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
-if (!file)
-{
-	return expFormat(
-		[ "", "Variable __" + $2 + "__ not set.  Note __" + $1 + "__ not found." ]);
-}
-if (file.children)
-{
-	return expFormat(
-		[ "", "Variable __" + $2 + "__ not set.  __" + $1 + "__ is a folder." ]);
-}
-
-// Get the file's content.  Early out if unavailable
-const content = await app.vault.cachedRead(file);
-if (content === null || content === undefined)
-{
-	return expFormat(
-		[ "", "Variable __" + $2 + "__ not set. Note __" + $1 + "__ read failed." ]);
-}
-
-// Resolve value - escape characters for newline and tab, comma-split into an array
-$3 = $3.replaceAll("\\n", "\n").replaceAll("\\t", "\t").split(",").filter(v => v);
-
-// Start the final expansion
-let result;
-
-// Get the file content's frontmatter
-const fmMatch = content.match(/^(\n*---)(\n[\S\s]*\n)(\n*---\n)/);
-
-// If there isn't yet a frontmatter, create it along with the variable name/value pair
-if (!fmMatch)
-{
-	result = "---\n" + $2 + ":\n";
-	for (let i = 0; i < $3.length; i++)
-	{
-		result += "- " + $3[i] + "\n";
-	}
-	result += "---\n\n" + content;
-}
-
-// If there IS a frontmatter, add the variable name/value pair to it
-else
-{
-	// Find the variable in the frontmatter
-	const varMatch = fmMatch[2].match("(\n" + $2 + ":)[^\n]*\n");
-
-	// If the variable is found, modify it
-	if (varMatch)
-	{
-		// Determine what character the variable definition ends at
-		let valueEndIndex = varMatch.index + varMatch[0].length;
-		while(fmMatch[2][valueEndIndex] === "-" ||
-		      fmMatch[2][valueEndIndex] === " ")
-		{
-			valueEndIndex = fmMatch[2].indexOf("\n", valueEndIndex) + 1;
-		}
-
-		// Insert the new variable definition in the old one's place
-		result =
-			fmMatch[1] + fmMatch[2].slice(0, varMatch.index) + varMatch[1] + "\n";
-		for (let i = 0; i < $3.length; i++)
-		{
-			result += "- " + $3[i] + "\n";
-		}
-		result +=
-			fmMatch[2].slice(valueEndIndex) + fmMatch[3] +
-			content.slice(fmMatch[0].length);
-	}
-
-	// If the variable is not found append it to the frontmatter (as an array)
-	else
-	{
-		result = fmMatch[1] + fmMatch[2] + $2 + ":\n";
-		for (let i = 0; i < $3.length; i++)
-		{
-			result += "- " + $3[i] + "\n";
-		}
-		result += fmMatch[3] + content.slice(fmMatch[0].length);
-	}
-}
-
-// Add an event callback to react to the next file-change by updating the file's view
-refreshPreviewOnNextModify(file);
-
-// Write the content changes back into the file
-await app.vault.modify(file, result);
+// If error with "notevars set", return that error
+if (!result[0]) { return result; }
 
 return expFormat(
-	"Note __" + $1 + "__, variable __" + $2 + "__ set to __" + $3 + "__.");
+	"Note __" + $1 + "__, variable __" + $2 + "__ set to array __\\[ " +
+	valueArray.join(", ") + " \\]__.");
 ```
 __
 notevars setArray {note name: path text} {array name: name text} {values: comma separated text} - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
