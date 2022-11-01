@@ -310,24 +310,36 @@ else
 	}
 }
 
-// Modify the variable in the frontmatter of the note
-await _inlineScripts.inlineScripts.HelperFncs.addToNote(toAdd.text, toAdd, file.path);
-
-// Update the file's reading view
+// Force the reading views to update (dataview isn't currently working for this)
 if (_inlineScripts.state.sessionState.notevars.isMarkdownRefreshed)
 {
 	const leaves = _inlineScripts.inlineScripts.HelperFncs.getLeavesForFile(file);
 	if (leaves.length)
 	{
-		setTimeout(() =>
+		const onChanged = (changedFile) =>
 		{
-			for (const leaf of leaves)
+			// If the changed file is the one we're monitoring
+			if (changedFile === file)
 			{
-				leaf.view.modes.preview.rerender(true)
+				// Stop monitoring for file changes
+				app.metadataCache.off("changed", onChanged);
+
+				// Force all views of the file to re-render on the next frame
+				setTimeout(() =>
+				{
+					for (const leaf of leaves)
+					{
+						leaf.view.modes.preview.rerender(true);
+					}
+				}, 100);
 			}
-		}, 1000);
+		}
+		app.metadataCache.on("changed", onChanged);
 	}
 }
+
+// Modify the variable in the frontmatter of the note
+await _inlineScripts.inlineScripts.HelperFncs.addToNote(toAdd.text, toAdd, file.path);
 
 return expFormat(
 	"Note __" + $1 + "__, variable __" + $2 + "__ set to __" + $3 + "__.");
