@@ -320,7 +320,7 @@ switch (_inlineScripts.state.sessionState.lists[$1].type)
 		for (let i = sublists.length-1; i >= 0; i--)
 		{
 			// Try adding
-			const result = expand("lists add " + subLists[i] + " " + $2);
+			const result = expand("lists add " + sublists[i] + " " + $2);
 			// if add was successful (signified by size 1), expand success message
 			if (result.length === 1)
 			{
@@ -379,10 +379,10 @@ switch (_inlineScripts.state.sessionState.lists[$1].type)
 	// combo type - iterate over sub-lists, running the replacement for each
 	case "combo":
 	{
-		const subLists = _inlineScripts.state.sessionState.lists[$1].content;
-		for (const subList of subLists)
+		const sublists = _inlineScripts.state.sessionState.lists[$1].content;
+		for (const subList of sublists)
 		{
-			expand("lists replace " + subList + " " + $2 + " " + $3);
+			expand("lists replace " + sublist + " " + $2 + " " + $3);
 		}
 		return expFormat(SUCCESS_MSG);
 	}
@@ -433,10 +433,10 @@ switch (_inlineScripts.state.sessionState.lists[$1].type)
 	// Combo type - Iterate over sub-items backwards, running remove until successful.
 	case "combo":
 	{
-		const subLists =  _inlineScripts.state.sessionState.lists[$1].content;
-		for (let i = subLists.length-1; i >= 0; i--)
+		const sublists =  _inlineScripts.state.sessionState.lists[$1].content;
+		for (let i = sublists.length-1; i >= 0; i--)
 		{
-			const result = expand("lists remove " + subLists[i] + " " + $2);
+			const result = expand("lists remove " + sublists[i] + " " + $2);
 			if (result.length === 1)
 			{
 				return expFormat([ SUCCESS_MSG ]);
@@ -487,7 +487,7 @@ __
 __
 ```js
 // Turn the sub-lists parameter into an array of (non-empty) names
-let subLists = $2.split(" ").filter(v => v);
+let sublists = $2.split(" ").filter(v => v);
 
 // Confirm the list name is available
 if (_inlineScripts.state.sessionState.lists[$1])
@@ -496,10 +496,10 @@ if (_inlineScripts.state.sessionState.lists[$1])
 }
 
 // Create the combo-list
-_inlineScripts.state.sessionState.lists[$1] = { type: "combo", content: subLists };
+_inlineScripts.state.sessionState.lists[$1] = { type: "combo", content: sublists };
 
 return expFormat(
-	"Combo-list __" + $1 + "__ added, linked to:\n. " + subLists.join("\n. "));
+	"Combo-list __" + $1 + "__ added, linked to:\n. " + sublists.join("\n. "));
 ```
 __
 lists addcombo {list name: name text} {sub-list: name text separated by spaces} - Creates a combo-list named {list name} that is linked to the lists given in {sub-list}.  A "combo-list" is a list who's items are all of the items of its linked sub-lists.
