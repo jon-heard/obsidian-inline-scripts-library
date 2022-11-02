@@ -69,6 +69,36 @@ async function rollTable(
 	tablePath, count, uniquePicks, format, useExpFormat, useConfig,
 	startOffset, itemFormat)
 {
+	// A wrapper for expFormat only formats if "useExpFormat" is true
+	function cndFormat(text)
+	{
+		return useExpFormat ? expFormat(text) : text;
+	}
+
+	// Remember whether the tablePath is a folder, then remove any tilde header
+	const isFolderTable = tablePath.startsWith("~folder~");
+	const baseTablePath = removeTildeHeader(tablePath);
+
+	// Get the file object for tablePath, or early out if it's invalid'
+	const file = app.vault.fileMap[baseTablePath];
+	if (!file)
+	{
+		return cndFormat(
+			[ "", "No table rolled.  Path __" + baseTablePath + "__ not found." ]);
+	}
+	if (file.children && !isFolderTable)
+	{
+		return cndFormat(
+			[ "", "No table rolled.  Path __" + baseTablePath +
+			"__ isn't a table file." ]);
+	}
+	if (!file.children && isFolderTable)
+	{
+		return cndFormat(
+			[ "", "No table rolled.  Path __" + baseTablePath +
+			"__ is not a folder." ]);
+	}
+
 	// If useConfig, set some of the parameters to the config saved for tablePath
 	if (useConfig)
 	{
@@ -82,42 +112,16 @@ async function rollTable(
 		itemFormat = configuration.itemFormat || "";
 	}
 
-	// Remember whether the tablePath is a folder, then remove any tilde header
-	const isFolderTable = tablePath.startsWith("~folder~");
-	const baseTablePath = removeTildeHeader(tablePath);
-
-	// Get the file object for tablePath, or early out if it doesn't exist
-	const file = app.vault.fileMap[baseTablePath];
-	if (!file)
-	{
-		return expFormat(
-			"No table rolled.  Path __" + baseTablePath + "__ not found.");
-	}
-
-	// If tablePath is NOT a folder, but points to a folder, early out
-	if (file.children && !isFolderTable)
-	{
-		return expFormat(
-			"No table rolled.  Path __" + baseTablePath + "__ is not a table file.");
-	}
-
-	// If tablepath IS a folder, but points to a non-folder, early out
-	if (!file.children && isFolderTable)
-	{
-		return expFormat(
-			"No table rolled.  Path __" + baseTablePath + "__ is not a folder.");
-	}
-
 	// If count parameter isn't valid, early out
 	if (!Number.isInteger(count) || count < 1)
 	{
-		return expFormat("No table rolled.  Invalid count given.");
+		return cndFormat([ "", "No table rolled.  Invalid count given." ]);
 	}
 
 	// If startOffset parameter isn't valid, early out
 	if (!Number.isInteger(startOffset) || startOffset < 0)
 	{
-		return expFormat("No table rolled.  Invalid startOffset given.");
+		return cndFormat([ "", "No table rolled.  Invalid startOffset given." ]);
 	}
 
 	// Convert itemFormat parameter to RegExp object.  If not valid, early out
@@ -127,7 +131,7 @@ async function rollTable(
 	}
 	catch (e)
 	{
-		return expFormat("No table rolled.  Invalid itemFormat given.");
+		return cndFormat([ "", "No table rolled.  Invalid itemFormat given." ]);
 	}
 
 	// Get the table items.  Early out if no items.
@@ -220,8 +224,12 @@ async function rollTable(
 		// If the item-specified table path is valid, re-pick from that table
 		if (app.vault.fileMap[nextEntryPath])
 		{
-			result[i] =
-				await rollTable(nextEntryPath, 1, false, format, false, true);
+			const replaceValue =
+				(await rollTable(nextEntryPath, 1, false, format, false, true));
+			if (replaceValue[i][0])
+			{
+				result[i] = replaceValue.join("");
+			}
 		}
 	}
 
@@ -239,13 +247,7 @@ async function rollTable(
 			break;
 	}
 
-	// If useExpansionFormat, then use the standard expansion format
-	if (useExpFormat)
-	{
-		result = expFormat(result);
-	}
-
-	return result;
+	return cndFormat([ result ]);
 }
 ```
 __
@@ -1139,15 +1141,15 @@ try
 }
 catch(e)
 {
-	return expFormat("No table rolled.  Unable to parse parameters.");
+	return expFormat([ "", "No table rolled.  Unable to parse parameters." ]);
 }
 
 // Load the "parameters" parameter over the default parameters object.  This provides
 // default parameters for anything that's not specified in the "parameters" parameter
 const defaultParameters =
 	{
-		count: 1, uniquePicks: false, format: "commas", isFolderTable: false,
-		useConfig: false, startOffset: 0, itemFormat: "", useExpansionFormat: false
+		count: 1, uniquePicks: false, format: "commas", useExpansionFormat: false,
+		isFolderTable: false, useConfig: false, startOffset: 0, itemFormat: ""
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
 
@@ -1162,15 +1164,15 @@ if (!$1.startsWith("~folder~") && parameters.isFolderTable)
 return await rollTable(
 	$1, parameters.count, parameters.uniquePicks, parameters.format,
 	parameters.useExpansionFormat, parameters.useConfig, parameters.startOffset,
-	parameters.itemFormat));
+	parameters.itemFormat);
 ```
 __
 tbl roll {table file: path text} {parameters: text, default: ""} - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
 	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
 	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
+	- __useExpansionFormat__ - If true, the result is outputted in the standard expansion format.
 	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
 	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
-	- __useExpansionFormat__ - If true, the result is outputted in the standard expansion format.
