@@ -77,10 +77,11 @@ async function rollTable(
 
 	// Remember whether the tablePath is a folder, then remove any tilde header
 	const isFolderTable = tablePath.startsWith("~folder~");
-	const baseTablePath = removeTildeHeader(tablePath);
+	let baseTablePath = removeTildeHeader(tablePath);
 
-	// Get the file object for tablePath, or early out if it's invalid'
-	const file = app.vault.fileMap[baseTablePath];
+	// Get the file object for tablePath, or early out if it's invalid
+	const file =
+		app.vault.fileMap[baseTablePath] || app.vault.fileMap[baseTablePath + ".md"];
 	if (!file)
 	{
 		return cndFormat(
@@ -98,6 +99,10 @@ async function rollTable(
 			[ "", "No table rolled.  Path __" + baseTablePath +
 			"__ is not a folder." ]);
 	}
+
+	// Reassign tablePath & baseTablePath from the file, in case ".md" was added
+	tablePath = (isFolderTable?  "~folder~" : "") + file.path;
+	baseTablePath = file.path;
 
 	// If useConfig, set some of the parameters to the config saved for tablePath
 	if (useConfig)
@@ -1036,7 +1041,7 @@ if (!file)
 	return expFormat("Path not added.  Path __" + $1 + "__ not found.");
 }
 
-// Add the path to the state
+// Add the path to the state. Use file.path instead of $1 in case the ".md" was added
 _inlineScripts.state.sessionState.tablefiles.paths[file.path] = 1;
 
 return expFormat(
