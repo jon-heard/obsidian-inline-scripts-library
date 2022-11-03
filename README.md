@@ -102,7 +102,7 @@ This shortcut-file has a tutorial video available:
 - __notevars get {note name: path text} {variable name: name text}__ - Expands to the value of variable {variable name} in note {note name}.  If {note name} is "." then it represents the current note.
 - __notevars getArray {note name: path text} {array name: name text} {index: >=0}__ - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
 - __notevars set {note name: path text} {variable name: name text} {value: text}__ - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
-- __notevars setArray {note name: path text} {array name: name text} {values: comma separated text}__ - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
+- __notevars setArray {note name: path text} {array name: name text} {values: text (comma separated)}__ - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
 
 ***
 
@@ -114,10 +114,10 @@ This shortcut-file has a tutorial video available:
 
 - __notepick reset__ - Clears all picks.
 ***
-- __notepick pickFromFolderAndGetPick {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames}__ - Combines the shortcuts "notepick pickFromFolder" and "notepick getPick".
-- __notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames}__ - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
+- __notepick pickFromFolderAndGetPick {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} {to ignore: text ( | separated filenames)}__ - Combines the shortcuts "notepick pickFromFolder" and "notepick getPick".
+- __notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} {to ignore: text ( | separated filenames)}__ - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
 ***
-- __notepick pickFromFolder {folder name: path text} {count: >0, default: 1} {pick id: name text, default: ""} {to ignore: | separated filenames}__ - Picks {count} random notes from folder {folder name} and remembers them as {pick id}.  Any files in {to ignore} are never picked.
+- __notepick pickFromFolder {folder name: path text} {count: >0, default: 1} {pick id: name text, default: ""} {to ignore: text ( | separated filenames)}__ - Picks {count} random notes from folder {folder name} and remembers them as {pick id}.  Any files in {to ignore} are never picked.
 - __notepick getPick {pick id: name text, default: ""}__ - Gets a list of the files last picked for {pick id}.
 - __notepick frontmatter {pick id: name text, default: ""}__ - Gets the frontmatter from the notes that are remembered in {pick id}.
 
@@ -136,7 +136,7 @@ Incompatible with __mythicgme.sfile__.  If __mythicgme.sfile__ comes before __my
 - __mythicv2 reset__ - Resets mythic state to defaults and displays scene heading.
 - __mythicv2 details {state: y OR n, default: ""}__ - If {state} is given, assigns it to the mythicv2 "details" mode.  Otherwise, displays the current "details" mode.
 ***
-- __fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y}__ - Makes a fate check based on {odds}.
+- __fate {odds: -4 TO 4 ("impossible" TO "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y}__ - Makes a fate check based on {odds}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 - __fate {odds: text, default: "50/50"} {wanted: y OR n, default: y}__ - Makes a fate check based on {odds}: a specific text such as "impossible", "sure thing", etc.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
@@ -173,7 +173,7 @@ Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __myth
 
 - __mythicgme reset__ - Resets mythic state to defaults and displays scene heading.
 ***
-- __fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")}__ - Makes a fate check based on {odds}.
+- __fate {odds: -4 TO 6 ("impossible" TO "has to be"), default: 0 ("50/50")}__ - Makes a fate check based on {odds}.
 - __fate {odds: text, default: "50/50"}__ - Makes a fate check based on {odds}: a specific text, such as "impossible", "sure thing", etc.
 - __scene get__ - Shows the current scene.
 - __scene {chaosAdjust: -1 OR 1}__ - Shifts the chaos value by {chaosAdjust}, then increments the current scene and runs a scene check.
@@ -192,7 +192,7 @@ Incompatible with __mythicv2.sfile__.  If __mythicv2.sfile__ comes before __myth
 Shortcuts for UNE: The Universal NPC Emulator.  UNE is an excellent character generation system for tabletop role playing and general storytelling.  It was designed by Zach Best. 
  You can find more info about UNE at its [drivethrurpg page](https://www.drivethrurpg.com/product/134163/UNE-The-Universal-NPC-Emulator-rev).
 
-- __une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship TO PC: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to PC} and {demeanor} are values for "une interact".
+- __une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship to PC: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to PC} and {demeanor} are values for "une interact".
 ***
 - __une character {randomness: 1 TO 5 (order to chaos), default: 3 (standard)}__ - Runs "identity", "power" and "motive" together.  {randomness} is a value for "power".
 - __une interact {relationship to PC: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random}__ - Runs "mood", "bearing" and "focus" together.  {relationship to PC} is a value for "mood".  {demeanor} is a value for "bearing".
@@ -266,10 +266,31 @@ This shortcut-file has a tutorial video available:
 	- Note that this does not randomize the new cards.  Call the "cards shuffle" shortcut to do that.
 ***
 - __cards list__ - Lists all card-piles.
-- __cards peek {count: >0 OR "all", default: 1} {pile id: name text, default: prior} {from the bottom: y OR n, default: prior OR n}__ - Displays the first {count} cards in the {pile id} card-pile, or ALL cards if {count} is "all".  If {from the bottom}, displays the LAST {count} cards instead.
+- __cards peek {count: >0, default: 1} {pile id: name text, default: prior} {from the bottom: y OR n, default: prior OR n}__ - Displays the first {count} cards in the {pile id} card-pile.  If {from the bottom}, displays the LAST {count} cards instead.
 ***
-- __cards draw {count: >0 OR "all", default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
+- __cards draw {count: >0, default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior}__ - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
+- __cards draw {details: text}__ - This version of "draw" lets you define the 3 parameters in your own order.
+  - __Parameters:__
+    - __source card-pile__ - prefix with the word "from".  If skipped, defaults to what it was on the prior draw.
+    - __destination card-pile__ - prefix with the word "into" or "to".  If skipped, defaults to what it was on the prior draw.
+    - __count__ - don't prefix with anything.  It'll be recognized as a number of 1 or more.  If skipped, defaults to 1.
+  - __Examples:__
+    - `;;cards draw 3 from deck into hand::`
+    - `;;cards draw to hand 5 from deck::`
+    - `;;cards draw into discard::`
+    - `;;cards draw 7 from deck::`
+    - `;;cards draw::`
 - __cards pick {destination pile id: name text, default: prior} {source pile id: name text, default: prior}__ - Has the user choose cards from the {source pile id} card-pile.  Moves the chosen cards into the {destination pile id} card-pile.
+- __cards pick {details: text}__ - This version of "pick" lets you define the 2 parameters in your own order.
+  - __Parameters:__
+    - __source card-pile__ - prefix with the word "from".  If skipped, defaults to what it was on the prior pick.
+    - __destination card-pile__ - prefix with the word "into" or "to".  If skipped, defaults to what it was on the prior pick.
+  - __Examples:__
+    - `;;cards pick from deck into hand::`
+    - `;;cards pick to hand from deck::`
+    - `;;cards pick into discard::`
+    - `;;cards pick from deck::`
+    - `;;cards pick::`
 ***
 - __cards shuffle {pile id: name text} {rotate: y OR n, default: n}__ - Randomizes the card order for the {pile id}.  If {rotate}, then card rotations are also randomized.
 	- Rotation typically means 0 or 180 degrees (right-side-up or up-side-down), but can also mean 90 or 270 degrees if the card is square.
@@ -287,8 +308,8 @@ This shortcut-file has a tutorial video available:
 Shortcut file to load tables from files and roll them.
 
 - __tbl reset__ - Clears registered table paths and table path configurations.
-- __tbl add {path: path string}__ - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
-- __tbl addfoldertable {path: path string}__ - Adds the folder {path} to the list of registered table paths as a folder-table.  A folder-table is a virtual table where each item is a file in the {path} folder.
+- __tbl add {path: path text}__ - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
+- __tbl addfoldertable {path: path text}__ - Adds the folder {path} to the list of registered table paths as a folder-table.  A folder-table is a virtual table where each item is a file in the {path} folder.
 - __tbl list__ - Get a list of the registered table paths.
 - __tbl roll__ - Get random results from one of the registered tables.  Shows a popup to allow selecting the table and how to get results from it.
 - __tbl roll {table file: path text} {parameters: text, default: ""}__ - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:

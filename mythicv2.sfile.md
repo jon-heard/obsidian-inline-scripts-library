@@ -254,7 +254,7 @@ return expFormat(
 	"Fate check (" + ODDS[$1 + 4] + "):\n" + result + evtText + getDetails());
 ```
 __
-fate {odds: -4 TO 4 ("impossible" to "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y} - Makes a fate check based on {odds}.
+fate {odds: -4 TO 4 ("impossible" TO "has to be"), default: 0 ("50/50")} {wanted: y OR n, default: y} - Makes a fate check based on {odds}.
 This fate check is also based on {wanted}: the desired outcome.  Used for the direction of the chaos modifier.
 
 

@@ -186,7 +186,7 @@ if (Math.trunc(r/10) == r % 10 &&
 return expFormat("Fate check (" + ODDS[$1+4] + "):\n" + result + eventOutput);
 ```
 __
-fate {odds: -4 TO 6 ("impossible" to "has to be"), default: 0 ("50/50")} - Makes a fate check based on {odds}.
+fate {odds: -4 TO 6 ("impossible" TO "has to be"), default: 0 ("50/50")} - Makes a fate check based on {odds}.
 
 
 __

@@ -369,4 +369,4 @@ return expFormat(
 	valueArray.join(", ") + " \\]__.");
 ```
 __
-notevars setArray {note name: path text} {array name: name text} {values: comma separated text} - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
+notevars setArray {note name: path text} {array name: name text} {values: text (comma separated)} - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.

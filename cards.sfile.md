@@ -726,7 +726,7 @@ cards list - Lists all card-piles.
 
 __
 ```
-^cards? peek ?([1-9][0-9]*|all|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
+^cards? peek ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?(y|n|)$
 ```
 __
 ```js
@@ -760,7 +760,7 @@ _inlineScripts.state.sessionState.cards.priorPeekIsBottom = $3;
 
 // Calculate actual values from the parameters
 const fromBottom = ($3 === "y");
-const count = ($1.toLowerCase() === "all") ? pile.cards.length : (Number($1) || 1);
+const count = Math.min(Number($1) || 1, pile.cards.length);
 
 // Create view of peeked cards
 let result = "";
@@ -775,16 +775,25 @@ return expFormat(
 	"__ card pile:\n" + result);
 ```
 __
-cards peek {count: >0 OR "all", default: 1} {pile id: name text, default: prior} {from the bottom: y OR n, default: prior OR n} - Displays the first {count} cards in the {pile id} card-pile, or ALL cards if {count} is "all".  If {from the bottom}, displays the LAST {count} cards instead.
+cards peek {count: >0, default: 1} {pile id: name text, default: prior} {from the bottom: y OR n, default: prior OR n} - Displays the first {count} cards in the {pile id} card-pile.  If {from the bottom}, displays the LAST {count} cards instead.
 ***
 
 
 __
 ```
-^cards? draw ?([1-9][0-9]*|all|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
+^cards? draw ?([1-9][0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|) ?([_a-zA-Z][_a-zA-Z0-9]*|)$
 ```
 __
 ```js
+// Check if we should be using the OTHER "cards draw" shortcut
+const $2Lowered = $2.toLowerCase();
+if ($2Lowered === "from" || $2Lowered === "into" || $2Lowered === "to" &&
+    !_inlineScripts.state.sessionState.cards.piles[$2])
+{
+	let otherWord = ($2Lowered === "from") ? "to" : "from";
+	return expand("cards draw " + $1 + " " + $2 + " " + $3 + " " + otherWord);
+}
+
 // Early out if source & destination piles not provided or recalled from prior draw.
 if (!$2 && !_inlineScripts.state.sessionState.cards.priorDrawDst)
 {
@@ -820,8 +829,7 @@ _inlineScripts.state.sessionState.cards.priorDrawDst = $2;
 _inlineScripts.state.sessionState.cards.priorDrawSrc = $3;
 
 // Calculate actual values from the parameters and settings
-const count =
-	($1.toLowerCase() === "all") ? srcPile.cards.length : (Number($1) || 1);
+const count = Math.min(Number($1) || 1, srcPile.cards.length);
 
 // Calculate whether to show the drawn cards in the expansion
 const showCards = (dstPile.showMoved && dstPile.isFaceUp);
@@ -856,7 +864,81 @@ onPileChanged($3);
 return expFormat(result);
 ```
 __
-cards draw {count: >0 OR "all", default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
+cards draw {count: >0, default: 1} {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Removes {count} cards from the {source pile id} card-pile and adds them to the {destination pile id} card-pile.
+
+
+__
+```
+^cards draw (.*)$
+```
+__
+```js
+// Split the details parameter into detail words to parse
+const detailWords = $1.split(" ").filter(v => v);
+
+// Setup the "from" and "to" to pull from the details
+let fromPileName = "";
+let toPileName = "";
+let count = "";
+
+// Track the expected next detail word's type based on the prior detail word
+let expectation = 0;
+
+// Iterate over all detail words
+for (const detailWord of detailWords)
+{
+	// Use the lowercase version of the word for case insensitivity
+	const detailWordLowered = detailWord.toLowerCase();
+
+	// Handle logic for the current detail word based on expectation
+	switch (expectation)
+	{
+		case 0:
+			if (detailWordLowered === "from")
+			{
+				expectation = 1;
+			}
+			else if (detailWordLowered === "into" ||
+			         detailWordLowered === "to")
+			{
+				expectation = 2;
+			}
+			else if (Number(detailWord) && Number(detailWord) > 0)
+			{
+				count = detailWord;
+			}
+			else
+			{
+				return expFormat(
+					[ "", "Cards not picked.  Expected 'from', 'into', 'to' or a " +
+					"positive number, but found __" + detailWord + "__." ]);
+			}
+			break;
+		case 1:
+			fromPileName = detailWord;
+			expectation = 0;
+			break;
+		case 2:
+			toPileName = detailWord;
+			expectation = 0;
+			break;
+	}
+}
+
+return expand("cards draw " + count + " " + toPileName + " " + fromPileName);
+```
+__
+cards draw {details: text} - This version of "draw" lets you define the 3 parameters in your own order.
+  - __Parameters:__
+    - __source card-pile__ - prefix with the word "from".  If skipped, defaults to what it was on the prior draw.
+    - __destination card-pile__ - prefix with the word "into" or "to".  If skipped, defaults to what it was on the prior draw.
+    - __count__ - don't prefix with anything.  It'll be recognized as a number of 1 or more.  If skipped, defaults to 1.
+  - __Examples:__
+    - `;;cards draw 3 from deck into hand::`
+    - `;;cards draw to hand 5 from deck::`
+    - `;;cards draw into discard::`
+    - `;;cards draw 7 from deck::`
+    - `;;cards draw::`
 
 
 __
@@ -865,6 +947,15 @@ __
 ```
 __
 ```js
+// Check if we should be using the OTHER "cards pick" shortcut
+const $1Lowered = $1.toLowerCase();
+if ($1Lowered === "from" || $1Lowered === "into" || $1Lowered === "to" &&
+    !_inlineScripts.state.sessionState.cards.piles[$1])
+{
+	let otherWord = ($1Lowered === "from") ? "to" : "from";
+	return expand("cards pick " + $1 + " " + $2 + " " + otherWord);
+}
+
 // Early out if source & destination piles not provided or recalled from prior pick.
 if (!$1 && !_inlineScripts.state.sessionState.cards.priorPickDst)
 {
@@ -900,7 +991,7 @@ _inlineScripts.state.sessionState.cards.priorPickSrc = $2;
 
 // Pick cards
 let picks = popups.custom(
-	"Pick cards from the <b>" + $2 + "</b> card-pile.",
+	"Pick cards to move from the <b>" + $2 + "</b> to the <b>" + $1 + "</b>.",
 	_inlineScripts.cards.cardPickerPopup, { pileId: $2 });
 if (!picks) { return; }
 
@@ -936,6 +1027,74 @@ return expFormat(result);
 ```
 __
 cards pick {destination pile id: name text, default: prior} {source pile id: name text, default: prior} - Has the user choose cards from the {source pile id} card-pile.  Moves the chosen cards into the {destination pile id} card-pile.
+
+
+__
+```
+^cards pick (.*)$
+```
+__
+```js
+// Split the details parameter into detail words to parse
+const detailWords = $1.split(" ").filter(v => v);
+
+// Setup the "from" and "to" to pull from the details
+let fromPileName = "";
+let toPileName = "";
+
+// Track the expected next detail word's type based on the prior detail word
+let expectation = 0;
+
+// Iterate over all detail words
+for (const detailWord of detailWords)
+{
+	// Use the lowercase version of the word for case insensitivity
+	const detailWordLowered = detailWord.toLowerCase();
+
+	// Handle logic for the current detail word based on expectation
+	switch (expectation)
+	{
+		case 0:
+			if (detailWordLowered === "from")
+			{
+				expectation = 1;
+			}
+			else if (detailWordLowered === "into" ||
+			         detailWordLowered === "to")
+			{
+				expectation = 2;
+			}
+			else
+			{
+				return expFormat(
+					[ "", "Cards not picked.  Expected 'from', 'into' or 'to', " +
+					"but found __" + detailWord + "__." ]);
+			}
+			break;
+		case 1:
+			fromPileName = detailWord;
+			expectation = 0;
+			break;
+		case 2:
+			toPileName = detailWord;
+			expectation = 0;
+			break;
+	}
+}
+
+return expand("cards pick " + toPileName + " " + fromPileName);
+```
+__
+cards pick {details: text} - This version of "pick" lets you define the 2 parameters in your own order.
+  - __Parameters:__
+    - __source card-pile__ - prefix with the word "from".  If skipped, defaults to what it was on the prior pick.
+    - __destination card-pile__ - prefix with the word "into" or "to".  If skipped, defaults to what it was on the prior pick.
+  - __Examples:__
+    - `;;cards pick from deck into hand::`
+    - `;;cards pick to hand from deck::`
+    - `;;cards pick into discard::`
+    - `;;cards pick from deck::`
+    - `;;cards pick::`
 ***
 
 

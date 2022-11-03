@@ -97,7 +97,7 @@ if (!result[0]) { return expFormat(result); }
 return expand("notepick getPick " + $3);
 ```
 __
-notepick pickFromFolderAndGetPick {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames} - Combines the shortcuts "notepick pickFromFolder" and "notepick getPick".
+notepick pickFromFolderAndGetPick {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} {to ignore: text ( | separated filenames)} - Combines the shortcuts "notepick pickFromFolder" and "notepick getPick".
 
 
 __
@@ -121,7 +121,7 @@ if (!result[0]) { return expFormat(result); }
 return result[1];
 ```
 __
-notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: text, default: ""} {to ignore: | separated filenames} - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
+notepick pickFromFolderAndGetFrontmatter {folder name: path text} {pick count: >0, default: 1} {pick id: name text, default: ""} {to ignore: text ( | separated filenames)} - Combines the shortcuts "notepick pickFromFolder" and "notepick frontmatter".
 ***
 
 
@@ -179,7 +179,7 @@ _inlineScripts.state.sessionState.notepick[$3] = pick;
 return expFormat([ $2 + " file(s) picked" + ($3 ? " for " + $3 : "") + "." ]);
 ```
 __
-notepick pickFromFolder {folder name: path text} {count: >0, default: 1} {pick id: name text, default: ""} {to ignore: | separated filenames} - Picks {count} random notes from folder {folder name} and remembers them as {pick id}.  Any files in {to ignore} are never picked.
+notepick pickFromFolder {folder name: path text} {count: >0, default: 1} {pick id: name text, default: ""} {to ignore: text ( | separated filenames)} - Picks {count} random notes from folder {folder name} and remembers them as {pick id}.  Any files in {to ignore} are never picked.
 
 
 __

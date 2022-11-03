@@ -53,7 +53,7 @@ return "" +
 	expFormat(expUnformat(expand("une interact " + $2 + " " +	$3)), true);
 ```
 __
-une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship TO PC: 1 to 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to PC} and {demeanor} are values for "une interact".
+une {randomness: 1 TO 5 (order to chaos), default: 3 (standard)} {relationship to PC: 1 TO 7 (love to hate), default: 4 (neutral)} {demeanor: 1 TO 8 (scheming to prejudiced), default: random} - Runs "une character" and "une interact" together.  {randomness} is a value for "une character".  {relationship to PC} and {demeanor} are values for "une interact".
 ***
 
 
