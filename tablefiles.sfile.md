@@ -1047,7 +1047,7 @@ return expFormat(
 	(file.children ? "Folder" : "File") + " __" + $1 + "__ added to table paths.");
 ```
 __
-tbl add {path: path string} - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
+tbl add {path: path text} - Adds {path} to the list of registered table paths.  {path} is either an individual table file, or a folder filled with table files.
 
 
 __
@@ -1072,7 +1072,7 @@ _inlineScripts.state.sessionState.tablefiles.paths["~folder~" + $1] = 1;
 return expFormat("Folder-table __" + $1 + "__ added to table paths.");
 ```
 __
-tbl addfoldertable {path: path string} - Adds the folder {path} to the list of registered table paths as a folder-table.  A folder-table is a virtual table where each item is a file in the {path} folder.
+tbl addfoldertable {path: path text} - Adds the folder {path} to the list of registered table paths as a folder-table.  A folder-table is a virtual table where each item is a file in the {path} folder.
 
 
 __
@@ -1176,6 +1176,65 @@ parameters = Object.assign({}, defaultParameters, parameters);
 if (!$1.startsWith("~folder~") && parameters.isfoldertable)
 {
 	$1 = "~folder~" + $1;
+}
+
+// Try the $1 as a path, else try as table title, else try as table file basename,
+// else early out
+// NOTE - This needs to happen this late for standardized folder-table knowledge
+let foundPath = false;
+if (!foundPath)
+{
+	const barePath = removeTildeHeader($1);
+	const file =
+		app.vault.fileMap[barePath] || app.vault.fileMap[[barePath + ".md"]];
+	if (file && !!file.children === barePath.startsWith("~folder~"))
+	{
+		foundPath = true;
+	}
+}
+if (!foundPath)
+{
+	for (const key in _inlineScripts.state.sessionState.tablefiles.configuration)
+	{
+		const configuration =
+			_inlineScripts.state.sessionState.tablefiles.configuration[key];
+		if (configuration.title === $1)
+		{
+			$1 = key;
+			foundPath = true;
+			break;
+		}
+	}
+}
+if (!foundPath)
+{
+	for (const path in _inlineScripts.state.sessionState.tablefiles.paths)
+	{
+		const file = app.vault.fileMap[path];
+		if (!file.children && file.basename === $1)
+		{
+			$1 = file.path;
+			foundPath = true;
+			break;
+		}
+		if (file.children)
+		{
+			for (const child of children)
+			{
+				if (child.basename === $1)
+				{
+					$1 = child.path;
+					foundPath = true;
+					break;
+				}
+			}
+		}
+	}
+}
+if (!foundPath)
+{
+	return expFormat(
+		[ "", "Table not rolled.  __" + $1 + "__ not recognized as a table." ]);
 }
 
 // Expand to the result of the table roll specified by the parameters.  Don't use
