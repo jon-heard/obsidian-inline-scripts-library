@@ -139,6 +139,11 @@ async function rollTable(
 		return cndFormat([ "", "No table rolled.  Invalid itemFormat given." ]);
 	}
 
+	// That's all the early-outs finished, record the roll for re-rolling purposes
+	_inlineScripts.tablefiles.priorRoll =
+		{ tablePath, count, uniquePicks, format, useExpFormat, useConfig,
+		startOffset, itemFormat };
+
 	// Get the table items.  Early out if no items.
 	let items = await getTableItems(tablePath, startOffset);
 	if (!items.length) { return null; }
@@ -280,7 +285,7 @@ confirmObjectPath(
 	});
 
 // Initialize session state
-confirmObjectPath("_inlineScripts.tablefiles.priorRoll");
+confirmObjectPath("_inlineScripts.tablefiles");
 
 // Custom CSS
 _inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
@@ -601,7 +606,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 				const label = path;
 				const value = path;
 				const isSelected =
-					(value === _inlineScripts.tablefiles.priorRoll.table);
+					(value === _inlineScripts.tablefiles.priorRoll?.tablePath);
 				selectUi.add(new Option(label, value, false, isSelected));
 			}
 			selectUi.setAttr("size", 10);
@@ -631,7 +636,8 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			uiRow[1].setAttr("placeholder", 1);
 			uiRow[1].style.width = "3em";
 			uiRow[1].setAttr("maxlength", 4);
-			uiRow[1].value = _inlineScripts.tablefiles.priorRoll.count || "";
+			uiRow[1].value = _inlineScripts.tablefiles.priorRoll?.count || "";
+			if (uiRow[1].value == 1) { uiRow[1].value = ""; }
 			uiRow[1].addEventListener("keypress", e =>
 			{
 				if (e.key === "Enter") { firstButton.click(); }
@@ -653,7 +659,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			uiRow[3].options[1] = new Option("Bulleted list", "bullets");
 			uiRow[3].options[2] = new Option("Perioded list", "periods");
 			uiRow[3].value =
-				_inlineScripts.tablefiles.priorRoll.format || "commas";
+				_inlineScripts.tablefiles.priorRoll?.format || "commas";
 			uiRow[3].addEventListener("keypress", e =>
 			{
 				if (e.key === "Enter") { firstButton.click(); }
@@ -673,7 +679,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			data.uniqueUi = uiRow[1];
 			uiRow[1].classList.add("checkbox-container");
 			uiRow[1].toggleClass(
-				"is-enabled", _inlineScripts.tablefiles.priorRoll.unique);
+				"is-enabled", _inlineScripts.tablefiles.priorRoll?.uniquePicks);
 			uiRow[1].addEventListener("click", e =>
 			{
 				e.target.classList.toggle("is-enabled");
@@ -687,7 +693,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			data.useExpFormatUi = uiRow[4];
 			uiRow[4].classList.add("checkbox-container");
 			uiRow[4].toggleClass(
-				"is-enabled", _inlineScripts.tablefiles.priorRoll.useExpFormat);
+				"is-enabled", _inlineScripts.tablefiles.priorRoll?.useExpFormat);
 			uiRow[4].addEventListener("click", e =>
 			{
 				e.target.classList.toggle("is-enabled");
@@ -970,13 +976,6 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 		const format = data.formatUi.value;
 		const useExpFormat = data.useExpFormatUi.classList.contains("is-enabled");
 
-		// Record parameters for the next roll
-		_inlineScripts.tablefiles.priorRoll.table = path;
-		_inlineScripts.tablefiles.priorRoll.count = count === 1 ? "" : count;
-		_inlineScripts.tablefiles.priorRoll.format = format;
-		_inlineScripts.tablefiles.priorRoll.unique = unique;
-		_inlineScripts.tablefiles.priorRoll.useExpFormat = useExpFormat;
-
 		// Do the roll
 		resolveFnc(await rollTable(
 			path, count, unique, format, useExpFormat, true));
@@ -1137,6 +1136,12 @@ __
 // Remove any quotes around the table file parameter
 $1 = $1.replaceAll(/^\"|\"$/g, "");
 
+// Make parameters case-insensitive
+$2 = $2.toLowerCase();
+
+// Allow format values without quotes (by adding missing quotes here)
+$2 = $2.replace(/format:\s*([^,]+)/, "format: \"$1\"");
+
 // The "parameters" parameter is basically an object definition without the curlys.
 // Load it as an object.  Early out on failure.
 let parameters;
@@ -1149,17 +1154,26 @@ catch(e)
 	return expFormat([ "", "No table rolled.  Unable to parse parameters." ]);
 }
 
+// The official formats are "commas", "bullets" and "periods".  Alow "comma", "bullet" and "period", as well as untrimmed versions.
+if (parameters.format)
+{
+	parameters.format = parameters.format.trim();
+	if (parameters.format === "comma") { parameters.format = "commas"; }
+	if (parameters.format === "bullet") { parameters.format = "bullets"; }
+	if (parameters.format === "period") { parameters.format = "periods"; }
+}
+
 // Load the "parameters" parameter over the default parameters object.  This provides
 // default parameters for anything that's not specified in the "parameters" parameter
 const defaultParameters =
 	{
-		count: 1, uniquePicks: false, format: "commas", useExpansionFormat: false,
-		isFolderTable: false, useConfig: false, startOffset: 0, itemFormat: ""
+		count: 1, uniquepicks: false, format: "commas", useexpansionformat: false,
+		isfoldertable: false, useconfig: false, startoffset: 0, itemformat: ""
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
 
 // Take the "isFolderTable" parameter and change the table path to match
-if (!$1.startsWith("~folder~") && parameters.isFolderTable)
+if (!$1.startsWith("~folder~") && parameters.isfoldertable)
 {
 	$1 = "~folder~" + $1;
 }
@@ -1167,9 +1181,9 @@ if (!$1.startsWith("~folder~") && parameters.isFolderTable)
 // Expand to the result of the table roll specified by the parameters.  Don't use
 // expFormat() since this could very well be used inline.
 return await rollTable(
-	$1, parameters.count, parameters.uniquePicks, parameters.format,
-	parameters.useExpansionFormat, parameters.useConfig, parameters.startOffset,
-	parameters.itemFormat);
+	$1, parameters.count, parameters.uniquepicks, parameters.format,
+	parameters.useexpansionformat, parameters.useconfig, parameters.startoffset,
+	parameters.itemformat);
 ```
 __
 tbl roll {table file: path text} {parameters: text, default: ""} - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
@@ -1181,3 +1195,29 @@ tbl roll {table file: path text} {parameters: text, default: ""} - Get random re
 	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
+
+
+__
+```
+^tbl reroll$
+```
+__
+```js
+// Get the prior roll parameters
+// priorRoll = { tablePath, count, uniquePicks, format, useExpFormat, useConfig,
+// startOffset, itemFormat };
+const p = _inlineScripts.tablefiles.priorRoll;
+
+// If there wasn't a prior roll, early out
+if (!p)
+{
+	return expFormat([ "", "Table not re-rolled.  No prior roll to re-roll." ]);
+}
+
+// Run a new roll with the priorRoll values
+return await rollTable(
+	p.tablePath, p.count, p.uniquePicks, p.format, p.useExpFormat, p.useConfig,
+	p.startOffset, p.itemFormat);
+```
+__
+tbl reroll - Re-rolls the last _successful_ table roll.
