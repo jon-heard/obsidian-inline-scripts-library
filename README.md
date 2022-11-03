@@ -37,6 +37,7 @@ To use an indiviual shortcut-file from this library in your Obsidian vault, you 
 - [cards_pileviewer.sfile](#cards_pileviewersfile)
 - [cards_ui.sfile](#cards_uisfile)
 - [clips_ui.sfile](#clips_uisfile)
+- [system.sfile](#systemsfile)
 
 
 ***
@@ -294,11 +295,12 @@ Shortcut file to load tables from files and roll them.
 	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
 	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
+	- __useExpansionFormat__ - If true, the result is outputted in the standard expansion format.
 	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
 	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
-	- __useExpressionFormat__ - If true, the result is outputted in the standard expression format.
+- __tbl reroll__ - Re-rolls the last _successful_ table roll.
 
 ***
 
@@ -493,5 +495,14 @@ An extension to __clips.sfile__ that provides graphical ui versions of shortcuts
 	- Alternative: __ui cg__
 - __ui clips expansion__ - User enters a clip name.  The prior expansion's text is then assigned to the clip name.
 - __ui clips remove__ - User chooses a clip, which is then removed.
+
+***
+
+### system.sfile
+Shortcuts to work with the system: Obsidian, JS, InlineScripts backend, etc.
+
+- __sys lasterror__ - Expands to the last expansion error that was posted to the console.  This does not include errors that were created by a shortcut, only those created by __Inline Scripts__ itself, i.e. those the trigger the message: `ERROR: Shortcut expansion issues. (see console for details)`.
+- __sys runjs {code: text}__ - Run the javascript in {code}.  Can run multiple statements separated with newline characters (`\n`).
+- __sys triggererror__ - Create an expansion error.  Useful for testing the `sys lasterror` shortcut.
 
 ***
