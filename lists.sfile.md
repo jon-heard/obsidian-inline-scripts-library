@@ -380,7 +380,7 @@ switch (_inlineScripts.state.sessionState.lists[$1].type)
 	case "combo":
 	{
 		const sublists = _inlineScripts.state.sessionState.lists[$1].content;
-		for (const subList of sublists)
+		for (const sublist of sublists)
 		{
 			expand("lists replace " + sublist + " " + $2 + " " + $3);
 		}
