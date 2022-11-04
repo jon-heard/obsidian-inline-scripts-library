@@ -7,6 +7,9 @@ This shortcut-file has a tutorial video available:
 __
 __
 ```js
+// The heading for a folder-table
+const HEADING_FTABLE = "~folder~";
+
 // Make a roll from 1 to max.
 function roll(max) { return Math.trunc(Math.random() * max + 1); }
 
@@ -32,11 +35,89 @@ function removeTildeHeader(path)
 	return path.match("^(?:~.*~)?(.*)")[1];
 }
 
+function getTableFilesFromPath(path)
+{
+	// Get the file object for the given path, early out if not available
+	const file = app.vault.fileMap[removeTildeHeader(path)];
+	if (!file) { return null; }
+
+	// Folder-tables MUST be folders and are just themselves
+	if (path.startsWith(HEADING_FTABLE))
+	{
+		if (!file.children) { return null; }
+		return [ file ];
+	}
+
+	// Path isn't a folder-table.  If path is a file, just return itself
+	if(!file.children)
+	{
+		return [ file ];
+	}
+
+	// Path is a folder.  Gather all the child files recursively.
+	result = [];
+	toRecurse = [ file ];
+	// Keep going while we have folders left to pull files from
+	while (toRecurse.length)
+	{
+		// Remove one of the folders in "toRecurse" to iterate over it
+		const beingRecursed = toRecurse.pop();
+
+		// Go over the children for the folder
+		for (const child of beingRecursed.children)
+		{
+			// If a file, just add it to the result list
+			if (!child.children)
+			{
+				result.push(child);
+			}
+
+			// If a folder, add it to the "toRecurse" list to go over it later
+			else
+			{
+				toRecurse.push(child);
+			}
+		}
+	}
+
+	return result;
+}
+
+function getAllTableFiles()
+{
+	let result = [];
+
+	// Get the stored paths of tables, folders, folder-tables
+	const rawPaths = _inlineScripts.state.sessionState.tablefiles.paths;
+
+	// Iterate over the paths to get just the table paths
+	for (const path in rawPaths)
+	{
+		// Get all files associated with the current path
+		const tableFilesFromPath = getTableFilesFromPath(path);
+
+		// If path had no files, skip it
+		if (!tableFilesFromPath) { continue; }
+
+		// Add all files to the tablePaths (as their paths)
+		if (path.startsWith(HEADING_FTABLE))
+		{
+			result.push(HEADING_FTABLE + tableFilesFromPath[0]);
+		}
+		else
+		{
+			result = result.concat(tableFilesFromPath);
+		}
+	}
+
+	return result;
+}
+
 // Get the items associated with a table path and offset
 async function getTableItems(path, offset)
 {
 	// If the path is a file, the items are the lines in the file
-	if (!path.startsWith("~folder~"))
+	if (!path.startsWith(HEADING_FTABLE))
 	{
 		// Get the file object, or return an empty array if none
 		const file = app.vault.fileMap[path];
@@ -76,7 +157,7 @@ async function rollTable(
 	}
 
 	// Remember whether the tablePath is a folder, then remove any tilde header
-	const isFolderTable = tablePath.startsWith("~folder~");
+	const isFolderTable = tablePath.startsWith(HEADING_FTABLE);
 	let baseTablePath = removeTildeHeader(tablePath);
 
 	// Get the file object for tablePath, or early out if it's invalid
@@ -101,7 +182,7 @@ async function rollTable(
 	}
 
 	// Reassign tablePath & baseTablePath from the file, in case ".md" was added
-	tablePath = (isFolderTable?  "~folder~" : "") + file.path;
+	tablePath = (isFolderTable?  HEADING_FTABLE : "") + file.path;
 	baseTablePath = file.path;
 
 	// If useConfig, set some of the parameters to the config saved for tablePath
@@ -144,7 +225,7 @@ async function rollTable(
 		{ tablePath, count, uniquePicks, format, useExpFormat, useConfig,
 		startOffset, itemFormat };
 
-	// Get the table items.  Early out if no items.
+	// Get table items. No items? return null (this is valid response, not early out)
 	let items = await getTableItems(tablePath, startOffset);
 	if (!items.length) { return null; }
 
@@ -347,7 +428,7 @@ async function updateTableConfig(data)
 	data.configUi.startLine.value = tblLines[0] || "";
 
 	// Determine if the table is a files-table
-	const isFolderTable = data.selectUi.value.startsWith("~folder~");
+	const isFolderTable = data.selectUi.value.startsWith(HEADING_FTABLE);
 
 	// Update the ui - startLine button enable-state, itemFormat
 	data.configUi.startLineUp.toggleClass(
@@ -407,7 +488,7 @@ function refreshTableListUi(data)
 			tableItemDatum.title = file?.basename || file?.name || "<Undefined>";
 
 			// If this is a folder table, include that in the title
-			if (tableItemDatum.path.startsWith("~folder~"))
+			if (tableItemDatum.path.startsWith(HEADING_FTABLE))
 			{
 				tableItemDatum.title += " (folder table)";
 			}
@@ -574,25 +655,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 		//////////////////////////
 		// Row 2 of UI (select) //
 		//////////////////////////
-		let tablePaths = [];
-		const rawPaths = _inlineScripts.state.sessionState.tablefiles.paths;
-		for (const path in rawPaths)
-		{
-			const file = app.vault.fileMap[removeTildeHeader(path)];
-			if (!file) { continue; }
-			if (!file.children || path.startsWith("~folder~"))
-			{
-				tablePaths.push(path);
-			}
-			else
-			{
-				for (const child of file.children)
-				{
-					if (child.children) { continue; }
-					tablePaths.push(child.path);
-				}
-			}
-		}
+		let tablePaths = getAllTableFiles().map(v => v.path);;
 		if (tablePaths.length === 0)
 		{
 			resolveFnc("No table rolled.  No tables available.\n\n");
@@ -1067,7 +1130,7 @@ if (!file || !file.children)
 }
 
 // Add the path to the table paths as a folder-table
-_inlineScripts.state.sessionState.tablefiles.paths["~folder~" + $1] = 1;
+_inlineScripts.state.sessionState.tablefiles.paths[HEADING_FTABLE + $1] = 1;
 
 return expFormat("Folder-table __" + $1 + "__ added to table paths.");
 ```
@@ -1097,7 +1160,7 @@ for (const path of paths)
 	// Normal paths are just added.  Folder-table paths are added with the tilde-
 	// header removed and a "folder table" suffix added.
 	result.push(
-		!path.startsWith("~folder~") ?
+		!path.startsWith(HEADING_FTABLE) ?
 		path :
 		removeTildeHeader(path) + " _(folder table)_");
 }
@@ -1173,9 +1236,9 @@ const defaultParameters =
 parameters = Object.assign({}, defaultParameters, parameters);
 
 // Take the "isFolderTable" parameter and change the table path to match
-if (!$1.startsWith("~folder~") && parameters.isfoldertable)
+if (!$1.startsWith(HEADING_FTABLE) && parameters.isfoldertable)
 {
-	$1 = "~folder~" + $1;
+	$1 = HEADING_FTABLE + $1;
 }
 
 // Try the $1 as a path, else try as table title, else try as table file basename,
@@ -1187,7 +1250,7 @@ if (!foundPath)
 	const barePath = removeTildeHeader($1);
 	const file =
 		app.vault.fileMap[barePath] || app.vault.fileMap[[barePath + ".md"]];
-	if (file && !!file.children === barePath.startsWith("~folder~"))
+	if (file && !!file.children === barePath.startsWith(HEADING_FTABLE))
 	{
 		foundPath = true;
 	}
@@ -1198,7 +1261,7 @@ if (!foundPath)
 	{
 		const configuration =
 			_inlineScripts.state.sessionState.tablefiles.configuration[key];
-		if (configuration.title === $1)
+		if ($1.toLowerCase() === configuration.title.toLowerCase())
 		{
 			$1 = key;
 			foundPath = true;
@@ -1208,26 +1271,14 @@ if (!foundPath)
 }
 if (!foundPath)
 {
-	for (const path in _inlineScripts.state.sessionState.tablefiles.paths)
+	const tableFiles = getAllTableFiles();
+	for (const tableFile of tableFiles)
 	{
-		const file = app.vault.fileMap[path];
-		if (!file.children && file.basename === $1)
+		if ($1.toLowerCase() === tableFile.basename.toLowerCase())
 		{
-			$1 = file.path;
+			$1 = tableFile.path;
 			foundPath = true;
 			break;
-		}
-		if (file.children)
-		{
-			for (const child of children)
-			{
-				if (child.basename === $1)
-				{
-					$1 = child.path;
-					foundPath = true;
-					break;
-				}
-			}
 		}
 	}
 }
