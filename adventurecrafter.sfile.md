@@ -389,12 +389,14 @@ let result = [];
 do
 {
 	// Roll the next theme.  If there's an error, early out
-	const result = expUnformat(expand("themes roll"));
-	if (!result[0])
+	const rollResult = expUnformat(expand("themes roll"));
+	if (!rollResult[0])
 	{
-		return expFormat("Themes not filled.  Theme roll error: " + result.join(""));
+		result = result.join("\n");
+		if (result) { result += "\n\n"; }
+		return expFormat(result + rollResult.join(""));
 	}
-	result.push([1]);
+	result.push(rollResult.join(""));
 }
 while (_inlineScripts.state.sessionState.adventurecrafter.themeSlots.length < 5);
 
