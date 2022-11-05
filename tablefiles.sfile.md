@@ -1231,7 +1231,7 @@ if (parameters.format)
 const defaultParameters =
 	{
 		count: 1, uniquepicks: false, format: "commas", useexpansionformat: false,
-		isfoldertable: false, useconfig: false, startoffset: 0, itemformat: ""
+		isfoldertable: false, useconfig: true, startoffset: 0, itemformat: ""
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
 
@@ -1302,7 +1302,7 @@ tbl roll {table file: path text} {parameters: text, default: ""} - Get random re
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
 	- __useExpansionFormat__ - "true" or "false", defaulting to "false".  If true, the result is outputted in the standard expansion format.
 	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
-	- __useConfig__ - "true" or "false", defaulting to "false".  If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
+	- __useConfig__ - "true" or "false", defaulting to "true".  If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
 
