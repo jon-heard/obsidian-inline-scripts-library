@@ -1300,9 +1300,9 @@ tbl roll {table file: path text} {parameters: text, default: ""} - Get random re
 	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
 	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
-	- __useExpansionFormat__ - If true, the result is outputted in the standard expansion format.
+	- __useExpansionFormat__ - "true" or "false", defaulting to "false".  If true, the result is outputted in the standard expansion format.
 	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
-	- __useConfig__ - If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
+	- __useConfig__ - "true" or "false", defaulting to "false".  If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
 	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
 
