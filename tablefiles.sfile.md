@@ -1261,7 +1261,7 @@ if (!foundPath)
 	{
 		const configuration =
 			_inlineScripts.state.sessionState.tablefiles.configuration[key];
-		if ($1.toLowerCase() === configuration.title.toLowerCase())
+		if ($1.toLowerCase() === configuration.title?.toLowerCase())
 		{
 			$1 = key;
 			foundPath = true;
