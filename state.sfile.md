@@ -129,12 +129,16 @@ if (!_inlineScripts.state.sessionState || stateFileHasBeenSet)
 		// Get the raw content
 		const stateString =
 			await app.vault.adapter.read(_inlineScripts.state.stateFile.path);
-		// Parse the content
-		const state = JSON.parse(stateString);
-		// Assign parsed content to the state
-		_inlineScripts.state.sessionState = state;
+
+		// Parse the content into the state
+		_inlineScripts.state.sessionState = JSON.parse(stateString);
+
 		// Assign raw content to the "priorString" to recognize when state has changed
 		_inlineScripts.state.stateFile.priorString = stateString;
+
+		// Call event callbacks for the state.onLoad event
+		_inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
+			"state.onLoad", _inlineScripts.state.listeners.onLoad);
 	}
 	catch (e)
 	{
@@ -280,14 +284,14 @@ try
 catch (e)
 {
 	// Notify the user of the failure to parse
-	return expFormat("State not loaded. Invalid state:\n" + $1);
+	return expFormat([ "", "State not loaded. Invalid state:\n" + $1 ]);
 }
 
 // Call event callbacks for the state.onLoad event
 _inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
 	"state.onLoad", _inlineScripts.state.listeners.onLoad);
 
-return expFormat("State set.");
+return expFormat([ State set." ]);
 ```
 __
 state set {state: text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.

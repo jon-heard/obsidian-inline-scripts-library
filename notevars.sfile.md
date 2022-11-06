@@ -177,7 +177,7 @@ if (!cache)
 {
 	return expFormat(
 		[ "", "No value.  Note __" + $1 + "__ is not properly cached by " +
-		"Obsidian.\n\n" ]);
+		"Obsidian." ]);
 }
 
 // Get the front-matter object

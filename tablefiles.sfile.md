@@ -113,8 +113,8 @@ function getAllTableFiles()
 	return result;
 }
 
-// Get the items associated with a table path and offset
-async function getTableItems(path, offset)
+// Get the tablepath data - the lines and the frontmatter configuration (if there)
+async function getTableFileContent(path)
 {
 	// If the path is a file, the items are the lines in the file
 	if (!path.startsWith(HEADING_FTABLE))
@@ -123,11 +123,47 @@ async function getTableItems(path, offset)
 		const file = app.vault.fileMap[path];
 		if (!file) { return []; }
 
-		// Read the file's contents
-		const content = await app.vault.cachedRead(file);
+		// Read the file's contents, split into non-empty lines
+		let rawContent = await app.vault.cachedRead(file);
+		let content = (await app.vault.cachedRead(file)).split("\n").filter(v => v);
 
-		// Return the file's lines, skipping the first "offset" lines
-		return content.split("\n").slice(offset || 0).filter(v => v);
+		// Frontmatter
+		let configuration = null;
+		const REGEX_FRONT_MATTER_VARIABLE =
+			/^(title|description|tags|startLine|itemFormat)\s*:\s*(.*)$/i;
+		if (content[0] === "---")
+		{
+			// There's a frontmatter, so there's a frontmatter-configuration.
+			// Start with defaults, then add from any variables
+			configuration =
+				{ title: "", description: "", tags: "", startLine: 0,
+				itemFormat: "" };
+
+			// Go over each line of the frontmatter
+			for (let i = 1; i < content.length; i++)
+			{
+				// Handle any configuration variables in the frontmatter
+				const varMatch = content[i].match(REGEX_FRONT_MATTER_VARIABLE);
+				if (varMatch)
+				{
+					configuration[varMatch[1]] = varMatch[2];
+				}
+
+				// Once we hit the end of the frontmatter, cut it from the content
+				if (content[i] === "---")
+				{
+					content = content.slice(i+1);
+					break;
+				}
+			}
+
+			// Make sure the startLine is the right format
+			configuration.startLine =
+				Math.max(0, Math.trunc(  Number(configuration.startLine) || 0  ));
+		}
+
+		// Return the file's lines, skipping the first "startLine" lines
+		return { lines: content, configuration };
 	}
 	// If the path is a folder, the items are the files in the folder
 	else
@@ -140,7 +176,8 @@ async function getTableItems(path, offset)
 		}
 
 		// Return the folder's child files/folders as links
-		return file.children.map(v => "[[" + v.path + "|" + v.basename + "]]");
+		return {
+			lines: file.children.map(v => "[[" + v.path + "|" + v.basename + "]]") };
 	}
 }
 
@@ -148,7 +185,7 @@ async function getTableItems(path, offset)
 // The is the MAIN function of the tablefiles system.  Each table roll happens here.
 async function rollTable(
 	tablePath, count, uniquePicks, format, useExpFormat, useConfig,
-	startOffset, itemFormat)
+	startLine, itemFormat)
 {
 	// A wrapper for expFormat only formats if "useExpFormat" is true
 	function cndFormat(text)
@@ -185,30 +222,40 @@ async function rollTable(
 	tablePath = (isFolderTable?  HEADING_FTABLE : "") + file.path;
 	baseTablePath = file.path;
 
-	// If useConfig, set some of the parameters to the config saved for tablePath
-	if (useConfig)
-	{
-		// Get the config for tablePath
-		const configuration =
-			_inlineScripts.state.sessionState.tablefiles.configuration[tablePath] ||
-			{};
-
-		// Set the parameters from the config (or use defaults, if undefined in it)
-		startOffset = configuration.offset || 0;
-		itemFormat = configuration.itemFormat || "";
-	}
-
 	// If count parameter isn't valid, early out
 	if (!Number.isInteger(count) || count < 1)
 	{
 		return cndFormat([ "", "No table rolled.  Invalid count given." ]);
 	}
 
-	// If startOffset parameter isn't valid, early out
-	if (!Number.isInteger(startOffset) || startOffset < 0)
+	// Get table items. No items? return null
+	const content = await getTableFileContent(tablePath, startLine);
+	let lines = content?.lines;
+	let config = content.configuration;
+	if (!lines?.length) { return null; }
+
+	// If useConfig, set some of the parameters to the config saved for tablePath
+	if (useConfig)
 	{
-		return cndFormat([ "", "No table rolled.  Invalid startOffset given." ]);
+		// If no frontmatter configuration, pull one from the settings, if possible
+		if (!config)
+		{
+			config =
+				_inlineScripts.state.sessionState.tablefiles.
+				configuration[tablePath] || {};
+		}
+		// Set the parameters from the config (or use defaults, if undefined)
+		startLine = config.startLine || 0;
+		itemFormat = config.itemFormat || "";
 	}
+	// If startLine parameter isn't valid, early out
+	if (!Number.isInteger(startLine) || startLine < 0)
+	{
+		return cndFormat([ "", "No table rolled.  Invalid startLine given." ]);
+	}
+
+	// Use start line now
+	lines = lines.slice(startLine);
 
 	// Convert itemFormat parameter to RegExp object.  If not valid, early out
 	try
@@ -217,67 +264,62 @@ async function rollTable(
 	}
 	catch (e)
 	{
-		return cndFormat([ "", "No table rolled.  Invalid itemFormat given." ]);
+		return cndFormat(
+			[ "", "No table rolled.  Invalid itemFormat given: __" + itemFormat +
+			"__." ]);
 	}
 
 	// That's all the early-outs finished, record the roll for re-rolling purposes
 	_inlineScripts.tablefiles.priorRoll =
 		{ tablePath, count, uniquePicks, format, useExpFormat, useConfig,
-		startOffset, itemFormat };
+		startLine, itemFormat };
 
-	// Get table items. No items? return null (this is valid response, not early out)
-	let items = await getTableItems(tablePath, startOffset);
-	if (!items.length) { return null; }
-
-	// Use itemFormat parameter to break the item up into the printed-item and range
-	let itemsHaveRange = false;
-	for (let i = 0; i < items.length; i++)
+	// Use itemFormat parameter to break the lines up into the item and range
+	let linesHaveRange = false;
+	for (let i = 0; i < lines.length; i++)
 	{
-		let match = items[i].match(itemFormat);
-		items[i] =
-		[
-			match?.groups?.item || match?.[1] || items[i],
-			match?.groups?.range || match?.[2] || null
-		];
-		if (items[i][1])
+		let match = lines[i].match(itemFormat);
+		lines[i] =
 		{
-			itemsHaveRange = true;
+			item: match?.groups?.item || match?.[1] || lines[i],
+			range: match?.groups?.range || match?.[2] || null
+		};
+		if (lines[i].range)
+		{
+			linesHaveRange = true;
 		}
 	}
 
-	// If items come with a range, remove any un-ranged, then sort them by range
-	if (itemsHaveRange)
+	// If lines include a range, remove any un-ranged, then sort them by range
+	if (linesHaveRange)
 	{
-		items.filter(v => v[1]);
-		items.sort((lhs, rhs) =>
-		{
-			lhs[1] - rhs[1];
-		});
+		lines.filter(v => v.range);
+		lines.sort((lhs, rhs) => { lhs.range - rhs.range; });
 	}
 
-	// If items do NOT come with a range, setup a consecutive, incrementing range
+	// If items do NOT come with a range, add a consecutive, incrementing range
 	else
 	{
-		for (let i = 0; i < items.length; i++)
+		for (let i = 0; i < lines.length; i++)
 		{
-			items[i][1] = (i+1);
+			lines[i].range = (i+1);
 		}
 	}
 
-	// If uniquePicks parameter, ceiling the count by the item count
-	count = (uniquePicks && count >= items.length) ? items.length : count;
+	// If uniquePicks parameter, ceiling the count by the lines count
+	count = (uniquePicks && count >= lines.length) ? lines.length : count;
 
-	// Pick "count" items.  If uniquePicks parameter, make sure each pick is unique.
+	// Pick "count" lines.  If uniquePicks parameter, make sure each pick is unique.
 	let result = [];
 	for (let i = 0; i < count; i++)
 	{
 		let nextEntry;
 		do
 		{
-			nextEntry = aPickWeight(items);
+			nextEntry = aPickWeight(lines, "range");
 		}
-		while(uniquePicks && result.includes(nextEntry[0]));
-		result.push(nextEntry[0]);
+		while(uniquePicks && result.includes(nextEntry.item));
+		result.push(nextEntry.item);
 	}
 
 	// If any items are "pick-and-replace", re-pick from the item-specified table
@@ -371,6 +413,16 @@ confirmObjectPath("_inlineScripts.tablefiles");
 // Custom CSS
 _inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
 
+// Convert from the old syntax
+for (const key in _inlineScripts.state.sessionState.tablefiles.configuration)
+{
+	let config = _inlineScripts.state.sessionState.tablefiles.configuration[key];
+	if (config.offset !== undefined)
+	{
+		config.startLine = config.offset;
+		delete config.offset;
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -398,46 +450,44 @@ function makeUiRow(elements)
 	return tbl;
 }
 
-// Helper function - Wrapper for getTableItems to use the CURRENTLY selected table
-async function getCurrentTableItems(data, offset)
+// The table configuration can come from the table-file's frontmatter or from user
+// entering settings.  Get the appropriate one for the given table-file path
+function getTableConfiguration(data, path)
 {
-	// If offset is undefined use current table's offset. If that is undefined, use 0
-	offset = offset ?? data.current.configuration?.offset ?? 0;
-
-	return getTableItems(data.current.path, offset);
+	return data.fmConfigurations[path] || 
+		_inlineScripts.state.sessionState.tablefiles.
+		configuration[path];
 }
 
 // Helper function - Called each time a different table is selected from the list.
 // Updates the ui and data to match the selected table.
 async function updateTableConfig(data)
 {
-	// Set the current table path and configuration
+	// Set the current table path and table lines
 	data.current = {};
 	data.current.path = data.selectUi.value;
-	data.current.configuration =
-		_inlineScripts.state.sessionState.tablefiles.
-		configuration[data.current.path];
+	data.current.lines = (await getTableFileContent(data.current.path)).lines
+
+	// Get the table's configuration and lines
+	const config = getTableConfiguration(data, data.current.path) || {};
 
 	// Update the ui - path, title, description, tags, startLine visualization
 	data.configUi.path.value = data.current.path;
-	data.configUi.title.value = data.current.configuration?.title || "";
-	data.configUi.description.value =
-		data.current.configuration?.description || "";
-	data.configUi.tags.value = data.current.configuration?.tags || "";
-	const tblLines = await getCurrentTableItems(data);
-	data.configUi.startLine.value = tblLines[0] || "";
+	data.configUi.title.value = config.title || "";
+	data.configUi.description.value = config.description || "";
+	data.configUi.tags.value = config.tags || "";
+	data.configUi.startLine.value = data.current.lines[config.startLine || 0] || "";
 
 	// Determine if the table is a files-table
 	const isFolderTable = data.selectUi.value.startsWith(HEADING_FTABLE);
 
 	// Update the ui - startLine button enable-state, itemFormat
 	data.configUi.startLineUp.toggleClass(
-		"iscript_smallButtonDisabled",
-		!(data.current?.configuration?.offset) || isFolderTable);
+		"iscript_smallButtonDisabled", !config.startLine || isFolderTable);
 	data.configUi.startLineDown.toggleClass(
 		"iscript_smallButtonDisabled",
-		tblLines.length <= 1 || isFolderTable);
-	data.configUi.itemFormat.value = data.current.configuration?.itemFormat || "";
+		(config.startLine >= data.current.lines.length - 1) || isFolderTable);
+	data.configUi.itemFormat.value = config.itemFormat || "";
 
 	// Update the ui - Format sample visualization
 	refreshItemFormatSample(data);
@@ -461,9 +511,7 @@ function refreshTableListUi(data)
 		};
 
 		// Get the configuration for the table of this tableItem
-		const config =
-			_inlineScripts.state.sessionState.
-			tablefiles.configuration[tableItemDatum.path];
+		const config = getTableConfiguration(data, tableItemDatum.path);
 
 		// If the configuration exists, update the tableItemDatum with its values
 		if (config)
@@ -624,11 +672,30 @@ function refreshItemFormatSample(data)
 ///////////////////////////////////////////////////////////////////////////////////
 
 // Definition for the table-roller custom popup, central to this tablefiles system
-confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
+//confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
+_inlineScripts.tablefiles.rollPopup =
 {
 	buttonIds: [ "Roll", "Cancel" ],
 	onOpen: async (data, parent, firstButton, SettingType, resolveFnc) =>
 	{
+		// Get table paths, early out if none
+		let tablePaths = getAllTableFiles().map(v => v.path);
+		if (tablePaths.length === 0)
+		{
+			resolveFnc(expFormat("No table rolled.  No tables available."));
+			return true;
+		}
+
+		// Load frontmatter configurations from tablepaths
+		data.fmConfigurations = {};
+		for (const tablePath of tablePaths)
+		{
+			const c = (await getTableFileContent(tablePath)).configuration;
+			if (!c) { continue; }
+			c.isFrontmatter = true;
+			data.fmConfigurations[tablePath] = c;
+		}
+
 		//////////////////////////
 		// Row 1 of UI (filter) //
 		//////////////////////////
@@ -655,14 +722,9 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 		//////////////////////////
 		// Row 2 of UI (select) //
 		//////////////////////////
-		let tablePaths = getAllTableFiles().map(v => v.path);;
-		if (tablePaths.length === 0)
-		{
-			resolveFnc("No table rolled.  No tables available.\n\n");
-			return true;
-		}
 		const selectUi = document.createElement("select");
 			data.selectUi = selectUi;
+			let hasItemSelected = false;
 			// Find longest title
 			for (const path of tablePaths)
 			{
@@ -671,6 +733,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 				const isSelected =
 					(value === _inlineScripts.tablefiles.priorRoll?.tablePath);
 				selectUi.add(new Option(label, value, false, isSelected));
+				if (isSelected) { hasItemSelected = true; }
 			}
 			selectUi.setAttr("size", 10);
 			selectUi.classList.add("dropdown");
@@ -683,6 +746,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			});
 			selectUi.addEventListener("change", e => updateTableConfig(data));
 			refreshTableListUi(data);
+			if (!hasItemSelected) { selectUi.selectedIndex = 0; }
 			parent.append(selectUi);
 
 		/////////////////////////////////
@@ -801,15 +865,24 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			uiRow[1].type = "text";
 			uiRow[1].setAttr("placeholder", "Display");
 			uiRow[1].style["min-width"] = "7em !important";
-			uiRow[1].addEventListener("change", e =>
+			uiRow[1].addEventListener("change", async e =>
 			{
-				if (!data.current.configuration)
+				let config = getTableConfiguration(data, data.current.path);
+				if (config?.isFrontmatter)
 				{
-					data.current.configuration =
-						_inlineScripts.state.sessionState.tablefiles.
+					expand(
+						"notevars set \"" + data.current.path + "\" title " +
+						e.target.value);
+				}
+				// Make sure the state config is setup
+				else if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
-				data.current.configuration.title = e.target.value;
+				// Add the new value to the configuration
+				config.title = e.target.value;
+				// Refresh the table list
 				refreshTableListUi(data);
 			});
 		uiRow[2] = document.createElement("div");
@@ -820,15 +893,24 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			data.configUi.description = uiRow[3];
 			uiRow[3].type = "text";
 			uiRow[3].classList.add("iscript_textbox_squished");
-			uiRow[3].addEventListener("change", e =>
+			uiRow[3].addEventListener("change", async e =>
 			{
-				if (!data.current.configuration)
+				let config = getTableConfiguration(data, data.current.path);
+				if (config?.isFrontmatter)
 				{
-					data.current.configuration =
-						_inlineScripts.state.sessionState.tablefiles.
+					expand(
+						"notevars set \"" + data.current.path + "\" description " +
+						e.target.value);
+				}
+				// Make sure the state config is setup
+				else if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
-				data.current.configuration.description = e.target.value;
+				// Add the new value to the configuration
+				config.description = e.target.value;
+				// Refresh the table list
 				refreshTableListUi(data);
 			});
 		uiRow[4] = document.createElement("div");
@@ -850,26 +932,35 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 		////////////////////////////////////
 		uiRow = [ 0, 1, 2, 3, 4, 5 ];
 		uiRow[0] = document.createElement("div");
-			uiRow[0].innerText = "Filter-tags";
+			uiRow[0].innerText = "Tags";
 			uiRow[0].classList.add("iscript_popupLabel");
 		uiRow[1] = document.createElement("input");
 			data.configUi.tags = uiRow[1];
 			uiRow[1].type = "text";
 			uiRow[1].classList.add("iscript_textbox_squished");
 			uiRow[1].setAttr("placeholder", "Space-separated");
-			uiRow[1].addEventListener("change", e =>
+			uiRow[1].addEventListener("change", async e =>
 			{
-				if (!data.current.configuration)
+				let config = getTableConfiguration(data, data.current.path);
+				if (config?.isFrontmatter)
 				{
-					data.current.configuration =
-						_inlineScripts.state.sessionState.tablefiles.
+					expand(
+						"notevars set \"" + data.current.path + "\" tags " +
+						e.target.value);
+				}
+				// Make sure the state config is setup
+				else if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
-				data.current.configuration.tags = e.target.value;
+				// Add the new value to the configuration
+				config.tags = e.target.value;
+				// Refresh the table list
 				refreshTableListUi(data);
 			});
 		uiRow[2] = document.createElement("div");
-			uiRow[2].innerText = "Starting line";
+			uiRow[2].innerText = "Start line";
 			uiRow[2].classList.add("iscript_popupLabel");
 			uiRow[2].classList.add("iscript_nextPopupLabel");
 		uiRow[3] = document.createElement("input");
@@ -885,27 +976,41 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			uiRow[4].classList.add("iscript_smallButtonDisabled");
 			uiRow[4].addEventListener("click", async e =>
 			{
+				// Ignore disabled button
 				if (e.target.classList.contains("iscript_smallButtonDisabled"))
 				{
 					return;
 				}
-				if (!data.current.configuration)
+
+				// Get the configuration, and setup (in state) if there isn't one
+				let config = getTableConfiguration(data, data.current.path);
+				if (!config)
 				{
-					data.current.configuration =
-						 _inlineScripts.state.sessionState.tablefiles.
-						 configuration[data.current.path] = {};
+					config = _inlineScripts.state.sessionState.tablefiles.
+						configuration[data.current.path] = {};
+
 				}
-				if (!data.current.configuration.offset)
+				// Add the value to the configuration
+				config.startLine = Math.max(0, (config.startLine || 0) - 1);
+				// If the configuration is from frontmatter, update frontmatter
+				if (config?.isFrontmatter)
 				{
-					data.current.configuration.offset = 0;
+					if (!data.delayedStartLineSet)
+					{
+						data.delayedStartLineSet = setTimeout(async () =>
+						{
+							delete data.delayedStartLineSet;
+							expand(
+								"notevars set \"" + data.current.path +
+								"\" startLine " + config.startLine);
+						}, 3000);
+					}
 				}
-				data.current.configuration.offset--;
-				const tblLines =
-					await getCurrentTableItems(data);
-				data.configUi.startLine.value = tblLines[0] || "";
-				e.target.toggleClass(
-					"iscript_smallButtonDisabled",
-					data.current.configuration.offset === 0);
+				// Update the display
+				data.configUi.startLine.value =
+					data.current.lines[config.startLine] || "";
+				data.configUi.startLineUp.toggleClass(
+					"iscript_smallButtonDisabled", config.startLine === 0);
 				data.configUi.startLineDown.toggleClass(
 					"iscript_smallButtonDisabled", false);
 				refreshItemFormatSample(data);
@@ -916,32 +1021,48 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			uiRow[5].classList.add("iscript_smallButton");
 			uiRow[5].addEventListener("click", async e =>
 			{
+				// Ignore disabled button
 				if (e.target.classList.contains("iscript_smallButtonDisabled"))
 				{
 					return;
 				}
-				if (!data.current.configuration)
+
+				// Get the configuration, and setup (in state) if there isn't one
+				let config = getTableConfiguration(data, data.current.path);
+				if (!config)
 				{
-					data.current.configuration =
-						_inlineScripts.state.sessionState.tablefiles.
+					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
+
 				}
-				if (!data.current.configuration.offset)
+				// Add the value to the configuration
+				config.startLine = (config.startLine || 0) + 1;
+				// If the configuration is from frontmatter, update frontmatter
+				if (config?.isFrontmatter)
 				{
-					data.current.configuration.offset = 0;
+					if (!data.delayedStartLineSet)
+					{
+						data.delayedStartLineSet = setTimeout(async () =>
+						{
+							delete data.delayedStartLineSet;
+							expand(
+								"notevars set \"" + data.current.path +
+								"\" startLine " + config.startLine);
+						}, 3000);
+					}
 				}
-				data.current.configuration.offset++;
-				const tblLines =
-					await getCurrentTableItems(
-					data, data.current.configuration.offset);
-				data.configUi.startLine.value = tblLines[0] || "";
-				e.target.toggleClass(
-					"iscript_smallButtonDisabled", tblLines.length <= 1);
+				// Update the display
+				data.configUi.startLine.value =
+					data.current.lines[config.startLine] || "";
 				data.configUi.startLineUp.toggleClass(
 					"iscript_smallButtonDisabled", false);
+				data.configUi.startLineDown.toggleClass(
+					"iscript_smallButtonDisabled",
+					config.startLine >= data.current.lines.length - 1);
 				refreshItemFormatSample(data);
 			});
 		tbl = makeUiRow(uiRow);
+			tbl.childNodes[0].childNodes[1].style.width = "30%";
 			configUi.append(tbl);
 
 		////////////////////////////////////////
@@ -960,6 +1081,10 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 			uiRow[1].style["max-width"] = "11.5em !important";
 			uiRow[1].addEventListener("input", e =>
 			{
+				// If the user selected one of the presets, replace their selection
+				// with the associated regex string.
+				// NOTE: That's not a space character being checked.  It's an exotic
+				// character: a thin space, which also prepends all of the presets.
 				if (e.target.value[0] === " ")
 				{
 					for (const option of data.configUi.itemFormatOptions.options)
@@ -970,18 +1095,28 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 						}
 					}
 				}
+				// Refresh the samples
 				refreshItemFormatSample(data);
 			});
-			uiRow[1].addEventListener("change", e =>
+			uiRow[1].addEventListener("change", async e =>
 			{
-				if (!data.current.configuration)
+				let config = getTableConfiguration(data, data.current.path);
+				if (config?.isFrontmatter)
 				{
-					data.current.configuration =
-						_inlineScripts.state.sessionState.tablefiles.
+					expand(
+						"notevars set \"" + data.current.path + "\" itemFormat " +
+						e.target.value);
+				}
+				// Make sure the state config is setup
+				else if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
-				data.current.configuration.itemFormat =
-					e.target.value;
+				// Add the new value to the configuration
+				config.itemFormat = e.target.value;
+				// Refresh the samples
+				refreshItemFormatSample(data);
 			});
 		uiRow[2] = document.createElement("div");
 			uiRow[2].innerText = "Sample item";
@@ -1043,7 +1178,7 @@ confirmObjectPath("_inlineScripts.tablefiles.rollPopup",
 		resolveFnc(await rollTable(
 			path, count, unique, format, useExpFormat, true));
 	}
-});
+}//);
 ```
 __
 Sets up this shortcut-file
@@ -1085,6 +1220,7 @@ return expFormat("tablefiles system reset");
 ```
 __
 tbl reset - Clears registered table paths and table path configurations.
+***
 
 
 __
@@ -1173,6 +1309,30 @@ tbl list - Get a list of the registered table paths.
 
 __
 ```
+^tbl clearpaths$
+```
+__
+```js
+const count = Object.keys(_inlineScripts.state.sessionState.tablefiles.paths).length;
+
+// Confirm before removing
+if (!popups.confirm("Confirm clearing all of <b>" + count + "</b> table path(s)."))
+{
+	return;
+}
+
+// Clear the paths set
+_inlineScripts.state.sessionState.tablefiles.paths = {};
+
+return expFormat("All of __" + count + "__ path(s) cleared.");
+```
+__
+tbl clearpaths - Remove all table paths.
+***
+
+
+__
+```
 ^tbl roll$
 ```
 __
@@ -1231,7 +1391,7 @@ if (parameters.format)
 const defaultParameters =
 	{
 		count: 1, uniquepicks: false, format: "commas", useexpansionformat: false,
-		isfoldertable: false, useconfig: true, startoffset: 0, itemformat: ""
+		isfoldertable: false, useconfig: true, startLine: 0, itemformat: ""
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
 
@@ -1292,7 +1452,7 @@ if (!foundPath)
 // expFormat() since this could very well be used inline.
 return await rollTable(
 	$1, parameters.count, parameters.uniquepicks, parameters.format,
-	parameters.useexpansionformat, parameters.useconfig, parameters.startoffset,
+	parameters.useexpansionformat, parameters.useconfig, parameters.startLine,
 	parameters.itemformat);
 ```
 __
@@ -1302,8 +1462,8 @@ tbl roll {table file: path text} {parameters: text, default: ""} - Get random re
 	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
 	- __useExpansionFormat__ - "true" or "false", defaulting to "false".  If true, the result is outputted in the standard expansion format.
 	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
-	- __useConfig__ - "true" or "false", defaulting to "true".  If true, __startOffset__ and __itemFormat__ are determined by the current configuration for the given table file.
-	- __startOffset__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
+	- __useConfig__ - "true" or "false", defaulting to "true".  If true, __startLine__ and __itemFormat__ are determined by the current configuration for the given table file.
+	- __startLine__ - A positive integer defaulting to 0.  Defines what line the table starts on in {table file}.  This is ignored for folder-tables.
 	- __itemFormat__ - A regex string defaulting to `(.*)`.  Determines what part of each item is printed out, as well as what part of each item is used as the weight value.  The default prints out the entire item.
 
 
@@ -1315,7 +1475,7 @@ __
 ```js
 // Get the prior roll parameters
 // priorRoll = { tablePath, count, uniquePicks, format, useExpFormat, useConfig,
-// startOffset, itemFormat };
+// startLine, itemFormat };
 const p = _inlineScripts.tablefiles.priorRoll;
 
 // If there wasn't a prior roll, early out
@@ -1327,7 +1487,7 @@ if (!p)
 // Run a new roll with the priorRoll values
 return await rollTable(
 	p.tablePath, p.count, p.uniquePicks, p.format, p.useExpFormat, p.useConfig,
-	p.startOffset, p.itemFormat);
+	p.startLine, p.itemFormat);
 ```
 __
 tbl reroll - Re-rolls the last _successful_ table roll.
