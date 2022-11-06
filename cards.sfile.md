@@ -113,7 +113,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.cards",
 	function()
 	{
-		expand("cards reset");
+		expand("cards reset noconfirm");
 	});
 confirmObjectPath(
 	"_inlineScripts.state.listeners.onLoad.cards",
@@ -215,6 +215,24 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Cards</b> system")) { return null; }
+
+// Reset
+expand("cards reset noconfirm");
+
+return expFormat("All card-piles cleared.");
+```
+__
+cards reset - Clears all card-piles.
+
+
+__
+```
+^cards? reset noconfirm$
+```
+__
+```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Make sure state container is ready
@@ -226,11 +244,9 @@ _inlineScripts.state.sessionState.cards =
 
 // Trigger the event of the list of piles changing
 onPileListChanged();
-
-return expFormat("All card-piles cleared.");
 ```
 __
-cards reset - Clears all card-piles.
+hidden - No-confirm reset
 
 
 __

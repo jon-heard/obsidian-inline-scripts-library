@@ -50,6 +50,28 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Adventure Crafter</b> system"))
+{
+	return null;
+}
+
+// Reset
+expand("adventurecrafter reset noconfirm");
+
+return expFormat("Adventure crafter reset.");
+```
+__
+adventurecrafter reset - Resets adventurecrafter state to defaults.
+***
+
+
+__
+```
+^adventurecrafter reset noconfirm$
+```
+__
+```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Reset themes
@@ -89,12 +111,9 @@ else
 	_inlineScripts.state.sessionState.lists.characters =
 		{ type: "combo", content: ["pcs", "npcs", "character_dupes"] };
 }
-
-return expFormat("Adventure crafter reset.");
 ```
 __
-adventurecrafter reset - Resets adventurecrafter state to defaults.
-***
+hidden - No-confirm reset
 
 
 __
@@ -987,7 +1006,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.adventurecrafter",
 	function()
 	{
-		expand("adventurecrafter reset");
+		expand("adventurecrafter reset noconfirm");
 	});
 
 confirmObjectPath(

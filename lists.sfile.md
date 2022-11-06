@@ -30,7 +30,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.lists",
 	function()
 	{
-		expand("lists reset");
+		expand("lists reset noconfirm");
 	});
 ```
 __
@@ -59,6 +59,25 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Lists</b> system")) { return null; }
+
+// Reset
+expand("lists reset noconfirm");
+
+return expFormat("All lists cleared.");
+```
+__
+lists reset - Clears all lists.
+***
+
+
+__
+```
+^lists? reset noconfirm$
+```
+__
+```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Confirm that the state is initialized
@@ -66,13 +85,9 @@ confirmObjectPath("_inlineScripts.state.sessionState");
 
 // Reset lists
 _inlineScripts.state.sessionState.lists = {};
-
-
-return expFormat("All lists cleared.");
 ```
 __
-lists reset - Clears all lists.
-***
+hidden - No-confirm reset
 
 
 __
@@ -141,6 +156,12 @@ const lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 
 // Start the expansion
 let result = "Lists:";
+
+// Early out with the result if no lists
+if (!lists.length)
+{
+	return expFormat(result + "\n- NONE");
+}
 
 // Add each list's individual expansion to the final expansion
 for (let i = 0; i < lists.length; i++)

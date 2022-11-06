@@ -30,7 +30,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.notevars",
 	function()
 	{
-		expand("notevars reset");
+		expand("notevars reset noconfirm");
 	});
 ```
 __
@@ -59,17 +59,33 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Notevars</b> system")) { return null; }
+
+// Reset
+expand("notevars reset noconfirm");
+
+return expFormat("Notevars cleared.");
+```
+__
+notevars reset - Clears the isMarkdownRefreshed flag.
+***
+
+
+__
+```
+^notevars reset noconfirm$
+```
+__
+```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Reset the state
 confirmObjectPath("_inlineScripts.state.sessionState.notevars");
 _inlineScripts.state.sessionState.notevars.isMarkdownRefreshed = true;
-
-return expFormat("All notepicks cleared.");
 ```
 __
-notevars reset - Clears the isMarkdownRefreshed flag.
-***
+hidden - No-confirm reset
 
 
 __

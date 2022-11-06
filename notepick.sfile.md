@@ -24,7 +24,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.notepick",
 	function()
 	{
-		expand("notepick reset");
+		expand("notepick reset noconfirm");
 	});
 ```
 __
@@ -53,17 +53,33 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Notepick</b> system")) { return null; }
 
-// Restart the state
-confirmObjectPath("_inlineScripts.state.sessionState");
-_inlineScripts.state.sessionState.notepick = {};
+// Reset
+expand("notepick reset noconfirm");
 
 return expFormat("All notepicks cleared.");
 ```
 __
 notepick reset - Clears all picks.
 ***
+
+
+__
+```
+^notepick reset noconfirm$
+```
+__
+```js
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+
+// Restart the state
+confirmObjectPath("_inlineScripts.state.sessionState");
+_inlineScripts.state.sessionState.notepick = {};
+```
+__
+hidden - No-confirm reset
 
 
 __

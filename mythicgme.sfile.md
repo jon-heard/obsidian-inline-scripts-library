@@ -55,7 +55,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.mythicgme",
 	function()
 	{
-		expand("mythicgme reset");
+		expand("mythicgme reset noconfirm");
 	});
 ```
 __
@@ -84,6 +84,26 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Mythic GME</b> system"))
+{
+	return null;
+}
+
+// Reset
+return expand("mythicgme reset noconfirm");
+```
+__
+mythicgme reset - Resets mythic state to defaults and displays scene heading.
+***
+
+
+__
+```
+^mythic(?:gme)? reset noconfirm$
+```
+__
+```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Reset state
@@ -105,8 +125,7 @@ return "***\n\n\n### SCENE " +
 	_inlineScripts.state.sessionState.mythicgme.scene + "\n- Setup:\n    - ";
 ```
 __
-mythicgme reset - Resets mythic state to defaults and displays scene heading.
-***
+hidden - No-confirm reset
 
 
 __

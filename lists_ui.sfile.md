@@ -28,7 +28,7 @@ __
 let lists = Object.keys(_inlineScripts.state.sessionState.lists).sort();
 if (!lists.length)
 {
-	return expFormat("No lists available.");
+	return expand("lists");
 }
 
 // Add "all lists" option
@@ -39,7 +39,7 @@ const pick = popups.pick("Choose a list to view", lists, 0, "adaptive");
 if (pick === null) { return null; }
 
 // return expansion of the list info (or ALL lists if pick is 0)
-return expand("lists" + (pick ? " " + lists[pick]) : ""));
+return expand("lists" + (pick ? (" " + lists[pick]) : ""));
 ```
 __
 ui lists - User chooses a list (options include "all lists"), then shows info on the chosen list.

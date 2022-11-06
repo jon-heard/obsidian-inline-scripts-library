@@ -28,7 +28,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.clips",
 	function()
 	{
-		expand("clips reset");
+		expand("clips reset noconfirm");
 	});
 
 // Event callback - inlineScripts.onExapsion
@@ -66,13 +66,30 @@ __
 ```
 __
 ```js
-// Reset state object
-_inlineScripts.state.sessionState.clips = {};
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Clips</b> system")) { return null; }
+
+// Reset
+expand("clips reset noconfirm");
 
 return expFormat("All clips cleared.");
 ```
 __
 clips reset - Removes all clips.
+***
+
+
+__
+```
+^clips? reset noconfirm$
+```
+__
+```js
+// Reset state object
+_inlineScripts.state.sessionState.clips = {};
+```
+__
+hidden - No-confirm reset
 
 
 __

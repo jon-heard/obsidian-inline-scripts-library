@@ -58,7 +58,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.mythicv2",
 	function()
 	{
-		expand("mythicv2 reset");
+		expand("mythicv2 reset noconfirm");
 	});
 ```
 __
@@ -87,6 +87,25 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Mythic Version 2</b> system"))
+{
+	return null;
+}
+
+// Reset
+return expand("mythicv2 reset noconfirm");
+```
+__
+mythicv2 reset - Resets mythic state to defaults and displays scene heading.
+
+
+__
+```
+^mythic(?:v2)? reset noconfirm$
+```
+__
+```js
 const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
 
 // Reset the state
@@ -108,7 +127,7 @@ return "***\n\n\n### SCENE " +
 	_inlineScripts.state.sessionState.mythicv2.scene + "\n- Setup:\n    - ";
 ```
 __
-mythicv2 reset - Resets mythic state to defaults and displays scene heading.
+hidden - No-confirm reset
 
 
 __

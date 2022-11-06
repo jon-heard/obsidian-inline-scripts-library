@@ -404,7 +404,7 @@ confirmObjectPath(
 	"_inlineScripts.state.listeners.onReset.tablefiles",
 	function()
 	{
-		expand("tbl reset");
+		expand("tbl reset noconfirm");
 	});
 
 // Initialize session state
@@ -1209,18 +1209,37 @@ __
 ```
 __
 ```js
-const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>Table files</b> system"))
+{
+	return null;
+}
 
-// Reset the state
-confirmObjectPath("_inlineScripts.state.sessionState.tablefiles");
-_inlineScripts.state.sessionState.tablefiles.paths = {};
-_inlineScripts.state.sessionState.tablefiles.configuration = {};
+// Reset
+expand("tbl reset noconfirm");
 
 return expFormat("tablefiles system reset");
 ```
 __
 tbl reset - Clears registered table paths and table path configurations.
 ***
+
+
+__
+```
+^tbl reset noconfirm$
+```
+__
+```js
+const confirmObjectPath = _inlineScripts.inlineScripts.HelperFncs.confirmObjectPath;
+
+// Reset the state
+confirmObjectPath("_inlineScripts.state.sessionState.tablefiles");
+_inlineScripts.state.sessionState.tablefiles.paths = {};
+_inlineScripts.state.sessionState.tablefiles.configuration = {};
+```
+__
+hidden - No-confirm reset
 
 
 __

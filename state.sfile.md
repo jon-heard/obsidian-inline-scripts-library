@@ -196,6 +196,14 @@ __
 ```
 __
 ```js
+// Confirm
+if (!popups.confirm("Confirm resetting the <b>State</b> system")) { return null; }
+if (!popups.confirm(
+    "This will clear the state for <b>all shortcut files</b>!<br/>Are you sure?"))
+{
+	return null;
+}
+
 // Wipe out all states
 _inlineScripts.state.sessionState = {};
 
