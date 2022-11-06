@@ -294,7 +294,7 @@ class CardPileView extends _inlineScripts.inlineScripts.HelperFncs.ItemView
 }
 
 // Register the panel type with the above class
-_inlineScripts.inlineScripts.plugin.registerView(
+_inlineScripts.inlineScripts.HelperFncs.registerView(
 	CARDPILE_VIEW_TYPE, leaf => new CardPileView(leaf));
 ```
 __
