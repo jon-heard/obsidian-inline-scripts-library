@@ -113,6 +113,44 @@ function getAllTableFiles()
 	return result;
 }
 
+// Update tracking of the frontmatter-config based titles of tables in path, or ALL
+// tables if path is undefined.
+function trackFmTitles(path)
+{
+	// Track path to fmTitle (reverse) to recognize and handle changes to titles
+	let pathToTitle = {};
+	for (const key in _inlineScripts.tablefiles.fmConfigTitles)
+	{
+		pathToTitle[ _inlineScripts.tablefiles.fmConfigTitles[key] ] = key;
+	}
+
+	// Go over all table-files either in the given path, or in total (if no path)
+	let tableFiles = path ? getTableFilesFromPath(path) : getAllTableFiles();
+	for (const tableFile of tableFiles)
+	{
+		// Get the title from the frontmatter of the table-file
+		const title = app.metadataCache.getFileCache(tableFile)?.frontmatter?.title;
+
+		// If the title / path association hasn't changed, do nothing
+		if (pathToTitle[tableFile.path] === title)
+		{
+			continue;
+		}
+
+		// If there's already a title / path association, remove it
+		if (pathToTitle[tableFile.path])
+		{
+			const oldTitle = pathToTitle[tableFile.path];
+			delete _inlineScripts.tablefiles.fmConfigTitles[oldTitle];
+			delete pathToTitle[tableFile.path];
+		}
+
+		// Record the title->path, to be used for recognition for "tbl roll" (non-ui)
+		_inlineScripts.tablefiles.fmConfigTitles[title] = tableFile.path;
+		pathToTitle[tableFile.path] = title;
+	}
+}
+
 // Get the tablepath data - the lines and the frontmatter configuration (if there)
 async function getTableFileContent(path)
 {
@@ -229,7 +267,7 @@ async function rollTable(
 	}
 
 	// Get table items. No items? return null
-	const content = await getTableFileContent(tablePath, startLine);
+	const content = await getTableFileContent(tablePath);
 	let lines = content?.lines;
 	let config = content.configuration;
 	if (!lines?.length) { return null; }
@@ -409,6 +447,17 @@ confirmObjectPath(
 
 // Initialize session state
 confirmObjectPath("_inlineScripts.tablefiles");
+confirmObjectPath("_inlineScripts.tablefiles.fmConfigTitles");
+trackFmTitles();
+if (!_inlineScripts.tablefiles.onCacheChanged)
+{
+	_inlineScripts.tablefiles.onCacheChanged = (file) =>
+	{
+		trackFmTitles(file.path);
+	};
+	app.metadataCache.on("changed", _inlineScripts.tablefiles.onCacheChanged);
+}
+
 
 // Custom CSS
 _inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
@@ -1261,6 +1310,9 @@ if (!file)
 // Add the path to the state. Use file.path instead of $1 in case the ".md" was added
 _inlineScripts.state.sessionState.tablefiles.paths[file.path] = 1;
 
+// Update the fm-config title tracking for the new table-file path
+trackFmTitles(file.path);
+
 return expFormat(
 	(file.children ? "Folder" : "File") + " __" + $1 + "__ added to table paths.");
 ```
@@ -1420,8 +1472,8 @@ if (!$1.startsWith(HEADING_FTABLE) && parameters.isfoldertable)
 	$1 = HEADING_FTABLE + $1;
 }
 
-// Try the $1 as a path, else try as table title, else try as table file basename,
-// else early out
+// Try the $1 as a path, else try as table title in state configs, else try in table
+// title in frontmatter configs, else try as table file basename, else early out
 // NOTE - This needs to happen this late for standardized folder-table knowledge
 let foundPath = false;
 if (!foundPath)
@@ -1443,6 +1495,18 @@ if (!foundPath)
 		if ($1.toLowerCase() === configuration.title?.toLowerCase())
 		{
 			$1 = key;
+			foundPath = true;
+			break;
+		}
+	}
+}
+if (!foundPath)
+{
+	for (const key in _inlineScripts.tablefiles.fmConfigTitles)
+	{
+		if ($1.toLowerCase() === key.toLowerCase())
+		{
+			$1 = _inlineScripts.tablefiles.fmConfigTitles[key];
 			foundPath = true;
 			break;
 		}
