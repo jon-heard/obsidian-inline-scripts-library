@@ -32,6 +32,7 @@ function aPickWeight(a, wIndex, theRoll)
 // Remove any tilde-encased text from the start of the string
 function removeTildeHeader(path)
 {
+	if (!path?.match) { return path; }
 	return path.match("^(?:~.*~)?(.*)")[1];
 }
 
@@ -151,8 +152,8 @@ function trackFmTitles(path)
 	}
 }
 
-// Get the tablepath data - the lines and the frontmatter configuration (if there)
-async function getTableFileContent(path)
+// Get the lines of the table-file at the given path
+async function getTableFileLines(path)
 {
 	// If the path is a file, the items are the lines in the file
 	if (!path.startsWith(HEADING_FTABLE))
@@ -165,28 +166,15 @@ async function getTableFileContent(path)
 		let rawContent = await app.vault.cachedRead(file);
 		let content = (await app.vault.cachedRead(file)).split("\n").filter(v => v);
 
-		// Frontmatter
+		// Cut the frontmatter
 		let configuration = null;
 		const REGEX_FRONT_MATTER_VARIABLE =
 			/^(title|description|tags|startLine|itemFormat)\s*:\s*(.*)$/i;
 		if (content[0] === "---")
 		{
-			// There's a frontmatter, so there's a frontmatter-configuration.
-			// Start with defaults, then add from any variables
-			configuration =
-				{ title: "", description: "", tags: "", startLine: 0,
-				itemFormat: "" };
-
 			// Go over each line of the frontmatter
 			for (let i = 1; i < content.length; i++)
 			{
-				// Handle any configuration variables in the frontmatter
-				const varMatch = content[i].match(REGEX_FRONT_MATTER_VARIABLE);
-				if (varMatch)
-				{
-					configuration[varMatch[1]] = varMatch[2];
-				}
-
 				// Once we hit the end of the frontmatter, cut it from the content
 				if (content[i] === "---")
 				{
@@ -194,14 +182,10 @@ async function getTableFileContent(path)
 					break;
 				}
 			}
-
-			// Make sure the startLine is the right format
-			configuration.startLine =
-				Math.max(0, Math.trunc(  Number(configuration.startLine) || 0  ));
 		}
 
-		// Return the file's lines, skipping the first "startLine" lines
-		return { lines: content, configuration };
+		// Return the file's lines
+		return content;
 	}
 	// If the path is a folder, the items are the files in the folder
 	else
@@ -217,6 +201,41 @@ async function getTableFileContent(path)
 		return {
 			lines: file.children.map(v => "[[" + v.path + "|" + v.basename + "]]") };
 	}
+}
+
+
+// Get the tablepath data - the lines and the frontmatter configuration (if there)
+function getTableFileConfiguration(path)
+{
+	// Get the file from the path.  Early out if it doesn't exist
+	const file = app.vault.fileMap[removeTildeHeader(path)];
+	if (!file) { return null; }
+
+	// The resulting configuration
+	let result = null;
+
+	// Try to get the configuration from the frontmatter
+	const fm = app.metadataCache.getFileCache(file)?.frontmatter;
+	if (fm)
+	{
+		return {
+			isFrontmatter: true,
+			title: fm.title || "",
+			description: fm.description || "",
+			tags: fm.tags || "",
+			startLine: Math.max(0, Math.trunc(  Number(fm.startLine) || 0  )),
+			itemFormat: fm.itemFormat || ""
+		};
+	}
+
+	// Try to get the configuration from the settings
+	if (!result)
+	{
+		result =
+			_inlineScripts.state.sessionState.tablefiles.configuration[path];
+	}
+
+	return result;
 }
 
 // Take a table-path & parameters for how to roll it.  Roll it & return the result.
@@ -266,34 +285,25 @@ async function rollTable(
 		return cndFormat([ "", "No table rolled.  Invalid count given." ]);
 	}
 
-	// Get table items. No items? return null
-	const content = await getTableFileContent(tablePath);
-	let lines = content?.lines;
-	let config = content.configuration;
-	if (!lines?.length) { return null; }
-
 	// If useConfig, set some of the parameters to the config saved for tablePath
 	if (useConfig)
 	{
-		// If no frontmatter configuration, pull one from the settings, if possible
-		if (!config)
-		{
-			config =
-				_inlineScripts.state.sessionState.tablefiles.
-				configuration[tablePath] || {};
-		}
-		// Set the parameters from the config (or use defaults, if undefined)
-		startLine = config.startLine || 0;
-		itemFormat = config.itemFormat || "";
+		let config = getTableFileConfiguration(tablePath);
+
+		// Set the parameters from the config (or use defaults)
+		startLine = config?.startLine || 0;
+		itemFormat = config?.itemFormat || "";
 	}
+
 	// If startLine parameter isn't valid, early out
 	if (!Number.isInteger(startLine) || startLine < 0)
 	{
 		return cndFormat([ "", "No table rolled.  Invalid startLine given." ]);
 	}
 
-	// Use start line now
-	lines = lines.slice(startLine);
+	// Get table lines. No lines? return null
+	let lines = (await getTableFileLines(tablePath)).slice(startLine);
+	if (!lines?.length) { return null; }
 
 	// Convert itemFormat parameter to RegExp object.  If not valid, early out
 	try
@@ -499,26 +509,17 @@ function makeUiRow(elements)
 	return tbl;
 }
 
-// The table configuration can come from the table-file's frontmatter or from user
-// entering settings.  Get the appropriate one for the given table-file path
-function getTableConfiguration(data, path)
-{
-	return data.fmConfigurations[path] || 
-		_inlineScripts.state.sessionState.tablefiles.
-		configuration[path];
-}
-
 // Helper function - Called each time a different table is selected from the list.
 // Updates the ui and data to match the selected table.
-async function updateTableConfig(data)
+async function updateTableConfigUi(data)
 {
 	// Set the current table path and table lines
 	data.current = {};
 	data.current.path = data.selectUi.value;
-	data.current.lines = (await getTableFileContent(data.current.path)).lines
+	data.current.lines = await getTableFileLines(data.current.path);
 
 	// Get the table's configuration and lines
-	const config = getTableConfiguration(data, data.current.path) || {};
+	const config = data.configurations[data.current.path] || {};
 
 	// Update the ui - path, title, description, tags, startLine visualization
 	data.configUi.path.value = data.current.path;
@@ -560,7 +561,7 @@ function refreshTableListUi(data)
 		};
 
 		// Get the configuration for the table of this tableItem
-		const config = getTableConfiguration(data, tableItemDatum.path);
+		const config = data.configurations[tableItemDatum.path];
 
 		// If the configuration exists, update the tableItemDatum with its values
 		if (config)
@@ -727,7 +728,7 @@ _inlineScripts.tablefiles.rollPopup =
 	buttonIds: [ "Roll", "Cancel" ],
 	onOpen: async (data, parent, firstButton, SettingType, resolveFnc) =>
 	{
-		// Get table paths, early out if none
+		// Get table paths, early out if none.  The map turns files to path strings
 		let tablePaths = getAllTableFiles().map(v => v.path);
 		if (tablePaths.length === 0)
 		{
@@ -735,14 +736,11 @@ _inlineScripts.tablefiles.rollPopup =
 			return true;
 		}
 
-		// Load frontmatter configurations from tablepaths
-		data.fmConfigurations = {};
+		// Store the table configurations during this popup
+		data.configurations = {};
 		for (const tablePath of tablePaths)
 		{
-			const c = (await getTableFileContent(tablePath)).configuration;
-			if (!c) { continue; }
-			c.isFrontmatter = true;
-			data.fmConfigurations[tablePath] = c;
+			data.configurations[tablePath] = getTableFileConfiguration(tablePath);
 		}
 
 		//////////////////////////
@@ -774,7 +772,7 @@ _inlineScripts.tablefiles.rollPopup =
 		const selectUi = document.createElement("select");
 			data.selectUi = selectUi;
 			let hasItemSelected = false;
-			// Find longest title
+			// Add tables to the select list
 			for (const path of tablePaths)
 			{
 				const label = path;
@@ -793,7 +791,7 @@ _inlineScripts.tablefiles.rollPopup =
 			{
 				if (e.key === "Enter") { firstButton.click(); }
 			});
-			selectUi.addEventListener("change", e => updateTableConfig(data));
+			selectUi.addEventListener("change", e => updateTableConfigUi(data));
 			refreshTableListUi(data);
 			if (!hasItemSelected) { selectUi.selectedIndex = 0; }
 			parent.append(selectUi);
@@ -916,21 +914,23 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].style["min-width"] = "7em !important";
 			uiRow[1].addEventListener("change", async e =>
 			{
-				let config = getTableConfiguration(data, data.current.path);
+				// Get the configuration
+				let config = data.configurations[data.current.path];
+				// Confirm a valid configuration
+				if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
+						configuration[data.current.path] = {};
+				}
+				// Add the value to the configuration
+				config.title = e.target.value;
+				// If configuration is from a frontmatter, update the frontmatter too
 				if (config?.isFrontmatter)
 				{
 					expand(
 						"notevars set \"" + data.current.path + "\" title " +
 						e.target.value);
 				}
-				// Make sure the state config is setup
-				else if (!config)
-				{
-					config = _inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
-				}
-				// Add the new value to the configuration
-				config.title = e.target.value;
 				// Refresh the table list
 				refreshTableListUi(data);
 			});
@@ -944,21 +944,23 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[3].classList.add("iscript_textbox_squished");
 			uiRow[3].addEventListener("change", async e =>
 			{
-				let config = getTableConfiguration(data, data.current.path);
+				// Get the configuration
+				let config = data.configurations[data.current.path];
+				// Confirm a valid configuration
+				if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
+						configuration[data.current.path] = {};
+				}
+				// Add the value to the configuration
+				config.description = e.target.value;
+				// If configuration is from a frontmatter, update the frontmatter too
 				if (config?.isFrontmatter)
 				{
 					expand(
 						"notevars set \"" + data.current.path + "\" description " +
 						e.target.value);
 				}
-				// Make sure the state config is setup
-				else if (!config)
-				{
-					config = _inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
-				}
-				// Add the new value to the configuration
-				config.description = e.target.value;
 				// Refresh the table list
 				refreshTableListUi(data);
 			});
@@ -990,21 +992,23 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].setAttr("placeholder", "Space-separated");
 			uiRow[1].addEventListener("change", async e =>
 			{
-				let config = getTableConfiguration(data, data.current.path);
+				// Get the configuration
+				let config = data.configurations[data.current.path];
+				// Confirm a valid configuration
+				if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
+						configuration[data.current.path] = {};
+				}
+				// Add the value to the configuration
+				config.tags = e.target.value;
+				// If configuration is from a frontmatter, update the frontmatter too
 				if (config?.isFrontmatter)
 				{
 					expand(
 						"notevars set \"" + data.current.path + "\" tags " +
 						e.target.value);
 				}
-				// Make sure the state config is setup
-				else if (!config)
-				{
-					config = _inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
-				}
-				// Add the new value to the configuration
-				config.tags = e.target.value;
 				// Refresh the table list
 				refreshTableListUi(data);
 			});
@@ -1031,18 +1035,18 @@ _inlineScripts.tablefiles.rollPopup =
 					return;
 				}
 
-				// Get the configuration, and setup (in state) if there isn't one
-				let config = getTableConfiguration(data, data.current.path);
+				// Get the configuration
+				let config = data.configurations[data.current.path];
+				// Confirm a valid configuration
 				if (!config)
 				{
 					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
-
 				}
 				// Add the value to the configuration
 				config.startLine = Math.max(0, (config.startLine || 0) - 1);
-				// If the configuration is from frontmatter, update frontmatter
-				if (config?.isFrontmatter)
+				// If configuration is from a frontmatter, update the frontmatter too
+				if (config.isFrontmatter)
 				{
 					if (!data.delayedStartLineSet)
 					{
@@ -1076,18 +1080,18 @@ _inlineScripts.tablefiles.rollPopup =
 					return;
 				}
 
-				// Get the configuration, and setup (in state) if there isn't one
-				let config = getTableConfiguration(data, data.current.path);
+				// Get the configuration
+				let config = data.configurations[data.current.path];
+				// Confirm a valid configuration
 				if (!config)
 				{
 					config = _inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
-
 				}
 				// Add the value to the configuration
 				config.startLine = (config.startLine || 0) + 1;
-				// If the configuration is from frontmatter, update frontmatter
-				if (config?.isFrontmatter)
+				// If configuration is from a frontmatter, update the frontmatter too
+				if (config.isFrontmatter)
 				{
 					if (!data.delayedStartLineSet)
 					{
@@ -1149,21 +1153,23 @@ _inlineScripts.tablefiles.rollPopup =
 			});
 			uiRow[1].addEventListener("change", async e =>
 			{
-				let config = getTableConfiguration(data, data.current.path);
+				// Get the configuration
+				let config = data.configurations[data.current.path];
+				// Confirm a valid configuration
+				if (!config)
+				{
+					config = _inlineScripts.state.sessionState.tablefiles.
+						configuration[data.current.path] = {};
+				}
+				// Add the value to the configuration
+				config.itemFormat = e.target.value;
+				// If configuration is from a frontmatter, update the frontmatter too
 				if (config?.isFrontmatter)
 				{
 					expand(
 						"notevars set \"" + data.current.path + "\" itemFormat " +
 						e.target.value);
 				}
-				// Make sure the state config is setup
-				else if (!config)
-				{
-					config = _inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
-				}
-				// Add the new value to the configuration
-				config.itemFormat = e.target.value;
 				// Refresh the samples
 				refreshItemFormatSample(data);
 			});
@@ -1209,7 +1215,7 @@ _inlineScripts.tablefiles.rollPopup =
 				"data-regex='.*?([^/]+)\\|.*$'></option>" +
 		configUi.append(itemFormatOptions);
 
-		updateTableConfig(data);
+		updateTableConfigUi(data);
 	},
 	onClose: async (data, resolveFnc, buttonId) =>
 	{
