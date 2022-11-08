@@ -241,7 +241,7 @@ function getTableFileConfiguration(path)
 // Take a table-path & parameters for how to roll it.  Roll it & return the result.
 // The is the MAIN function of the tablefiles system.  Each table roll happens here.
 async function rollTable(
-	tablePath, count, uniquePicks, format, useExpFormat, useConfig,
+	tablePath, count, uniquePicks, outputFormat, useExpFormat, useConfig,
 	startLine, itemFormat)
 {
 	// A wrapper for expFormat only formats if "useExpFormat" is true
@@ -319,7 +319,7 @@ async function rollTable(
 
 	// That's all the early-outs finished, record the roll for re-rolling purposes
 	_inlineScripts.tablefiles.priorRoll =
-		{ tablePath, count, uniquePicks, format, useExpFormat, useConfig,
+		{ tablePath, count, uniquePicks, outputFormat, useExpFormat, useConfig,
 		startLine, itemFormat };
 
 	// Use itemFormat parameter to break the lines up into the item and range
@@ -406,7 +406,7 @@ async function rollTable(
 		if (app.vault.fileMap[nextEntryPath])
 		{
 			const replaceValue =
-				(await rollTable(nextEntryPath, 1, false, format, false, true));
+				(await rollTable(nextEntryPath, 1, false, "comma", false, true));
 			if (replaceValue[i][0])
 			{
 				result[i] = replaceValue.join("");
@@ -415,7 +415,7 @@ async function rollTable(
 	}
 
 	// Format the results into a string, based on the format parameter
-	switch (format)
+	switch (outputFormat)
 	{
 		case "bullets":
 			result = "- " + result.join("\n- ") + (useExpFormat ? "" : "\n");
@@ -423,6 +423,8 @@ async function rollTable(
 		case "periods":
 			result = ". " + result.join("\n. ") + (useExpFormat ? "" : "\n");
 			break;
+		case "array":
+			return result;
 		default:
 			result = result.join(", ");
 			break;
@@ -821,7 +823,7 @@ _inlineScripts.tablefiles.rollPopup =
 				}
 			});
 		uiRow[2] = document.createElement("div");
-			uiRow[2].innerText = "Pick format";
+			uiRow[2].innerText = "Output format";
 			uiRow[2].classList.add("iscript_popupLabel");
 			uiRow[2].classList.add("iscript_nextPopupLabel");
 		uiRow[3] = document.createElement("select");
@@ -832,8 +834,9 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[3].options[0] = new Option("Comma separated", "commas");
 			uiRow[3].options[1] = new Option("Bulleted list", "bullets");
 			uiRow[3].options[2] = new Option("Perioded list", "periods");
+			uiRow[3].options[3] = new Option("Raw JS array", "array");
 			uiRow[3].value =
-				_inlineScripts.tablefiles.priorRoll?.format || "commas";
+				_inlineScripts.tablefiles.priorRoll?.outputFormat || "commas";
 			uiRow[3].addEventListener("keypress", e =>
 			{
 				if (e.key === "Enter") { firstButton.click(); }
@@ -860,7 +863,7 @@ _inlineScripts.tablefiles.rollPopup =
 			});
 		uiRow[2] = document.createElement("div");
 		uiRow[3] = document.createElement("div");
-			uiRow[3].innerText = "Use expansion format";
+			uiRow[3].innerText = "Use common expansion format";
 			uiRow[3].classList.add("iscript_popupLabel");
 			uiRow[3].classList.add("iscript_nextPopupLabel");
 		uiRow[4] = document.createElement("div");
@@ -1454,21 +1457,23 @@ catch(e)
 	return expFormat([ "", "No table rolled.  Unable to parse parameters." ]);
 }
 
-// The official formats are "commas", "bullets" and "periods".  Alow "comma", "bullet" and "period", as well as untrimmed versions.
+// The official formats are "commas", "bullets", "periods" and "array".  Alow "comma", "bullet", "period" and "arrays" as well as untrimmed versions.
 if (parameters.format)
 {
 	parameters.format = parameters.format.trim();
 	if (parameters.format === "comma") { parameters.format = "commas"; }
 	if (parameters.format === "bullet") { parameters.format = "bullets"; }
 	if (parameters.format === "period") { parameters.format = "periods"; }
+	if (parameters.format === "arrays") { parameters.format = "array"; }
 }
 
 // Load the "parameters" parameter over the default parameters object.  This provides
 // default parameters for anything that's not specified in the "parameters" parameter
 const defaultParameters =
 	{
-		count: 1, uniquepicks: false, format: "commas", useexpansionformat: false,
-		isfoldertable: false, useconfig: true, startLine: 0, itemformat: ""
+		count: 1, uniquepicks: false, outputFormat: "commas",
+		useexpansionformat: false, isfoldertable: false, useconfig: true,
+		startLine: 0, itemformat: ""
 	};
 parameters = Object.assign({}, defaultParameters, parameters);
 
@@ -1548,7 +1553,7 @@ __
 tbl roll {table file: path text} {parameters: text, default: ""} - Get random results from table {table file}.  If provided, {parameters} can alter the results.  {parameters} is expected to be a comma-separated list of parameters in "key: value" form.  Here are accepted parameters:
 	- __count__ - A positive integer defaulting to 1.  Determines number of items picked.
 	- __uniquePicks__ - "true" or "false", defaulting to "false".  If true, each item can be picked only once for this roll.
-	- __format__ - "commas", "bullets" or "periods", defaulting to "commas".  Determines the format of the output.
+	- __format__ - "commas", "bullets", "periods" or "array", defaulting to "commas".  Determines the format of the output.
 	- __useExpansionFormat__ - "true" or "false", defaulting to "false".  If true, the result is outputted in the standard expansion format.
 	- __isFolderTable__ - "true" or "false", defaulting to "false".  If true, {table file} must be a folder path, and the result is picks from the files within it.
 	- __useConfig__ - "true" or "false", defaulting to "true".  If true, __startLine__ and __itemFormat__ are determined by the current configuration for the given table file.
@@ -1575,8 +1580,8 @@ if (!p)
 
 // Run a new roll with the priorRoll values
 return await rollTable(
-	p.tablePath, p.count, p.uniquePicks, p.format, p.useExpFormat, p.useConfig,
-	p.startLine, p.itemFormat);
+	p.tablePath, p.count, p.uniquePicks, p.outputFormat, p.useExpFormat,
+	p.useConfig, p.startLine, p.itemFormat);
 ```
 __
 tbl reroll - Re-rolls the last _successful_ table roll.
