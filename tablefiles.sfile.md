@@ -922,7 +922,9 @@ _inlineScripts.tablefiles.rollPopup =
 				// Confirm a valid configuration
 				if (!config)
 				{
-					config = _inlineScripts.state.sessionState.tablefiles.
+					config =
+						data.configurations[data.current.path] =
+						_inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
 				// Add the value to the configuration
@@ -952,7 +954,9 @@ _inlineScripts.tablefiles.rollPopup =
 				// Confirm a valid configuration
 				if (!config)
 				{
-					config = _inlineScripts.state.sessionState.tablefiles.
+					config =
+						data.configurations[data.current.path] =
+						_inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
 				// Add the value to the configuration
@@ -1000,7 +1004,9 @@ _inlineScripts.tablefiles.rollPopup =
 				// Confirm a valid configuration
 				if (!config)
 				{
-					config = _inlineScripts.state.sessionState.tablefiles.
+					config =
+						data.configurations[data.current.path] =
+						_inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
 				// Add the value to the configuration
@@ -1043,7 +1049,9 @@ _inlineScripts.tablefiles.rollPopup =
 				// Confirm a valid configuration
 				if (!config)
 				{
-					config = _inlineScripts.state.sessionState.tablefiles.
+					config =
+						data.configurations[data.current.path] =
+						_inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
 				// Add the value to the configuration
@@ -1088,7 +1096,9 @@ _inlineScripts.tablefiles.rollPopup =
 				// Confirm a valid configuration
 				if (!config)
 				{
-					config = _inlineScripts.state.sessionState.tablefiles.
+					config =
+						data.configurations[data.current.path] =
+						_inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
 				// Add the value to the configuration
@@ -1161,7 +1171,9 @@ _inlineScripts.tablefiles.rollPopup =
 				// Confirm a valid configuration
 				if (!config)
 				{
-					config = _inlineScripts.state.sessionState.tablefiles.
+					config =
+						data.configurations[data.current.path] =
+						_inlineScripts.state.sessionState.tablefiles.
 						configuration[data.current.path] = {};
 				}
 				// Add the value to the configuration
