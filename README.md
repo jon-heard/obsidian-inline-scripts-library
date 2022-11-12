@@ -1,5 +1,5 @@
 # Inline Scripts (Obsidian Plugin) - Shortcut-file library
-## Version 0.24.8.5
+## Version 0.24.10.1
 
 These are sample shortcut-files for the Obsidian plugin [Inline Scripts](https://github.com/jon-heard/obsidian-inline-scripts).
 

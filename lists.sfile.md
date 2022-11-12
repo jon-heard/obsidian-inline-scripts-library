@@ -295,14 +295,14 @@ __
 $2 = Number($2) - 1;
 
 // Generic expansion messages
-const ERROR_MSG_PREFIX = "Item not picked from ist __" + $1 + "__.  ";
+const ERROR_MSG_PREFIX = "Item not picked from list __" + $1 + "__.  ";
 
 // Get the list's items.  Early out if parameter is out-of-bounds
 let items = getListItems($1);
 if ($2 >= items.length)
 {
 	return expFormat(
-		[ ERROR_MSG_PREFIX + "The item index " + result + " is out of range." ]);
+		[ ERROR_MSG_PREFIX + "The item index " + $2 + " is out of range." ]);
 }
 
 // Return expansion with the picked item
