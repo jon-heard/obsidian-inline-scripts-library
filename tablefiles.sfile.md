@@ -472,7 +472,7 @@ if (!_inlineScripts.tablefiles.onCacheChanged)
 
 
 // Custom CSS
-_inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: 1.5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_smallButtonDisabled { color: grey; cursor: unset } .iscript_nextPopupLabelSquished { margin-left: .5em } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; }");
+_inlineScripts.inlineScripts.HelperFncs.addCss("tableFiles", ".iscript_popupLabel { margin-right: .25em; white-space: nowrap; } .iscript_nextPopupLabel { margin-left: .5em } .iscript_popupRow { width: 100%; margin-bottom: 1em; } .iscript_smallButton { padding: 0.5em 0.5em; margin: 0 } .iscript_minWidth { width: 0% } .iscript_textbox_squished { padding: 4px !important; } .iscript_textbox_readonly { background-color: transparent !important; color: var(--text-muted) !important; }");
 
 // Convert from the old syntax
 for (const key in _inlineScripts.state.sessionState.tablefiles.configuration)
@@ -511,35 +511,76 @@ function makeUiRow(elements)
 	return tbl;
 }
 
+function getCurrentConfigurations(data)
+{
+	return data.current.paths.map(v => data.configurations[v]);
+}
+
 // Helper function - Called each time a different table is selected from the list.
 // Updates the ui and data to match the selected table.
 async function updateTableConfigUi(data)
 {
 	// Set the current table path and table lines
 	data.current = {};
-	data.current.path = data.selectUi.value;
-	data.current.lines = await getTableFileLines(data.current.path);
+	data.current.paths = [ ...data.selectUi.selectedOptions ].map(v => v.value);
+
+	// Get the lines for all current paths
+	let tableLines =
+		await _inlineScripts.inlineScripts.HelperFncs.asyncMap(
+			data.current.paths, async v => await getTableFileLines(v));
+	//  Get the lines of the first current path (for startLine visualiation ui)
+	data.current.lines = tableLines[0];
+	// Work out the smallest line count of the current paths
+	data.current.minLineCount = Math.min(...tableLines.map(v => v.length));
 
 	// Get the table's configuration and lines
-	const config = data.configurations[data.current.path] || {};
+	const configs = getCurrentConfigurations(data);
 
-	// Update the ui - path, title, description, tags, startLine visualization
-	data.configUi.path.value = data.current.path;
-	data.configUi.title.value = config.title || "";
-	data.configUi.description.value = config.description || "";
-	data.configUi.tags.value = config.tags || "";
-	data.configUi.startLine.value = data.current.lines[config.startLine || 0] || "";
+	// Define a convenient way to display possible multiple values in ui
+	function getCommonProperty(objects, property, defaultValue)
+	{
+		defaultValue ??= "";
+	    let result = "~~undefined~~";
+	    for (const o of objects)
+	    {
+		    const value = o ? (o[property] || defaultValue) : defaultValue;
+	        if (result === "~~undefined~~") { result = value; }
+	        else if (value !== result) { return "." }
+	    }
+	    return result === "~~undefined~~" ? null : result;
+	}
+
+	// Update the ui - path, title, description, tags, itemFormat visualization
+	data.configUi.path.value =
+		data.current.paths.length > 1 ? "." : data.current.paths[0];
+	data.configUi.title.value = getCommonProperty(configs, "title") || "";
+	data.configUi.description.value =
+		getCommonProperty(configs, "description") || "";
+	data.configUi.tags.value = getCommonProperty(configs, "tags") || "";
+	data.configUi.itemFormat.value = getCommonProperty(configs, "itemFormat") || "";
+
+	// Update the ui - startLine visualization
+	const startLineValue = getCommonProperty(configs, "startLine", 0);
+	if (startLineValue === ".")
+	{
+		data.configUi.startLine.value = ".";
+	}
+	else
+	{
+		data.configUi.startLine.value =
+			data.current.lines[startLineValue] || "";
+	}
 
 	// Determine if the table is a files-table
 	const isFolderTable = data.selectUi.value.startsWith(HEADING_FTABLE);
 
-	// Update the ui - startLine button enable-state, itemFormat
+	// Update the ui - startLine button enable-state
 	data.configUi.startLineUp.toggleClass(
-		"iscript_smallButtonDisabled", !config.startLine || isFolderTable);
+		"iscript_button_disabled", !startLineValue || isFolderTable);
 	data.configUi.startLineDown.toggleClass(
-		"iscript_smallButtonDisabled",
-		(config.startLine >= data.current.lines.length - 1) || isFolderTable);
-	data.configUi.itemFormat.value = config.itemFormat || "";
+		"iscript_button_disabled",
+		((configs[0].startLine || 0) >= data.current.minLineCount - 1) ||
+		isFolderTable);
 
 	// Update the ui - Format sample visualization
 	refreshItemFormatSample(data);
@@ -789,6 +830,7 @@ _inlineScripts.tablefiles.rollPopup =
 			selectUi.classList.add("iscript_listSelect");
 			selectUi.style["font-family"] = "monospace";
 			selectUi.style.margin = "0.5em 0em";
+			selectUi.multiple = true;
 			selectUi.addEventListener("keypress", e =>
 			{
 				if (e.key === "Enter") { firstButton.click(); }
@@ -917,23 +959,27 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].style["min-width"] = "7em !important";
 			uiRow[1].addEventListener("change", async e =>
 			{
-				// Get the configuration
-				let config = data.configurations[data.current.path];
-				// Confirm a valid configuration
-				if (!config)
+				// Get the configurations
+				let configs = getCurrentConfigurations(data);
+				// Confirm valid configurations
+				for (let i = 0; i < configs.length; i++)
 				{
-					config =
-						data.configurations[data.current.path] =
-						_inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
+					if (!configs[i])
+					{
+						configs[i] =
+							data.configurations[data.current.paths[i]] =
+							_inlineScripts.state.sessionState.tablefiles.
+							configuration[data.current.paths[i]] = {};
+					}
 				}
 				// Add the value to the configuration
-				config.title = e.target.value;
-				// If configuration is from a frontmatter, update the frontmatter too
-				if (config?.isFrontmatter)
+				configs.forEach(v => v.title = e.target.value);
+				// If configuration is from frontmatter, update frontmatter
+				for (let i = 0; i < configs.length; i++)
 				{
+					if (!configs[i].isFrontmatter) { continue; }
 					expand(
-						"notevars set \"" + data.current.path + "\" title " +
+						"notevars set \"" + data.current.paths[i] + "\" title " +
 						e.target.value);
 				}
 				// Refresh the table list
@@ -949,24 +995,28 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[3].classList.add("iscript_textbox_squished");
 			uiRow[3].addEventListener("change", async e =>
 			{
-				// Get the configuration
-				let config = data.configurations[data.current.path];
-				// Confirm a valid configuration
-				if (!config)
+				// Get the configurations
+				let configs = getCurrentConfigurations(data);
+				// Confirm valid configurations
+				for (let i = 0; i < configs.length; i++)
 				{
-					config =
-						data.configurations[data.current.path] =
-						_inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
+					if (!configs[i])
+					{
+						configs[i] =
+							data.configurations[data.current.paths[i]] =
+							_inlineScripts.state.sessionState.tablefiles.
+							configuration[data.current.paths[i]] = {};
+					}
 				}
 				// Add the value to the configuration
-				config.description = e.target.value;
-				// If configuration is from a frontmatter, update the frontmatter too
-				if (config?.isFrontmatter)
+				configs.forEach(v => v.description = e.target.value);
+				// If configuration is from frontmatter, update frontmatter
+				for (let i = 0; i < configs.length; i++)
 				{
+					if (!configs[i].isFrontmatter) { continue; }
 					expand(
-						"notevars set \"" + data.current.path + "\" description " +
-						e.target.value);
+						"notevars set \"" + data.current.paths[i] +
+						"\" description " + e.target.value);
 				}
 				// Refresh the table list
 				refreshTableListUi(data);
@@ -979,10 +1029,13 @@ _inlineScripts.tablefiles.rollPopup =
 			data.configUi.path = uiRow[5];
 			uiRow[5].type = "text";
 			uiRow[5].classList.add("iscript_textbox_squished");
+			uiRow[5].classList.add("iscript_textbox_readonly");
 			uiRow[5].setAttr("readonly", true);
 			uiRow[5].style["min-width"] = "12em !important";
 			uiRow[5].style["background-color"] = "var(--background-secondary)";
 		tbl = makeUiRow(uiRow);
+			tbl.childNodes[0].childNodes[1].style.width = "13%";
+			tbl.childNodes[0].childNodes[3].style.width = "20%";
 			configUi.append(tbl);
 
 		////////////////////////////////////
@@ -999,24 +1052,28 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[1].setAttr("placeholder", "Space-separated");
 			uiRow[1].addEventListener("change", async e =>
 			{
-				// Get the configuration
-				let config = data.configurations[data.current.path];
-				// Confirm a valid configuration
-				if (!config)
+				// Get the configurations
+				let configs = getCurrentConfigurations(data);
+				// Confirm valid configurations
+				for (let i = 0; i < configs.length; i++)
 				{
-					config =
-						data.configurations[data.current.path] =
-						_inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
+					if (!configs[i])
+					{
+						configs[i] =
+							data.configurations[data.current.paths[i]] =
+							_inlineScripts.state.sessionState.tablefiles.
+							configuration[data.current.paths[i]] = {};
+					}
 				}
 				// Add the value to the configuration
-				config.tags = e.target.value;
-				// If configuration is from a frontmatter, update the frontmatter too
-				if (config?.isFrontmatter)
+				configs.forEach(v => v.tags = e.target.value);
+				// If configuration is from frontmatter, update frontmatter
+				for (let i = 0; i < configs.length; i++)
 				{
+					if (!configs[i].isFrontmatter) { continue; }
 					expand(
-						"notevars set \"" + data.current.path + "\" tags " +
-						e.target.value);
+						"notevars set \"" + data.current.paths[i] +
+						"\" tags " + e.target.value);
 				}
 				// Refresh the table list
 				refreshTableListUi(data);
@@ -1029,54 +1086,71 @@ _inlineScripts.tablefiles.rollPopup =
 			data.configUi.startLine = uiRow[3];
 			uiRow[3].type = "text";
 			uiRow[3].classList.add("iscript_textbox_squished");
+			uiRow[3].classList.add("iscript_textbox_readonly");
 			uiRow[3].setAttr("readonly", true);
 			uiRow[3].style["background-color"] = "var(--background-secondary)";
 		uiRow[4] = document.createElement("button");
 			data.configUi.startLineUp = uiRow[4];
 			uiRow[4].innerText = "▲";
 			uiRow[4].classList.add("iscript_smallButton");
-			uiRow[4].classList.add("iscript_smallButtonDisabled");
+			uiRow[4].classList.add("iscript_button_disabled");
 			uiRow[4].addEventListener("click", async e =>
 			{
 				// Ignore disabled button
-				if (e.target.classList.contains("iscript_smallButtonDisabled"))
+				if (e.target.classList.contains("iscript_button_disabled"))
 				{
 					return;
 				}
 
-				// Get the configuration
-				let config = data.configurations[data.current.path];
-				// Confirm a valid configuration
-				if (!config)
+				// Get the configurations
+				let configs = getCurrentConfigurations(data);
+				// Confirm valid configurations
+				for (let i = 0; i < configs.length; i++)
 				{
-					config =
-						data.configurations[data.current.path] =
-						_inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
+					if (!configs[i])
+					{
+						configs[i] =
+							data.configurations[data.current.paths[i]] =
+							_inlineScripts.state.sessionState.tablefiles.
+							configuration[data.current.paths[i]] = {};
+					}
 				}
+				const value = Math.clamp(
+					(configs[0].startLine || 0) - 1,
+					0, data.current.minLineCount - 1);
 				// Add the value to the configuration
-				config.startLine = Math.max(0, (config.startLine || 0) - 1);
-				// If configuration is from a frontmatter, update the frontmatter too
-				if (config.isFrontmatter)
+				configs.forEach(v => v.startLine = value);
+				// If configuration is from frontmatter, update frontmatter
+				if (!data.delayedStartLineSet)
 				{
-					if (!data.delayedStartLineSet)
+					// Gether what frontmatters to update
+					let toUpdate = data.current.paths.filter(
+						v => data.configurations[v].isFrontmatter);
+					// Setup updating frontmatters (delayed)
+					if (toUpdate)
 					{
 						data.delayedStartLineSet = setTimeout(async () =>
 						{
 							delete data.delayedStartLineSet;
-							expand(
-								"notevars set \"" + data.current.path +
-								"\" startLine " + config.startLine);
+							for (let i = 0; i < toUpdate.length; i++)
+							{
+								let startLine =
+									data.configurations[toUpdate[i]].startLine;
+								expand(
+									"notevars set \"" + toUpdate[i] +
+									"\" startLine " + startLine);
+							}
 						}, 3000);
 					}
 				}
 				// Update the display
 				data.configUi.startLine.value =
-					data.current.lines[config.startLine] || "";
+					data.current.lines[configs[0].startLine] || "";
 				data.configUi.startLineUp.toggleClass(
-					"iscript_smallButtonDisabled", config.startLine === 0);
+					"iscript_button_disabled", configs[0].startLine === 0);
 				data.configUi.startLineDown.toggleClass(
-					"iscript_smallButtonDisabled", false);
+					"iscript_button_disabled",
+					configs[0].startLine >= data.current.minLineCount - 1);
 				refreshItemFormatSample(data);
 			});
 		uiRow[5] = document.createElement("button");
@@ -1086,45 +1160,58 @@ _inlineScripts.tablefiles.rollPopup =
 			uiRow[5].addEventListener("click", async e =>
 			{
 				// Ignore disabled button
-				if (e.target.classList.contains("iscript_smallButtonDisabled"))
+				if (e.target.classList.contains("iscript_button_disabled"))
 				{
 					return;
 				}
 
-				// Get the configuration
-				let config = data.configurations[data.current.path];
-				// Confirm a valid configuration
-				if (!config)
+				// Get the configurations
+				let configs = getCurrentConfigurations(data);
+				// Confirm valid configurations
+				for (let i = 0; i < configs.length; i++)
 				{
-					config =
-						data.configurations[data.current.path] =
-						_inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
+					if (!configs[i])
+					{
+						configs[i] =
+							data.configurations[data.current.paths[i]] =
+							_inlineScripts.state.sessionState.tablefiles.
+							configuration[data.current.paths[i]] = {};
+					}
 				}
+				const value = (configs[0].startLine || 0) + 1;
 				// Add the value to the configuration
-				config.startLine = (config.startLine || 0) + 1;
-				// If configuration is from a frontmatter, update the frontmatter too
-				if (config.isFrontmatter)
+				configs.forEach(v => v.startLine = value);
+				// If configuration is from frontmatter, update frontmatter
+				if (!data.delayedStartLineSet)
 				{
-					if (!data.delayedStartLineSet)
+					// Gether what frontmatters to update
+					let toUpdate = data.current.paths.filter(
+						v => data.configurations[v].isFrontmatter);
+					// Setup updating frontmatters (delayed)
+					if (toUpdate)
 					{
 						data.delayedStartLineSet = setTimeout(async () =>
 						{
 							delete data.delayedStartLineSet;
-							expand(
-								"notevars set \"" + data.current.path +
-								"\" startLine " + config.startLine);
+							for (let i = 0; i < toUpdate.length; i++)
+							{
+								let startLine =
+									data.configurations[toUpdate[i]].startLine;
+								expand(
+									"notevars set \"" + toUpdate[i] +
+									"\" startLine " + startLine);
+							}
 						}, 3000);
 					}
 				}
 				// Update the display
 				data.configUi.startLine.value =
-					data.current.lines[config.startLine] || "";
+					data.current.lines[configs[0].startLine] || "";
 				data.configUi.startLineUp.toggleClass(
-					"iscript_smallButtonDisabled", false);
+					"iscript_button_disabled", false);
 				data.configUi.startLineDown.toggleClass(
-					"iscript_smallButtonDisabled",
-					config.startLine >= data.current.lines.length - 1);
+					"iscript_button_disabled",
+					configs[0].startLine >= data.current.minLineCount - 1);
 				refreshItemFormatSample(data);
 			});
 		tbl = makeUiRow(uiRow);
@@ -1166,24 +1253,28 @@ _inlineScripts.tablefiles.rollPopup =
 			});
 			uiRow[1].addEventListener("change", async e =>
 			{
-				// Get the configuration
-				let config = data.configurations[data.current.path];
-				// Confirm a valid configuration
-				if (!config)
+				// Get the configurations
+				let configs = getCurrentConfigurations(data);
+				// Confirm valid configurations
+				for (let i = 0; i < configs.length; i++)
 				{
-					config =
-						data.configurations[data.current.path] =
-						_inlineScripts.state.sessionState.tablefiles.
-						configuration[data.current.path] = {};
+					if (!configs[i])
+					{
+						configs[i] =
+							data.configurations[data.current.paths[i]] =
+							_inlineScripts.state.sessionState.tablefiles.
+							configuration[data.current.paths[i]] = {};
+					}
 				}
 				// Add the value to the configuration
-				config.itemFormat = e.target.value;
-				// If configuration is from a frontmatter, update the frontmatter too
-				if (config?.isFrontmatter)
+				configs.forEach(v => v.itemFormat = e.target.value);
+				// If configuration is from frontmatter, update frontmatter
+				for (let i = 0; i < configs.length; i++)
 				{
+					if (!configs[i].isFrontmatter) { continue; }
 					expand(
-						"notevars set \"" + data.current.path + "\" itemFormat " +
-						e.target.value);
+						"notevars set \"" + data.current.paths[i] +
+						"\" itemFormat " + e.target.value);
 				}
 				// Refresh the samples
 				refreshItemFormatSample(data);
@@ -1191,21 +1282,23 @@ _inlineScripts.tablefiles.rollPopup =
 		uiRow[2] = document.createElement("div");
 			uiRow[2].innerText = "Sample item";
 			uiRow[2].classList.add("iscript_popupLabel");
-			uiRow[2].classList.add("iscript_nextPopupLabelSquished");
+			uiRow[2].classList.add("iscript_nextPopupLabel");
 		uiRow[3] = document.createElement("input");
 			data.configUi.sampleItem = uiRow[3];
 			uiRow[3].type = "text";
 			uiRow[3].classList.add("iscript_textbox_squished");
+			uiRow[3].classList.add("iscript_textbox_readonly");
 			uiRow[3].setAttr("readonly", true);
 			uiRow[3].style["background-color"] = "var(--background-secondary)";
 		uiRow[4] = document.createElement("div");
 			uiRow[4].innerText = "Sample Range";
 			uiRow[4].classList.add("iscript_popupLabel");
-			uiRow[4].classList.add("iscript_nextPopupLabelSquished");
+			uiRow[4].classList.add("iscript_nextPopupLabel");
 		uiRow[5] = document.createElement("input");
 			data.configUi.sampleRange = uiRow[5];
 			uiRow[5].type = "text";
 			uiRow[5].classList.add("iscript_textbox_squished");
+			uiRow[5].classList.add("iscript_textbox_readonly");
 			uiRow[5].style.width = "3em";
 			uiRow[5].setAttr("readonly", true);
 			uiRow[5].style["background-color"] = "var(--background-secondary)";

@@ -113,15 +113,12 @@ async function getListItems(name)
 	return expand("lists listraw " + name);
 }
 
-//  An array filter function that allows for async predicate
-const asyncFilter = async (arr, predicate) => Promise.all(arr.map(predicate))
-	.then((results) => arr.filter((_v, index) => results[index]));
-
 // returns the names of lists that have items.
 async function getNamesOfPopulatedLists()
 {
 	let result = Object.keys(_inlineScripts.state.sessionState.lists).sort();
-	return asyncFilter(result, async v => (await getListItems(v)).length);
+	return await _inlineScripts.inlineScripts.HelperFncs.asyncFilter(
+		result, async v => (await getListItems(v)).length);
 };
 
 // Filter list names to those of basic and combo type
