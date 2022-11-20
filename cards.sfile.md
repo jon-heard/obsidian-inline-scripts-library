@@ -256,7 +256,7 @@ __
 __
 ```js
 // Remove quotes around the path
-$2 = $2.replaceAll(/^\"|\"$/g, "");
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // Start expansion result
 let result = "The card system's settings are updated:\n";
@@ -521,7 +521,7 @@ __
 __
 ```js
 // Remove quotes around the path
-$2 = $2.replaceAll(/^\"|\"$/g, "");
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // Get the pile, early out if it doesnt exist
 const pile = _inlineScripts.state.sessionState.cards.piles[$1];

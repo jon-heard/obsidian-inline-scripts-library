@@ -368,7 +368,7 @@ __
 __
 ```js
 // Remove any quotes around the old item
-$2 = $2.replaceAll(/^\"|\"$/g, "");
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // Generic expansion messages
 const SUCCESS_MSG =
@@ -484,7 +484,7 @@ __
 __
 ```js
 // Remove any quotes around the specified folder path
-$2 = $2.replaceAll(/^\"|\"$/g, "");
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // Confirm the list name is available
 if (_inlineScripts.state.sessionState.lists[$1])
@@ -562,7 +562,7 @@ __
 __
 ```js
 // Remove any quotes around the file path
-$2 = $2.replaceAll(/^\"|\"$/g, "");
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // Get the specified file
 let file = app.vault.fileMap[$2];

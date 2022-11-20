@@ -1412,7 +1412,7 @@ __
 __
 ```js
 // Remove any quotes around the parameter
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+$1 = $1.replace(/^"(.*)"$/, "$1")
 
 // If neither path nor path.md is valid, early out
 const file = app.vault.fileMap[$1] || app.vault.fileMap[$1 + ".md"];
@@ -1441,7 +1441,7 @@ __
 __
 ```js
 // Remove any quotes around the parameter
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+$1 = $1.replace(/^"(.*)"$/, "$1")
 
 // If path parameter isn't a valid folder, early out
 let file = app.vault.fileMap[$1];
@@ -1542,7 +1542,7 @@ __
 __
 ```js
 // Remove any quotes around the table file parameter
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+$1 = $1.replace(/^"(.*)"$/, "$1")
 
 // Make parameters case-insensitive
 $2 = $2.toLowerCase();

@@ -102,7 +102,7 @@ __
 __
 ```js
 // Remove any quotes around the folder path
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+$1 = $1.replace(/^"(.*)"$/, "$1")
 
 // Pick random items.  If error, early-out.
 let result = expUnformat(
@@ -123,7 +123,7 @@ __
 __
 ```js
 // Remove any quotes around the folder path
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+$1 = $1.replace(/^"(.*)"$/, "$1")
 
 // Pick random items.  If error, early-out.
 let result = expUnformat(
@@ -148,7 +148,7 @@ __
 __
 ```js
 // Remove any quotes around the folder path
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+$1 = $1.replace(/^"(.*)"$/, "$1")
 // Count defaults to 1
 $2 = Number($2) || 1;
 // Split toIgnore into filenames

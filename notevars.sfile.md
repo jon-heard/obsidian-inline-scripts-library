@@ -114,12 +114,13 @@ notevars isMarkdownRefreshed {state: y OR n, default: ""} - If {state} is given,
 
 __
 ```
-^notevars get ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*)
+^notevars get ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ("[^ \t\['`\|\{\}">*&#@!].*"|[^ \t\['`\|\{\}">*&#@!][^ \t]*)$
 ```
 __
 ```js
-// Remove any quotes around the note path parameter
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+// Remove any quotes around parameters
+$1 = $1.replace(/^"(.*)"$/, "$1")
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
@@ -160,17 +161,18 @@ const result = fm[$2] || fm[$2 + ":"] || null;
 return Array.isArray(result) ? result.join(",") : result;
 ```
 __
-notevars get {note name: path text} {variable name: name text} - Expands to the value of variable {variable name} in note {note name}.  If {note name} is "." then it represents the current note.
+notevars get {note name: path text} {variable name: yaml name text} - Expands to the value of variable {variable name} in note {note name}.  If {note name} is "." then it represents the current note.
 
 
 __
 ```
-^notevars getArray ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) ([0-9]+)$
+^notevars getArray ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ("[^ \t\['`\|\{\}">*&#@!].*"|[^ \t\['`\|\{\}">*&#@!][^ \t]*) ([0-9]+)$
 ```
 __
 ```js
-// Remove any quotes around the note path parameter
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+// Remove any quotes around parameters
+$1 = $1.replace(/^"(.*)"$/, "$1")
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path; }
@@ -212,17 +214,18 @@ const result = fm[$2] || fm[$2 + ":"] || null;
 return Array.isArray(result) ? result[$3] : ($3 === "0") ? result : null;
 ```
 __
-notevars getArray {note name: path text} {array name: name text} {index: >=0} - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
+notevars getArray {note name: path text} {array name: yaml name text} {index: >=0} - Expands to the value of item {index} of array {array name} in note {note name}.  If {note name} is "." then it represents the current note.
 
 
 __
 ```
-^notevars set ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
+^notevars set ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ("[^ \t\['`\|\{\}">*&#@!].*"|[^ \t\['`\|\{\}">*&#@!][^ \t]*) (.*)$
 ```
 __
 ```js
-// Remove any quotes that surround the path
-$1 = $1.replaceAll(/^\"|\"$/g, "");
+// Remove any quotes around parameters
+$1 = $1.replace(/^"(.*)"$/, "$1")
+$2 = $2.replace(/^"(.*)"$/, "$1")
 
 // If notename is ".", change it to the current file
 if ($1 === ".") { $1 = app.workspace.getActiveFile()?.path || ""; }
@@ -361,15 +364,19 @@ return expFormat(
 	"Note __" + $1 + "__, variable __" + $2 + "__ set to __" + $3 + "__.");
 ```
 __
-notevars set {note name: path text} {variable name: name text} {value: text} - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
+notevars set {note name: path text} {variable name: yaml name text} {value: text} - Sets the value of variable {variable name} to {value} in note {note name}.  If {note name} is "." then it represents the current note.
 
 
 __
 ```
-^notevars setArray ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ([_a-zA-Z][_a-zA-Z0-9]*) (.*)$
+^notevars setArray ("[^ \t\\:*?"<>|][^\t\\:*?"<>|]*"|[^ \t\\:*?"<>|]+) ("[^ \t\['`\|\{\}">*&#@!].*"|[^ \t\['`\|\{\}">*&#@!][^ \t]*) (.*)$
 ```
 __
 ```js
+// Remove any quotes around parameters
+$1 = $1.replace(/^"(.*)"$/, "$1")
+$2 = $2.replace(/^"(.*)"$/, "$1")
+
 // Get the input array
 const valueArray = $3.split(",").map(v => v.trim());
 
@@ -385,4 +392,4 @@ return expFormat(
 	valueArray.join(", ") + " \\]__.");
 ```
 __
-notevars setArray {note name: path text} {array name: name text} {values: text (comma separated)} - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
+notevars setArray {note name: path text} {array name: yaml name text} {values: text (comma separated)} - Sets the values of array {array name} to {value1}, {value2}, etc. in note {note name}.  If {note name} is "." then it represents the current note.
