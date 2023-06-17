@@ -299,7 +299,7 @@ catch (e)
 _inlineScripts.inlineScripts.HelperFncs.callEventListenerCollection(
 	"state.onLoad", _inlineScripts.state.listeners.onLoad);
 
-return expFormat([ State set." ]);
+return expFormat([ "State set." ]);
 ```
 __
 state set {state: text} - Loads the session state from {state}, a state-string created with the "state get" shortcut.
